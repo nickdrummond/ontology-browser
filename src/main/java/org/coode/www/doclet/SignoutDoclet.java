@@ -34,7 +34,7 @@ public class SignoutDoclet extends AbstractOWLDocDoclet {
         out.print(OWLHTMLConstants.LinkTarget._top);
         out.print("'>");
         out.print("<img src='");
-        out.print(URLUtils.createRelativeURL(pageURL, urlScheme.getURLForRelativePage("src/main/webapp/images/close.png")));
+        out.print(URLUtils.createRelativeURL(pageURL, urlScheme.getURLForRelativePage("images/close.png")));
         out.print("' width='16' height='16' title='close' />");
         out.println("</a>");
     }

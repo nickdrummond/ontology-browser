@@ -89,7 +89,7 @@ public class URLUtils {
         }
 
         for (int i=0; i<currentSubCount; i++){
-            relativeURL.append(OWLHTMLConstants.SERVLET_BASE);
+            relativeURL.append("..");
             relativeURL.append(OWLHTMLConstants.SLASH);
         }
 

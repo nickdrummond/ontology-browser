@@ -226,6 +226,8 @@ public class SessionManager {
     }
 
     private synchronized static void create(HttpSession mySession, HttpServletRequest request) {
+        logger.debug("Creating a new Session: " + mySession.getId());
+
         try{
             String url = request.getRequestURL().toString();
 

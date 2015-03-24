@@ -18,7 +18,7 @@ import java.net.URL;
  */
 public class OntologyBrowserConstants extends OWLHTMLConstants {
 
-    public static String VERSION = "1.4.4";
+    public static String VERSION = "2.0.0-SNAPSHOT";
 
     public static final String SERVER_STATES_DIR = "caches/";
     public static final String SERVER_STATES_EXT = ".saved";

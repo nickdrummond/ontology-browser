@@ -147,10 +147,10 @@
         <servlet-name>Summary</servlet-name>
         <url-pattern>/individuals/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/ontologies/*</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>Summary</servlet-name>-->
+        <!--<url-pattern>/ontologies/*</url-pattern>-->
+    <!--</servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>QueryReasoner</servlet-name>
         <url-pattern>/query/</url-pattern>
