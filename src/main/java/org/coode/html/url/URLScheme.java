@@ -4,6 +4,7 @@ import org.coode.html.OWLHTMLKit;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -40,4 +41,6 @@ public interface URLScheme extends OWLObjectURLRenderer {
     URL getURLForRelativePage(String pageRelativeToBase);
 
     URL getURLForAbsolutePage(URL pageURL);
+
+    URL getURLForApi(NamedObjectType type);
 }

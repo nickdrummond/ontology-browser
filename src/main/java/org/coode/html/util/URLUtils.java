@@ -174,7 +174,7 @@ public class URLUtils {
 
     public static void renderURLLinks(URL url, OWLHTMLKit kit, URL pageURL, PrintWriter out) {
         try{
-            final URL loadBaseURL = kit.getURLScheme().getURLForIndex(NamedObjectType.ontologies);
+            final URL loadBaseURL = kit.getURLScheme().getURLForApi(NamedObjectType.ontologies);
 
             // need the redirect to be relative to the load URL
             final String relRedirect = URLUtils.createRelativeURL(loadBaseURL, pageURL);

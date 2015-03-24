@@ -150,6 +150,15 @@ public class RestURLScheme extends AbstractURLScheme {
         additionalLinkArguments = null;
     }
 
+    @Override
+    public URL getURLForApi(NamedObjectType type) {
+        try {
+            return new URL(kit.getBaseURL() + "api" + OWLHTMLConstants.SLASH + type.getPluralRendering().toLowerCase());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private int getID(URL url) throws MalformedURLException {
         String relativeURL = URLUtils.createRelativeURL(kit.getBaseURL(), url);
         String[] path = relativeURL.split(OWLHTMLConstants.SLASH);

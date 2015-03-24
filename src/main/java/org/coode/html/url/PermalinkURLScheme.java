@@ -99,4 +99,9 @@ public class PermalinkURLScheme implements URLScheme {
     public URL getURLForAbsolutePage(URL pageURL) {
         return append(baseScheme.getURLForAbsolutePage(pageURL));
     }
+
+    @Override
+    public URL getURLForApi(NamedObjectType type) {
+        return baseScheme.getURLForApi(type); // cannot bookmark
+    }
 }

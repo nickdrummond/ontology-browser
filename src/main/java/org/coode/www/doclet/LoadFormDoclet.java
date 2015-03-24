@@ -31,7 +31,7 @@ public class LoadFormDoclet extends AbstractOWLDocDoclet {
 
     protected void renderHeader(URL pageURL, PrintWriter out) {
         out.print("    <form id='load' method='POST' action='");
-        out.print(URLUtils.createRelativeURL(pageURL, getOWLHTMLKit().getURLScheme().getURLForIndex(NamedObjectType.ontologies)));
+        out.print(URLUtils.createRelativeURL(pageURL, getOWLHTMLKit().getURLScheme().getURLForApi(NamedObjectType.ontologies)));
         out.println("' target='_top' >");
         out.println("        <label for='uri-spec'><h3 style='margin-bottom: 0;'>Specify the physical location of your ontology:</h3></label><br />");
         out.print("        <input id='");

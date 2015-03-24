@@ -52,7 +52,7 @@ public class LoadBookmarksDoclet extends AbstractOWLDocDoclet {
 
     protected void renderHeader(URL pageURL, PrintWriter out) {
         out.print("    <form id='bookmarks' method='POST' action='");
-        out.print(URLUtils.createRelativeURL(pageURL, getOWLHTMLKit().getURLScheme().getURLForIndex(NamedObjectType.ontologies)));
+        out.print(URLUtils.createRelativeURL(pageURL, getOWLHTMLKit().getURLScheme().getURLForApi(NamedObjectType.ontologies)));
         out.println("' target='_top' >");
         out.println("        <label for='uri-bookmark'><h3 style='margin-bottom: 0;'>" + label + "</h3></label><br />");
         out.println("        <select id='uri-bookmark' name='uri' style='width:80%; margin-top: 0;'>");

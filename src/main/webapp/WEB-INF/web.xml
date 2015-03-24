@@ -113,7 +113,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Ontologies</servlet-name>
-        <url-pattern>/ontologies/</url-pattern>
+        <url-pattern>/api/ontologies</url-pattern>
     </servlet-mapping>
     <servlet-mapping><!-- for backward compatibility -->
         <servlet-name>Ontologies</servlet-name>
@@ -147,10 +147,10 @@
         <servlet-name>Summary</servlet-name>
         <url-pattern>/individuals/*</url-pattern>
     </servlet-mapping>
-    <!--<servlet-mapping>-->
-        <!--<servlet-name>Summary</servlet-name>-->
-        <!--<url-pattern>/ontologies/*</url-pattern>-->
-    <!--</servlet-mapping>-->
+    <servlet-mapping>
+        <servlet-name>Summary</servlet-name>
+        <url-pattern>/ontologies/*</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>QueryReasoner</servlet-name>
         <url-pattern>/query/</url-pattern>
@@ -167,10 +167,6 @@
         <servlet-name>DLQuery</servlet-name>
         <url-pattern>/dlquery/</url-pattern>
     </servlet-mapping>
-        <!--<servlet-mapping>-->
-        <!--<servlet-name>TestServlet</servlet-name>-->
-        <!--<url-pattern>/test/</url-pattern>-->
-    <!--</servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>Summary</servlet-name>
         <url-pattern>/annotationproperties/*</url-pattern>

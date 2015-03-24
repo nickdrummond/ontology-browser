@@ -125,6 +125,11 @@ public class StaticFilesURLScheme extends AbstractURLScheme {
         return null;
     }
 
+    @Override
+    public URL getURLForApi(NamedObjectType type) {
+        return null;
+    }
+
     public void setAdditionalLinkArguments(String s) {
         // do nothing
     }
