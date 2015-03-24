@@ -82,6 +82,30 @@
           </configuration>
         </configuration>
       </plugin>
+
+      <!-- Required for heroku deployment.
+           See https://devcenter.heroku.com/articles/deploy-a-java-web-application-that-launches-with-jetty-runner -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>copy</goal></goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.mortbay.jetty</groupId>
+                  <artifactId>jetty-runner</artifactId>
+                  <version>7.5.4.v20111024</version>
+                  <destFileName>jetty-runner.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
 
   </build>
