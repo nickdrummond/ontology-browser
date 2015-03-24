@@ -9,4 +9,8 @@ https://code.google.com/p/ontology-browser/
 * Have it running again for demo purposes
 * Make it more scalable - sort out stupid config problems
 * Extract all rendering into views - jsp? or maybe just go full blown Spring MVC
-* Tests!!!
+* Tests!!
+
+## Build
+
+'''mvn clean package cargo:run'''
