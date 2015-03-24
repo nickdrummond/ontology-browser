@@ -1,0 +1,89 @@
+/****************************************************************
+ *
+ * parse-x.x.x.css used by parse.js javascript library
+ * http://www.nickdrummond.co.uk/code/parse.js/
+ *
+ * version:  v0.0.9 beta
+ * author:   Nick Drummond (http://www.nickdrummond.co.uk)
+ * date:     18 Oct 2010
+ * license:  MIT (http://www.opensource.org/licenses/mit-license.html)
+ *
+ * copyright 2010, Nick Drummond
+ *
+ ****************************************************************/
+
+div.wrapper{
+}
+
+div.autocomplete{
+    position: absolute;
+    background-color: white;
+    width: 200px; height: 200px;
+    border: solid 1px black;
+    padding-left: 1px; padding-right: 1px;
+    display: none;
+    overflow: auto;
+    text-align: left;
+    font-size: 10pt;
+    color: #999999;
+}
+
+div.autocomplete ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    -moz-padding-start: 0; /* Firefox adds a huge left padding - remove it */
+}
+
+div.autocomplete li{
+    margin: auto;
+}
+
+/* The style of the matched text in autocompleter when highlightResults is on */
+div.autocomplete li span.match{
+    color: black;
+}
+
+div.autocomplete li.selected{
+    background-color: #ddddff;
+}
+
+div#xml, div#debug{
+    font-family: monospace;
+}
+
+div#xml{
+    white-space: pre;
+}
+
+/* All editors will have this class added to them when the ExpressionEditor is bound */
+textarea.expression, input.expression[type="text"]{
+}
+
+textarea.invalid, input.invalid[type="text"]{
+    /*border-width: 1px;*/
+    border-color: red; /* set the border of the editor to red when there is and error */
+}
+
+div.errorhighlight{
+    background-color: #999999;
+}
+
+div.errorhighlight .error{
+    border-bottom: 2px dotted red; /* add a dotted red line under the error */
+}
+
+/* The current token that will be replaced when an autocomplete is activated */
+div.errorhighlight .actoken{
+    /*color: #ddddff;*/
+    /*background-color: #ddddff;*/
+}
+
+div.errormessage {
+    position: absolute;
+    white-space: pre; /* does not appear to work in IE7 */
+    background-color: #ffffee;
+    border: solid 1px gray;
+    padding: 3px;
+    font-size: 8pt;
+}

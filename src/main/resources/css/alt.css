@@ -1,0 +1,51 @@
+body {font-family: Verdana, Arial, sans-serif; font-size: 14pt; padding: 5px;}
+
+img {border: none;}
+img.button {position: relative; top: 8px;}
+
+.literal {color: green;}
+.annotation-uri {color: gray;}
+.ontology-uri {color: #990099;}
+.active-ontology-uri {color: #330033;}
+.active-entity {color: darkblue; font-weight: bold;}
+
+/* keywords - default cyan */
+.keyword {color: #00B2B2; font-weight: bolder;}
+.comment, .some, .only, .value, .min, .max, .exactly {color: #B200B2; font-weight:bolder;}
+
+div.codebox {overflow: hidden;
+    background: #f1f5f9; width: 95%; padding: 5px;
+    border-width: 1px; border-style: solid; border-color: #c7cfd5;
+}
+
+#queryform {background: #ddddff; padding: 5px;}
+#most_used_classes {text-align: center;}
+
+h1 {margin-top: 5px; font-size: 18pt; font-weight: bold;}
+h2 {margin-top: 10px; margin-bottom: 3px; font-size: 16pt; font-weight: normal;}
+h2.summaryURI {color: #444444; margin-top: 0px; margin-bottom: 10px;}
+
+#menu{width: 95%;  padding-left: 2px; padding-right: 2px; background-color: #ddddff; border: solid 1px blue; margin-bottom: 5px;}
+#menu a{font-weight: bolder;}
+#menu a:hover{text-decoration: none; color: white; background-color: black;}
+
+
+a {text-decoration: none; color: #000000;}
+a:hover {text-decoration: underline; color: blue;}
+
+a.subsexpand {color: #555555; font-size: 7pt; text-decoration: underline; line-height: 180%;}
+
+ul {margin-top: 1px; margin-bottom: 1px; margin-left: 10px; padding-left: 5px;}
+li {margin-top: 3px;}
+
+p.footer {font-size: 10pt; text-align: right; width: 95%;}
+
+table {border-collapse: collapse}
+td, tr {font-size: 14pt; border: solid black 1px; padding: 3px;}
+th {background-color:black; color:white;}
+
+.disabled {color: #bbbbbb;}
+.warn {color: #ff0000;}
+
+#tabs{font-size: smaller;}
+#options{float: right;}

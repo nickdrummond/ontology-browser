@@ -1,0 +1,89 @@
+
+.literal {
+    color: green;
+}
+
+.annotation-uri {
+    color: gray;
+}
+
+.ontology-uri {
+    color: #990099;
+}
+
+.active-ontology-uri {
+    color: #330033;
+}
+
+.active-entity {
+    background-color: #ffffaa;
+}
+
+.deprecated {
+    color: #222222;
+    text-decoration: line-through;
+}
+
+/* keywords - default cyan */
+.keyword {
+    color: #00B2B2;
+    font-weight: bolder;
+}
+
+.comment {
+    color: green;
+}
+
+.some, .only, .value, .min, .max, .exactly {
+    color: #B200B2;
+    font-weight:bolder;
+}
+
+.Class{
+    color: #000000;
+}
+
+a.Class:hover{
+    color: blue;
+}
+
+.Object.Property{
+    color: #004e4f;
+    font-style: italic;
+}
+
+a.Object.Property:hover{
+    color: #006363;
+    font-style: italic;
+}
+
+.Data.Property{
+    color: #18327a;
+    font-style: italic;
+}
+
+a.Data.Property:hover{
+    color: #1d3b91;
+    font-style: italic;
+}
+
+
+.Annotation.Property{
+    color: #155700;
+    font-style: italic;
+}
+
+a.Annotation.Property:hover{
+    color: #249400;
+    font-style: italic;
+}
+
+.Individual{
+    color: #000000;
+    font-style: italic;
+}
+
+a.Individual:hover{
+    color: blue;
+    font-style: italic;
+}
