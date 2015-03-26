@@ -29,17 +29,6 @@ import java.util.Map;
 
 
 /**
- * Author: Nick Drummond<br>
- * nick.drummond@cs.manchester.ac.uk<br>
- * http://www.cs.man.ac.uk/~drummond<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jun 28, 2007<br><br>
- * <p/>
- * code made available under Mozilla Public License (http://www.mozilla.org/MPL/MPL-1.1.html)<br>
- * copyright 2006, The University of Manchester<br>
- *
  * For a given key we will have completely independent ontology managers running with seperate reasoners etc
  * as each will be handling different ontologies (each session is independent).
  *
@@ -54,8 +43,9 @@ public class SessionManager {
 
     private static final String URI_MAPPING_MARKER = "##";
 
+    private Integer i = 0;
 
-    private static Map<SessionID, OWLHTMLKit> activeServers = new HashMap<SessionID, OWLHTMLKit>();
+    private Map<SessionID, OWLHTMLKit> activeServers = new HashMap<SessionID, OWLHTMLKit>();
 
 
 
@@ -65,7 +55,7 @@ public class SessionManager {
      * @return
      * @throws OntServerException
      */
-    public synchronized static OWLHTMLKit getHTMLKit(HttpServletRequest request) throws OntServerException {
+    public synchronized OWLHTMLKit getHTMLKit(HttpServletRequest request) throws OntServerException {
         HttpSession session = request.getSession(true);
 
         if (session.isNew()){
@@ -84,7 +74,7 @@ public class SessionManager {
      * @return
      * @throws OntServerException
      */
-    public synchronized static OWLHTMLKit getHTMLKit(HttpServletRequest request, String label) throws OntServerException {
+    public synchronized OWLHTMLKit getHTMLKit(HttpServletRequest request, String label) throws OntServerException {
         OWLHTMLKit kit = getHTMLKit(request);
         if (label != null && !label.equals(kit.getCurrentLabel())){
             loadLabel(kit, label);
@@ -98,7 +88,7 @@ public class SessionManager {
      * @param kit note: will set the current label on the server
      * @throws OntServerException
      */
-    public synchronized static void createLabel(OWLHTMLKit kit) throws OntServerException {
+    public synchronized void createLabel(OWLHTMLKit kit) throws OntServerException {
         String label = kit.getID() + "-" + createID();
         File file = getFile(label + OntologyBrowserConstants.SERVER_STATES_EXT);
         try {
@@ -141,7 +131,7 @@ public class SessionManager {
      * @param label
      * @throws OntServerException
      */
-    private synchronized static void loadLabel(OWLHTMLKit kit, String label) throws OntServerException {
+    private synchronized void loadLabel(OWLHTMLKit kit, String label) throws OntServerException {
 
         File file = getFile(label + OntologyBrowserConstants.SERVER_STATES_EXT);
 
@@ -186,7 +176,7 @@ public class SessionManager {
         }
     }
 
-    private static void cleanupProperties(OWLHTMLKit kit) {
+    private void cleanupProperties(OWLHTMLKit kit) {
         // fix the default css that was in the root
         String css = kit.getHTMLProperties().get(OWLHTMLProperty.optionDefaultCSS);
         if (!css.startsWith("http") && !css.startsWith(OWLHTMLConstants.CSS_BASE)){
@@ -195,7 +185,7 @@ public class SessionManager {
     }
 
 
-    public static File getFile(String name) {
+    public File getFile(String name) {
         File cacheDir = new File(OntologyBrowserConstants.SERVER_STATES_DIR);
         if (!cacheDir.exists()){
             cacheDir.mkdir();
@@ -203,7 +193,7 @@ public class SessionManager {
         return new File(OntologyBrowserConstants.SERVER_STATES_DIR + name);
     }
 
-    public synchronized static void closeSession(HttpSession mySession) {
+    public synchronized void closeSession(HttpSession mySession) {
         if (mySession != null){
             SessionID id = (SessionID) mySession.getAttribute(ID);
             cleanupSession(id);
@@ -211,7 +201,7 @@ public class SessionManager {
         }
     }
 
-    public synchronized static void cleanupSession(SessionID id) {
+    public synchronized void cleanupSession(SessionID id) {
 
         OWLHTMLKit kit = activeServers.remove(id);
         if (kit != null){ // might already have been tidied away
@@ -225,7 +215,7 @@ public class SessionManager {
         }
     }
 
-    private synchronized static void create(HttpSession mySession, HttpServletRequest request) {
+    private synchronized void create(HttpSession mySession, HttpServletRequest request) {
         logger.debug("Creating a new Session: " + mySession.getId());
 
         try{
@@ -252,7 +242,7 @@ public class SessionManager {
         }
     }
 
-    private static OWLHTMLKit createHTMLKit(String id, URL basePath) {
+    private OWLHTMLKit createHTMLKit(String id, URL basePath) {
 
         OWLHTMLKit kit = new OWLHTMLKitImpl(id, basePath);
 
@@ -302,7 +292,7 @@ public class SessionManager {
     }
 
 
-    private static void setupDefaultServerProperties(OWLHTMLKit kit) {
+    private void setupDefaultServerProperties(OWLHTMLKit kit) {
 
         // make sure the reasoner is enabled to allow dl query etc
         kit.getOWLServer().getProperties().setBoolean(ServerProperty.optionReasonerEnabled, true);
@@ -324,16 +314,14 @@ public class SessionManager {
         properties.setBoolean(OWLHTMLProperty.optionShowInferredHierarchies, false);
     }
 
-    public static Collection<OWLHTMLKit> getRunningKits() {
+    public Collection<OWLHTMLKit> getRunningKits() {
         return activeServers.values();
     }
 
     /**
      * The ID will get notified when a session expires and calls the session manager to cleanup
      */
-    static class SessionID implements HttpSessionBindingListener, java.io.Serializable {
-        private static Integer i = 0;
-
+    class SessionID implements HttpSessionBindingListener, java.io.Serializable {
         private String id;
 
         public SessionID() {
@@ -349,7 +337,7 @@ public class SessionManager {
         }
     }
 
-    private static String createID() {
+    private String createID() {
         return Long.toHexString(System.currentTimeMillis());
     }
 }

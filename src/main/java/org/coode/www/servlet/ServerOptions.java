@@ -15,6 +15,7 @@ import org.coode.www.doclet.OptionsTableDoclet;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.RedirectException;
 import org.coode.www.mngr.SessionManager;
+import org.coode.www.mngr.SessionManagerFactory;
 
 import java.io.PrintWriter;
 import java.net.URL;
@@ -116,7 +117,7 @@ public class ServerOptions extends AbstractOntologyServerServlet {
             }
 
             if (success){
-                SessionManager.createLabel(kit);
+                SessionManagerFactory.getSessionManager().createLabel(kit);
             }
         }
         return success;

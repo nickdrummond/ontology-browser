@@ -22,6 +22,7 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.RedirectException;
 import org.coode.www.exception.SignOutException;
 import org.coode.www.mngr.SessionManager;
+import org.coode.www.mngr.SessionManagerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -118,7 +119,7 @@ public abstract class AbstractOntologyServerServlet extends HttpServlet {
         }
         catch(SignOutException e){
             redirect = URLUtils.createRelativeURL(pageURL, kit.getBaseURL());
-            SessionManager.closeSession(request.getSession(false));
+            SessionManagerFactory.getSessionManager().closeSession(request.getSession(false));
         }
         catch (Throwable e) {
             handleError(e, kit, pageURL, response, format);
@@ -269,7 +270,7 @@ public abstract class AbstractOntologyServerServlet extends HttpServlet {
 
     private OWLHTMLKit getOWLHTMLKit(HttpServletRequest request, String sessionLabel, URL pageURL) throws ServletException {
         try {
-            return SessionManager.getHTMLKit(request, sessionLabel);
+            return SessionManagerFactory.getSessionManager().getHTMLKit(request, sessionLabel);
         }
         catch (OntServerException e) {
             throw new ServletException("Severe exception initialising kit session: " + pageURL, e);
