@@ -9,8 +9,6 @@ import org.coode.html.page.HTMLPage;
 import org.coode.html.page.OWLDocPage;
 import org.coode.html.renderer.ElementRenderer;
 import org.coode.www.exception.OntServerException;
-import org.coode.www.mngr.SessionManager;
-import org.coode.www.mngr.SessionManagerFactory;
 import org.coode.www.servlet.AbstractOntologyServerServlet;
 
 import java.io.PrintWriter;

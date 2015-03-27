@@ -11,7 +11,7 @@ import org.coode.owl.util.OWLUtils;
 import org.coode.www.OntologyAction;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.RedirectException;
-import org.coode.www.mngr.SessionManagerFactory;
+import org.coode.www.mngr.Application;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -133,7 +133,7 @@ public class Ontologies extends AbstractOntologyServerServlet {
         }
 
         if (!success.isEmpty()){
-            SessionManagerFactory.getSessionManager().saveKit(kit);
+            Application.getRepo().saveKit(kit);
         }
 
         if (server.getOntologies().size() == 1){
@@ -172,7 +172,7 @@ public class Ontologies extends AbstractOntologyServerServlet {
         else{
             server.removeOntology(ontology);
 
-            SessionManagerFactory.getSessionManager().saveKit(kit);
+            Application.getRepo().saveKit(kit);
 //            sb.append("<p>Removed ");
 //            sb.append(server.getOntologyShortFormProvider().getShortForm(ontology));
 //            sb.append("</p><p>saved session: [");

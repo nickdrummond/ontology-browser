@@ -14,7 +14,7 @@ import org.coode.owl.mngr.ServerProperty;
 import org.coode.www.doclet.OptionsTableDoclet;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.RedirectException;
-import org.coode.www.mngr.SessionManagerFactory;
+import org.coode.www.mngr.Application;
 
 import java.io.PrintWriter;
 import java.net.URL;
@@ -116,7 +116,7 @@ public class ServerOptions extends AbstractOntologyServerServlet {
             }
 
             if (success){
-                SessionManagerFactory.getSessionManager().saveKit(kit);
+                Application.getRepo().saveKit(kit);
             }
         }
         return success;
