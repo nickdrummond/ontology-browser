@@ -63,7 +63,7 @@ public class OntologyExporter {
             // the default base should never be exposed in the output because all URLs should be relative
             URL defaultBase = new URL("http://www.co-ode.org/ontologies/owldoc/");
 
-            OWLHTMLKit kit = new OWLHTMLKitImpl("kit", defaultBase);
+            OWLHTMLKit kit = new OWLHTMLKitImpl(defaultBase);
 
             String out = null;
 

@@ -11,7 +11,6 @@ import org.coode.owl.util.OWLUtils;
 import org.coode.www.OntologyAction;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.RedirectException;
-import org.coode.www.mngr.SessionManager;
 import org.coode.www.mngr.SessionManagerFactory;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.IRI;
@@ -74,7 +73,9 @@ public class Ontologies extends AbstractOntologyServerServlet {
                 case load:
                     boolean clear = Boolean.parseBoolean(params.get(OWLHTMLParam.clear));
                     String redirect = params.get(OWLHTMLParam.redirect);
-                    return handleLoad(getURIFromParam(params.get(OWLHTMLParam.uri)), clear, redirect, kit, pageURL);
+                    URI uri = getURIFromParam(params.get(OWLHTMLParam.uri));
+                    System.out.println("uri = " + uri);
+                    return handleLoad(uri, clear, redirect, kit, pageURL);
                 case remove:
                     return handleRemove(getOntologyFromParam(params.get(OWLHTMLParam.uri), server), kit, pageURL);
                 case reload:
@@ -132,7 +133,7 @@ public class Ontologies extends AbstractOntologyServerServlet {
         }
 
         if (!success.isEmpty()){
-            SessionManagerFactory.getSessionManager().createLabel(kit);
+            SessionManagerFactory.getSessionManager().saveKit(kit);
         }
 
         if (server.getOntologies().size() == 1){
@@ -171,7 +172,7 @@ public class Ontologies extends AbstractOntologyServerServlet {
         else{
             server.removeOntology(ontology);
 
-            SessionManagerFactory.getSessionManager().createLabel(kit);
+            SessionManagerFactory.getSessionManager().saveKit(kit);
 //            sb.append("<p>Removed ");
 //            sb.append(server.getOntologyShortFormProvider().getShortForm(ontology));
 //            sb.append("</p><p>saved session: [");

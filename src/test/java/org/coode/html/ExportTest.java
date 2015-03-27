@@ -45,7 +45,7 @@ public class ExportTest extends TestCase {
     public void testPerformExport(){
         try {
             URL base = new URL("http://purl.uniprot.org/core/");
-            OWLHTMLKit kit = new OWLHTMLKitImpl("core", base);
+            OWLHTMLKit kit = new OWLHTMLKitImpl(base);
             URI source = URI.create("file:////Users/drummond/Work/CO-ODE/Ontologies/uniprot/core.owl");
             kit.getOWLServer().loadOntology(source);
             OntologyExporter exporter = new OntologyExporter(kit);

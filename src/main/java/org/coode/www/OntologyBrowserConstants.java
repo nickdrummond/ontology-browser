@@ -21,7 +21,10 @@ public class OntologyBrowserConstants extends OWLHTMLConstants {
     public static String VERSION = "2.0.0-SNAPSHOT";
 
     public static final String SERVER_STATES_DIR = "caches/";
-    public static final String SERVER_STATES_EXT = ".saved";
+    public static final String PROPERTIES_PREFIX = "properties.";
+    public static final String PROPERTIES_EXT = ".xml";
+    public static final String ONTOLOGIES_PREFIX = "ontologies.";
+    public static final String ONTOLOGIES_EXT = ".properties";
 
     // bookmarks
     public static final String BOOKMARKS_XML = "custom.bookmarks.xml";

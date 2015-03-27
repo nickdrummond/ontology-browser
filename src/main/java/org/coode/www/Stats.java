@@ -16,6 +16,7 @@ import org.coode.www.servlet.AbstractOntologyServerServlet;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -46,7 +47,7 @@ public class Stats extends AbstractOntologyServerServlet {
 
             @Override
             protected Collection<OWLHTMLKit> getElements() {
-                return SessionManagerFactory.getSessionManager().getRunningKits();
+                return Collections.EMPTY_SET;
             }
 
             @Override

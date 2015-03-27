@@ -23,7 +23,8 @@ import javax.servlet.http.HttpSessionBindingListener;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,17 +38,10 @@ import java.util.Map;
  */
 public class SessionManager {
 
+    public static final String LABEL_SPLITTER = "_";
     private static Logger logger = Logger.getLogger(SessionManager.class.getName());
 
-    private static final String ID = "ID";
-
-    private static final String URI_MAPPING_MARKER = "##";
-
-    private Integer i = 0;
-
-    private Map<SessionID, OWLHTMLKit> activeServers = new HashMap<SessionID, OWLHTMLKit>();
-
-
+    private static final String KIT_KEY = "kit";
 
     /**
      * Get a server (creates a new one if you have a new session)
@@ -55,15 +49,14 @@ public class SessionManager {
      * @return
      * @throws OntServerException
      */
-    public synchronized OWLHTMLKit getHTMLKit(HttpServletRequest request) throws OntServerException {
+    public synchronized OWLHTMLKit getHTMLKit(final HttpServletRequest request) throws OntServerException {
         HttpSession session = request.getSession(true);
 
         if (session.isNew()){
             create(session, request);
         }
 
-        SessionID id = (SessionID)session.getAttribute(ID);
-        return activeServers.get(id);
+        return ((KitCleanupAdapter)session.getAttribute(KIT_KEY)).getKit();
     }
 
 
@@ -74,56 +67,103 @@ public class SessionManager {
      * @return
      * @throws OntServerException
      */
-    public synchronized OWLHTMLKit getHTMLKit(HttpServletRequest request, String label) throws OntServerException {
+    public synchronized OWLHTMLKit getHTMLKit(final HttpServletRequest request, final String label) throws OntServerException {
         OWLHTMLKit kit = getHTMLKit(request);
         if (label != null && !label.equals(kit.getCurrentLabel())){
-            loadLabel(kit, label);
+            loadKit(kit, label);
         }
         return kit;
     }
-
 
     /**
      * Persist the current loaded ontologies with their mappings
      * @param kit note: will set the current label on the server
      * @throws OntServerException
      */
-    public synchronized void createLabel(OWLHTMLKit kit) throws OntServerException {
-        String label = kit.getID() + "-" + createID();
-        File file = getFile(label + OntologyBrowserConstants.SERVER_STATES_EXT);
+    public synchronized void saveKit(final OWLHTMLKit kit) throws OntServerException {
         try {
-            OutputStream out = new FileOutputStream(file);
-            PrintWriter writer = new PrintWriter(out);
+            String propLabel = saveProperties(kit);
 
-            // this saves the base properties (which includes the OWL server properties)
-            kit.getHTMLProperties().save(out);
+            String ontsLabel = saveOntologies(kit);
 
-            // always print the active ontology first
-            OWLOntology activeOnt = kit.getOWLServer().getActiveOntology();
-            writer.println(URI_MAPPING_MARKER + OWLUtils.getOntologyIdString(activeOnt) + "=" +
-                           kit.getOWLServer().getOWLOntologyManager().getOntologyDocumentIRI(activeOnt));
-
-            for (OWLOntology ont : kit.getOWLServer().getOntologies()){
-                if (!ont.equals(activeOnt)){
-                    writer.println(URI_MAPPING_MARKER + OWLUtils.getOntologyIdString(ont) + "=" +
-                                   kit.getOWLServer().getOWLOntologyManager().getOntologyDocumentIRI(ont));
-                }
-            }
-
-            writer.flush();
-            out.flush();
-
-            writer.close();
-            out.close();
-
-            kit.setCurrentLabel(label);
-            logger.debug("kit state saved at: " + file.getAbsolutePath());
+            kit.setCurrentLabel(ontsLabel + LABEL_SPLITTER + propLabel);
         }
         catch (IOException e) {
             throw new OntServerException(e);
         }
     }
 
+    private String saveOntologies(OWLHTMLKit kit) throws IOException {
+        System.out.println("Saving ontologies");
+        ByteArrayOutputStream out = new ByteArrayOutputStream(3 * 1024); // < 3k
+        PrintWriter writer = new PrintWriter(out);
+
+        // always print the active ontology first
+        OWLOntology activeOnt = kit.getOWLServer().getActiveOntology();
+        writer.println(OWLUtils.getOntologyIdString(activeOnt) + "=" +
+                kit.getOWLServer().getOWLOntologyManager().getOntologyDocumentIRI(activeOnt));
+
+        for (OWLOntology ont : kit.getOWLServer().getOntologies()){
+            if (!ont.equals(activeOnt)){
+                writer.println(OWLUtils.getOntologyIdString(ont) + "=" +
+                        kit.getOWLServer().getOWLOntologyManager().getOntologyDocumentIRI(ont));
+            }
+        }
+        writer.flush();
+        writer.close();
+
+        byte[] bytes = out.toByteArray();
+        String ontsLabel = md5(bytes);
+        save(bytes, OntologyBrowserConstants.ONTOLOGIES_PREFIX + ontsLabel + OntologyBrowserConstants.ONTOLOGIES_EXT);
+        return ontsLabel;
+    }
+
+    private String saveProperties(OWLHTMLKit kit) throws IOException {
+        System.out.println("Saving properties");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream(3 * 1024); // < 3k
+        kit.getHTMLProperties().save(out);
+        out.flush();
+        out.close();
+        byte[] bytes = out.toByteArray();
+        String propLabel = md5(bytes);
+        save(bytes, OntologyBrowserConstants.PROPERTIES_PREFIX + propLabel + OntologyBrowserConstants.PROPERTIES_EXT);
+        return propLabel;
+    }
+
+    private void save(byte[] bytes, String filename) throws IOException {
+        File file = getFile(filename);
+        if (!file.exists()) {
+            FileOutputStream fOut = new FileOutputStream(file);
+            fOut.write(bytes);
+            fOut.flush();
+            fOut.close();
+            System.out.println("kit state saved at: " + file.getAbsolutePath());
+        }
+        else {
+            System.out.println("kit state already saved at: " + file.getAbsolutePath());
+        }
+    }
+
+    private String md5(byte[] bytes) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            byte[] hashedBytes = digest.digest(bytes);
+            return convertByteArrayToHexString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private String convertByteArrayToHexString(byte[] arrayBytes) {
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < arrayBytes.length; i++) {
+            stringBuffer.append(Integer.toString((arrayBytes[i] & 0xff) + 0x100, 16)
+                    .substring(1));
+        }
+        return stringBuffer.toString();
+    }
 
     /**
      * Clears the given server and replaces its state with that specified by the label given
@@ -131,40 +171,49 @@ public class SessionManager {
      * @param label
      * @throws OntServerException
      */
-    private synchronized void loadLabel(OWLHTMLKit kit, String label) throws OntServerException {
+    private synchronized void loadKit(OWLHTMLKit kit, String label) throws OntServerException {
 
-        File file = getFile(label + OntologyBrowserConstants.SERVER_STATES_EXT);
+        System.out.println("Loading " + label);
 
-        if (!file.exists()){
-            throw new OntServerException("Cannot find stored state for unknown session " + label);
+        String[] parts = label.split(LABEL_SPLITTER);
+
+        File ontsFile = getFile(
+                OntologyBrowserConstants.ONTOLOGIES_PREFIX + parts[0] + OntologyBrowserConstants.ONTOLOGIES_EXT);
+
+        if (!ontsFile.exists()){
+            throw new OntServerException("Cannot find stored ontologies: " + ontsFile.getAbsolutePath());
         }
 
         try{
             // we are currently reading the file twice - @@TODO make this much nicer
 
             // pass 1 to get the ontology mappings
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new FileReader(ontsFile));
             String line;
             Map<IRI, IRI> ontMap = new HashMap<IRI, IRI>();
             while ((line = reader.readLine()) != null){
-                if (line.startsWith(URI_MAPPING_MARKER)){
-                    line = line.substring(URI_MAPPING_MARKER.length(), line.length());
-                    String[] param = line.split("=");
-                    IRI ontURI = IRI.create(param[0].trim());
-                    final String str = param[1].trim();
-                    IRI physicalURI = null;
-                    // protect ourselves against http://a.com=null as null will be a valid relative IRI
-                    if (!str.equals("null")){
-                        physicalURI = IRI.create(str);
-                    }
-                    ontMap.put(ontURI, physicalURI);
+                String[] param = line.split("=");
+                IRI ontURI = IRI.create(param[0].trim());
+                final String str = param[1].trim();
+                IRI physicalURI = null;
+                // protect ourselves against http://a.com=null as null will be a valid relative IRI
+                if (!str.equals("null")){
+                    physicalURI = IRI.create(str);
                 }
+                ontMap.put(ontURI, physicalURI);
             }
-
+            reader.close();
             kit.getOWLServer().loadOntologies(ontMap);
 
             // pass 2 to get the properties
-            BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+            File propsFile = getFile(
+                    OntologyBrowserConstants.PROPERTIES_PREFIX + parts[1] + OntologyBrowserConstants.PROPERTIES_EXT);
+
+            if (!propsFile.exists()){
+                throw new OntServerException("Cannot find stored properties: " + propsFile.getAbsolutePath());
+            }
+
+            BufferedInputStream in = new BufferedInputStream(new FileInputStream(propsFile));
             kit.getHTMLProperties().load(in);
             in.close();
             cleanupProperties(kit);
@@ -193,32 +242,18 @@ public class SessionManager {
         return new File(OntologyBrowserConstants.SERVER_STATES_DIR + name);
     }
 
-    public synchronized void closeSession(HttpSession mySession) {
+    public synchronized void closeSession(HttpServletRequest request) {
+        HttpSession mySession = request.getSession(false);
         if (mySession != null){
-            SessionID id = (SessionID) mySession.getAttribute(ID);
-            cleanupSession(id);
             mySession.invalidate();
         }
     }
 
-    public synchronized void cleanupSession(SessionID id) {
-
-        OWLHTMLKit kit = activeServers.remove(id);
-        if (kit != null){ // might already have been tidied away
-            final String serverID = kit.getID();
-            kit.dispose();
-
-            logger.debug("killed " +  serverID + " - active servers: " + activeServers.size());
-
-            System.gc();
-            System.gc();
-        }
-    }
-
     private synchronized void create(HttpSession mySession, HttpServletRequest request) {
-        logger.debug("Creating a new Session: " + mySession.getId());
-
         try{
+            logger.debug("Creating a new Session: " + mySession.getId());
+
+            // TODO Why do we need the base URL in the kit?
             String url = request.getRequestURL().toString();
 
             int index = url.indexOf(request.getServletPath());
@@ -229,22 +264,20 @@ public class SessionManager {
 
             URL basePath = new URL(url);
 
-            SessionID id = new SessionID();
+            OWLHTMLKit kit = createHTMLKit(basePath);
 
-            OWLHTMLKit kit = createHTMLKit(id.id, basePath);
+            KitCleanupAdapter adapter = new KitCleanupAdapter(kit);
 
-            activeServers.put(id, kit);
-            mySession.setAttribute(ID, id);
-            logger.debug("started " + id + " - active servers: " + activeServers.size());
+            mySession.setAttribute(KIT_KEY, adapter);
         }
         catch (MalformedURLException e) {
-            logger.error(e);
+            throw new RuntimeException(e);
         }
     }
 
-    private OWLHTMLKit createHTMLKit(String id, URL basePath) {
+    private OWLHTMLKit createHTMLKit(URL basePath) {
 
-        OWLHTMLKit kit = new OWLHTMLKitImpl(id, basePath);
+        OWLHTMLKit kit = new OWLHTMLKitImpl(basePath);
 
         // set silent error handling for missing imports
         kit.getOWLServer().getOWLOntologyManager().setSilentMissingImportsHandling(true);
@@ -254,13 +287,13 @@ public class SessionManager {
 
         // register parsers
         kit.getOWLServer().registerDescriptionParser(ServerConstants.Syntax.man.toString(),
-                                                     new ManchesterOWLSyntaxParser(kit.getOWLServer()));
+                new ManchesterOWLSyntaxParser(kit.getOWLServer()));
 
 
         boolean defaultsLoaded = false;
 
         // we will likely want different defaults for different versions (or run versions on the same server)
-        File file = getFile("default" + OntologyBrowserConstants.VERSION + OntologyBrowserConstants.SERVER_STATES_EXT);
+        File file = getFile("default" + OntologyBrowserConstants.VERSION + OntologyBrowserConstants.PROPERTIES_EXT);
 
         if (file.exists()){
             try {
@@ -314,30 +347,27 @@ public class SessionManager {
         properties.setBoolean(OWLHTMLProperty.optionShowInferredHierarchies, false);
     }
 
-    public Collection<OWLHTMLKit> getRunningKits() {
-        return activeServers.values();
-    }
-
     /**
      * The ID will get notified when a session expires and calls the session manager to cleanup
      */
-    class SessionID implements HttpSessionBindingListener, java.io.Serializable {
-        private String id;
+    class KitCleanupAdapter implements HttpSessionBindingListener {
+        private OWLHTMLKit kit;
 
-        public SessionID() {
-            this.id = createID() + "-" + i++;
+        public KitCleanupAdapter(OWLHTMLKit kit) {
+            this.kit = kit;
+        }
+
+        public OWLHTMLKit getKit() {
+            return kit;
         }
 
         public void valueBound(HttpSessionBindingEvent httpSessionBindingEvent) {
         }
 
         public void valueUnbound(HttpSessionBindingEvent httpSessionBindingEvent) {
-            logger.debug("do unbind for session");
-            cleanupSession(this);
+            System.out.println("do unbind for session");
+            kit.dispose();
+            System.gc();
         }
-    }
-
-    private String createID() {
-        return Long.toHexString(System.currentTimeMillis());
     }
 }

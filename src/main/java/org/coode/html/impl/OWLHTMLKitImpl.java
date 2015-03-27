@@ -70,18 +70,21 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     private Date timestamp;
 
 
-    public OWLHTMLKitImpl(String id, URL baseURL) {
-        this(id, new OWLServerImpl(OWLManager.createOWLOntologyManager()), baseURL);
+    public OWLHTMLKitImpl(URL baseURL) {
+        this(new OWLServerImpl(OWLManager.createOWLOntologyManager()), baseURL);
     }
 
-
-    public OWLHTMLKitImpl(String id, OWLServer server, URL baseURL) {
+    public OWLHTMLKitImpl(OWLServer server, URL baseURL) {
         this.timestamp = new Date(System.currentTimeMillis());
-        this.id = id;
+        this.id = createID();
         this.owlServer = server;
         this.baseURL = baseURL;
         this.comparator = new OWLObjectComparator<OWLObject>(server);
         createDocletFactory();
+    }
+
+    private String createID() {
+        return Long.toHexString(System.currentTimeMillis());
     }
 
     private void createDocletFactory() {

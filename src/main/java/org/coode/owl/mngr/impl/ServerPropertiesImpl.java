@@ -97,12 +97,12 @@ public class ServerPropertiesImpl implements ServerProperties {
 
 
     public void save(OutputStream out) throws IOException {
-        properties.store(out, null);
+        properties.storeToXML(out, null);
     }
 
 
     public void load(InputStream in) throws IOException {
-        properties.load(in);
+        properties.loadFromXML(in);
 
         cleanupDeprecatedNames();
     }

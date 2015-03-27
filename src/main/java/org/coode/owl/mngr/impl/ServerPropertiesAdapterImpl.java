@@ -27,7 +27,6 @@ public class ServerPropertiesAdapterImpl<E extends Enum> implements ServerProper
 
     protected ServerProperties delegate;
 
-
     public ServerPropertiesAdapterImpl(ServerProperties delegate) {
         this.delegate = delegate;
     }
@@ -51,7 +50,6 @@ public class ServerPropertiesAdapterImpl<E extends Enum> implements ServerProper
     public void save(OutputStream out) throws IOException {
         delegate.save(out);
     }
-
 
     public void load(InputStream in) throws IOException {
         delegate.load(in);

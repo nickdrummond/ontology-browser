@@ -119,7 +119,7 @@ public abstract class AbstractOntologyServerServlet extends HttpServlet {
         }
         catch(SignOutException e){
             redirect = URLUtils.createRelativeURL(pageURL, kit.getBaseURL());
-            SessionManagerFactory.getSessionManager().closeSession(request.getSession(false));
+            SessionManagerFactory.getSessionManager().closeSession(request);
         }
         catch (Throwable e) {
             handleError(e, kit, pageURL, response, format);
