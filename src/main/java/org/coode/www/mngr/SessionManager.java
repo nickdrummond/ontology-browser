@@ -41,6 +41,7 @@ public class SessionManager {
     private static Logger logger = Logger.getLogger(SessionManager.class);
 
     private static final String KIT_KEY = "kit";
+    private static final String KIT_CLEANUP = "kitcleanup";
 
     private final KitRepository repo;
 
@@ -57,11 +58,11 @@ public class SessionManager {
     public OWLHTMLKit getHTMLKit(final HttpServletRequest request) throws OntServerException {
         HttpSession session = request.getSession(true);
 
-        if (session.isNew()){
+        if (session.getAttribute(KIT_KEY) == null){
             create(session, request);
         }
 
-        return ((KitCleanupAdapter)session.getAttribute(KIT_KEY)).getKit();
+        return (OWLHTMLKit)session.getAttribute(KIT_KEY);
     }
 
 
@@ -103,10 +104,10 @@ public class SessionManager {
             URL basePath = new URL(url);
 
             OWLHTMLKit kit = repo.createHTMLKit(basePath);
-
             KitCleanupAdapter adapter = new KitCleanupAdapter(kit);
 
-            mySession.setAttribute(KIT_KEY, adapter);
+            mySession.setAttribute(KIT_KEY, kit);
+            mySession.setAttribute(KIT_CLEANUP, adapter);
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);

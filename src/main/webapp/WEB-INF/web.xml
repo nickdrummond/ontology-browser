@@ -5,18 +5,15 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
         version="2.5">
+
     <display-name>Ontology Browser</display-name>
     <description>Server for navigating through OWL ontologies</description>
+
 
     <servlet>
         <servlet-name>Stats</servlet-name>
         <display-name>Stats</display-name>
         <servlet-class>org.coode.www.Stats</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Ontologies</servlet-name>
-        <display-name>Load Ontology</display-name>
-        <servlet-class>org.coode.www.servlet.Ontologies</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SignOut</servlet-name>
@@ -86,18 +83,6 @@
         <description>for hierarchy expansion</description>
         <servlet-class>org.coode.www.servlet.Hierarchy</servlet-class>
     </servlet>
-    <!--<servlet>-->
-        <!--<servlet-name>TestServlet</servlet-name>-->
-        <!--<display-name>Test Servlet</display-name>-->
-        <!--<description>Tests for the TOmcat framework</description>-->
-        <!--<servlet-class>org.coode.www.TestServlet</servlet-class>-->
-    <!--</servlet>-->
-    <!--<servlet>-->
-        <!--<servlet-name>ToggleCookie</servlet-name>-->
-        <!--<display-name>ToggleCookie</display-name>-->
-        <!--<description>ToggleCookie test</description>-->
-        <!--<servlet-class>org.coode.www.ToggleCookie</servlet-class>-->
-    <!--</servlet>-->
 
     <servlet-mapping>
         <servlet-name>Stats</servlet-name>
@@ -110,14 +95,6 @@
     <servlet-mapping>
         <servlet-name>SignOut</servlet-name>
         <url-pattern>/signout.html</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Ontologies</servlet-name>
-        <url-pattern>/api/ontologies</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping><!-- for backward compatibility -->
-        <servlet-name>Ontologies</servlet-name>
-        <url-pattern>/manage/</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Find</servlet-name>
@@ -147,10 +124,10 @@
         <servlet-name>Summary</servlet-name>
         <url-pattern>/individuals/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/ontologies/*</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>Summary</servlet-name>-->
+        <!--<url-pattern>/ontologies/*</url-pattern>-->
+    <!--</servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>QueryReasoner</servlet-name>
         <url-pattern>/query/</url-pattern>
@@ -188,9 +165,31 @@
         <url-pattern>/hierarchy/</url-pattern>
     </servlet-mapping>
     <!--<servlet-mapping>-->
-        <!--<servlet-name>ToggleCookie</servlet-name>-->
-        <!--<url-pattern>/cookie/</url-pattern>-->
+    <!--<servlet-name>ToggleCookie</servlet-name>-->
+    <!--<url-pattern>/cookie/</url-pattern>-->
     <!--</servlet-mapping>-->
+
+
+    <!-- Spring MVC -->
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
     <session-config>
         <session-timeout>10</session-timeout>

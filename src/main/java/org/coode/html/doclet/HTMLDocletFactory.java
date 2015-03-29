@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -67,31 +68,16 @@ public class HTMLDocletFactory {
         }
     }
 
-    public void load(BufferedReader reader) throws IOException {
-        String line;
-        while((line = reader.readLine()) != null){
-            line = line.trim();
-            if (line.length() == 0 || line.startsWith("//")){
-                // do nothing
-            }
-            else{
-                String[] args = line.split(",");
-                if (args.length == 2){
-                    try {
-                        final Class cls = Class.forName(args[1].trim());
-                        final Class<? extends HTMLDoclet> impl = cls.asSubclass(HTMLDoclet.class);
-                        register(args[0].trim(), impl);
-                    }
-                    catch (ClassNotFoundException e) {
-                        System.err.println("Malformed doclet descriptor (cannot find class): " + line);
-                    }
-                    catch (ClassCastException e){
-                        System.err.println("Malformed doclet descriptor (class does not implement HTMLDoclet): " + line);
-                    }
-                }
-                else{
-                    System.err.println("Malformed doclet descriptor: " + line);
-                }
+    public void load(Properties properties) throws IOException {
+        for (String name : properties.stringPropertyNames()) {
+            try {
+                final Class cls = Class.forName(properties.getProperty(name).trim());
+                final Class<? extends HTMLDoclet> impl = cls.asSubclass(HTMLDoclet.class);
+                register(name, impl);
+            } catch (ClassNotFoundException e) {
+                System.err.println("Malformed doclet descriptor (cannot find class): " +  name);
+            } catch (ClassCastException e) {
+                System.err.println("Malformed doclet descriptor (class does not implement HTMLDoclet): " + name);
             }
         }
     }

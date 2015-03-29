@@ -9,6 +9,7 @@ import org.coode.owl.mngr.ServerConstants;
 import org.semanticweb.owlapi.model.*;
 
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
@@ -29,6 +30,14 @@ public class URLUtils {
 
     private static final Logger logger = Logger.getLogger(URLUtils.class.getName());
 
+
+    public static URL createURL(String s) {
+        try {
+            return new URL(s);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 //    public static String createRelativeURL(URL current, URL target) {
 //        try {
 //            URI currentURI = current.toURI();

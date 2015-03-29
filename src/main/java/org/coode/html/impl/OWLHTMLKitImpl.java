@@ -87,26 +87,17 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return Long.toHexString(System.currentTimeMillis());
     }
 
+    // TODO get rid of this when doclets gone or move to Spring config
     private void createDocletFactory() {
         this.fac = new HTMLDocletFactory(this);
 
-        BufferedReader config = null;
         try {
-            config = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(OWLHTMLConstants.DOCLET_CONFIG), OWLHTMLConstants.DEFAULT_ENCODING));
+            Properties config = new Properties();
+            config.load(getClass().getClassLoader().getResourceAsStream(OWLHTMLConstants.DOCLET_CONFIG));
             fac.load(config);
         }
         catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
-            if (config != null){
-                try {
-                    config.close();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 

@@ -4,6 +4,7 @@ import org.coode.html.impl.OWLHTMLParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -18,39 +19,42 @@ public class ServletUtils {
 
     // requestURL on its own is not good enough - doesn't include params
     // Need to rebuild the URL
-    public static URL getPageURL(HttpServletRequest request) throws IOException {
+    public static URL getPageURL(HttpServletRequest request) {
+        try {
+            // if the request is for an html-frag and we have a referer page we return the url of the referer
+            String query = request.getQueryString();
+            if (query != null){
+                String referer = request.getHeader("Referer");
+                if (referer != null){
+                    for (String param : query.split("&")){
+                        if (param.startsWith(OWLHTMLParam.format.toString()) && param.endsWith(OntologyBrowserConstants.HTML_FRAG)){
+                            return new URL(referer);
+                        }
+                    }
+                }
+            }
 
-        // if the request is for an html-frag and we have a referer page we return the url of the referer
-        String query = request.getQueryString();
-        if (query != null){
-            String referer = request.getHeader("Referer");
-            if (referer != null){
+            StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
+            boolean appendedParams = false;
+
+            if (query != null){
                 for (String param : query.split("&")){
-                    if (param.startsWith(OWLHTMLParam.format.toString()) && param.endsWith(OntologyBrowserConstants.HTML_FRAG)){
-                        return new URL(referer);
+                    if (!param.startsWith(OWLHTMLParam.session.name())){
+                        if (appendedParams){
+                            requestURL.append("&");
+                        }
+                        else{
+                            requestURL.append("?");
+                            appendedParams = true;
+                        }
+                        requestURL.append(param);
                     }
                 }
             }
+            return new URL(requestURL.toString());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
         }
-
-        StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
-        boolean appendedParams = false;
-
-        if (query != null){
-            for (String param : query.split("&")){
-                if (!param.startsWith(OWLHTMLParam.session.name())){
-                    if (appendedParams){
-                        requestURL.append("&");
-                    }
-                    else{
-                        requestURL.append("?");
-                        appendedParams = true;
-                    }
-                    requestURL.append(param);
-                }
-            }
-        }
-        return new URL(requestURL.toString());
     }
 
 

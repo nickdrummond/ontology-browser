@@ -41,13 +41,13 @@ public class OWLHTMLConstants extends ServerConstants {
 
     public static String ONTOLOGY_SERVER_NAME = "Ontology Browser";
 
-    public static final String DOCLET_CONFIG = "doclets.config";
+    public static final String DOCLET_CONFIG = "doclets.properties";
 
     public static final String DEFAULT_ENCODING = "UTF-8";
 
-    public static final String JS_ROOT = "js/";
-    public static final String CSS_BASE= "css/";
-    public static final String IMAGES_BASE = "images/";
+    public static final String JS_ROOT = "static/js/";
+    public static final String CSS_BASE= "static/css/";
+    public static final String IMAGES_BASE = "static/images/";
 
     // Javascript
     public static final String JS_DEFAULT = JS_ROOT + "default.js";
