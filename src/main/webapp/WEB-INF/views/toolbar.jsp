@@ -3,7 +3,7 @@
 
 <a href='${application.url}/wiki/GettingStarted' class='help' target='_blank' >Help</a>
 
-<h1><a href='<spring:url value="/"/>"'>${application.name}</a></h1>
+<h1><a href='<spring:url value="/"/>'>${application.name}</a></h1>
 
 ${application.version}
 
@@ -30,7 +30,7 @@ ${application.version}
         var as = new AutoSuggest("find", options);
     </script>
 
-    <a id='signout' href='<spring:url value="/signout.html"/>' target='_top'>
+    <a id='signout' href='<spring:url value="/signout"/>' target='_top'>
         <img src='<spring:url value="/static/images/close.png"/>' width='16' height='16' title='close' />
     </a>
 

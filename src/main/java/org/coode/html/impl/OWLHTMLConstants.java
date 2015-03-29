@@ -76,7 +76,7 @@ public class OWLHTMLConstants extends ServerConstants {
     public static final String QUERY_HTML = "query/";
     public static final String OPTIONS_HTML = "options/";
     public static final String HEADER_HTML = "header" + DEFAULT_EXTENSION;
-    public static final String SIGNOUT_HTML = "signout" + DEFAULT_EXTENSION;
+    public static final String SIGNOUT_HTML = "signout";
 
     public static final String DL_QUERY_LABEL = "DL Query";
     public static final String LOAD_LABEL = "Load";

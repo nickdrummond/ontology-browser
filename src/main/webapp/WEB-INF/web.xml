@@ -16,12 +16,6 @@
         <servlet-class>org.coode.www.Stats</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>SignOut</servlet-name>
-        <display-name>Sign Out</display-name>
-        <description>Kills the current session and reallocates resources</description>
-        <servlet-class>org.coode.www.servlet.SignOut</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Contents</servlet-name>
         <display-name>Render Contents</display-name>
         <servlet-class>org.coode.www.servlet.Contents</servlet-class>
@@ -82,10 +76,6 @@
     <servlet-mapping>
         <servlet-name>Stats</servlet-name>
         <url-pattern>/stats/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SignOut</servlet-name>
-        <url-pattern>/signout.html</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Find</servlet-name>
