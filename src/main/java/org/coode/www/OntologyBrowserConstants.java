@@ -28,7 +28,6 @@ public class OntologyBrowserConstants extends OWLHTMLConstants {
 
     // bookmarks
     public static final String BOOKMARKS_XML = "custom.bookmarks.xml";
-    public static final String DEFAULT_BOOKMARKS_XML = "default.bookmarks.xml";
 
     public static final String LOAD_ONTOLOGIES_INPUT_ID = "uri-spec";
 

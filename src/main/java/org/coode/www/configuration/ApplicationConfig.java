@@ -3,11 +3,13 @@ package org.coode.www.configuration;
 import org.coode.www.model.ApplicationInfo;
 import org.coode.www.mngr.Application;
 import org.coode.www.mngr.SessionManager;
+import org.coode.www.model.Bookmarks;
 import org.coode.www.service.OntologiesService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -36,6 +38,11 @@ public class ApplicationConfig {
     @Bean
     public OntologiesService ontologiesService() {
         return new OntologiesService();
+    }
+
+    @Bean
+    public Bookmarks bookmarks(@Value("${bookmarks.source}") String bookmarksSource) {
+        return new Bookmarks(new ClassPathResource(bookmarksSource));
     }
 
     @Bean

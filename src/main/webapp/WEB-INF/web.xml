@@ -22,11 +22,6 @@
         <servlet-class>org.coode.www.servlet.SignOut</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>StartPage</servlet-name>
-        <display-name>Start page</display-name>
-        <servlet-class>org.coode.www.servlet.StartPage</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Contents</servlet-name>
         <display-name>Render Contents</display-name>
         <servlet-class>org.coode.www.servlet.Contents</servlet-class>
@@ -89,10 +84,6 @@
         <url-pattern>/stats/</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>StartPage</servlet-name>
-        <url-pattern>/index.html</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>SignOut</servlet-name>
         <url-pattern>/signout.html</url-pattern>
     </servlet-mapping>
@@ -124,10 +115,6 @@
         <servlet-name>Summary</servlet-name>
         <url-pattern>/individuals/*</url-pattern>
     </servlet-mapping>
-    <!--<servlet-mapping>-->
-        <!--<servlet-name>Summary</servlet-name>-->
-        <!--<url-pattern>/ontologies/*</url-pattern>-->
-    <!--</servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>QueryReasoner</servlet-name>
         <url-pattern>/query/</url-pattern>
@@ -164,10 +151,6 @@
         <servlet-name>Hierarchy</servlet-name>
         <url-pattern>/hierarchy/</url-pattern>
     </servlet-mapping>
-    <!--<servlet-mapping>-->
-    <!--<servlet-name>ToggleCookie</servlet-name>-->
-    <!--<url-pattern>/cookie/</url-pattern>-->
-    <!--</servlet-mapping>-->
 
 
     <!-- Spring MVC -->
