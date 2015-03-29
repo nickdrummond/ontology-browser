@@ -183,31 +183,34 @@ public class URLUtils {
 
     public static void renderURLLinks(URL url, OWLHTMLKit kit, URL pageURL, PrintWriter out) {
         try{
-            final URL loadBaseURL = kit.getURLScheme().getURLForApi(NamedObjectType.ontologies);
 
-            // need the redirect to be relative to the load URL
-            final String relRedirect = URLUtils.createRelativeURL(loadBaseURL, pageURL);
-
-            StringBuilder sb = new StringBuilder();
-            sb.append(loadBaseURL);
-            sb.append("?").append(OWLHTMLParam.action).append("=load");
-            sb.append("&").append(OWLHTMLParam.uri).append("=").append(URLEncoder.encode(url.toString(), OWLHTMLConstants.DEFAULT_ENCODING));
-            sb.append("&").append(OWLHTMLParam.redirect).append("=").append(URLEncoder.encode(relRedirect, OWLHTMLConstants.DEFAULT_ENCODING));
-
-            final URL loadURL = new URL(sb.toString());
-            
             out.println(" ");
             
             renderImageLink(kit.getURLScheme().getURLForRelativePage(OWLHTMLConstants.EXTERNAL_IMAGE),
                             "Attempt to open link in another window",
                             url, OWLHTMLConstants.LinkTarget._blank, "urlOption", true, pageURL, out);
 
+
             // if the ontology at this location has not already been loaded
             if (kit.getOWLServer().getOntologyForIRI(IRI.create(url.toURI())) == null){
+
+                final URL loadBaseURL = kit.getURLScheme().getURLForIndex(NamedObjectType.ontologies);
+
+                // need the redirect to be relative to the load URL
+                final String relRedirect = URLUtils.createRelativeURL(loadBaseURL, pageURL);
+
+                final String img = kit.getURLScheme().getURLForRelativePage(OWLHTMLConstants.LOAD_IMAGE).toString();
+
                 out.println(" ");
-                renderImageLink(kit.getURLScheme().getURLForRelativePage(OWLHTMLConstants.LOAD_IMAGE),
-                                "Attempt to load owl/rdf",
-                                loadURL, null, "urlOption", true, pageURL, out);
+                out.println("<form method='POST' style='display:inline' action='"+ loadBaseURL +"'>");
+                out.println("<input name='uri' type='hidden' value='" + url + "' />");
+                out.println("<input name='redirect' type='hidden' value='" + relRedirect + "' />");
+                out.println("<input type='image' alt='Attempt to load owl/rdf' src='" + img + "' />");
+                out.println("</form>");
+
+//                renderImageLink(kit.getURLScheme().getURLForRelativePage(OWLHTMLConstants.LOAD_IMAGE),
+//                                "Attempt to load owl/rdf",
+//                                loadURL, null, "urlOption", true, pageURL, out);
             }
         }
         catch (Exception e) {
