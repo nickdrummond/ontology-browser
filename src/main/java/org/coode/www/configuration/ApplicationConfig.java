@@ -4,6 +4,7 @@ import org.coode.www.model.ApplicationInfo;
 import org.coode.www.mngr.Application;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.Bookmarks;
+import org.coode.www.service.OWLClassesService;
 import org.coode.www.service.OntologiesService;
 import org.coode.www.service.OptionsService;
 import org.coode.www.service.ReasonerFactoryService;
@@ -44,6 +45,11 @@ public class ApplicationConfig {
     @Bean
     public OntologiesService ontologiesService() {
         return new OntologiesService();
+    }
+
+    @Bean
+    public OWLClassesService owlClassesService() {
+        return new OWLClassesService();
     }
 
     @Bean

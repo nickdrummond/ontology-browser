@@ -6,8 +6,6 @@ import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.index.OWLObjectIndexDoclet;
 import org.coode.www.ServletUtils;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.mngr.SessionManager;
-import org.coode.www.service.OWLObjectIdMapper;
 import org.coode.www.service.OntologiesService;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.model.LoadOntology;
@@ -65,7 +63,7 @@ public class OntologiesController extends ApplicationController {
                               Model model) throws OntServerException, NotFoundException {
         OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        OWLOntology ontology = new OWLObjectIdMapper(kit).getOntologyFor(ontId);
+        OWLOntology ontology = ontologiesService.getOntologyFor(ontId, kit);
 
         // TODO yuck replace this adapter
         SummaryPageFactory summaryPageFactory = new SummaryPageFactory(kit);

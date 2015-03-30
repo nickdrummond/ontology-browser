@@ -4,6 +4,7 @@ import org.coode.html.OWLHTMLKit;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.util.OWLUtils;
+import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.RedirectException;
 import org.coode.www.mngr.Application;
@@ -22,6 +23,19 @@ import java.util.Set;
 
 @Service
 public class OntologiesService {
+
+    public OWLOntology getOntologyFor(final String id, final OWLHTMLKit kit) throws NotFoundException {
+        for (OWLOntology ont : kit.getOWLServer().getOntologies()){
+            if (String.valueOf(ont.getOntologyID().hashCode()).equals(id)){
+                return ont;
+            }
+        }
+        throw new NotFoundException("Ontology", id);
+    }
+
+    public String getIdFor(final OWLOntology ontology) {
+        return String.valueOf(ontology.getOntologyID().hashCode());
+    }
 
     /**
      * @return the ID of the active ontology
