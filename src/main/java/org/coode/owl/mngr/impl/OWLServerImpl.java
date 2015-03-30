@@ -59,7 +59,7 @@ public class OWLServerImpl implements OWLServer {
 
     private Map<URI, OWLOntologyIRIMapper> baseMapper = new HashMap<URI, OWLOntologyIRIMapper>();
 
-    private ServerPropertiesAdapter<ServerProperty> properties;
+    private ServerOptionsAdapter<ServerProperty> properties;
 
     private final Set<Listener> listeners = new HashSet<Listener>();
 
@@ -247,10 +247,10 @@ public class OWLServerImpl implements OWLServer {
         return getAnonymousOntology(iri.toString());
     }
 
-    public ServerPropertiesAdapter<ServerProperty> getProperties() {
+    public ServerOptionsAdapter<ServerProperty> getProperties() {
         if (properties == null){
 
-            properties = new ServerPropertiesAdapterImpl<ServerProperty>(new ServerPropertiesImpl());
+            properties = new ServerOptionsAdapterImpl<ServerProperty>(new ServerPropertiesImpl());
 
             properties.setBoolean(ServerProperty.optionReasonerEnabled, false);
             properties.setAllowedValues(ServerProperty.optionReasonerEnabled, Arrays.asList(Boolean.TRUE.toString(),

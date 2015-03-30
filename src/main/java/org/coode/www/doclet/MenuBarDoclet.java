@@ -10,7 +10,7 @@ import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.impl.OWLHTMLConstants;
 import org.coode.html.util.HTMLUtils;
 import org.coode.owl.mngr.ServerConstants;
-import org.coode.owl.mngr.ServerPropertiesAdapter;
+import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.owl.mngr.impl.LabelShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -54,7 +54,7 @@ public class MenuBarDoclet extends AbstractOWLDocDoclet {
     }
 
     private HTMLDoclet createActiveOntDoclet(final OWLHTMLKit kit) {
-        final ServerPropertiesAdapter<ServerProperty> serverProps = kit.getOWLServer().getProperties();
+        final ServerOptionsAdapter<ServerProperty> serverProps = kit.getOWLServer().getProperties();
         return new OptionSelectorDoclet(kit,
                                         ServerProperty.optionActiveOnt.name(),
                                         serverProps.get(ServerProperty.optionActiveOnt),

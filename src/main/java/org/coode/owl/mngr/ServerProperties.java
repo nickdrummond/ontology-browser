@@ -25,6 +25,8 @@ public interface ServerProperties {
 
     String get(String key);
 
+    Map<String, String> getAll();
+
     URL getURL(String key) throws MalformedURLException;
 
     boolean set(String key, String value);

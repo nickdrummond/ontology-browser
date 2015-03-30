@@ -4,7 +4,7 @@
 package org.coode.owl.mngr.impl;
 
 import org.coode.owl.mngr.ServerProperties;
-import org.coode.owl.mngr.ServerPropertiesAdapter;
+import org.coode.owl.mngr.ServerOptionsAdapter;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -23,16 +23,16 @@ import java.util.Map;
  * Bio Health Informatics Group<br>
  * Date: Jan 22, 2008<br><br>
  */
-public class ServerPropertiesAdapterImpl<E extends Enum> implements ServerPropertiesAdapter<E> {
+public class ServerOptionsAdapterImpl<E extends Enum> implements ServerOptionsAdapter<E> {
 
     protected ServerProperties delegate;
 
-    public ServerPropertiesAdapterImpl(ServerProperties delegate) {
+    public ServerOptionsAdapterImpl(ServerProperties delegate) {
         this.delegate = delegate;
     }
 
     // share the delegate
-    public ServerPropertiesAdapterImpl(ServerPropertiesAdapterImpl anotherAdapter) {
+    public ServerOptionsAdapterImpl(ServerOptionsAdapterImpl anotherAdapter) {
         this.delegate = anotherAdapter.delegate;
     }
 
@@ -73,6 +73,11 @@ public class ServerPropertiesAdapterImpl<E extends Enum> implements ServerProper
 
     public boolean set(E key, String value) {
         return delegate.set(key.name(), value);
+    }
+
+    @Override
+    public Map<String, String> getAll() {
+        return delegate.getAll();
     }
 
 

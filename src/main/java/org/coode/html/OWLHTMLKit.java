@@ -4,7 +4,7 @@ import org.coode.html.doclet.HTMLDocletFactory;
 import org.coode.html.impl.OWLHTMLProperty;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.mngr.ServerPropertiesAdapter;
+import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -49,7 +49,7 @@ public interface OWLHTMLKit {
 
     OWLServer getOWLServer();
 
-    ServerPropertiesAdapter<OWLHTMLProperty> getHTMLProperties();
+    ServerOptionsAdapter<OWLHTMLProperty> getHTMLProperties();
 
     void resetProperties();
 

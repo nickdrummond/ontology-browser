@@ -7,7 +7,7 @@ import org.coode.html.impl.OWLHTMLKitImpl;
 import org.coode.html.impl.OWLHTMLProperty;
 import org.coode.html.url.RestURLScheme;
 import org.coode.owl.mngr.ServerConstants;
-import org.coode.owl.mngr.ServerPropertiesAdapter;
+import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.owl.mngr.impl.ManchesterOWLSyntaxParser;
 import org.coode.owl.util.OWLUtils;
@@ -258,7 +258,7 @@ public class KitRepository {
         kit.getOWLServer().getProperties().setBoolean(ServerProperty.optionReasonerEnabled, true);
 
 
-        ServerPropertiesAdapter<OWLHTMLProperty> properties = kit.getHTMLProperties();
+        ServerOptionsAdapter<OWLHTMLProperty> properties = kit.getHTMLProperties();
 
 //        // by default, do not use frames navigation
 //        properties.set(OWLHTMLProperty.optionContentWindow, null);

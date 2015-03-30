@@ -5,9 +5,9 @@ import org.coode.html.doclet.HTMLDocletFactory;
 import org.coode.html.url.StaticFilesURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.mngr.ServerPropertiesAdapter;
+import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.impl.OWLServerImpl;
-import org.coode.owl.mngr.impl.ServerPropertiesAdapterImpl;
+import org.coode.owl.mngr.impl.ServerOptionsAdapterImpl;
 import org.coode.owl.util.OWLObjectComparator;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -57,7 +57,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private OWLServer owlServer;
 
-    private ServerPropertiesAdapter<OWLHTMLProperty> properties;
+    private ServerOptionsAdapter<OWLHTMLProperty> properties;
 
     private String id;
 
@@ -102,10 +102,10 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
 
-    public ServerPropertiesAdapter<OWLHTMLProperty> getHTMLProperties() {
+    public ServerOptionsAdapter<OWLHTMLProperty> getHTMLProperties() {
         if (properties == null){
             // share the same base properties
-            properties = new ServerPropertiesAdapterImpl<OWLHTMLProperty>((ServerPropertiesAdapterImpl)getOWLServer().getProperties());
+            properties = new ServerOptionsAdapterImpl<OWLHTMLProperty>((ServerOptionsAdapterImpl)getOWLServer().getProperties());
             properties.addDeprecatedNames(OWLHTMLProperty.generateDeprecatedNamesMap());
 
             properties.set(OWLHTMLProperty.optionIndexAllURL, OWLHTMLConstants.DEFAULT_INDEX_ALL_URL);

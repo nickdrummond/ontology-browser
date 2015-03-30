@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <entry key="optionShowMiniHierarchies">true</entry>
+    <entry key="optionShowInferences">true</entry>
+    <entry key="optionReasonerEnabled">true</entry>
+    <entry key="optionRenderer">label</entry>
+    <entry key="optionShowInferredHierarchies">false</entry>
+    <entry key="optionLabelUri">http://www.w3.org/2000/01/rdf-schema#label</entry>
+    <entry key="optionDefaultCSS">static/css/default.css</entry>
+    <entry key="optionLabelLang"/>
+    <entry key="optionReasoner">Structural Reasoner</entry>
+    <entry key="optionActiveOnt">http://www.manchester.ac.uk/root.owl</entry>
+    <entry key="optionRenderPermalink">true</entry>
+    <entry key="optionRenderSubs">true</entry>
+    <entry key="optionIndexAllURL">entities/</entry>
+    <entry key="optionLabelPropertyUri">http://xmlns.com/foaf/0.1/name</entry>
+</properties>

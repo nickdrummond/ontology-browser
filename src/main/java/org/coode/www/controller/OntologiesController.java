@@ -31,15 +31,12 @@ public class OntologiesController extends ApplicationController {
     @Autowired
     private OntologiesService ontologiesService;
 
-    @Autowired
-    private SessionManager sessionManager;
-
     @RequestMapping(method=RequestMethod.GET)
     public String getOntologies(@RequestParam(required=false) final String label,
                                 final HttpServletRequest request,
                                 Model model) throws OntServerException {
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
+        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
         // TODO yuck replace this adapter
         Set<OWLOntology> results = kit.getOWLServer().getActiveOntologies();

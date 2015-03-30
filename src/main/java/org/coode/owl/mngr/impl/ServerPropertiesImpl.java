@@ -37,6 +37,15 @@ public class ServerPropertiesImpl implements ServerProperties {
         return properties.getProperty(key);
     }
 
+    @Override
+    public Map<String, String> getAll() {
+        Map<String, String> map = new HashMap<String, String>();
+        for (String key: properties.stringPropertyNames()) {
+            map.put(key, properties.getProperty(key));
+        }
+        return map;
+    }
+
     public URL getURL(String key) throws MalformedURLException {
         return new URL(properties.getProperty(key));
     }

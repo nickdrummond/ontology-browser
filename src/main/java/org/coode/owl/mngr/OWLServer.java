@@ -74,7 +74,7 @@ public interface OWLServer extends ActiveOntologyProvider {
 
     Set<String> getSupportedSyntaxes();
 
-    ServerPropertiesAdapter<ServerProperty> getProperties();
+    ServerOptionsAdapter<ServerProperty> getProperties();
 
     void resetProperties();
 

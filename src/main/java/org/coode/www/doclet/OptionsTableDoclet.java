@@ -7,7 +7,7 @@ import org.coode.html.OWLHTMLKit;
 import org.coode.html.doclet.AbstractOWLDocDoclet;
 import org.coode.html.impl.OWLHTMLParam;
 import org.coode.html.impl.OWLHTMLProperty;
-import org.coode.owl.mngr.ServerPropertiesAdapter;
+import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 
 import java.io.PrintWriter;
@@ -51,7 +51,7 @@ public class OptionsTableDoclet extends AbstractOWLDocDoclet {
     }
 
 
-    private <E extends Enum> void renderProperties(ServerPropertiesAdapter<E> properties, List<E> keys, String title, URL pageURL, PrintWriter out) {
+    private <E extends Enum> void renderProperties(ServerOptionsAdapter<E> properties, List<E> keys, String title, URL pageURL, PrintWriter out) {
 
         renderBoxStart(title, out, pageURL);
 

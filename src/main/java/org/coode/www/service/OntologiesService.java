@@ -24,12 +24,7 @@ import java.util.Set;
 public class OntologiesService {
 
     /**
-     *
-     * @param uri
-     * @param clear
-     * @param kit
      * @return the ID of the active ontology
-     * @throws OntServerException
      */
     public String load(URI uri, boolean clear, OWLHTMLKit kit) throws OntServerException {
 
@@ -77,5 +72,13 @@ public class OntologiesService {
         }
 
         return String.valueOf(ont.hashCode());
+    }
+
+    public OWLOntology getActiveOntology(final OWLHTMLKit kit) {
+        return kit.getOWLServer().getActiveOntology();
+    }
+
+    public Set<OWLOntology> getOntologies(final OWLHTMLKit kit) {
+        return kit.getOWLServer().getOntologies();
     }
 }

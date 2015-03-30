@@ -13,6 +13,7 @@ import org.coode.html.url.PermalinkURLScheme;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerConstants;
+import org.coode.www.CookieHelper;
 import org.coode.www.OntologyBrowserConstants;
 import org.coode.www.ParametersBuilder;
 import org.coode.www.ServletUtils;
@@ -49,6 +50,10 @@ import java.util.Set;
 public abstract class AbstractOntologyServerServlet extends HttpServlet {
 
     protected Logger logger = Logger.getLogger(getClass().getName());
+
+    private CookieHelper cookieHelper = new CookieHelper(
+            OntologyBrowserConstants.LABEL_COOKIE_NAME,
+            OntologyBrowserConstants.COOKIE_SESSION_RECOVERY);
 
     protected abstract Doclet handleXMLRequest(Map<OWLHTMLParam, String> params,
                                                OWLHTMLKit kit,
@@ -124,37 +129,11 @@ public abstract class AbstractOntologyServerServlet extends HttpServlet {
             handleError(e, kit, pageURL, response, format);
         }
         finally{
-            if (ServerConstants.COOKIE_SESSION_RECOVERY){
-                updateCookies(request, response, kit);
-            }
+            cookieHelper.updateCookies(request, response, kit);
             if (redirect != null){
                 handleRedirect(redirect, response);
             }
             response.getWriter().flush();
-        }
-    }
-
-    private void updateCookies(HttpServletRequest request, HttpServletResponse response, OWLHTMLKit kit) {
-        if (kit.isActive() && kit.getCurrentLabel() != null){
-            Cookie cookie = new Cookie(OntologyBrowserConstants.LABEL_COOKIE_NAME, kit.getCurrentLabel());
-            cookie.setPath(request.getContextPath() + "/");
-            cookie.setMaxAge(-1); // until session expires
-            response.addCookie(cookie);
-//                    System.out.println("Setting cookie " + kit.getCurrentLabel());
-        }
-        else {
-            final Cookie[] cookies = request.getCookies();
-            if (cookies != null){
-                for (Cookie cookie : cookies){
-                    if (cookie.getName().equals(OntologyBrowserConstants.LABEL_COOKIE_NAME)){
-//                            System.out.println("clearing cookie " + cookie.getValue());
-                        cookie = new Cookie(OntologyBrowserConstants.LABEL_COOKIE_NAME, "");
-                        cookie.setPath(request.getContextPath() + "/");
-                        cookie.setMaxAge(0);
-                        response.addCookie(cookie);
-                    }
-                }
-            }
         }
     }
 
@@ -165,19 +144,8 @@ public abstract class AbstractOntologyServerServlet extends HttpServlet {
             return label;
         }
 
-        if (ServerConstants.COOKIE_SESSION_RECOVERY){
-            // and if not, check the cookies
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null){
-                for (Cookie cookie : cookies){
-                    if (cookie.getName().equals(OntologyBrowserConstants.LABEL_COOKIE_NAME)){
-//                        System.out.println("recovering session from cookie: " + cookie.getValue());
-                        return cookie.getValue();
-                    }
-                }
-            }
-        }
-        return null;
+        // or maybe the cookie
+        return cookieHelper.getLabelFromCookie(request);
     }
 
     private void handleRedirect(String redirectPage, HttpServletResponse response) throws IOException {

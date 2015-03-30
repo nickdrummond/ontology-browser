@@ -60,6 +60,15 @@ function createOptionListeners(){
 
         option(optionId, value, null);
     });
+
+    $("input.option[type='checkbox']").click(function(e){
+        var optionId = $("input[name=property]", $(this).parent()).attr("value");
+        var state = "false";
+        if (this.checked){
+            state = "true";
+        }
+        option(optionId, state, null);
+    });
 }
 
 
@@ -78,7 +87,7 @@ function option(opt, value, successpage){
 
         xmlHttpOption.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
-        var attrs =  "property=" + opt + "&value=" + value + "&format=xml";
+        var attrs =  "property=" + opt + "&value=" + value;
 
         onSuccess = successpage;
 

@@ -1,7 +1,7 @@
 package org.coode.owl.mngr.impl;
 
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.mngr.ServerPropertiesAdapter;
+import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.AnnotationValueShortFormProvider;
@@ -29,7 +29,7 @@ public class LabelShortFormProvider implements ShortFormProvider {
 
     public LabelShortFormProvider(final OWLServer server, ShortFormProvider defaultSFP) {
 
-        final ServerPropertiesAdapter<ServerProperty> properties = server.getProperties();
+        final ServerOptionsAdapter<ServerProperty> properties = server.getProperties();
 
         final String lang = properties.get(ServerProperty.optionLabelLang);
 

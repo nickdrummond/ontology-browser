@@ -2,74 +2,48 @@
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-        http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+        xsi:schemaLocation="
+          http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
         version="2.5">
-
-    <display-name>Ontology Browser</display-name>
-    <description>Server for navigating through OWL ontologies</description>
-
 
     <servlet>
         <servlet-name>Stats</servlet-name>
-        <display-name>Stats</display-name>
         <servlet-class>org.coode.www.Stats</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Contents</servlet-name>
-        <display-name>Render Contents</display-name>
         <servlet-class>org.coode.www.servlet.Contents</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Summary</servlet-name>
-        <display-name>RenderOWLClass</display-name>
         <servlet-class>org.coode.www.servlet.Summary</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Find</servlet-name>
-        <display-name>Name Service</display-name>
         <servlet-class>org.coode.www.servlet.Find</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>QueryReasoner</servlet-name>
-        <display-name>Query Reasoner</display-name>
-        <description>Query the reasoner</description>
         <servlet-class>org.coode.www.servlet.QueryReasoner</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Cloud</servlet-name>
-        <display-name>Cloud</display-name>
-        <description>Generates a tag cloud for the active ontologies</description>
         <servlet-class>org.coode.www.servlet.Cloud</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ServerOptions</servlet-name>
-        <display-name>Set Option</display-name>
-        <description>allows configuration of the server</description>
-        <servlet-class>org.coode.www.servlet.ServerOptions</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>DLQuery</servlet-name>
-        <display-name>DL Query Page</display-name>
-        <description>generates a page with a form on which DL Queries can take place</description>
         <servlet-class>org.coode.www.servlet.DLQuery</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ParseMOS</servlet-name>
-        <display-name>Parse Manchester OWL Syntax</display-name>
-        <description>for use with parse.js</description>
         <servlet-class>org.coode.www.servlet.ParseMOS</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AutocompleteMOS</servlet-name>
-        <display-name>Autocomplete Manchester OWL Syntax</display-name>
-        <description>for use with parse.js</description>
         <servlet-class>org.coode.www.servlet.AutocompleteMOS</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Hierarchy</servlet-name>
-        <display-name>Hierarchy Expansion</display-name>
-        <description>for hierarchy expansion</description>
         <servlet-class>org.coode.www.servlet.Hierarchy</servlet-class>
     </servlet>
 
@@ -112,10 +86,6 @@
     <servlet-mapping>
         <servlet-name>Cloud</servlet-name>
         <url-pattern>/cloud/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ServerOptions</servlet-name>
-        <url-pattern>/options/</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DLQuery</servlet-name>

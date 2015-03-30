@@ -39,11 +39,13 @@ import java.util.Map;
  * Bio Health Informatics Group<br>
  * Date: Aug 7, 2009<br><br>
  */
-public interface ServerPropertiesAdapter<E extends Enum> {
+public interface ServerOptionsAdapter<E extends Enum> {
 
     String get(E key);
 
     boolean set(E key, String value);
+
+    Map<String, String> getAll();
 
     boolean isSet(E key);
 

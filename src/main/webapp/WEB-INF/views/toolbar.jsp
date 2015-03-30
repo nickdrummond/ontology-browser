@@ -39,7 +39,7 @@ ${application.version}
         <select class="option" name="value">
             <c:forEach items="${ontologies}" var="ontology">
                 <option value='${ontology.ontologyID.ontologyIRI}'
-                 <c:if test="${true}">
+                 <c:if test="${ontology.ontologyID.ontologyIRI eq activeOntology.ontologyID.ontologyIRI}">
                    selected='selected'
                  </c:if>
                  >${ontology.ontologyID.ontologyIRI}</option>

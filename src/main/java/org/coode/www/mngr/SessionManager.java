@@ -2,31 +2,14 @@ package org.coode.www.mngr;
 
 import org.apache.log4j.Logger;
 import org.coode.html.OWLHTMLKit;
-import org.coode.html.impl.OWLHTMLConstants;
-import org.coode.html.impl.OWLHTMLKitImpl;
-import org.coode.html.impl.OWLHTMLProperty;
-import org.coode.html.url.RestURLScheme;
-import org.coode.owl.mngr.ServerConstants;
-import org.coode.owl.mngr.ServerPropertiesAdapter;
-import org.coode.owl.mngr.ServerProperty;
-import org.coode.owl.mngr.impl.ManchesterOWLSyntaxParser;
-import org.coode.owl.util.OWLUtils;
-import org.coode.www.OntologyBrowserConstants;
 import org.coode.www.exception.OntServerException;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -95,10 +78,14 @@ public class SessionManager {
             // TODO Why do we need the base URL in the kit?
             String url = request.getRequestURL().toString();
 
-            int index = url.indexOf(request.getServletPath());
+            String servletPath = request.getServletPath();
 
-            if (index != -1){
-                url = url.substring(0, index+1);
+            if (!servletPath.equals("/")) {
+                int index = url.indexOf(servletPath);
+
+                if (index != -1){
+                    url = url.substring(0, index+1);
+                }
             }
 
             URL basePath = new URL(url);
