@@ -28,12 +28,9 @@ public class OntologiesService {
      */
     public String load(URI uri, boolean clear, OWLHTMLKit kit) throws OntServerException {
 
-        Set<URI> success = new HashSet<URI>();
         Map<URI, Throwable> fail = new HashMap<URI, Throwable>();
 
         OWLServer server = kit.getOWLServer();
-
-        OWLOntology ont = null;
 
         if (clear) {
             server.clearOntologies();
@@ -41,21 +38,24 @@ public class OntologiesService {
 
         try {
             if (uri.isAbsolute()) {
-                ont = server.loadOntology(uri);
-                success.add(uri);
-            } else {
+                OWLOntology ont = server.loadOntology(uri);
+                Application.getRepo().saveKit(kit);
+                return String.valueOf(ont.hashCode());
+            }
+            else {
                 throw new IllegalArgumentException("Ontology URIs must be absolute: " + uri);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             fail.put(uri, e);
-        } catch (OutOfMemoryError e) {
+        }
+        catch (OutOfMemoryError e) {
             fail.put(uri, e);
             // clear all ontologies as we are in an unpredictable state
             server.clearOntologies();
             throw new OntServerException("Out of memory trying to load ontologies");
         }
-
 
         for (URI f : fail.keySet()) {
             String message;
@@ -66,12 +66,7 @@ public class OntologiesService {
             }
             kit.addUserError("<p>Failed to load: " + uri + "</p><p>" + message + "</p>");
         }
-
-        if (!success.isEmpty()) {
-            Application.getRepo().saveKit(kit);
-        }
-
-        return String.valueOf(ont.hashCode());
+        return String.valueOf(kit.getOWLServer().getActiveOntology().hashCode());
     }
 
     public OWLOntology getActiveOntology(final OWLHTMLKit kit) {

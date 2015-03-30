@@ -7,10 +7,6 @@
         version="2.5">
 
     <servlet>
-        <servlet-name>Stats</servlet-name>
-        <servlet-class>org.coode.www.Stats</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Summary</servlet-name>
         <servlet-class>org.coode.www.servlet.Summary</servlet-class>
     </servlet>
@@ -43,10 +39,6 @@
         <servlet-class>org.coode.www.servlet.Hierarchy</servlet-class>
     </servlet>
 
-    <servlet-mapping>
-        <servlet-name>Stats</servlet-name>
-        <url-pattern>/stats/</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Find</servlet-name>
         <url-pattern>/find/*</url-pattern>
