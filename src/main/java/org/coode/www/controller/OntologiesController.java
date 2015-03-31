@@ -92,6 +92,8 @@ public class OntologiesController extends ApplicationController {
                                HttpServletRequest request,
                                Model model) throws OntServerException {
 
+        logger.info("Loading ontology from " + loadOntology.getUri());
+
         OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
         String ontologyId = service.load(loadOntology.getUri(), loadOntology.isClear(), kit);

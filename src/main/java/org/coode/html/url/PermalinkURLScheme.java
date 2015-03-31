@@ -3,7 +3,7 @@
 */
 package org.coode.html.url;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLParam;
@@ -26,7 +26,7 @@ import java.net.URL;
  */
 public class PermalinkURLScheme implements URLScheme {
 
-    private static final Logger logger = Logger.getLogger(PermalinkURLScheme.class);
+    private static final Logger logger = LoggerFactory.getLogger(PermalinkURLScheme.class);
 
     private URLScheme baseScheme;
 

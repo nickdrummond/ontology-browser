@@ -3,7 +3,7 @@
 */
 package org.coode.www.bookmarks;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.semanticweb.owlapi.model.*;
 
 import java.net.URI;
@@ -19,6 +19,8 @@ import java.util.*;
  * Date: Feb 11, 2008<br><br>
  */
 public class OntologyBookmarks {
+
+    private static final Logger logger = LoggerFactory.getLogger(OntologyBookmarks.class);
 
     private static final String BOOKMARK_PROP = "http://www.co-ode.org/ontologies/meta.owl#bookmark";
 
@@ -112,7 +114,7 @@ public class OntologyBookmarks {
                 }
             }
             catch (URISyntaxException e) {
-                Logger.getLogger(OntologyBookmarks.class).error(e);
+                logger.error("Cannot parse bookmark annotation: '" + s + "'", e);
             }
         }
     }

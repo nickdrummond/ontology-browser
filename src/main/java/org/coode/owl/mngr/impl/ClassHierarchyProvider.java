@@ -1,7 +1,6 @@
 package org.coode.owl.mngr.impl;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -25,13 +24,12 @@ import java.util.Set;
  */
 public class ClassHierarchyProvider implements HierarchyProvider<OWLClass>{
 
-    private Logger logger = Logger.getLogger(ClassHierarchyProvider.class);
+    private Logger logger = LoggerFactory.getLogger(ClassHierarchyProvider.class);
 
     private OWLServer server;
 
     public ClassHierarchyProvider(OWLServer server) {
         this.server = server;
-        logger.setLevel(Level.WARN);
     }
 
     public Class<? extends OWLClass> getNodeClass() {
@@ -55,7 +53,7 @@ public class ClassHierarchyProvider implements HierarchyProvider<OWLClass>{
             return getReasoner().getSuperClasses(node, true).getFlattened();
         }
         catch (OWLReasonerRuntimeException e) {
-            logger.error(e);
+            logger.error("Cannot get parents of node", e);
         }
         return Collections.emptySet();
     }
@@ -74,7 +72,7 @@ public class ClassHierarchyProvider implements HierarchyProvider<OWLClass>{
             return children;
         }
         catch (OWLReasonerRuntimeException e) {
-            logger.error(e);
+            logger.error("Cannot get children of node", e);
         }
         return Collections.emptySet();
     }
@@ -85,7 +83,7 @@ public class ClassHierarchyProvider implements HierarchyProvider<OWLClass>{
             return getReasoner().getEquivalentClasses(node).getEntitiesMinus(node);
         }
         catch (OWLReasonerRuntimeException e) {
-            logger.error(e);
+            logger.error("Cannot get equivs of node", e);
         }
         return Collections.emptySet();
     }
@@ -96,7 +94,7 @@ public class ClassHierarchyProvider implements HierarchyProvider<OWLClass>{
             return getReasoner().getSubClasses(node, false).getFlattened();
         }
         catch (OWLReasonerRuntimeException e) {
-            logger.error(e);
+            logger.error("Cannot get descendants of node", e);
         }
         return Collections.emptySet();
     }
@@ -106,7 +104,7 @@ public class ClassHierarchyProvider implements HierarchyProvider<OWLClass>{
             return getReasoner().getSuperClasses(node, false).getFlattened();
         }
         catch (OWLReasonerRuntimeException e) {
-            logger.error(e);
+            logger.error("Cannot get ancestors of node", e);
         }
         return Collections.emptySet();
     }

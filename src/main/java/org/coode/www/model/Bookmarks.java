@@ -1,7 +1,7 @@
 package org.coode.www.model;
 
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class Bookmarks {
 
-    private static Logger logger = Logger.getLogger(Bookmarks.class);
+    private static Logger logger = LoggerFactory.getLogger(Bookmarks.class);
 
     private Map<String, URI> bookmarks = Collections.emptyMap();
 

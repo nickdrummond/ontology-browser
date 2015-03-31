@@ -1,6 +1,6 @@
 package org.coode.www.mngr;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLKitImpl;
@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class KitRepository {
 
-    private static Logger logger = Logger.getLogger(KitRepository.class);
+    private static Logger logger = LoggerFactory.getLogger(KitRepository.class);
 
     public static final String LABEL_SPLITTER = "_";
 
@@ -48,7 +48,8 @@ public class KitRepository {
     }
 
     private String saveOntologies(OWLHTMLKit kit) throws IOException {
-        System.out.println("Saving ontologies");
+        logger.info("Saving ontologies");
+
         ByteArrayOutputStream out = new ByteArrayOutputStream(3 * 1024); // < 3k
         PrintWriter writer = new PrintWriter(out);
 
@@ -73,7 +74,7 @@ public class KitRepository {
     }
 
     private String saveProperties(OWLHTMLKit kit) throws IOException {
-        System.out.println("Saving properties");
+        logger.info("Saving properties");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream(3 * 1024); // < 3k
         kit.getHTMLProperties().save(out);
@@ -92,10 +93,10 @@ public class KitRepository {
             fOut.write(bytes);
             fOut.flush();
             fOut.close();
-            System.out.println("kit state saved at: " + file.getAbsolutePath());
+            logger.info("kit state saved at: " + file.getAbsolutePath());
         }
         else {
-            System.out.println("kit state already saved at: " + file.getAbsolutePath());
+            logger.info("kit state already saved at: " + file.getAbsolutePath());
         }
     }
 
@@ -104,7 +105,8 @@ public class KitRepository {
             MessageDigest digest = MessageDigest.getInstance("MD5");
             byte[] hashedBytes = digest.digest(bytes);
             return convertByteArrayToHexString(hashedBytes);
-        } catch (NoSuchAlgorithmException e) {
+        }
+        catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
@@ -127,7 +129,7 @@ public class KitRepository {
      */
     public synchronized void loadKit(OWLHTMLKit kit, String label) throws OntServerException {
 
-        System.out.println("Loading " + label);
+        logger.info("Loading kit for label: " + label);
 
         String[] parts = label.split(LABEL_SPLITTER);
 

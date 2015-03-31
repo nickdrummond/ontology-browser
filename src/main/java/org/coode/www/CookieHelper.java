@@ -1,6 +1,6 @@
 package org.coode.www;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 
 import javax.servlet.http.Cookie;
@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CookieHelper {
 
-    private static final Logger logger = Logger.getLogger(CookieHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(CookieHelper.class);
 
     private final String cookieName;
     private final boolean enabled;

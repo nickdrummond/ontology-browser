@@ -1,6 +1,6 @@
 package org.coode.www.service;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public class ReasonerFactoryService {
 
-    private static final Logger logger = Logger.getLogger(ReasonerFactoryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReasonerFactoryService.class);
 
     public static String STRUCTURAL;
 

@@ -1,6 +1,6 @@
 package org.coode.html.url;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.owl.mngr.NamedObjectType;
@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class StaticFilesURLScheme extends AbstractURLScheme {
 
-    private static final Logger logger = Logger.getLogger(StaticFilesURLScheme.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(StaticFilesURLScheme.class.getName());
 
     private ShortFormProvider shortFormProvider;
     private OntologyIRIShortFormProvider ontologyShortFormProvider;
@@ -86,10 +86,10 @@ public class StaticFilesURLScheme extends AbstractURLScheme {
             }
         }
         catch (MalformedURLException e) {
-            logger.error(e);
+            logger.error("Cannot get URL for " + owlObject, e);
         }
         catch (UnsupportedEncodingException e) {
-            logger.error(e);
+            logger.error("Cannot get URL for " + owlObject, e);
         }
 
         return url;
@@ -104,7 +104,7 @@ public class StaticFilesURLScheme extends AbstractURLScheme {
             return new URL(getBaseURL(), type + OWLHTMLConstants.SLASH + INDEX_PREFIX + ontologyShortFormProvider.getShortForm(ont) + OWLHTMLConstants.DEFAULT_EXTENSION);
         }
         catch (MalformedURLException e) {
-            logger.error(e);
+            logger.error("Cannot get URL for ontology index: " + ont.getOntologyID(), e);
         }
         return null;
     }

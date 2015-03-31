@@ -3,7 +3,7 @@
 */
 package org.coode.www.renderer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.url.OWLObjectURLRenderer;
@@ -33,7 +33,7 @@ import java.util.*;
  */
 public class OWLHTMLVisitor implements OWLObjectVisitor {
 
-    private Logger logger = Logger.getLogger(getClass().getName());
+    private Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     // These should match the css class names
     private static final String CSS_DEPRECATED = "deprecated";

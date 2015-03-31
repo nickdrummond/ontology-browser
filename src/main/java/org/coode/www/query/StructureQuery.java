@@ -23,7 +23,7 @@ package org.coode.www.query;
  */
 public class StructureQuery {
 //
-//    private static final Logger logger = Logger.getLogger(StructureQuery.class.getName());
+//    private static final Logger logger = LoggerFactory.getLogger(StructureQuery.class.getName());
 //
 //    private Set<OWLEntity> results = new HashSet<OWLEntity>();
 //

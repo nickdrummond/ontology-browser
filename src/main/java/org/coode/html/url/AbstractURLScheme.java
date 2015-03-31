@@ -3,7 +3,7 @@
 */
 package org.coode.html.url;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.util.URLUtils;
@@ -22,7 +22,7 @@ import java.net.URL;
  */
 public abstract class AbstractURLScheme implements URLScheme {
 
-    private static final Logger logger = Logger.getLogger(AbstractURLScheme.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractURLScheme.class);
 
     protected final OWLHTMLKit kit;
 

@@ -3,7 +3,7 @@
 */
 package org.coode.html.url;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLParam;
@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public class RestURLScheme extends AbstractURLScheme {
 
-    private static final Logger logger = Logger.getLogger(RestURLScheme.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RestURLScheme.class.getName());
 
     private String additionalLinkArguments;
 
@@ -137,7 +137,7 @@ public class RestURLScheme extends AbstractURLScheme {
             return new URL(getBaseURL(), sb.toString());
         }
         catch (Exception e) {
-            logger.error(e);
+            logger.error("Cannot get URL for ont index", e);
         }
         return null;
     }

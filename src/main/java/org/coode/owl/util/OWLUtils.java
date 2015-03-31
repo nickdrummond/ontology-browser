@@ -33,9 +33,6 @@ public class OWLUtils {
     }
 
     public static String getOntologyIdString(OWLOntology ont){
-        if (ont == null){
-            System.out.println("ont = " + ont);
-        }
         if (ont.isAnonymous()){
             return ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString();
         }

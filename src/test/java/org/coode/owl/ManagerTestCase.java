@@ -1,7 +1,7 @@
 package org.coode.owl;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.impl.OWLServerImpl;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -49,10 +49,9 @@ import java.util.Set;
  */
 public class ManagerTestCase extends TestCase {
 
-    private Logger logger = Logger.getLogger(ManagerTestCase.class);
+    private Logger logger = LoggerFactory.getLogger(ManagerTestCase.class);
 
     public void testFindNamedClassDoesNotExist(){
-
 
         OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
         try {
@@ -76,7 +75,7 @@ public class ManagerTestCase extends TestCase {
             assertTrue(matchesForZ.isEmpty());
         }
         catch (Exception e) {
-            logger.error(e);
+            logger.error("Fail!", e);
             fail();
         }
     }

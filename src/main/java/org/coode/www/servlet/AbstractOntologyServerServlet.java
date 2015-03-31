@@ -1,6 +1,6 @@
 package org.coode.www.servlet;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.Doclet;
 import org.coode.html.doclet.HTMLDoclet;
@@ -47,7 +47,7 @@ import java.util.Set;
  */
 public abstract class AbstractOntologyServerServlet extends HttpServlet {
 
-    protected Logger logger = Logger.getLogger(getClass().getName());
+    protected Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private CookieHelper cookieHelper = new CookieHelper(
             OntologyBrowserConstants.LABEL_COOKIE_NAME,

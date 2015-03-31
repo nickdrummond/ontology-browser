@@ -47,7 +47,7 @@ package org.coode.www.query;
  */
 public class QuickDescriptionParser{// implements OWLClassExpressionParser {
 //
-//    private static final Logger logger = Logger.getLogger(QuickDescriptionParser.class.getName());
+//    private static final Logger logger = LoggerFactory.getLogger(QuickDescriptionParser.class.getName());
 //
 //    private OWLServer kit;
 //    private OWLObjectProperty defaultProp;

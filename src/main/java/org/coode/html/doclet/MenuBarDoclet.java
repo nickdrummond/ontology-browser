@@ -3,7 +3,7 @@
 */
 package org.coode.html.doclet;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.util.HTMLUtils;
@@ -26,7 +26,7 @@ import java.net.URL;
  */
 public class MenuBarDoclet extends AbstractOWLDocDoclet {
 
-    private static final Logger logger = Logger.getLogger(MenuBarDoclet.class);
+    private static final Logger logger = LoggerFactory.getLogger(MenuBarDoclet.class);
 
     public static final String ID = "doclet.menubar";
 

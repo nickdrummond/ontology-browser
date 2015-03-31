@@ -1,6 +1,6 @@
 package org.coode.owl.mngr.impl;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.owl.mngr.*;
 import org.coode.owl.util.MySimpleShortFormProvider;
 import org.coode.owl.util.OWLObjectComparator;
@@ -31,7 +31,7 @@ import java.util.*;
  */
 public class OWLServerImpl implements OWLServer {
 
-    private static final Logger logger = Logger.getLogger(OWLServerImpl.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OWLServerImpl.class.getName());
 
     private OWLOntologyManager mngr;
 

@@ -6,6 +6,8 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyLoaderListener;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.reasoner.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.net.URL;
@@ -23,6 +25,8 @@ import java.util.Map;
  * Date: Mar 24, 2011<br><br>
  */
 public class OWLReasonerManagerImpl implements OWLReasonerManager {
+
+    public static final Logger logger = LoggerFactory.getLogger(OWLReasonerManagerImpl.class);
 
     public static String STRUCTURAL;
     public static String OWLLINK;
@@ -53,12 +57,12 @@ public class OWLReasonerManagerImpl implements OWLReasonerManager {
                 }
             }
             catch (Throwable e){
-                System.out.println("Reasoner cannot be found: " + reasonerFactoryName);
+                logger.info("Reasoner cannot be found: " + reasonerFactoryName);
             }
         }
 
         for (String name : facsByName.keySet()){
-            System.out.println("Reasoner found: " + name);
+            logger.info("Reasoner found: " + name);
         }
     }
 

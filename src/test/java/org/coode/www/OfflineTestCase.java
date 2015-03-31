@@ -1,7 +1,7 @@
 package org.coode.www;
 
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.semanticweb.owlapi.util.NamespaceUtil;
 
 /**
@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.util.NamespaceUtil;
  */
 public class OfflineTestCase extends TestCase {
 
-    private static final Logger logger = Logger.getLogger(OfflineTestCase.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OfflineTestCase.class.getName());
 
 //    public void testImports(){
 //        OWLOntologyManager mngr = org.semanticweb.owlapi.apibinding.OWLManager.createOWLOntologyManager();

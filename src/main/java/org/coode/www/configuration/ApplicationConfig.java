@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@ComponentScan({"org.coode.www.controller", "org.coode.www.services"})
+@ComponentScan("org.coode.www.controller")
 @EnableWebMvc
 public class ApplicationConfig {
 

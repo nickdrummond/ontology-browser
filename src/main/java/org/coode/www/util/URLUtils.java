@@ -1,6 +1,6 @@
 package org.coode.www.util;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLParam;
@@ -27,7 +27,7 @@ import java.util.*;
  */
 public class URLUtils {
 
-    private static final Logger logger = Logger.getLogger(URLUtils.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(URLUtils.class.getName());
 
 
     public static URL createURL(String s) {
@@ -62,8 +62,7 @@ public class URLUtils {
             }
         }
         catch(Throwable e){
-            logger.debug(current);
-            logger.debug(target);
+            logger.error("Cannot create relative string from " + current + " to " + target);
         }
 
         List<String> currentPath = new ArrayList<String>(Arrays.asList(current.getPath().split("/")));

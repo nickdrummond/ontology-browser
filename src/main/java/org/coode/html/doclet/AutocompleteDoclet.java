@@ -3,29 +3,22 @@
 */
 package org.coode.html.doclet;
 
-import org.apache.log4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.url.PermalinkURLScheme;
 import org.coode.www.util.URLUtils;
+
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Feb 4, 2008<br><br>
- */
 public class AutocompleteDoclet extends AbstractOWLDocDoclet {
 
-    private static final Logger logger = Logger.getLogger(AutocompleteDoclet.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(AutocompleteDoclet.class);
 
     private String id;
     private boolean multiword = false;

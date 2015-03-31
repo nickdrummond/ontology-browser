@@ -1,6 +1,6 @@
 package org.coode.www.mngr;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.OntServerException;
 
@@ -21,7 +21,7 @@ import java.net.URL;
  */
 public class SessionManager {
 
-    private static Logger logger = Logger.getLogger(SessionManager.class);
+    private static Logger logger = LoggerFactory.getLogger(SessionManager.class);
 
     private static final String KIT_KEY = "kit";
     private static final String KIT_CLEANUP = "kitcleanup";
@@ -117,10 +117,11 @@ public class SessionManager {
         }
 
         public void valueBound(final HttpSessionBindingEvent event) {
+            logger.debug("Added Kit to session " + event.getSession().getId());
         }
 
         public void valueUnbound(final HttpSessionBindingEvent event) {
-            System.out.println("do unbind for session");
+            logger.debug("Disposing of Kit for session " + event.getSession().getId());
             kit.dispose();
             System.gc();
         }
