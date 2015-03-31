@@ -3,6 +3,7 @@
 
 <a href='${application.url}/wiki/GettingStarted' class='help' target='_blank' >Help</a>
 
+<img class='icon' src='<spring:url value="/static/images/splat-24-211412.png"/>'/>
 <h1><a href='<spring:url value="/"/>'>${application.name}</a></h1>
 
 ${application.version}

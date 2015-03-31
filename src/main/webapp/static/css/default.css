@@ -16,6 +16,11 @@ img {
     border: none;
 }
 
+img.icon {
+    width: 24px;
+    height: 24px;
+}
+
 img.button {
     position: relative;
     top: 8px;
@@ -94,7 +99,7 @@ td.key{
 #queryform {background: #ddddff; padding: 5px;}
 #most_used_classes {text-align: center;}
 
-h1 {font-size: 16pt;
+h1 {font-size: 20pt;
     font-weight: bold;
     display: inline;
     margin-top: 0; margin-bottom: 12px;
