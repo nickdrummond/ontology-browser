@@ -27,7 +27,7 @@ public class OntologiesService {
 
     public OWLOntology getOntologyFor(final String id, final OWLHTMLKit kit) throws NotFoundException {
         for (OWLOntology ont : kit.getOWLServer().getOntologies()){
-            if (String.valueOf(ont.getOntologyID().hashCode()).equals(id)){
+            if (getIdFor(ont).equals(id)){
                 return ont;
             }
         }

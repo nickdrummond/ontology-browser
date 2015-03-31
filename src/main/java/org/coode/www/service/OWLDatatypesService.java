@@ -21,7 +21,7 @@ public class OWLDatatypesService {
         
         for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
             for (OWLDatatype owlDatatype: ont.getDatatypesInSignature()) {
-                if (String.valueOf(owlDatatype.getIRI().hashCode()).equals(propertyId)){
+                if (getIdFor(owlDatatype).equals(propertyId)){
                     return owlDatatype;
                 }
             }

@@ -7,10 +7,6 @@
         version="2.5">
 
     <servlet>
-        <servlet-name>Summary</servlet-name>
-        <servlet-class>org.coode.www.servlet.Summary</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Find</servlet-name>
         <servlet-class>org.coode.www.servlet.Find</servlet-class>
     </servlet>
@@ -42,14 +38,6 @@
     <servlet-mapping>
         <servlet-name>Find</servlet-name>
         <url-pattern>/find/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/entities/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/individuals/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>QueryReasoner</servlet-name>

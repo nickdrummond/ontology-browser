@@ -19,7 +19,7 @@ public class OWLAnnotationPropertiesService {
     public OWLAnnotationProperty getOWLAnnotationPropertyFor(String propertyId, OWLHTMLKit kit) throws NotFoundException {
         for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
             for (OWLAnnotationProperty owlAnnotationProperty: ont.getAnnotationPropertiesInSignature()) {
-                if (String.valueOf(owlAnnotationProperty.getIRI().hashCode()).equals(propertyId)){
+                if (getIdFor(owlAnnotationProperty).equals(propertyId)){
                     return owlAnnotationProperty;
                 }
             }

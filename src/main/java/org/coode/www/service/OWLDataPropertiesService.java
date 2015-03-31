@@ -26,7 +26,7 @@ public class OWLDataPropertiesService {
 
         for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
             for (OWLDataProperty owlDataProperty: ont.getDataPropertiesInSignature()) {
-                if (String.valueOf(owlDataProperty.getIRI().hashCode()).equals(propertyId)){
+                if (getIdFor(owlDataProperty).equals(propertyId)){
                     return owlDataProperty;
                 }
             }

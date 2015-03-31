@@ -22,7 +22,7 @@ public class OWLClassesService {
 
         for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
             for (OWLClass owlClass: ont.getClassesInSignature()) {
-                if (String.valueOf(owlClass.getIRI().hashCode()).equals(classId)){
+                if (getIdFor(owlClass).equals(classId)){
                     return owlClass;
                 }
             }
