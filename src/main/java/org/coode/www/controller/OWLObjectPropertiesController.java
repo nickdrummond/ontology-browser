@@ -6,10 +6,9 @@ import org.coode.html.doclet.HTMLDoclet;
 import org.coode.www.ServletUtils;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
-import org.coode.www.service.OWLClassesService;
-
-import org.semanticweb.owlapi.model.OWLClass;
-
+import org.coode.www.service.OWLObjectPropertiesService;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,42 +20,44 @@ import java.io.StringWriter;
 import java.net.URL;
 
 @Controller
-@RequestMapping(value="/classes")
+@RequestMapping(value="/objectproperties")
 @SessionAttributes("kit")
-public class OWLClassesController extends ApplicationController {
+public class OWLObjectPropertiesController extends ApplicationController {
 
     @Autowired
-    private OWLClassesService owlClassesService;
+    private OWLObjectPropertiesService owlObjectPropertiesService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLClasses(@RequestParam(required=false) final String label,
+    public String getOWLObjectProperties(@RequestParam(required=false) final String label,
                                 final HttpServletRequest request) throws OntServerException {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        OWLClass owlThing = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory().getOWLThing();
+        final OWLDataFactory df = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory();
 
-        String id = owlClassesService.getIdFor(owlThing);
+        OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
 
-        return "redirect:/classes/" + id;
+        String id = owlObjectPropertiesService.getIdFor(owlTopObjectProperty);
+
+        return "redirect:/objectproperties/" + id;
     }
 
 
-    @RequestMapping(value="/{classId}", method=RequestMethod.GET)
-    public String getOWLClass(@PathVariable final String classId,
+    @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
+    public String getOWLObjectProperty(@PathVariable final String propertyId,
                               @RequestParam(required=false) final String label,
                               final HttpServletRequest request,
                               Model model) throws OntServerException, NotFoundException {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        OWLClass owlClass = owlClassesService.getOWLClassFor(classId, kit);
+        OWLObjectProperty owlObjectProperty = owlObjectPropertiesService.getOWLObjectPropertyFor(propertyId, kit);
 
         // TODO yuck replace this adapter
         SummaryPageFactory summaryPageFactory = new SummaryPageFactory(kit);
-        HTMLDoclet hierarchyDoclet = summaryPageFactory.getHierarchy(OWLClass.class);
-        hierarchyDoclet.setUserObject(owlClass);
-        HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(owlClass);
+        HTMLDoclet hierarchyDoclet = summaryPageFactory.getHierarchy(OWLObjectProperty.class);
+        hierarchyDoclet.setUserObject(owlObjectProperty);
+        HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(owlObjectProperty);
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);

@@ -139,7 +139,7 @@ public abstract class AbstractOntologyServerServlet extends HttpServlet {
 
     private String getLabel(HttpServletRequest request) {
         // first check if a label is given in the URL
-        String label = getParameter(request, OWLHTMLParam.session);
+        String label = getParameter(request, OWLHTMLParam.label);
         if (label != null){
             return label;
         }

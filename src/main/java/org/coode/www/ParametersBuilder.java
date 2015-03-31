@@ -53,7 +53,7 @@ public class ParametersBuilder {
             String[] values = (String[])request.getParameterMap().get(param.name());
             String value = values[0].trim();
             switch(param){
-                case session: break;
+                case label: break;
                 case format: break;
                 case uri:    // eg people+pets.owl gets corrupted otherwise
                 case parent: // dropthrough

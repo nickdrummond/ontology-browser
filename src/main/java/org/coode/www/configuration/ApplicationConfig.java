@@ -4,10 +4,7 @@ import org.coode.www.model.ApplicationInfo;
 import org.coode.www.mngr.Application;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.Bookmarks;
-import org.coode.www.service.OWLClassesService;
-import org.coode.www.service.OntologiesService;
-import org.coode.www.service.OptionsService;
-import org.coode.www.service.ReasonerFactoryService;
+import org.coode.www.service.*;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -50,6 +47,16 @@ public class ApplicationConfig {
     @Bean
     public OWLClassesService owlClassesService() {
         return new OWLClassesService();
+    }
+
+    @Bean
+    public OWLObjectPropertiesService owlObjectPropertiesService() {
+        return new OWLObjectPropertiesService();
+    }
+
+    @Bean
+    public OWLDataPropertiesService owlDataPropertiesService() {
+        return new OWLDataPropertiesService();
     }
 
     @Bean

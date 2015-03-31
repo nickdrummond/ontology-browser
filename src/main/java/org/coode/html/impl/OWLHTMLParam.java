@@ -35,7 +35,7 @@ public enum OWLHTMLParam {
     action,
     clear,
     format,
-    session,
+    label,
     expression,
     query,
     syntax,

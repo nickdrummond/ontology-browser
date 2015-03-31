@@ -49,14 +49,6 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Summary</servlet-name>
-        <url-pattern>/objectproperties/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/dataproperties/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
         <url-pattern>/individuals/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

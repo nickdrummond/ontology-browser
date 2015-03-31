@@ -39,7 +39,7 @@ public class ServletUtils {
 
             if (query != null){
                 for (String param : query.split("&")){
-                    if (!param.startsWith(OWLHTMLParam.session.name())){
+                    if (!param.startsWith(OWLHTMLParam.label.name())){
                         if (appendedParams){
                             requestURL.append("&");
                         }

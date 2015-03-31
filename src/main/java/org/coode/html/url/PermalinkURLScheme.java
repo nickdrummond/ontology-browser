@@ -44,7 +44,7 @@ public class PermalinkURLScheme implements URLScheme {
             else{
                 link += OWLHTMLConstants.PARAM_SEP;
             }
-            link += OWLHTMLParam.session + OWLHTMLConstants.EQUALS + getOWLHTMLKit().getCurrentLabel();
+            link += OWLHTMLParam.label + OWLHTMLConstants.EQUALS + getOWLHTMLKit().getCurrentLabel();
 
             try {
                 return new URL(link);

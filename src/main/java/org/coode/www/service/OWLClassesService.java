@@ -4,7 +4,9 @@ import org.coode.html.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.springframework.stereotype.Service;
 
+@Service
 public class OWLClassesService {
 
     // TODO need to index the entities by ID
