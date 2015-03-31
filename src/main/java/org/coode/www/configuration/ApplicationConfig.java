@@ -60,6 +60,11 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public OWLAnnotationPropertiesService owlAnnotationPropertiesService() {
+        return new OWLAnnotationPropertiesService();
+    }
+
+    @Bean
     public Bookmarks bookmarks(@Value("${bookmarks.source}") String bookmarksSource) {
         return new Bookmarks(new ClassPathResource(bookmarksSource));
     }

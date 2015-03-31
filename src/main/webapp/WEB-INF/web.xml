@@ -65,10 +65,6 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Summary</servlet-name>
-        <url-pattern>/annotationproperties/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
         <url-pattern>/datatypes/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

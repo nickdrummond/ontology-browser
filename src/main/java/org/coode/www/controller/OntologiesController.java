@@ -27,7 +27,7 @@ import java.util.Set;
 public class OntologiesController extends ApplicationController {
 
     @Autowired
-    private OntologiesService ontologiesService;
+    private OntologiesService service;
 
     @RequestMapping(method=RequestMethod.GET)
     public String getOntologies(@RequestParam(required=false) final String label,
@@ -63,7 +63,7 @@ public class OntologiesController extends ApplicationController {
                               Model model) throws OntServerException, NotFoundException {
         OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        OWLOntology ontology = ontologiesService.getOntologyFor(ontId, kit);
+        OWLOntology ontology = service.getOntologyFor(ontId, kit);
 
         // TODO yuck replace this adapter
         SummaryPageFactory summaryPageFactory = new SummaryPageFactory(kit);
@@ -94,7 +94,7 @@ public class OntologiesController extends ApplicationController {
 
         OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        String ontologyId = ontologiesService.load(loadOntology.getUri(), loadOntology.isClear(), kit);
+        String ontologyId = service.load(loadOntology.getUri(), loadOntology.isClear(), kit);
 
         model.addAttribute("kit", kit); // this will add it to the session
 

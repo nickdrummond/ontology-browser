@@ -25,7 +25,7 @@ import java.net.URL;
 public class OWLDataPropertiesController extends ApplicationController {
 
     @Autowired
-    private OWLDataPropertiesService owlDataPropertiesService;
+    private OWLDataPropertiesService service;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLDataProperties(@RequestParam(required=false) final String label,
@@ -37,7 +37,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         OWLDataProperty owlTopDataProperty = df.getOWLTopDataProperty();
 
-        String id = owlDataPropertiesService.getIdFor(owlTopDataProperty);
+        String id = service.getIdFor(owlTopDataProperty);
 
         return "redirect:/dataproperties/" + id;
     }
@@ -51,7 +51,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        OWLDataProperty owlDataProperty = owlDataPropertiesService.getOWLDataPropertyFor(propertyId, kit);
+        OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
 
         // TODO yuck replace this adapter
         SummaryPageFactory summaryPageFactory = new SummaryPageFactory(kit);
