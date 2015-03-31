@@ -3,14 +3,14 @@
 */
 package org.coode.www.servlet;
 
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.Doclet;
 import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.impl.OWLHTMLParam;
+import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.html.page.HTMLPage;
 import org.coode.owl.mngr.OWLClassExpressionParser;
 import org.coode.www.exception.OntServerException;
-import org.coode.www.page.DLQueryHTMLPage;
+import org.coode.html.page.DLQueryHTMLPage;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import java.net.URL;

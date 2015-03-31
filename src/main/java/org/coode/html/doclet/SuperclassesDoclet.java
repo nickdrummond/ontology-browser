@@ -3,7 +3,7 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;

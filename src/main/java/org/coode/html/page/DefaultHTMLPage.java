@@ -4,8 +4,8 @@
 package org.coode.html.page;
 
 import org.coode.html.doclet.AbstractHTMLDoclet;
-import org.coode.html.impl.OWLHTMLConstants;
-import org.coode.html.util.URLUtils;
+import org.coode.www.kit.impl.OWLHTMLConstants;
+import org.coode.www.util.URLUtils;
 
 import java.io.PrintWriter;
 import java.net.URL;

@@ -1,7 +1,7 @@
 package org.coode.html.doclet;
 
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.renderer.OWLHTMLRenderer;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.model.*;
 

@@ -1,31 +1,29 @@
 package org.coode.www.servlet;
 
 import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.Doclet;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.MessageBoxDoclet;
-import org.coode.html.impl.OWLHTMLConstants;
-import org.coode.html.impl.OWLHTMLParam;
+import org.coode.www.kit.impl.OWLHTMLConstants;
+import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.html.page.HTMLPage;
 import org.coode.html.page.OWLDocPage;
 import org.coode.html.url.PermalinkURLScheme;
-import org.coode.html.util.URLUtils;
+import org.coode.www.util.URLUtils;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.mngr.ServerConstants;
 import org.coode.www.CookieHelper;
 import org.coode.www.OntologyBrowserConstants;
 import org.coode.www.ParametersBuilder;
 import org.coode.www.ServletUtils;
-import org.coode.www.doclet.MenuBarDoclet;
-import org.coode.www.doclet.TitleDoclet;
+import org.coode.html.doclet.MenuBarDoclet;
+import org.coode.html.doclet.TitleDoclet;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.RedirectException;
 import org.coode.www.exception.SignOutException;
 import org.coode.www.mngr.Application;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

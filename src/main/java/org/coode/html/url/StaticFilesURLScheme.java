@@ -1,8 +1,8 @@
 package org.coode.html.url;
 
 import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.impl.OWLHTMLConstants;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;

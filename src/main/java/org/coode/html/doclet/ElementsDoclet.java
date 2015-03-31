@@ -3,7 +3,7 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.html.renderer.ElementRenderer;
+import org.coode.www.renderer.ElementRenderer;
 
 import java.io.PrintWriter;
 import java.net.URL;

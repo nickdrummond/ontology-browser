@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.SummaryPageFactory;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.html.page.SummaryPageFactory;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.www.ServletUtils;
 import org.coode.www.exception.NotFoundException;

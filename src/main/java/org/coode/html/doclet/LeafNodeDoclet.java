@@ -4,9 +4,9 @@
 package org.coode.html.doclet;
 
 import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.impl.OWLHTMLConstants;
-import org.coode.html.renderer.OWLHTMLRenderer;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLConstants;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.owl.mngr.HierarchyProvider;
 import org.semanticweb.owlapi.model.OWLObject;
 

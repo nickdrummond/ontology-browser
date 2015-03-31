@@ -1,6 +1,6 @@
 package org.coode.html.doclet;
 
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAnnotationPropertyRangeAxiom;

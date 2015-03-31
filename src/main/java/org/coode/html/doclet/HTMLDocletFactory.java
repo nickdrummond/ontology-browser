@@ -1,8 +1,7 @@
 package org.coode.html.doclet;
 
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

@@ -1,6 +1,6 @@
 package org.coode.www.controller;
 
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.model.OptionSet;
 import org.coode.www.service.OntologiesService;

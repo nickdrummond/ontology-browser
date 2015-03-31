@@ -3,9 +3,9 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.bookmarks.OntologyBookmarks;
-import org.coode.html.impl.OWLHTMLConstants;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.bookmarks.OntologyBookmarks;
+import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 

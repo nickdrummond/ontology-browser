@@ -1,10 +1,10 @@
 package org.coode.www.mngr;
 
 import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.impl.OWLHTMLConstants;
-import org.coode.html.impl.OWLHTMLKitImpl;
-import org.coode.html.impl.OWLHTMLProperty;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLConstants;
+import org.coode.www.kit.impl.OWLHTMLKitImpl;
+import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.html.url.RestURLScheme;
 import org.coode.owl.mngr.ServerConstants;
 import org.coode.owl.mngr.ServerOptionsAdapter;

@@ -3,10 +3,10 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.impl.OWLHTMLConstants;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.url.URLScheme;
-import org.coode.html.util.HTMLUtils;
+import org.coode.www.util.HTMLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.model.OWLEntity;

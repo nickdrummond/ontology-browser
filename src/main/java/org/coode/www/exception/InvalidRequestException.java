@@ -3,7 +3,7 @@
 */
 package org.coode.www.exception;
 
-import org.coode.html.impl.OWLHTMLParam;
+import org.coode.www.kit.impl.OWLHTMLParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;

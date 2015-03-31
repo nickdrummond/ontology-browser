@@ -2,7 +2,7 @@ package org.coode.html;
 
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
-import org.coode.html.util.URLUtils;
+import org.coode.www.util.URLUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;

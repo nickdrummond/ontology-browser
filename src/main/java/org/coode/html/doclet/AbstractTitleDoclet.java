@@ -3,12 +3,12 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.impl.OWLHTMLConstants;
-import org.coode.html.impl.OWLHTMLProperty;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLConstants;
+import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.html.url.PermalinkURLScheme;
-import org.coode.html.util.HTMLUtils;
-import org.coode.html.util.URLUtils;
+import org.coode.www.util.HTMLUtils;
+import org.coode.www.util.URLUtils;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import java.io.PrintWriter;

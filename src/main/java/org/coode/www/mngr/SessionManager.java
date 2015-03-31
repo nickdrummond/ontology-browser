@@ -1,7 +1,7 @@
 package org.coode.www.mngr;
 
 import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.OntServerException;
 
 import javax.servlet.http.HttpServletRequest;

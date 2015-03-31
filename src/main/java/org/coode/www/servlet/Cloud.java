@@ -1,16 +1,16 @@
 package org.coode.www.servlet;
 
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.cloud.*;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.cloud.*;
 import org.coode.html.doclet.AbstractTitleDoclet;
 import org.coode.html.doclet.CloudDoclet;
 import org.coode.html.doclet.Doclet;
 import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.impl.OWLHTMLConstants;
-import org.coode.html.impl.OWLHTMLParam;
+import org.coode.www.kit.impl.OWLHTMLConstants;
+import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.html.page.HTMLPage;
 import org.coode.html.page.OWLDocPage;
-import org.coode.www.doclet.CloudIndexDoclet;
+import org.coode.html.doclet.CloudIndexDoclet;
 import org.coode.www.exception.OntServerException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;

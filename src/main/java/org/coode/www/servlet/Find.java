@@ -1,17 +1,17 @@
 package org.coode.www.servlet;
 
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.Doclet;
 import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.impl.OWLHTMLParam;
-import org.coode.html.index.OWLObjectIndexDoclet;
+import org.coode.www.kit.impl.OWLHTMLParam;
+import org.coode.html.doclet.OWLObjectIndexDoclet;
 import org.coode.html.page.HTMLPage;
 import org.coode.html.page.OWLDocPage;
-import org.coode.html.util.URLUtils;
+import org.coode.www.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.www.doclet.XMLResultsDoclet;
+import org.coode.html.doclet.XMLResultsDoclet;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.RedirectException;
 import org.semanticweb.owlapi.model.IRI;

@@ -1,9 +1,8 @@
 package org.coode.www;
 
-import org.coode.html.impl.OWLHTMLParam;
+import org.coode.www.kit.impl.OWLHTMLParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 

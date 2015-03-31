@@ -1,10 +1,9 @@
 package org.coode.html.url;
 
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**

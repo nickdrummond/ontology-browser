@@ -1,24 +1,16 @@
 package org.coode.www.service;
 
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.util.URLUtils;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.util.OWLUtils;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
-import org.coode.www.exception.RedirectException;
 import org.coode.www.mngr.Application;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

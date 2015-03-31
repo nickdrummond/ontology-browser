@@ -1,7 +1,7 @@
 package org.coode.www.service;
 
-import org.coode.html.OWLHTMLKit;
-import org.coode.html.impl.OWLHTMLProperty;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.www.exception.OntServerException;

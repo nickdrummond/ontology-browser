@@ -1,10 +1,10 @@
 package org.coode.html.page;
 
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.MessageBoxDoclet;
 import org.coode.html.doclet.TabsDoclet;
-import org.coode.html.impl.OWLHTMLConstants;
-import org.coode.html.impl.OWLHTMLProperty;
+import org.coode.www.kit.impl.OWLHTMLConstants;
+import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import java.io.PrintWriter;

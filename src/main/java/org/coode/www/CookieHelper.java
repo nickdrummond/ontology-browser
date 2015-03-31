@@ -1,7 +1,7 @@
 package org.coode.www;
 
 import org.apache.log4j.Logger;
-import org.coode.html.OWLHTMLKit;
+import org.coode.www.kit.OWLHTMLKit;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

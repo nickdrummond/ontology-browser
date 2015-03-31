@@ -3,7 +3,7 @@
 */
 package org.coode.www;
 
-import org.coode.html.impl.OWLHTMLConstants;
+import org.coode.www.kit.impl.OWLHTMLConstants;
 
 import java.net.MalformedURLException;
 import java.net.URL;
