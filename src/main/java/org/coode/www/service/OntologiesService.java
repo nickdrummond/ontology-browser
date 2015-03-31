@@ -12,6 +12,7 @@ import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;

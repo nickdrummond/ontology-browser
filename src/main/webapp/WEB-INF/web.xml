@@ -64,10 +64,6 @@
         <url-pattern>/dlquery/</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/datatypes/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>ParseMOS</servlet-name>
         <url-pattern>/parse/</url-pattern>
     </servlet-mapping>

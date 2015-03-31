@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@ComponentScan("org.coode.www.controller")
+@ComponentScan({"org.coode.www.controller", "org.coode.www.services"})
 @EnableWebMvc
 public class ApplicationConfig {
 
@@ -62,6 +62,11 @@ public class ApplicationConfig {
     @Bean
     public OWLAnnotationPropertiesService owlAnnotationPropertiesService() {
         return new OWLAnnotationPropertiesService();
+    }
+
+    @Bean
+    public OWLDatatypesService owlDatatypesService() {
+        return new OWLDatatypesService();
     }
 
     @Bean
