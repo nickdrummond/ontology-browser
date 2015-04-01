@@ -139,10 +139,14 @@ h2, .owlselector h4 {
 
 #options{clear: right; float: right;}
 
+#options .optionLink {
+    border-right: solid 2px #c7cfd5;
+    padding-right: 5px;
+}
+
 #activeOnt {
     display: inline;
-    position: relative;
-    top: -3px;
+    height: 24px;
 }
 
 #tabs {
@@ -179,7 +183,7 @@ div.cloud{
     margin-bottom: 12px;    
 }
 
-.owlselector .codebox {
+div.owlselector .codebox {
     height: 500px;
     overflow: auto;
 }
@@ -207,7 +211,9 @@ a.subsexpand {
     line-height: 180%;
 }
 
-a.help {float: right;}
+a.help {
+  float: right;
+}
 
 a.permalink {font-size: smaller;}
 
@@ -230,7 +236,6 @@ ul.minihierarchy li.expandable {}
 
 p.footer {
     font-size: 7pt;
-    text-align: right;
     margin-top: 30px;
     margin-right: 30px;
     clear: both;
@@ -324,4 +329,46 @@ div.googlemaps{
 img.thumb{
     vertical-align: top;
     margin-left: 6px;
+}
+
+
+@media screen
+  and (max-width: 450px) {
+
+    body {
+        font-size: 14pt;
+    }
+
+    h2, div.owlselector h4 {
+        font-size: 20pt;
+    }
+
+    h4 {
+        font-size: 18pt;
+    }
+
+    #tabs {
+        background-color: #ffffff;
+        border: solid 1px #c7cfd5;
+        border-top: none;
+        position: relative;
+        top: -1px;
+    }
+
+    #tabs a, #tabs span.currentpage {
+        background-color: none;
+        border: none;
+        border-right: solid 2px #c7cfd5;
+        margin: 5px;
+        padding: 0;
+        padding-right: 6px;
+    }
+
+    #activeOnt, #findForm, #options,
+    div.owlselector, div.summary, #resultsForm {
+        float: none;
+        clear: both;
+        width: 100%;
+        margin-top: 10px;
+    }
 }

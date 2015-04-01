@@ -59,8 +59,8 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         URL pageUrl = ServletUtils.getPageURL(request);
-        hierarchyDoclet.renderAll(pageUrl, writer);
         summaryDoclet.renderAll(pageUrl, writer);
+        hierarchyDoclet.renderAll(pageUrl, writer);
         String content = stringWriter.toString();
 
         model.addAttribute("application", applicationInfo);
