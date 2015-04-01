@@ -271,13 +271,9 @@ form.autocomplete {
     margin-bottom: 10px;
 }
 
-#load_ontologies div.codebox{
-    height: 90px; /*easy way to force floating contents to fit */
-}
-
 form#load {
     float: left;
-    margin-left: 5%;
+    margin-bottom: 50px;
     width: 45%;
 }
 
@@ -364,6 +360,7 @@ img.thumb{
         padding-right: 6px;
     }
 
+    form#bookmarks, form#load,
     #activeOnt, #findForm, #options,
     div.owlselector, div.summary, #resultsForm {
         float: none;
