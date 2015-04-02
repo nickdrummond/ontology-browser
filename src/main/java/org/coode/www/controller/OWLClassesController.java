@@ -11,8 +11,10 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.www.service.OWLClassesService;
 
+import org.coode.www.service.OWLIndividualsService;
 import org.semanticweb.owlapi.model.OWLClass;
 
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +34,9 @@ public class OWLClassesController extends ApplicationController {
 
     @Autowired
     private OWLClassesService service;
+
+    @Autowired
+    private OWLIndividualsService individualsService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLClasses(@RequestParam(required=false) final String label,
@@ -83,6 +88,23 @@ public class OWLClassesController extends ApplicationController {
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
         HierarchyProvider<OWLClass> hp = service.getHierarchyProvider(kit);
         NodeDoclet<OWLClass> nodeDoclet = new NodeDoclet<OWLClass>(kit, owlClass, hp);
+        nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
+
+        return renderDoclets(referer, nodeDoclet);
+    }
+
+    @RequestMapping(value="/{classId}/instances", method=RequestMethod.GET)
+    @ResponseBody
+    public String getInstances(@PathVariable final String classId,
+                               @RequestParam(required=false) final String label,
+                               @RequestHeader final URL referer,
+                               final HttpServletRequest request) throws OntServerException, NotFoundException {
+
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+
+        OWLClass owlClass = service.getOWLClassFor(classId, kit);
+        HierarchyProvider<OWLNamedIndividual> hp = individualsService.getHierarchyProvider(kit);
+        NodeDoclet nodeDoclet = new NodeDoclet(kit, owlClass, hp);
         nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
 
         return renderDoclets(referer, nodeDoclet);

@@ -1,8 +1,11 @@
 package org.coode.www.service;
 
+import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
 import org.semanticweb.owlapi.model.OWLIndividual;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
@@ -39,5 +42,9 @@ public class OWLIndividualsService {
             individuals.addAll(ont.getIndividualsInSignature());
         }
         return individuals;
+    }
+
+    public HierarchyProvider<OWLNamedIndividual> getHierarchyProvider(OWLHTMLKit kit) {
+        return kit.getOWLServer().getHierarchyProvider(OWLNamedIndividual.class);
     }
 }

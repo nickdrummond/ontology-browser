@@ -397,6 +397,7 @@ public class OWLServerImpl implements OWLServer {
                 hp = (HierarchyProvider<N>)new OWLAnnotationPropertyHierarchyProvider(this);
             }
             else if (OWLNamedIndividual.class.isAssignableFrom(cls)){
+                // TODO the corresponding type is wrong - getParents produces OWLClass, not OWLNamedIndividual
                 hp = (HierarchyProvider<N>)new OWLIndividualByClassHierarchyProvider(this);
             }
             else if (OWLDatatype.class.isAssignableFrom(cls)){
