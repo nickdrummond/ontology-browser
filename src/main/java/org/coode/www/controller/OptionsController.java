@@ -46,8 +46,7 @@ public class OptionsController extends ApplicationController {
     @RequestMapping(method = RequestMethod.POST)
     public String setOption(
             final HttpServletRequest request,
-            @ModelAttribute final OptionSet optionSet
-    ) throws OntServerException {
+            @ModelAttribute final OptionSet optionSet) throws OntServerException {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
@@ -59,12 +58,10 @@ public class OptionsController extends ApplicationController {
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody OptionSet setOptionJson(
             final HttpServletRequest request,
-            @ModelAttribute() final OptionSet optionSet
-    ) throws OntServerException {
+            @ModelAttribute() final OptionSet optionSet) throws OntServerException {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
         return optionsService.getOption(optionSet.getProperty(), kit);
     }
-
 }

@@ -7,10 +7,6 @@
         version="2.5">
 
     <servlet>
-        <servlet-name>Find</servlet-name>
-        <servlet-class>org.coode.www.servlet.Find</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>QueryReasoner</servlet-name>
         <servlet-class>org.coode.www.servlet.QueryReasoner</servlet-class>
     </servlet>
@@ -31,10 +27,6 @@
         <servlet-class>org.coode.www.servlet.AutocompleteMOS</servlet-class>
     </servlet>
 
-    <servlet-mapping>
-        <servlet-name>Find</servlet-name>
-        <url-pattern>/find/*</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>QueryReasoner</servlet-name>
         <url-pattern>/query/</url-pattern>

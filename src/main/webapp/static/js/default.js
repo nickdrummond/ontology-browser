@@ -161,7 +161,6 @@ function handleExpand(li){
 function getChildren(li){
     var childList = $("<ul><li><img src=\"" + baseURL + "static/images/small_busy.gif\" width=\"10\" height=\"10\"/></li></ul>");
 
-    // TODO individuals
     var query = 'children';
     if (li.parent().hasClass('OWLNamedIndividual')) {
         query = 'instances';

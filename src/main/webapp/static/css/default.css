@@ -134,7 +134,9 @@ h2, .owlselector h4 {
 #menu a{font-weight: bolder;}
 #menu a:hover img{text-decoration: none;}
 
-#signout img{
+#signout {
+  float: right;
+  margin-top: 12px;
 }
 
 #options{clear: right; float: right;}
@@ -146,8 +148,13 @@ h2, .owlselector h4 {
 
 #activeOnt {
     display: inline;
-    height: 24px;
 }
+
+#activeOnt select {
+    height: 24px;
+    width: 376px;
+}
+
 
 #tabs {
     color: #aaaacc;
@@ -268,7 +275,6 @@ form.autocomplete {
 
 #findForm{
     float: right;
-    margin-bottom: 10px;
 }
 
 form#load {
@@ -288,6 +294,8 @@ pre {
 
 #find {
     width: 200px;
+    height: 18px;
+    margin-bottom: 10px;
 }
 
 #dlQuery{
@@ -331,8 +339,8 @@ img.thumb{
 @media screen
   and (max-width: 450px) {
 
-    body {
-        font-size: 14pt;
+    body, input, select {
+        font-size: 12pt;
     }
 
     h2, div.owlselector h4 {
@@ -360,12 +368,20 @@ img.thumb{
         padding-right: 6px;
     }
 
+    #find {
+        width: 98.3%;
+    }
+
+    #findForm {
+        float: none;
+    }
+
     form#bookmarks, form#load,
-    #activeOnt, #findForm, #options,
+    #activeOnt select, #options,
     div.owlselector, div.summary, #resultsForm {
         float: none;
         clear: both;
         width: 100%;
-        margin-top: 10px;
+        margin-bottom: 10px;
     }
 }

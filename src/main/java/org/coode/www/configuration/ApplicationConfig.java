@@ -40,6 +40,16 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public NameService nameService() {
+        return new NameService();
+    }
+
+    @Bean
+    public SearchService searchService() {
+        return new SearchService();
+    }
+
+    @Bean
     public OntologiesService ontologiesService() {
         return new OntologiesService();
     }
