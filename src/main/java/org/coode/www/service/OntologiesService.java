@@ -1,5 +1,6 @@
 package org.coode.www.service;
 
+import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
@@ -82,5 +83,9 @@ public class OntologiesService {
 
     public Set<OWLOntology> getOntologies(final OWLHTMLKit kit) {
         return kit.getOWLServer().getOntologies();
+    }
+
+    public HierarchyProvider<OWLOntology> getHierarchyProvider(final OWLHTMLKit kit) {
+        return kit.getOWLServer().getHierarchyProvider(OWLOntology.class);
     }
 }

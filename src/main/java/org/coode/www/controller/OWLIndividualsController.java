@@ -1,5 +1,7 @@
 package org.coode.www.controller;
 
+import org.coode.html.doclet.NodeDoclet;
+import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.page.SummaryPageFactory;
 import org.coode.html.doclet.HTMLDoclet;
@@ -8,6 +10,7 @@ import org.coode.www.ServletUtils;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.service.OWLIndividualsService;
+import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,17 +76,10 @@ public class OWLIndividualsController extends ApplicationController {
         hierarchyDoclet.setUserObject(owlIndividual);
         HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(owlIndividual);
 
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        URL pageUrl = ServletUtils.getPageURL(request);
-        summaryDoclet.renderAll(pageUrl, writer);
-        hierarchyDoclet.renderAll(pageUrl, writer);
-        String content = stringWriter.toString();
-
         model.addAttribute("application", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", content);
+        model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
 
         return "doclet";
     }

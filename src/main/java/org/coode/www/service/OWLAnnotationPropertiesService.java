@@ -41,4 +41,8 @@ public class OWLAnnotationPropertiesService {
         }
         throw new NotFoundException("OWLAnnotationProperty", "any");
     }
+
+    public HierarchyProvider<OWLAnnotationProperty> getHierarchyProvider(OWLHTMLKit kit) {
+        return kit.getOWLServer().getHierarchyProvider(OWLAnnotationProperty.class);
+    }
 }

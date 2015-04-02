@@ -1,8 +1,10 @@
 package org.coode.www.service;
 
+import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +34,9 @@ public class OWLClassesService {
 
     public String getIdFor(final OWLClass owlClass) {
         return String.valueOf(owlClass.getIRI().hashCode());
+    }
+
+    public HierarchyProvider<OWLClass> getHierarchyProvider(final OWLHTMLKit kit) {
+        return kit.getOWLServer().getHierarchyProvider(OWLClass.class);
     }
 }

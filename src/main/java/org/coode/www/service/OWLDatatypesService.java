@@ -1,5 +1,6 @@
 package org.coode.www.service;
 
+import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -31,5 +32,9 @@ public class OWLDatatypesService {
 
     public String getIdFor(final OWLDatatype owlDatatype) {
         return String.valueOf(owlDatatype.getIRI().hashCode());
+    }
+
+    public HierarchyProvider<OWLDatatype> getHierarchyProvider(final OWLHTMLKit kit) {
+        return kit.getOWLServer().getHierarchyProvider(OWLDatatype.class);
     }
 }

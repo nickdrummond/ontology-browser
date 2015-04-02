@@ -1,5 +1,7 @@
 package org.coode.www.controller;
 
+import org.coode.html.doclet.NodeDoclet;
+import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.page.SummaryPageFactory;
 import org.coode.html.doclet.HTMLDoclet;
@@ -9,6 +11,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.service.OntologiesService;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.model.LoadOntology;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,17 +74,10 @@ public class OntologiesController extends ApplicationController {
         hierarchyDoclet.setUserObject(ontology);
         HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(ontology);
 
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        URL pageUrl = ServletUtils.getPageURL(request);
-        summaryDoclet.renderAll(pageUrl, writer);
-        hierarchyDoclet.renderAll(pageUrl, writer);
-        String content = stringWriter.toString();
-
         model.addAttribute("application", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", content);
+        model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
 
         return "doclet";
     }
@@ -106,5 +102,22 @@ public class OntologiesController extends ApplicationController {
         else {
             return "redirect:/ontologies/" + ontologyId;
         }
+    }
+
+    @RequestMapping(value="/{ontologyId}/children", method=RequestMethod.GET)
+    @ResponseBody
+    public String getChildren(@PathVariable final String ontologyId,
+                              @RequestParam(required=false) final String label,
+                              @RequestHeader final URL referer,
+                              final HttpServletRequest request) throws OntServerException, NotFoundException {
+
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+
+        OWLOntology ontology = service.getOntologyFor(ontologyId, kit);
+        HierarchyProvider<OWLOntology> hp = service.getHierarchyProvider(kit);
+        NodeDoclet<OWLOntology> nodeDoclet = new NodeDoclet<OWLOntology>(kit, ontology, hp);
+        nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
+
+        return renderDoclets(referer, nodeDoclet);
     }
 }

@@ -1,11 +1,12 @@
 package org.coode.www.service;
 
+import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class OWLDataPropertiesService {
@@ -36,5 +37,9 @@ public class OWLDataPropertiesService {
 
     public String getIdFor(final OWLDataProperty owlDataProperty) {
         return String.valueOf(owlDataProperty.getIRI().hashCode());
+    }
+
+    public HierarchyProvider<OWLDataProperty> getHierarchyProvider(final OWLHTMLKit kit) {
+        return kit.getOWLServer().getHierarchyProvider(OWLDataProperty.class);
     }
 }

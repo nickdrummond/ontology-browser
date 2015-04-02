@@ -30,10 +30,6 @@
         <servlet-name>AutocompleteMOS</servlet-name>
         <servlet-class>org.coode.www.servlet.AutocompleteMOS</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>Hierarchy</servlet-name>
-        <servlet-class>org.coode.www.servlet.Hierarchy</servlet-class>
-    </servlet>
 
     <servlet-mapping>
         <servlet-name>Find</servlet-name>
@@ -58,10 +54,6 @@
     <servlet-mapping>
         <servlet-name>AutocompleteMOS</servlet-name>
         <url-pattern>/autocomplete/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Hierarchy</servlet-name>
-        <url-pattern>/hierarchy/</url-pattern>
     </servlet-mapping>
 
 

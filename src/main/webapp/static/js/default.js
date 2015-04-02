@@ -161,14 +161,11 @@ function handleExpand(li){
 function getChildren(li){
     var childList = $("<ul><li><img src=\"" + baseURL + "static/images/small_busy.gif\" width=\"10\" height=\"10\"/></li></ul>");
 
-    var data = {
-        format: "html-frag",
-        parent: $("a", li).attr("title"),
-        cls: $(".minihierarchy").attr("class") // will leave the service to split
-    };
+    // TODO individuals
+    var url = $('a', li).first().attr('href') + 'children';
+
     $.ajax({
-        url: baseURL + hierarchyURL,
-        data: data,
+        url: url,
         context: li,
         success: function(data, textStatus, request){
             this.html(data); // replace the li with an expanded version
