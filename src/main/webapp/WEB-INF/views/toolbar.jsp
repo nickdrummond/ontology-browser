@@ -41,11 +41,13 @@
 
     <div id='options'>
         <a class='optionLink' href='<spring:url value="/options/"/>' >Options</a>
-        <form id='rendererForm' style='display: inline;'>
-            <label for='renderLabels'>Render labels</label>
+        <form id='rendererForm'>
+            <label for='renderLabels'>Labels</label>
             <input type='checkbox' name='renderLabels' id="renderLabels" checked='checked' />
         </form>
     </div> <!-- options -->
+
+    <div class='clearfix'></div>
 
 </div> <!-- menu -->
 
@@ -54,8 +56,8 @@
     <a href='<spring:url value="/ontologies/"/>'>Ontologies</a>
     <a href='<spring:url value="/classes/"/>'>Classes</a>
     <a href='<spring:url value="/individuals/"/>'>Individuals</a>
-    <a href='<spring:url value="/objectproperties/"/>'>Object Properties</a>
-    <a href='<spring:url value="/dataproperties/"/>'>Data Properties</a>
-    <a href='<spring:url value="/annotationproperties/"/>'>Annotation Properties</a>
+    <a href='<spring:url value="/objectproperties/"/>'>Object&nbsp;Properties</a>
+    <a href='<spring:url value="/dataproperties/"/>'>Data&nbsp;Properties</a>
+    <a href='<spring:url value="/annotationproperties/"/>'>Annotation&nbsp;Properties</a>
     <a href='<spring:url value="/datatypes/"/>'>Datatypes</a>
 </div> <!-- tabs -->
