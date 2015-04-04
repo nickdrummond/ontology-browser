@@ -7,6 +7,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,10 +28,6 @@ public class DifferentFromDoclet extends AbstractOWLElementsDoclet<OWLNamedIndiv
     }
 
     protected Collection<OWLIndividual> getAssertedElements(Set<OWLOntology> onts) {
-        Set<OWLIndividual> sameAs = new HashSet<OWLIndividual>();
-        for (OWLOntology ont : onts){
-            sameAs.addAll(getUserObject().getDifferentIndividuals(ont));
-        }
-        return sameAs;
+        return EntitySearcher.getDifferentIndividuals(getUserObject(), onts);
     }
 }

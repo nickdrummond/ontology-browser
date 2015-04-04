@@ -7,6 +7,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,9 +28,10 @@ public class AnnotationsDoclet<O extends OWLEntity> extends AbstractOWLElementsD
     }
 
     protected Collection<OWLAnnotation> getAssertedElements(Set<OWLOntology> onts) {
+        // EntitySearcher.getAnnotations missing (IRI, onts) method
         Set<OWLAnnotation> annots = new HashSet<OWLAnnotation>();
         for (OWLOntology ont : onts){
-            annots.addAll(getUserObject().getAnnotations(ont));
+            annots.addAll(EntitySearcher.getAnnotations(getUserObject().getIRI(), ont));
         }
         return annots;
     }

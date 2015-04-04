@@ -40,6 +40,13 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public GeoService geoService(@Value("${geo.latitude}") String lat,
+                                 @Value("${geo.longitude}") String longitude,
+                                 @Value("${geo.point}") String point) {
+        return new GeoService(lat, longitude, point);
+    }
+
+    @Bean
     public NameService nameService() {
         return new NameService();
     }

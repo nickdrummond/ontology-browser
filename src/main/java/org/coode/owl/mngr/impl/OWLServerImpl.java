@@ -1,5 +1,7 @@
 package org.coode.owl.mngr.impl;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.owl.mngr.*;
 import org.coode.owl.util.MySimpleShortFormProvider;
@@ -12,6 +14,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
@@ -72,7 +75,7 @@ public class OWLServerImpl implements OWLServer {
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
             try{
                 handlePropertyChange(ServerProperty.valueOf(propertyChangeEvent.getPropertyName()),
-                                     propertyChangeEvent.getNewValue());
+                        propertyChangeEvent.getNewValue());
             }
             catch(IllegalArgumentException e){
                 // do nothing - a user property
@@ -254,14 +257,14 @@ public class OWLServerImpl implements OWLServer {
 
             properties.setBoolean(ServerProperty.optionReasonerEnabled, false);
             properties.setAllowedValues(ServerProperty.optionReasonerEnabled, Arrays.asList(Boolean.TRUE.toString(),
-                                                                                            Boolean.FALSE.toString()));
+                    Boolean.FALSE.toString()));
 
             // make sure the deprecated names are updated on a load
             properties.addDeprecatedNames(ServerProperty.generateDeprecatedNamesMap());
 
             properties.set(ServerProperty.optionRenderer, ServerConstants.RENDERER_LABEL);
             properties.setAllowedValues(ServerProperty.optionRenderer, Arrays.asList(ServerConstants.RENDERER_FRAG,
-                                                                                     ServerConstants.RENDERER_LABEL));
+                    ServerConstants.RENDERER_LABEL));
 
             properties.set(ServerProperty.optionLabelUri, OWLRDFVocabulary.RDFS_LABEL.getIRI().toString());
             properties.set(ServerProperty.optionLabelLang, "");
@@ -582,24 +585,30 @@ public class OWLServerImpl implements OWLServer {
 
         final OWLDataFactory df = mngr.getOWLDataFactory();
 
-        List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
+        final List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
 
         for (OWLOntology root : newRoots){
-            changes.add(new AddImport(rootOntology, df.getOWLImportsDeclaration(getImportIRIForOntology(root))));
+            Optional<IRI> maybeIRI = getImportIRIForOntology(root);
+            if (maybeIRI.isPresent()) {
+                changes.add(new AddImport(rootOntology, df.getOWLImportsDeclaration(maybeIRI.get())));
+            }
         }
 
         for (OWLOntology root : oldRoots){
-            changes.add(new RemoveImport(rootOntology, df.getOWLImportsDeclaration(getImportIRIForOntology(root))));
+            Optional<IRI> maybeIRI = getImportIRIForOntology(root);
+            if (maybeIRI.isPresent()) {
+                changes.add(new RemoveImport(rootOntology, df.getOWLImportsDeclaration(maybeIRI.get())));
+            }
         }
 
         mngr.applyChanges(changes);
     }
 
-    private IRI getImportIRIForOntology(OWLOntology root) {
+    private Optional<IRI> getImportIRIForOntology(OWLOntology root) {
         if (root.isAnonymous()){
             // TODO need a workaround as this will not work
             // see OWL API bug - https://sourceforge.net/tracker/?func=detail&aid=3110834&group_id=90989&atid=595534
-            return mngr.getOntologyDocumentIRI(root);
+            return Optional.fromNullable(mngr.getOntologyDocumentIRI(root));
         }
         return root.getOntologyID().getDefaultDocumentIRI();
     }
@@ -635,17 +644,8 @@ public class OWLServerImpl implements OWLServer {
             throw new RuntimeException("Cannot getNameCache - server is dead");
         }
         if (nameCache == null){
-            nameCache = new CachingBidirectionalShortFormProvider(){
-                protected String generateShortForm(OWLEntity owlEntity) {
-                    String shortform = getShortFormProvider().getShortForm(owlEntity);
-                    if (shortform.indexOf(" ") > -1){ // if this is a multiword name
-                        shortform = "\"" + shortform + "\"";
-                    }
-                    return shortform;
-                }
-            };
-            // TODO: should names also include all standard xsd datatypes - not just the ones referenced?
-            nameCache.rebuild(new ReferencedEntitySetProvider(getActiveOntologies()));
+            // TODO throw away if the onts or the provider change
+            nameCache = new QuotingBiDirectionalShortFormProvider(getShortFormProvider(), getActiveOntologies());
         }
         return nameCache;
     }

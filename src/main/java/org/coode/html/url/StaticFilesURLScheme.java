@@ -1,5 +1,6 @@
 package org.coode.html.url;
 
+import com.google.common.base.Optional;
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
@@ -11,6 +12,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.util.SimpleShortFormProvider;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -72,11 +74,17 @@ public class StaticFilesURLScheme extends AbstractURLScheme {
                     url = new URL(getBaseURL(), NamedObjectType.getType(owlEntity) + OWLHTMLConstants.SLASH + name + OWLHTMLConstants.DEFAULT_EXTENSION);
 
                 }
-                else if (owlObject instanceof OWLOntology){
-                    IRI iri = ((OWLOntology)owlObject).getOntologyID().getOntologyIRI();
-                    String name = ontologyShortFormProvider.getShortForm(iri) + ID_SPLITTER + iri.hashCode();
-                    name = URLEncoder.encode(name, OWLHTMLConstants.DEFAULT_ENCODING);
-                    url = new URL(getBaseURL(), NamedObjectType.ontologies + OWLHTMLConstants.SLASH + name + OWLHTMLConstants.DEFAULT_EXTENSION);
+                else if (owlObject instanceof OWLOntology) {
+                    Optional<IRI> maybeIri = ((OWLOntology) owlObject).getOntologyID().getOntologyIRI();
+                    if (maybeIri.isPresent()) {
+                        IRI iri = maybeIri.get();
+                        String name = ontologyShortFormProvider.getShortForm(iri) + ID_SPLITTER + iri.hashCode();
+                        name = URLEncoder.encode(name, OWLHTMLConstants.DEFAULT_ENCODING);
+                        url = new URL(getBaseURL(), NamedObjectType.ontologies + OWLHTMLConstants.SLASH + name + OWLHTMLConstants.DEFAULT_EXTENSION);
+                    }
+                    else {
+                        throw new RuntimeException("Anonymous ontologies not supported");
+                    }
                 }
 
                 if (url != null){

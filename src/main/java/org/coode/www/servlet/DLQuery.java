@@ -11,6 +11,7 @@ import org.coode.html.page.HTMLPage;
 import org.coode.owl.mngr.OWLClassExpressionParser;
 import org.coode.www.exception.OntServerException;
 import org.coode.html.page.DLQueryHTMLPage;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 
 import java.net.URL;
@@ -44,7 +45,7 @@ public class DLQuery extends AbstractOntologyServerServlet {
             try {
                 OWLClassExpression descr = parser.parse(q);
             }
-            catch (ParseException e) {
+            catch (ParserException e) {
                 kit.addUserError("Parse error.", e);
             }
         }

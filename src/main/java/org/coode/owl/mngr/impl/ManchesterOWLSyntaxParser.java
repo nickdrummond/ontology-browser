@@ -5,59 +5,40 @@ package org.coode.owl.mngr.impl;
 
 import org.coode.owl.mngr.OWLClassExpressionParser;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.expression.ParserException;
+import org.semanticweb.owlapi.expression.OWLExpressionParser;
+import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.util.NamespaceUtil;
 
 import java.text.ParseException;
 
 /**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jan 11, 2008<br><br>
+ * This implementation instantiates a Man Syntax Class Expression parser
+ * on creation.
+ * We do not manage changes to the ontology. It is assumed that the
+ * DataFactory and EntityChecker updating is sufficient.
  */
 public class ManchesterOWLSyntaxParser implements OWLClassExpressionParser {
 
-    private OWLServer server;
+    private final OWLExpressionParser<OWLClassExpression> parser;
 
-    // @@TODO this should probably be shared (ie the server should have it) so that renderers can use it too
-    private NamespaceUtil nsUtil;
-
-    
     public ManchesterOWLSyntaxParser(OWLServer server) {
-        this.server = server;
-        nsUtil = new NamespaceUtil();
+        this.parser = getParser(server);
     }
 
-
-    public OWLClassExpression parse(String str) throws ParseException {
-        try {
-            return getParser(str).parseClassExpression();
-        }
-        catch (ParserException e) {
-            throw new ParseException(e.getMessage(), e.getStartPos());
-        }
+    public OWLClassExpression parse(String str) {
+        return parser.parse(str);
     }
 
-
-    private ManchesterOWLSyntaxEditorParser getParser(String expression){
+    private OWLExpressionParser<OWLClassExpression> getParser(OWLServer server){
         final OWLOntologyManager ontMngr = server.getOWLOntologyManager();
-
-        OWLEntityChecker checker = server.getOWLEntityChecker();
-
         final OWLDataFactory df = ontMngr.getOWLDataFactory();
 
-        ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(df, expression);
-        parser.setDefaultOntology(server.getActiveOntology());
-        parser.setOWLEntityChecker(checker);
+        final OWLEntityChecker checker = server.getOWLEntityChecker();
 
-        return parser;
+        return new ManchesterOWLSyntaxClassExpressionParser(df, checker);
     }
 }

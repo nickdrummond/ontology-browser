@@ -43,7 +43,7 @@ public class LabelShortFormProvider implements ShortFormProvider {
         
         // the property assertion sfp
         OWLDataProperty dataProp = df.getOWLDataProperty(IRI.create(properties.get(ServerProperty.optionLabelPropertyUri)));
-        ShortFormProvider pValueProvider = new PropertyAssertionValueShortFormProvider(Collections.<OWLPropertyExpression<?,?>>singletonList(dataProp),
+        ShortFormProvider pValueProvider = new PropertyAssertionValueShortFormProvider(Collections.<OWLPropertyExpression>singletonList(dataProp),
                                                                                        createLangMap((OWLDataPropertyExpression)dataProp, lang),
                                                                                        activeOntologiesSetProvider,
                                                                                        defaultSFP);

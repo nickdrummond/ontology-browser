@@ -22,12 +22,12 @@ public class OWLObjectPropertySummaryDoclet extends AbstractOWLDocDoclet<OWLObje
         addDoclet(new OWLEntityTitleDoclet<OWLObjectProperty>(kit));
         addDoclet(new AnnotationsDoclet<OWLObjectProperty>(kit));
         addDoclet(new PropertyCharacteristicsDoclet<OWLObjectProperty>(kit));
-        addDoclet(new DomainsDoclet<OWLObjectProperty>(kit));
-        addDoclet(new RangesDoclet<OWLObjectProperty>(kit));
+        addDoclet(new ObjectPropertyDomainsDoclet(kit));
+        addDoclet(new ObjectPropertyRangesDoclet(kit));
         addDoclet(new InversesDoclet(kit));
-        addDoclet(new AssertedSuperpropertiesDoclet<OWLObjectProperty>(kit));
-        addDoclet(new AssertedEquivpropertiesDoclet<OWLObjectProperty>(kit));
-        addDoclet(new DisjointPropertiesDoclet<OWLObjectProperty>(kit));
+        addDoclet(new AssertedSuperObjectPropertiesDoclet(kit));
+        addDoclet(new AssertedEquivObjectPropertiesDoclet(kit));
+        addDoclet(new DisjointObjectPropertiesDoclet(kit));
         addDoclet(new UsageDoclet<OWLObjectProperty>(kit));
     }
 

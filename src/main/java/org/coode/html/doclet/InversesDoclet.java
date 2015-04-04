@@ -7,6 +7,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.Collection;
 import java.util.Set;
@@ -26,6 +27,6 @@ public class InversesDoclet extends AbstractOWLElementsDoclet<OWLObjectProperty,
     }
 
     protected Collection<OWLObjectPropertyExpression> getAssertedElements(Set<OWLOntology> onts) {
-        return getUserObject().getInverses(onts);
+        return EntitySearcher.getInverses(getUserObject(), onts);
     }
 }

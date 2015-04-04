@@ -1,23 +1,23 @@
 package org.coode.www.servlet;
 
+import org.coode.owl.mngr.OWLClassExpressionParser;
+import org.coode.owl.mngr.ServerConstants;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.Doclet;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.html.page.HTMLPage;
 import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.owl.mngr.OWLServer;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxEditorParser;
 import org.coode.www.exception.OntServerException;
-import org.semanticweb.owlapi.expression.ParserException;
+import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import uk.co.nickdrummond.parsejs.AutocompleteResult;
-import uk.co.nickdrummond.parsejs.ParseException;
 
 import java.io.PrintWriter;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -34,15 +34,10 @@ public class AutocompleteMOS extends AbstractOntologyServerServlet {
 
     public AutocompleteResult parse(String expression, OWLHTMLKit kit) throws ParseException {
 
-        final OWLServer server = kit.getOWLServer();
-
-        ManchesterOWLSyntaxEditorParser parser = new ManchesterOWLSyntaxEditorParser(server.getOWLOntologyManager().getOWLDataFactory(),
-                                                                                     expression + ERROR_TOKEN); // force error
-        parser.setDefaultOntology(server.getActiveOntology());
-        parser.setOWLEntityChecker(server.getOWLEntityChecker());
+        OWLClassExpressionParser parser = kit.getOWLServer().getClassExpressionParser(ServerConstants.Syntax.man.toString());
 
         try {
-            parser.parseClassExpression();
+            parser.parse(expression);
             throw new RuntimeException("Cannot get here if we have correctly forced an error");
         }
         catch(ParserException e){

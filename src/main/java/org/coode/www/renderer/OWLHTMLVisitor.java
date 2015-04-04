@@ -3,6 +3,7 @@
 */
 package org.coode.www.renderer;
 
+import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
@@ -10,7 +11,6 @@ import org.coode.html.url.OWLObjectURLRenderer;
 import org.coode.www.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.util.OWLUtils;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -867,68 +867,68 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {
-        write("<span class=\"anon\">");
-        final Set<OWLClassExpression> types = individual.getTypes(ontologies);
-        if (!types.isEmpty()){
-            writeOpList(types, ", ", false);
-        }
-
-        // TODO tidy this up - we shouldn't really group by ontology
-        for (OWLOntology ont : ontologies){
-            Map<OWLDataPropertyExpression, Set<OWLLiteral>> dataValues = individual.getDataPropertyValues(ont);
-            if (!dataValues.isEmpty()){
-                write("<ul>");
-                for (OWLDataPropertyExpression p : dataValues.keySet()){
-                    write("<li>");
-                    p.accept(this);
-                    write("<ul><li>");
-                    writeOpList(dataValues.get(p), "</li><li>", false);
-                    write("</ul></li>");
-                }
-                write("</ul>");
-            }
-            Map<OWLDataPropertyExpression, Set<OWLLiteral>> negDataValues = individual.getNegativeDataPropertyValues(ont);
-            if (!negDataValues.isEmpty()){
-                write("<ul>");
-
-                for (OWLDataPropertyExpression p : negDataValues.keySet()){
-                    write("<li>not ");
-                    p.accept(this);
-                    write("<ul><li>");
-                    writeOpList(negDataValues.get(p), "</li><li>", false);
-                    write("</ul></li>");
-                }
-                write("</ul>");
-            }
-
-            Map<OWLObjectPropertyExpression, Set<OWLIndividual>> objValues = individual.getObjectPropertyValues(ont);
-            if (!objValues.isEmpty()){
-                write("<ul>");
-
-                for (OWLObjectPropertyExpression p : objValues.keySet()){
-                    write("<li>");
-                    p.accept(this);
-                    write("<ul><li>");
-                    writeOpList(objValues.get(p), "</li><li>", false);
-                    write("</ul></li>");
-                }
-                write("</ul>");
-
-            }
-            Map<OWLObjectPropertyExpression, Set<OWLIndividual>> negbjValues = individual.getNegativeObjectPropertyValues(ont);
-            if (!negbjValues.isEmpty()){
-                write("<ul>");
-
-                for (OWLObjectPropertyExpression p : negbjValues.keySet()){
-                    write("<li>not ");
-                    p.accept(this);
-                    write("<ul><li>");
-                    writeOpList(negbjValues.get(p), "</li><li>", false);
-                    write("</ul></li>");
-                }
-                write("</ul>");
-            }
-        }
+        write("<span class=\"anon\">Anonymous Individual");
+//        final Set<OWLClassExpression> types = individual.getTypes(ontologies);
+//        if (!types.isEmpty()){
+//            writeOpList(types, ", ", false);
+//        }
+//
+//        // TODO tidy this up - we shouldn't really group by ontology
+//        for (OWLOntology ont : ontologies){
+//            Map<OWLDataPropertyExpression, Set<OWLLiteral>> dataValues = individual.getDataPropertyValues(ont);
+//            if (!dataValues.isEmpty()){
+//                write("<ul>");
+//                for (OWLDataPropertyExpression p : dataValues.keySet()){
+//                    write("<li>");
+//                    p.accept(this);
+//                    write("<ul><li>");
+//                    writeOpList(dataValues.get(p), "</li><li>", false);
+//                    write("</ul></li>");
+//                }
+//                write("</ul>");
+//            }
+//            Map<OWLDataPropertyExpression, Set<OWLLiteral>> negDataValues = individual.getNegativeDataPropertyValues(ont);
+//            if (!negDataValues.isEmpty()){
+//                write("<ul>");
+//
+//                for (OWLDataPropertyExpression p : negDataValues.keySet()){
+//                    write("<li>not ");
+//                    p.accept(this);
+//                    write("<ul><li>");
+//                    writeOpList(negDataValues.get(p), "</li><li>", false);
+//                    write("</ul></li>");
+//                }
+//                write("</ul>");
+//            }
+//
+//            Map<OWLObjectPropertyExpression, Set<OWLIndividual>> objValues = individual.getObjectPropertyValues(ont);
+//            if (!objValues.isEmpty()){
+//                write("<ul>");
+//
+//                for (OWLObjectPropertyExpression p : objValues.keySet()){
+//                    write("<li>");
+//                    p.accept(this);
+//                    write("<ul><li>");
+//                    writeOpList(objValues.get(p), "</li><li>", false);
+//                    write("</ul></li>");
+//                }
+//                write("</ul>");
+//
+//            }
+//            Map<OWLObjectPropertyExpression, Set<OWLIndividual>> negbjValues = individual.getNegativeObjectPropertyValues(ont);
+//            if (!negbjValues.isEmpty()){
+//                write("<ul>");
+//
+//                for (OWLObjectPropertyExpression p : negbjValues.keySet()){
+//                    write("<li>not ");
+//                    p.accept(this);
+//                    write("<ul><li>");
+//                    writeOpList(negbjValues.get(p), "</li><li>", false);
+//                    write("</ul></li>");
+//                }
+//                write("</ul>");
+//            }
+//        }
         write("</span>");
     }
 

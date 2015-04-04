@@ -22,11 +22,11 @@ public class OWLDataPropertySummaryDoclet extends AbstractOWLDocDoclet<OWLDataPr
         addDoclet(new OWLEntityTitleDoclet<OWLDataProperty>(kit));
         addDoclet(new AnnotationsDoclet<OWLDataProperty>(kit));
         addDoclet(new PropertyCharacteristicsDoclet<OWLDataProperty>(kit));
-        addDoclet(new DomainsDoclet<OWLDataProperty>(kit));
-        addDoclet(new RangesDoclet<OWLDataProperty>(kit));
-        addDoclet(new AssertedSuperpropertiesDoclet<OWLDataProperty>(kit));
-        addDoclet(new AssertedEquivpropertiesDoclet<OWLDataProperty>(kit));
-        addDoclet(new DisjointPropertiesDoclet<OWLDataProperty>(kit));
+        addDoclet(new DataPropertyDomainsDoclet(kit));
+        addDoclet(new DataPropertyRangesDoclet(kit));
+        addDoclet(new AssertedSuperDataPropertiesDoclet(kit));
+        addDoclet(new AssertedEquivDataPropertiesDoclet(kit));
+        addDoclet(new DisjointDataPropertiesDoclet(kit));
         addDoclet(new UsageDoclet<OWLDataProperty>(kit));
     }
 

@@ -7,6 +7,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.Collection;
 import java.util.Set;
@@ -26,6 +27,6 @@ public class AssertedEquivalentsDoclet extends AbstractOWLElementsDoclet<OWLClas
     }
 
     protected Collection<OWLClassExpression> getAssertedElements(Set<OWLOntology> onts) {
-        return getUserObject().getEquivalentClasses(onts);
+        return EntitySearcher.getEquivalentClasses(getUserObject(), onts);
     }
 }

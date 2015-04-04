@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ public class SuperclassesDoclet extends AbstractOWLElementsDoclet<OWLClass, OWLC
     }
 
     protected Collection<OWLClassExpression> getAssertedElements(Set<OWLOntology> onts) {
-        return getUserObject().getSuperClasses(onts);
+        return EntitySearcher.getSuperClasses(getUserObject(), onts);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class SuperclassesDoclet extends AbstractOWLElementsDoclet<OWLClass, OWLC
         Set<OWLClassExpression> supers = new HashSet<OWLClassExpression>();
         supers.addAll(r.getSuperClasses(getUserObject(), true).getFlattened());
         for (OWLClass ancestor : r.getSuperClasses(getUserObject(), false).getFlattened()){
-            for (OWLClassExpression e : ancestor.getSuperClasses(onts)){
+            for (OWLClassExpression e : EntitySearcher.getSuperClasses(ancestor, onts)){
                 if (e.isAnonymous()){
                     supers.add(e);
                 }
@@ -53,7 +54,7 @@ public class SuperclassesDoclet extends AbstractOWLElementsDoclet<OWLClass, OWLC
 
         if (OWLUtils.isStructural(r)){
             for (OWLClass equiv : r.getEquivalentClasses(getUserObject())){
-                for (OWLClassExpression e : equiv.getSuperClasses(onts)){
+                for (OWLClassExpression e : EntitySearcher.getSuperClasses(equiv, onts)){
                     supers.add(e);
                 }
             }

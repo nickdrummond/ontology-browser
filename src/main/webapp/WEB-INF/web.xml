@@ -19,10 +19,6 @@
         <servlet-class>org.coode.www.servlet.DLQuery</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ParseMOS</servlet-name>
-        <servlet-class>org.coode.www.servlet.ParseMOS</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>AutocompleteMOS</servlet-name>
         <servlet-class>org.coode.www.servlet.AutocompleteMOS</servlet-class>
     </servlet>
@@ -38,10 +34,6 @@
     <servlet-mapping>
         <servlet-name>DLQuery</servlet-name>
         <url-pattern>/dlquery/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParseMOS</servlet-name>
-        <url-pattern>/parse/</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AutocompleteMOS</servlet-name>

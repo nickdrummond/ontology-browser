@@ -235,46 +235,4 @@ public class URLUtils {
             out.print(altText);
             out.print("\" /></a>");
     }
-
-    public static Loc getLocation(OWLEntity owlEntity, Set<OWLOntology> onts) {
-        if (onts == null || onts.isEmpty()){
-            throw new IllegalArgumentException("Ontologies cannot be empty");
-        }
-
-        if (owlEntity.isOWLNamedIndividual()){
-            OWLDataFactory df = onts.iterator().next().getOWLOntologyManager().getOWLDataFactory();
-            OWLDataProperty latProp = df.getOWLDataProperty(ServerConstants.LATITUDE);
-            OWLDataProperty longProp = df.getOWLDataProperty(ServerConstants.LONGITUDE);
-            OWLDataProperty point = df.getOWLDataProperty(ServerConstants.POINT);
-
-            Loc loc = new Loc();
-            for (OWLOntology ont : onts){
-                for (OWLLiteral val : owlEntity.asOWLNamedIndividual().getDataPropertyValues(point, ont)){
-                    String[] latLong = val.getLiteral().trim().split("\\s+");
-                    if (latLong.length == 2){
-                        loc.latitude = latLong[0];
-                        loc.longitude = latLong[1];
-                        return loc;
-                    }
-                }
-                for (OWLLiteral val : owlEntity.asOWLNamedIndividual().getDataPropertyValues(latProp, ont)){
-                    loc.latitude = val.getLiteral().trim();
-                    break; // use the first value
-                }
-                for (OWLLiteral val : owlEntity.asOWLNamedIndividual().getDataPropertyValues(longProp, ont)){
-                    loc.longitude = val.getLiteral().trim();
-                    break; // use the first value
-                }
-                if (loc.latitude != null && loc.longitude != null){
-                    return loc;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static class Loc {
-        public String latitude;
-        public String longitude;
-    }
 }

@@ -1,9 +1,12 @@
 package org.coode.html.doclet;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.net.URL;
 /*
@@ -61,12 +64,15 @@ public class OntologyTitleDoclet extends AbstractTitleDoclet<OWLOntology> {
         if (getUserObject().isAnonymous()){
             return null;
         }
-        String s = getUserObject().getOntologyID().getOntologyIRI().toString();
+        final String s = getUserObject().getOntologyID().getOntologyIRI().toString();
 
-        IRI versionIRI = getUserObject().getOntologyID().getVersionIRI();
-        if (versionIRI != null){
-            s += "<br />" + versionIRI.toString();
-        }
-        return s;
+        return getUserObject().getOntologyID().getVersionIRI().transform(new Function<IRI, String>(){
+
+            @Nullable
+            @Override
+            public String apply(IRI iri) {
+                return s + "<br />" + iri.toString();
+            }
+        }).or(s);
     }
 }

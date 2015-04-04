@@ -112,7 +112,7 @@ public class OWLUtils {
     public static Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> getAnnotationPropertyMap(OWLNamedIndividual individual, Set<OWLOntology> onts) {
         Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> props = new HashMap<OWLAnnotationProperty, Set<OWLAnnotationValue>>();
         for (OWLOntology ont : onts){
-            for (OWLAnnotationAssertionAxiom ax : individual.getAnnotationAssertionAxioms(ont)){
+            for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(individual.getIRI())){
                 OWLAnnotationProperty p = ax.getProperty();
                 Set<OWLAnnotationValue> objects = props.get(p);
                 if (objects == null){
@@ -128,9 +128,9 @@ public class OWLUtils {
     public static Map<OWLPropertyExpression, Set<OWLPropertyAssertionObject>> getAssertedPropertyMap(OWLNamedIndividual individual, Set<OWLOntology> onts) {
         Map<OWLPropertyExpression, Set<OWLPropertyAssertionObject>> props = new HashMap<OWLPropertyExpression, Set<OWLPropertyAssertionObject>>();
         for (OWLOntology ont : onts){
-            for (OWLAxiom ax : individual.getReferencingAxioms(ont)){
-                if (ax instanceof OWLPropertyAssertionAxiom){
-                    OWLPropertyAssertionAxiom propAssertion = (OWLPropertyAssertionAxiom)ax;
+            for (OWLAxiom ax : ont.getObjectPropertyAssertionAxioms(individual)){
+                if (ax instanceof OWLObjectPropertyAssertionAxiom){
+                    OWLPropertyAssertionAxiom propAssertion = (OWLObjectPropertyAssertionAxiom)ax;
                     if (propAssertion.getSubject().equals(individual)){
                         OWLPropertyExpression p = propAssertion.getProperty();
                         Set<OWLPropertyAssertionObject> objects = props.get(p);

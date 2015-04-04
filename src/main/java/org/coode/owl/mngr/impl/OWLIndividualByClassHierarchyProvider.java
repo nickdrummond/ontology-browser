@@ -4,6 +4,7 @@ import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.*;
 
@@ -71,7 +72,8 @@ public class OWLIndividualByClassHierarchyProvider implements HierarchyProvider<
         if (node instanceof OWLClassExpression){
             return Collections.emptySet();
         }
-        Set<OWLObject> types = new HashSet<OWLObject>(((OWLIndividual)node).getTypes(getOntologies()));
+
+        Set<OWLObject> types = new HashSet<OWLObject>(EntitySearcher.getTypes((OWLIndividual) node, getOntologies()));
         if (types.isEmpty()){
             types = Collections.<OWLObject>singleton(server.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
         }
@@ -88,12 +90,8 @@ public class OWLIndividualByClassHierarchyProvider implements HierarchyProvider<
 
 
     public Set<OWLObject> getEquivalents(OWLObject node) {
-        if (node instanceof OWLIndividual){
-            Set<OWLObject> sameIndividuals = new HashSet<OWLObject>();
-            for (OWLOntology ont : getOntologies()){
-                sameIndividuals.addAll(((OWLIndividual)node).getSameIndividuals(ont));
-            }
-            return sameIndividuals;
+        if (node instanceof OWLNamedIndividual){
+            return new HashSet<OWLObject>(EntitySearcher.getSameIndividuals(((OWLNamedIndividual)node), getOntologies()));
         }
         return Collections.emptySet();
     }

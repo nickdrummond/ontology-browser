@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ public class TypesDoclet extends AbstractOWLElementsDoclet<OWLNamedIndividual, O
     }
 
     protected Collection<OWLClassExpression> getAssertedElements(Set<OWLOntology> onts) {
-        return getUserObject().getTypes(onts);
+        return EntitySearcher.getTypes(getUserObject(), onts);
     }
 
     @Override

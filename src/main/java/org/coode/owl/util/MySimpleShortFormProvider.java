@@ -18,7 +18,7 @@ public class MySimpleShortFormProvider implements ShortFormProvider {
 
     public String getShortForm(OWLEntity owlEntity) {
         IRI iri = owlEntity.getIRI();
-        String name = iri.getFragment();
+        String name = iri.getFragment(); // TODO getShortForm()?
         if (name == null){
             name = iri.toString();
             if (name.endsWith("/")){

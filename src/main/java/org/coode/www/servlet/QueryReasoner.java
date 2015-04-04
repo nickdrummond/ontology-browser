@@ -13,6 +13,7 @@ import org.coode.www.QueryType;
 import org.coode.html.doclet.ReasonerResultsDoclet;
 import org.coode.html.doclet.XMLResultsDoclet;
 import org.coode.www.exception.OntServerException;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 
@@ -132,7 +133,7 @@ public class QueryReasoner extends AbstractOntologyServerServlet {
             final OWLClassExpressionParser parser = kit.getOWLServer().getClassExpressionParser(syntax);
             return parser.parse(expression);
         }
-        catch (ParseException e1) {
+        catch (ParserException e1) {
             throw new OntServerException(e1);
         }
     }

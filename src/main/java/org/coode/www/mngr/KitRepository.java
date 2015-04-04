@@ -209,8 +209,9 @@ public class KitRepository {
 
         OWLHTMLKit kit = new OWLHTMLKitImpl(basePath);
 
-        // set silent error handling for missing imports
-        kit.getOWLServer().getOWLOntologyManager().setSilentMissingImportsHandling(true);
+        // TODO remove me? Not available in OWLAPI 2014
+//        // set silent error handling for missing imports
+//        kit.getOWLServer().getOWLOntologyManager().setSilentMissingImportsHandling(true);
 
         // use a servlet URL scheme which encodes the names in params
         kit.setURLScheme(new RestURLScheme(kit));
@@ -218,7 +219,6 @@ public class KitRepository {
         // register parsers
         kit.getOWLServer().registerDescriptionParser(ServerConstants.Syntax.man.toString(),
                 new ManchesterOWLSyntaxParser(kit.getOWLServer()));
-
 
         boolean defaultsLoaded = false;
 
