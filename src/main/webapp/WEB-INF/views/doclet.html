@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace='base :: header'></head>
+
+<body>
+
+<div th:replace='base :: title'/>
+<div th:replace='base :: menu'/>
+<div th:replace='base :: tabs'/>
+
+<div th:utext='${content}'>Some Content</div>
+
+<div th:replace='base :: footer'></div>
+
+</body>
+</html>

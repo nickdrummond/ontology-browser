@@ -22,19 +22,17 @@ public class RootController extends ApplicationController {
                         final HttpServletRequest request) throws OntServerException {
         OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
-        model.addAttribute("application", applicationInfo);
+        model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("bookmarks", bookmarks.getBookmarks());
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("doclet", "doclet-load");
-        return "base";
+        return "load";
     }
 
     @RequestMapping("/signout")
     public String signout(final Model model) {
-        model.addAttribute("application", applicationInfo);
-        model.addAttribute("doclet", "doclet-signout");
-        return "base";
+        model.addAttribute("applicationInfo", applicationInfo);
+        return "signout";
     }
 
     @RequestMapping("/signout-confirmed")

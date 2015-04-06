@@ -61,18 +61,22 @@ public class OntologyTitleDoclet extends AbstractTitleDoclet<OWLOntology> {
 
 
     public String getSubtitle() {
-        if (getUserObject().isAnonymous()){
-            return null;
-        }
-        final String s = getUserObject().getOntologyID().getOntologyIRI().toString();
+        final String label = getUserObject().getOntologyID().getOntologyIRI().transform(new Function<IRI, String>(){
+
+            @Nullable
+            @Override
+            public String apply(@Nullable IRI iri) {
+                return iri.toString();
+            }
+        }).or("Anonymous");
 
         return getUserObject().getOntologyID().getVersionIRI().transform(new Function<IRI, String>(){
 
             @Nullable
             @Override
             public String apply(IRI iri) {
-                return s + "<br />" + iri.toString();
+                return label+ "<br />" + iri.toString();
             }
-        }).or(s);
+        }).or(label);
     }
 }

@@ -51,7 +51,7 @@ public class OWLIndividualsController extends ApplicationController {
         doclet.renderAll(pageUrl, writer);
         String content = stringWriter.toString();
 
-        model.addAttribute("application", applicationInfo);
+        model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", content);
@@ -76,7 +76,7 @@ public class OWLIndividualsController extends ApplicationController {
         hierarchyDoclet.setUserObject(owlIndividual);
         HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(owlIndividual);
 
-        model.addAttribute("application", applicationInfo);
+        model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));

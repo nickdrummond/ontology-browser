@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace='base :: header'></head>
+
+<body>
+
+<div th:replace='base :: title'/>
+<div th:replace='base :: menu'/>
+<div th:replace='base :: tabs'/>
+
 <h4>Sign Out?</h4>
 
 <div class='error'>
@@ -11,3 +22,8 @@
     <p><a href='signout-confirmed'>Yes</a></p>
 
 </div><!-- error -->
+
+<div th:replace='base :: footer'></div>
+
+</body>
+</html>

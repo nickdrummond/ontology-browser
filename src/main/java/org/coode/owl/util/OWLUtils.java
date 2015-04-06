@@ -1,9 +1,11 @@
 package org.coode.owl.util;
 
+import com.google.common.base.Function;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,12 +35,14 @@ public class OWLUtils {
     }
 
     public static String getOntologyIdString(OWLOntology ont){
-        if (ont.isAnonymous()){
-            return ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString();
-        }
-        else{
-            return ont.getOntologyID().getDefaultDocumentIRI().toString();
-        }
+        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
+
+            @Nullable
+            @Override
+            public String apply(IRI iri) {
+                return iri.toString();
+            }
+        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
     }
 
     public static boolean isDeprecated(OWLEntity entity, Set<OWLOntology> ontologies) {

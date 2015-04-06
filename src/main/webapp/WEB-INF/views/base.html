@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head th:fragment='header'>
+<title th:text='${applicationInfo.name}'>Application Name</title>
+
+    <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>
+
+    <link rel='icon'       type='image/x-icon' href='../../static/images/favicon.ico' th:href='@{/static/images/favicon.ico}'/>
+    <link rel='apple-touch-icon-precomposed'   href='../../static/images/splat-152-211412.png' th:href='@{/static/images/splat-152-211412.png}'/>
+
+    <link rel='stylesheet' type='text/css'     href='../../static/css/autosuggest_inquisitor.css' th:href='@{/static/css/autosuggest_inquisitor.css}'/>
+    <link rel='stylesheet' type='text/css'     href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
+
+    <script type='text/javascript' href='../../static/js/bsn.AutoSuggest_2.1_multiword.js' th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
+    <script type='text/javascript' href='../../static/js/jquery-1.4.3.min.js' th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
+    <script type='text/javascript' href='../../static/js/default.js' th:src='@{/static/js/default.js}'></script>
+    <script type='text/javascript' th:inline='javascript'>
+        // TODO Thymeleaf inlining http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html#script-inlining-javascript-and-dart
+        baseURL=/*[[@{/}]]*/ '/';
+        document.getElementById("uri-spec").focus();
+    </script>
+
+</head>
+
+<body>
+
+<div id='title' th:fragment='title'>
+<img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
+<h1><a th:href='@{/}' th:text='${applicationInfo.name}'>Application Name</a></h1>
+        <a id='signout' th:href='@{/signout}'>
+            <img th:src='@{/static/images/close.png}' width='16' height='16' title='close' />
+        </a>
+</div>
+
+<div id='menu' th:fragment="menu">
+
+    <a style='display: none;' href='#content'>skip to content</a>
+    <form id="activeOnt">
+        <input type='hidden' name='property' value='optionActiveOnt' />
+        <select class="option" name="value">
+            <option th:each='ontology : ${ontologies}'
+                    th:selected='${ontology.ontologyID.ontologyIRI eq activeOntology.ontologyID.ontologyIRI}'
+                    th:text='${ontology.ontologyID.ontologyIRI.or("Anonymous")}'
+                    th:value='${ontology.ontologyID.ontologyIRI.get()}'>An ontology</option>
+        </select>
+    </form>
+
+    <form class='autocomplete' method='get' id='findForm'>
+        <input type='text' name='input' placeholder='Search for an Entity' id='find'/>
+    </form>
+    <script type='text/javascript'>
+        alert(baseURL + 'entities/');
+        var options = {
+            script: baseURL + 'entities/?',
+            varname: 'name',
+            cache: false,
+            callback: function (obj){
+                window.location = obj.id;
+            }
+        };
+        var as = new AutoSuggest("find", options);
+    </script>
+
+    <div id='options'>
+        <a class='optionLink' th:href='@{/options/}' >Options</a>
+        <form id='rendererForm'>
+            <label for='renderLabels'>Labels</label>
+            <input type='checkbox' name='renderLabels' id="renderLabels" checked='checked' />
+        </form>
+    </div> <!-- options -->
+
+    <div class='clearfix'></div>
+
+</div> <!-- menu -->
+
+<div id='tabs' th:fragment='tabs'>
+    <a th:href='@{/ontologies/}'>Ontologies</a>
+    <a th:href='@{/classes/}'>Classes</a>
+    <a th:href='@{/individuals/}'>Individuals</a>
+    <a th:href='@{/objectproperties/}'>Object&nbsp;Properties</a>
+    <a th:href='@{/dataproperties/}'>Data&nbsp;Properties</a>
+    <a th:href='@{/annotationproperties/}'>Annotation&nbsp;Properties</a>
+    <a th:href='@{/datatypes/}'>Datatypes</a>
+</div> <!-- tabs -->
+
+<div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
+
+<p class='footer' th:fragment='footer'>
+  <a th:href='${applicationInfo.url + "/"}' th:text='${"OWL Browser v" + applicationInfo.version}'>Version info</a>
+  <a th:href='${applicationInfo.url + "/wiki/GettingStarted"}' class='help' target='_blank'>Help</a>
+</p>
+
+</body>
+</html>

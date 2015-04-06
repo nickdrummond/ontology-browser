@@ -59,7 +59,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         hierarchyDoclet.setUserObject(owlAnnotationProperty);
         HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(owlAnnotationProperty);
 
-        model.addAttribute("application", applicationInfo);
+        model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));

@@ -34,13 +34,12 @@ public class OptionsController extends ApplicationController {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
-        model.addAttribute("application", applicationInfo);
+        model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("reasoners", reasonerService.getAvailableReasoners());
         model.addAttribute("activeOntology", ontologiesService.getActiveOntology(kit));
         model.addAttribute("ontologies", ontologiesService.getOntologies(kit));
-        model.addAttribute("doclet", "doclet-options");
-        return "base";
+        return "options";
     }
 
     @RequestMapping(method = RequestMethod.POST)

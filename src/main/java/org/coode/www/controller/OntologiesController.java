@@ -51,7 +51,7 @@ public class OntologiesController extends ApplicationController {
         doclet.renderAll(pageUrl, writer);
         String content = stringWriter.toString();
 
-        model.addAttribute("application", applicationInfo);
+        model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", content);
@@ -74,7 +74,7 @@ public class OntologiesController extends ApplicationController {
         hierarchyDoclet.setUserObject(ontology);
         HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(ontology);
 
-        model.addAttribute("application", applicationInfo);
+        model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
