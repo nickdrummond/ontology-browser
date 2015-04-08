@@ -41,9 +41,9 @@
         <input type='hidden' name='property' value='optionActiveOnt' />
         <select class="option" name="value">
             <option th:each='ontology : ${ontologies}'
-                    th:selected='${ontology.ontologyID.ontologyIRI eq activeOntology.ontologyID.ontologyIRI}'
-                    th:text='${ontology.ontologyID.ontologyIRI.or("Anonymous")}'
-                    th:value='${ontology.ontologyID.ontologyIRI.get()}'>An ontology</option>
+                    th:selected='${ontology eq activeOntology}'
+                    th:text='${{ontology.ontologyID}}'
+                    th:value='${{ontology.ontologyID}}'>An ontology</option>
         </select>
     </form>
 
@@ -51,7 +51,6 @@
         <input type='text' name='input' placeholder='Search for an Entity' id='find'/>
     </form>
     <script type='text/javascript'>
-        alert(baseURL + 'entities/');
         var options = {
             script: baseURL + 'entities/?',
             varname: 'name',

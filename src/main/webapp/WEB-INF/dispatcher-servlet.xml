@@ -10,6 +10,8 @@
     <context:property-placeholder location="classpath:application.properties"/>
     <context:component-scan base-package="org.coode.www.configuration" />
 
+    <mvc:annotation-driven conversion-service="conversionService"/>
+
     <!-- Can this be moved to the config? -->
     <mvc:resources mapping="/static/**" location="/static/" />
 
@@ -27,5 +29,14 @@
 
     <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
         <property name="templateEngine" ref="templateEngine" />
+    </bean>
+
+    <bean id="conversionService"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set>
+                <bean class="org.coode.www.formatter.OntologyIdFormatter" />
+            </set>
+        </property>
     </bean>
 </beans>
