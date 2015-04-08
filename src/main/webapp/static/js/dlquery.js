@@ -2,7 +2,7 @@
  * Control of AJAX calls to build the query form dynamically and request results from the ontology kit
  *
  */
-var BUSY_IMAGE = "images/busy.gif";
+var BUSY_IMAGE = baseURL + "static/images/busy.gif";
 
 var EQUIVALENTS = 0;
 var SUBCLASSES = 1;
@@ -20,7 +20,7 @@ var NAME = 0;
 var XML_OBJ = 1;
 var CALLBACK = 2;
 
-var queryURL;
+var queryURL = baseURL + "dlquery/results";
 
 var queryArray = [
     ["equivalents", null, inferredEquivalentsReceived],
@@ -72,7 +72,7 @@ function sendSubQuery(expression, syntax, querytype, xmlHttpReq){
         var busy = document.createElement('div');
         busy.setAttribute('id', querytype);
         busy.innerHTML = "<h4 style='display: inline;'>" + querytype +
-                         "</h4><img src='../" + BUSY_IMAGE + "' width='18px' height='18px' />";
+                         "</h4><img src='" + BUSY_IMAGE + "' width='18px' height='18px' />";
         document.getElementById("resultsForm").appendChild(busy);
     }
 }

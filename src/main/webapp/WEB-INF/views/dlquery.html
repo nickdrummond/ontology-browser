@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace='base :: header'></head>
+
+<body>
+
+<div th:replace='base :: title'/>
+<div th:replace='base :: menu'/>
+<div th:replace='base :: tabs'/>
+
+
+<div class='owlselector'>
+    <h2>DL Query</h2>
+    <a href='.' class='permalink' >permalink</a>
+
+    <div class='codebox'>
+
+        <p>Reasoner: <a href="../options/" th:href='@{/options/}'>JFact</a></p>
+
+        <form class='autocomplete' method='get' id='dlQueryForm' action=''>
+            <textarea name='expression' id='dlQuery'></textarea>
+            <input name='uri' type='hidden' value='' />
+            <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
+            <input name='session' type='hidden' value='' />
+            <input type='submit' value='query' />
+        </form>
+
+        <script type="text/javascript">
+            var options = {
+              parser : baseURL + 'dlquery/parse',
+              autocomplete: baseURL + 'dlquery/ac'
+            };
+            new ExpressionEditor("dlQuery", options);
+        </script>
+
+    </div>
+
+</div><!-- owlselector -->
+
+<div id='resultsForm'>
+  <!-- results will go here -->
+</div>
+
+<div th:replace='base :: footer'></div>
+
+</body>
+</html>

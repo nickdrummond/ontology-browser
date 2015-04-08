@@ -57,6 +57,11 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public ParserService parserService() {
+        return new ParserService();
+    }
+
+    @Bean
     public OntologiesService ontologiesService() {
         return new OntologiesService();
     }
