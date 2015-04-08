@@ -9,6 +9,7 @@
   <url>https://code.google.com/p/ontology-browser</url>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <owlapi.version>4.0.1</owlapi.version>
     <spring.version>4.1.6.RELEASE</spring.version>
     <servlet.version>3.0.1</servlet.version>
@@ -98,6 +99,18 @@
       <groupId>net.sourceforge.owlapi</groupId>
       <artifactId>owlapi-parsers</artifactId>
       <version>${owlapi.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sourceforge.owlapi</groupId>
+      <artifactId>jfact</artifactId>
+      <version>4.0.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>net.sourceforge.owlapi</groupId>
+          <artifactId>owlapi-distribution</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
