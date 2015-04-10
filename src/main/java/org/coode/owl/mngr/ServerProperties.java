@@ -21,6 +21,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jan 22, 2008<br><br>
  */
+@Deprecated
 public interface ServerProperties {
 
     String get(String key);

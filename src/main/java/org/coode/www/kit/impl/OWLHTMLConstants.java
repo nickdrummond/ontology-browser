@@ -35,6 +35,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Oct 2, 2007<br><br>
  */
+@Deprecated
 public class OWLHTMLConstants extends ServerConstants {
 
     public static final URL HOME_PAGE = createURL("http://code.google.com/p/ontology-browser/");

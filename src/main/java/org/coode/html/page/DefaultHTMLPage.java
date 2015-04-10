@@ -26,6 +26,7 @@ import java.util.Set;
  *
  * Also has convenience methods for adding JS and CSS imports, and an onLoad JS action.
  */
+@Deprecated
 public class DefaultHTMLPage<O> extends AbstractHTMLDoclet<O> implements HTMLPage<O> {
 
     private List<URL> cssImports = new ArrayList<URL>();

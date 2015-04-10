@@ -20,6 +20,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Feb 4, 2008<br><br>
  */
+@Deprecated
 public class CloudIndexDoclet extends OWLSelectorDoclet {
 
     public static final String ID = "doclet.index.cloud";

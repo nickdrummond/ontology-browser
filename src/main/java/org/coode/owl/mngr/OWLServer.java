@@ -56,10 +56,13 @@ public interface OWLServer extends ActiveOntologyProvider {
 
     OntologyIRIShortFormProvider getOntologyShortFormProvider();
 
+    @Deprecated
     OWLClassExpressionParser getClassExpressionParser(String type);
 
+    @Deprecated
     void registerDescriptionParser(String syntax, OWLClassExpressionParser parser);
 
+    @Deprecated
     Set<String> getSupportedSyntaxes();
 
     ServerOptionsAdapter<ServerProperty> getProperties();

@@ -24,6 +24,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Jan 24, 2008<br><br>
  */
+@Deprecated
 public class MenuBarDoclet extends AbstractOWLDocDoclet {
 
     private static final Logger logger = LoggerFactory.getLogger(MenuBarDoclet.class);

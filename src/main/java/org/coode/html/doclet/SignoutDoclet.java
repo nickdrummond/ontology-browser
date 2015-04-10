@@ -16,6 +16,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Aug 5, 2010<br><br>
  */
+@Deprecated
 public class SignoutDoclet extends AbstractOWLDocDoclet {
 
     public SignoutDoclet(OWLHTMLKit kit) {

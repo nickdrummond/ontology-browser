@@ -22,6 +22,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Feb 7, 2008<br><br>
  */
+@Deprecated
 public class OWLEntityTitleDoclet<O extends OWLEntity> extends AbstractTitleDoclet<O> {
 
     private final GeoService locService;

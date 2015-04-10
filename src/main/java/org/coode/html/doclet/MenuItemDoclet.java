@@ -18,6 +18,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Feb 4, 2008<br><br>
  */
+@Deprecated
 public class MenuItemDoclet extends AbstractOWLDocDoclet {
 
     private final String label;

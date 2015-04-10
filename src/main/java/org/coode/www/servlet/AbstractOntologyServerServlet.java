@@ -45,6 +45,7 @@ import java.util.Set;
  * code made available under Mozilla Public License (http://www.mozilla.org/MPL/MPL-1.1.html)<br>
  * copyright 2006, The University of Manchester<br>
  */
+@Deprecated
 public abstract class AbstractOntologyServerServlet extends HttpServlet {
 
     protected Logger logger = LoggerFactory.getLogger(getClass().getName());

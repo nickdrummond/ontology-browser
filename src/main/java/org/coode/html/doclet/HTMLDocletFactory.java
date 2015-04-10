@@ -18,6 +18,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Aug 22, 2010<br><br>
  */
+@Deprecated
 public class HTMLDocletFactory {
 
     private Map<String, Class<? extends HTMLDoclet>> allDoclets = new HashMap<String, Class<? extends HTMLDoclet>>();

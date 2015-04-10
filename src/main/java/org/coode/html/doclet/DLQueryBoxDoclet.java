@@ -21,6 +21,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Aug 13, 2010<br><br>
  */
+@Deprecated
 public class DLQueryBoxDoclet extends OWLSelectorDoclet{
 
     private static final String DL_QUERY_AC_ID = "dlQuery";

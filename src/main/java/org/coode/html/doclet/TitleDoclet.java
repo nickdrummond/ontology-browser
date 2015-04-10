@@ -17,6 +17,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Jul 26, 2010<br><br>
  */
+@Deprecated
 public class TitleDoclet extends AbstractHTMLDoclet {
 
     private OWLHTMLKit kit;

@@ -39,6 +39,7 @@ import java.util.Map;
  * Bio Health Informatics Group<br>
  * Date: Aug 7, 2009<br><br>
  */
+@Deprecated
 public interface ServerOptionsAdapter<E extends Enum> {
 
     String get(E key);

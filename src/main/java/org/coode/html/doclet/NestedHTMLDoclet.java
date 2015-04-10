@@ -13,6 +13,7 @@ package org.coode.html.doclet;
  *
  * HTMLDoclets are nestable views on a user object
  */
+@Deprecated
 public interface NestedHTMLDoclet<O> extends HTMLDoclet<O> {
 
     /**

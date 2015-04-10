@@ -39,6 +39,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jul 31, 2009<br><br>
  */
+@Deprecated
 public class AnnotationPropertySuperPropertiesDoclet extends AbstractOWLElementsDoclet<OWLAnnotationProperty, OWLAnnotationProperty>{
 
     public AnnotationPropertySuperPropertiesDoclet(OWLHTMLKit kit) {

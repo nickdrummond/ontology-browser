@@ -14,6 +14,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Aug 13, 2010<br><br>
  */
+@Deprecated
 public class OWLSelectorDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O>{
 
     private static final String ID = "doclet.owl.selector";

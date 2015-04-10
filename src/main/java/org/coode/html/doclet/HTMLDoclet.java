@@ -21,6 +21,7 @@ import java.util.Set;
  * A basic piece of HTML.
  * A doclet can specify if it is dependent on any particular CSS or JS
  */
+@Deprecated
 public interface HTMLDoclet<O> extends Doclet{
 
     String getID();

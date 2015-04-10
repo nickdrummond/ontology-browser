@@ -18,6 +18,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jun 4, 2010<br><br>
  */
+@Deprecated
 public class OWLClassSelectDoclet extends AbstractOWLElementsDoclet<OWLClass, OWLClass>{
 
     public OWLClassSelectDoclet(String name, OWLHTMLKit kit) {

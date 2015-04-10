@@ -23,6 +23,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jan 25, 2008<br><br>
  */
+@Deprecated
 public class SuperclassesDoclet extends AbstractOWLElementsDoclet<OWLClass, OWLClassExpression> {
 
     public SuperclassesDoclet(OWLHTMLKit kit) {

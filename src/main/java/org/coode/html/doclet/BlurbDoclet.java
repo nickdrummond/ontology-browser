@@ -16,6 +16,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Jan 25, 2008<br><br>
  */
+@Deprecated
 public class BlurbDoclet extends AbstractHTMLDoclet {
 
     private static final String ID = "doclet.blurb";

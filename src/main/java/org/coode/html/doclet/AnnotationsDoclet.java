@@ -21,6 +21,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jan 25, 2008<br><br>
  */
+@Deprecated
 public class AnnotationsDoclet<O extends OWLEntity> extends AbstractOWLElementsDoclet<O, OWLAnnotation> {
 
     public AnnotationsDoclet(OWLHTMLKit kit) {

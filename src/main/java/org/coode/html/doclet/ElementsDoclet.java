@@ -17,6 +17,7 @@ import java.util.*;
  * Bio Health Informatics Group<br>
  * Date: Jan 24, 2008<br><br>
  */
+@Deprecated
 public abstract class ElementsDoclet<O, E> extends AbstractHTMLDoclet<O> {
 
     public enum Format {list, csv}

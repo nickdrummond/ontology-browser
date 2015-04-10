@@ -40,6 +40,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jul 31, 2009<br><br>
  */
+@Deprecated
 public class AnnotationPropertyRangesDoclet extends AbstractOWLElementsDoclet<OWLAnnotationProperty, IRI> {
 
     public AnnotationPropertyRangesDoclet(OWLHTMLKit kit) {

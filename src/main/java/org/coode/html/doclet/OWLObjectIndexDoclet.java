@@ -23,6 +23,7 @@ import java.util.Set;
  * code made available under Mozilla Public License (http://www.mozilla.org/MPL/MPL-1.1.html)<br>
  * copyright 2006, The University of Manchester<br>
  */
+@Deprecated
 public class OWLObjectIndexDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<OWLOntology> {
 
     private Set<O> index = new HashSet<O>();

@@ -52,6 +52,7 @@ import java.util.*;
  * Bio Health Informatics Group<br>
  * Date: Jul 17, 2007<br><br>
  */
+@Deprecated
 public class QueryReasoner extends AbstractOntologyServerServlet {
 
     protected Doclet handleXMLRequest(Map<OWLHTMLParam, String> params,

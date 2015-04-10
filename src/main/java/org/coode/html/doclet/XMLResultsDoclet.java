@@ -19,6 +19,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Aug 20, 2010<br><br>
  */
+@Deprecated
 public class XMLResultsDoclet implements Doclet {
 
     private OWLServer server;

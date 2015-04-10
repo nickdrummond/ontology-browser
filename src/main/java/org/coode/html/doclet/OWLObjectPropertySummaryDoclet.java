@@ -14,6 +14,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Aug 4, 2010<br><br>
  */
+@Deprecated
 public class OWLObjectPropertySummaryDoclet extends AbstractOWLDocDoclet<OWLObjectProperty> {
 
     public OWLObjectPropertySummaryDoclet(OWLHTMLKit kit) {

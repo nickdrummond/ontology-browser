@@ -52,6 +52,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jul 27, 2007<br><br>
  */
+@Deprecated
 public class Cloud extends AbstractOntologyServerServlet {
 
     private String title = "Clouds";

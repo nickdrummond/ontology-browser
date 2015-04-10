@@ -26,6 +26,7 @@ import java.util.Map;
  * Bio Health Informatics Group<br>
  * Date: Jan 11, 2008<br><br>
  */
+@Deprecated
 public class DLQuery extends AbstractOntologyServerServlet {
 
     protected Doclet handleXMLRequest(Map<OWLHTMLParam, String> params, OWLHTMLKit kit, URL pageURL) throws OntServerException {

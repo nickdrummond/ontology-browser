@@ -16,6 +16,7 @@ import java.util.List;
  * Bio Health Informatics Group<br>
  * Date: Jul 27, 2010<br><br>
  */
+@Deprecated
 public class OptionSelectorDoclet extends AbstractOWLDocDoclet{
 
     private final String option;

@@ -20,6 +20,7 @@ import java.util.List;
  * Bio Health Informatics Group<br>
  * Date: Feb 7, 2008<br><br>
  */
+@Deprecated
 public class HierarchyDoclet<O extends OWLObject> extends LeafNodeDoclet<O> {
 
     private String title;

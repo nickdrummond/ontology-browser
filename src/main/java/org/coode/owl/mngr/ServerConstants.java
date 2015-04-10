@@ -2,6 +2,7 @@ package org.coode.owl.mngr;
 
 import org.semanticweb.owlapi.model.IRI;
 
+@Deprecated
 public class ServerConstants {
 
     public static final boolean COOKIE_SESSION_RECOVERY = false;

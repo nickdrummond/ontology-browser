@@ -21,6 +21,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Jan 24, 2008<br><br>
  */
+@Deprecated
 public class TabsDoclet extends AbstractOWLDocDoclet {
 
     public static final String ID = "doclet.Tabs";

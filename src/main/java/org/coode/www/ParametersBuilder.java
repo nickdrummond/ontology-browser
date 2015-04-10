@@ -21,6 +21,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Aug 20, 2010<br><br>
  */
+@Deprecated
 public class ParametersBuilder {
 
     public Map<OWLHTMLParam, String> checkAndCreateParams(HttpServletRequest request,

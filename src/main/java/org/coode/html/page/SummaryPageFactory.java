@@ -15,6 +15,7 @@ import org.semanticweb.owlapi.model.*;
  * Bio Health Informatics Group<br>
  * Date: Aug 4, 2010<br><br>
  */
+@Deprecated
 public class SummaryPageFactory {
 
     private OWLHTMLKit kit;

@@ -28,6 +28,7 @@ import java.net.URL;
  *
  * Content should be provided as additional doclets.
  */
+@Deprecated
 public class OWLDocPage<O extends OWLObject> extends DefaultHTMLPage<O> {
 
     private OWLHTMLKit kit;

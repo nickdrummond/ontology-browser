@@ -28,6 +28,7 @@ import java.util.*;
  * Bio Health Informatics Group<br>
  * Date: Nov 1, 2010<br><br>
  */
+@Deprecated
 public class AutocompleteMOS extends AbstractOntologyServerServlet {
 
     private static final String ERROR_TOKEN = "$$";

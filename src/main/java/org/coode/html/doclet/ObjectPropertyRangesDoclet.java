@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 import java.util.Collection;
 import java.util.Set;
 
+@Deprecated
 public class ObjectPropertyRangesDoclet extends AbstractOWLElementsDoclet<OWLObjectProperty, OWLClassExpression> {
 
     public ObjectPropertyRangesDoclet(OWLHTMLKit kit) {

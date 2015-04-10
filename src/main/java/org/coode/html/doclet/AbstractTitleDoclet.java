@@ -25,6 +25,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Feb 7, 2008<br><br>
  */
+@Deprecated
 public abstract class AbstractTitleDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O> {
 
     public static final String ID = "doclet.summary.title";

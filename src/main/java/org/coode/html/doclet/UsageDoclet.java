@@ -19,6 +19,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jan 25, 2008<br><br>
  */
+@Deprecated
 public class UsageDoclet<O extends OWLEntity> extends AbstractOWLElementsDoclet<O, OWLObject>{
 
     private UsageVisibilityVisitor usageVisibilityVisitor = new UsageVisibilityVisitor();

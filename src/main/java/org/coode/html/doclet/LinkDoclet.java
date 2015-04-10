@@ -21,6 +21,7 @@ import java.util.*;
  * Bio Health Informatics Group<br>
  * Date: Jan 25, 2008<br><br>
  */
+@Deprecated
 public class LinkDoclet<O extends OWLEntity> implements HTMLDoclet<O>{
 
     private O object;

@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class AutocompleteDoclet extends AbstractOWLDocDoclet {
 
     private static final Logger logger = LoggerFactory.getLogger(AutocompleteDoclet.class);

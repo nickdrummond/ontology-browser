@@ -22,6 +22,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Jan 25, 2008<br><br>
  */
+@Deprecated
 public class OntologyContentsDoclet extends AbstractOWLDocDoclet<OWLOntology> {
 
     public static final String ID = "doclet.contents";

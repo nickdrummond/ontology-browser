@@ -4,7 +4,9 @@ import org.coode.owl.mngr.OWLClassExpressionParser;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.ServerConstants;
 import org.coode.www.kit.OWLHTMLKit;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
+import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -20,9 +22,12 @@ public class ParserService {
 
     private static final String ERROR_TOKEN = "$$";
 
-    public ParseResult parse(final String expression, final OWLHTMLKit kit) throws ParseException {
+    public ParseResult parse(final String expression,
+                             final OWLDataFactory df,
+                             final OWLEntityChecker owlEntityChecker) throws ParseException {
 
-        OWLClassExpressionParser parser = kit.getOWLServer().getClassExpressionParser(ServerConstants.Syntax.man.toString());
+        ManchesterOWLSyntaxClassExpressionParser parser =
+                new ManchesterOWLSyntaxClassExpressionParser(df, owlEntityChecker);
 
         try {
             parser.parse(expression);
@@ -32,19 +37,27 @@ public class ParserService {
         }
     }
 
-    public AutocompleteResult autocomplete(final String expression, final OWLHTMLKit kit) {
+    public AutocompleteResult autocomplete(final String expression,
+                                           final OWLDataFactory df,
+                                           final OWLEntityChecker owlEntityChecker,
+                                           final OWLEntityFinder finder,
+                                           final ShortFormProvider sfp) {
 
-        OWLClassExpressionParser parser = kit.getOWLServer().getClassExpressionParser(ServerConstants.Syntax.man.toString());
+        ManchesterOWLSyntaxClassExpressionParser parser =
+                new ManchesterOWLSyntaxClassExpressionParser(df, owlEntityChecker);
 
         try {
             parser.parse(expression);
             throw new RuntimeException("Cannot get here if we have correctly forced an error");
         } catch (ParserException e) {
-            return exceptionToAutocomplete(expression, e, kit);
+            return exceptionToAutocomplete(expression, e, finder, sfp);
         }
     }
 
-    private AutocompleteResult exceptionToAutocomplete(String expression, ParserException e, OWLHTMLKit kit) {
+    private AutocompleteResult exceptionToAutocomplete(final String expression,
+                                                       final ParserException e,
+                                                       final OWLEntityFinder finder,
+                                                       final ShortFormProvider sfp) {
 
         String lastToken;
         int pos;
@@ -69,9 +82,6 @@ public class ParserService {
         }
 
         Map<String, List<String>> expected = new HashMap<String, List<String>>();
-
-        final OWLEntityFinder finder = kit.getOWLServer().getFinder();
-        final ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
 
         String search = lastToken + ".*"; // starts with
 

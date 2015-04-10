@@ -16,6 +16,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Jan 14, 2008<br><br>
  */
+@Deprecated
 public class OntologyBrowserConstants extends OWLHTMLConstants {
 
     public static String VERSION = "2.0.0-SNAPSHOT";

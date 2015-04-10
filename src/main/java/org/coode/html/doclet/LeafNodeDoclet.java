@@ -23,6 +23,7 @@ import java.util.*;
  * Bio Health Informatics Group<br>
  * Date: Feb 7, 2008<br><br>
  */
+@Deprecated
 public class LeafNodeDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O>{
 
     private static final Logger logger = LoggerFactory.getLogger(LeafNodeDoclet.class);

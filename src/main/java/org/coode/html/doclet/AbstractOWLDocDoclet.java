@@ -16,6 +16,7 @@ import org.semanticweb.owlapi.model.OWLObject;
  *
  * Handy version for getting access to the server
  */
+@Deprecated
 public abstract class AbstractOWLDocDoclet<O extends OWLObject> extends AbstractHTMLDoclet<O>{
 
     private OWLHTMLKit kit;

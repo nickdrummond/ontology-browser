@@ -21,6 +21,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Feb 5, 2008<br><br>
  */
+@Deprecated
 public class DifferentFromDoclet extends AbstractOWLElementsDoclet<OWLNamedIndividual, OWLIndividual> {
 
     public DifferentFromDoclet(OWLHTMLKit kit) {

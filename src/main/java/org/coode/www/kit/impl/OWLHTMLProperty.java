@@ -35,6 +35,7 @@ import java.util.Map;
  * Bio Health Informatics Group<br>
  * Date: Aug 7, 2009<br><br>
  */
+@Deprecated
 public enum OWLHTMLProperty {
 
     optionContentWindow("Content window", true, "content-window"),

@@ -14,6 +14,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Jul 26, 2010<br><br>
  */
+@Deprecated
 public class ServletUtils {
 
     // requestURL on its own is not good enough - doesn't include params

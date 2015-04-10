@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.owl.mngr.*;
-import org.coode.owl.util.MySimpleShortFormProvider;
 import org.coode.owl.util.OWLObjectComparator;
 import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -452,7 +451,7 @@ public class OWLServerImpl implements OWLServer {
 
         if (shortFormProvider == null){
             String ren = getProperties().get(ServerProperty.optionRenderer);
-            shortFormProvider = new MySimpleShortFormProvider();
+            shortFormProvider = new SimpleShortFormProvider();
             if (ren.equals(ServerConstants.RENDERER_LABEL)){
                 shortFormProvider = new LabelShortFormProvider(this, shortFormProvider);
             }

@@ -30,6 +30,7 @@ package org.coode.www.kit.impl;
  * Bio Health Informatics Group<br>
  * Date: Aug 7, 2009<br><br>
  */
+@Deprecated
 public enum OWLHTMLParam {
     uri,
     action,

@@ -20,6 +20,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Jan 25, 2008<br><br>
  */
+@Deprecated
 public class MembersDoclet extends AbstractOWLElementsDoclet<OWLClass, OWLIndividual> {
 
 

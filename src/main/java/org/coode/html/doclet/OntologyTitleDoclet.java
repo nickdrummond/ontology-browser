@@ -40,6 +40,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Aug 5, 2009<br><br>
  */
+@Deprecated
 public class OntologyTitleDoclet extends AbstractTitleDoclet<OWLOntology> {
 
     public OntologyTitleDoclet(OWLHTMLKit kit) {

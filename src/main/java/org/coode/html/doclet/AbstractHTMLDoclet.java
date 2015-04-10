@@ -21,6 +21,7 @@ import java.util.*;
  * Default handling for doclet nesting, including handing the user object down through the hierarchy.
  * Content will be surrounded by whatever is created in renderHeader and renderFooter
  */
+@Deprecated
 public abstract class AbstractHTMLDoclet<O> implements NestedHTMLDoclet<O> {
 
     private boolean pinned = false;

@@ -15,6 +15,7 @@ import org.semanticweb.owlapi.model.OWLObject;
  * Bio Health Informatics Group<br>
  * Date: Feb 7, 2008<br><br>
  */
+@Deprecated
 public class NodeDoclet<O extends OWLObject> extends LeafNodeDoclet<O>{
 
 

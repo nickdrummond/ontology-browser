@@ -22,6 +22,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Feb 11, 2008<br><br>
  */
+@Deprecated
 public class BookmarksDoclet extends AbstractOWLElementsDoclet<OWLOntology, OWLEntity>{
 
     public BookmarksDoclet(OWLHTMLKit kit) {

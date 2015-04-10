@@ -17,6 +17,7 @@ import java.util.*;
  * Bio Health Informatics Group<br>
  * Date: Aug 4, 2010<br><br>
  */
+@Deprecated
 public class OWLIndividualSummaryDoclet extends AbstractOWLDocDoclet<OWLNamedIndividual> {
 
     public OWLIndividualSummaryDoclet(OWLHTMLKit kit) {

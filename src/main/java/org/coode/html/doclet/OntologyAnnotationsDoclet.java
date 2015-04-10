@@ -18,6 +18,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Feb 5, 2008<br><br>
  */
+@Deprecated
 public class OntologyAnnotationsDoclet extends AbstractOWLElementsDoclet<OWLOntology, OWLAnnotation> {
 
     public OntologyAnnotationsDoclet(OWLHTMLKit kit) {

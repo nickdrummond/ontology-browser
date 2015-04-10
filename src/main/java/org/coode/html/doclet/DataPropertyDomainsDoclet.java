@@ -10,6 +10,7 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 import java.util.Collection;
 import java.util.Set;
 
+@Deprecated
 public class DataPropertyDomainsDoclet extends AbstractOWLElementsDoclet<OWLDataProperty, OWLClassExpression> {
 
     public DataPropertyDomainsDoclet(OWLHTMLKit kit) {

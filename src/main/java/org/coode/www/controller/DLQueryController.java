@@ -1,8 +1,13 @@
 package org.coode.www.controller;
 
+import org.coode.owl.mngr.OWLEntityFinder;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.service.ParserService;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -44,7 +49,13 @@ public class DLQueryController extends ApplicationController {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        return service.autocomplete(expression, kit).toString();
+        OWLServer owlServer = kit.getOWLServer();
+        OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
+        OWLEntityChecker checker = owlServer.getOWLEntityChecker();
+        OWLEntityFinder finder = owlServer.getFinder();
+        ShortFormProvider sfp = owlServer.getShortFormProvider();
+
+        return service.autocomplete(expression, df, checker, finder, sfp).toString();
     }
 
     // TODO return the actual ParseResult or an XML rendering of the parse exception
@@ -56,8 +67,12 @@ public class DLQueryController extends ApplicationController {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
+        OWLServer owlServer = kit.getOWLServer();
+        OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
+        OWLEntityChecker checker = owlServer.getOWLEntityChecker();
+
         try {
-            return service.parse(expression, kit).toString();
+            return service.parse(expression, df, checker).toString();
         } catch (ParseException e) {
             return e.toString();
         }

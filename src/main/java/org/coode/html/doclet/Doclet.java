@@ -11,6 +11,7 @@ import java.net.URL;
  * Bio Health Informatics Group<br>
  * Date: Aug 20, 2010<br><br>
  */
+@Deprecated
 public interface Doclet {
 
     void renderAll(URL pageURL, PrintWriter out);

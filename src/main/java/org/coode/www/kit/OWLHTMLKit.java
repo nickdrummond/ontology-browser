@@ -49,16 +49,20 @@ public interface OWLHTMLKit {
 
     OWLServer getOWLServer();
 
+    @Deprecated
     ServerOptionsAdapter<OWLHTMLProperty> getHTMLProperties();
 
+    @Deprecated
     void resetProperties();
 
+    @Deprecated
     URL getBaseURL();
     
     URLScheme getURLScheme();
 
     void setURLScheme(URLScheme urlScheme);
 
+    @Deprecated
     HTMLDocletFactory getDocletFactory();
 
     Comparator<OWLObject> getOWLObjectComparator();
@@ -91,6 +95,4 @@ public interface OWLHTMLKit {
     void addUserError(String errorMessage, Throwable e);
     List<String> getUserErrors();
     void clearUserErrors();
-
-
 }

@@ -40,6 +40,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Aug 5, 2009<br><br>
  */
+@Deprecated
 public class DatatypeDefinitionDoclet extends AbstractOWLElementsDoclet<OWLDatatype, OWLDataRange> {
 
     public DatatypeDefinitionDoclet(OWLHTMLKit kit) {

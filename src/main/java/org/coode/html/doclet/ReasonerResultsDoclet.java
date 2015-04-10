@@ -21,6 +21,7 @@ import java.util.Set;
  * Bio Health Informatics Group<br>
  * Date: Feb 6, 2008<br><br>
  */
+@Deprecated
 public class ReasonerResultsDoclet<O extends OWLClassExpression> extends AbstractOWLElementsDoclet<O, OWLEntity> {
 
     Set<OWLEntity> results;
