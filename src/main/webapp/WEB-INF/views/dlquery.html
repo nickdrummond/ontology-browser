@@ -19,7 +19,7 @@
         <p>Reasoner: <a href="../options/" th:href='@{/options/}'>JFact</a></p>
 
         <form class='autocomplete' method='get' id='dlQueryForm' action=''>
-            <textarea name='expression' id='dlQuery'></textarea>
+            <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
             <input name='uri' type='hidden' value='' />
             <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
             <input name='session' type='hidden' value='' />

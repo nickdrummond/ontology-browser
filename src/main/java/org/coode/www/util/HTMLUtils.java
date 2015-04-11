@@ -15,7 +15,6 @@ import java.net.URL;
  */
 public class HTMLUtils {
 
-
     /**
      * Makes sure the link does not target a frame when single frame navigation is on (to prevent popups in other windows).
      *

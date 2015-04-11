@@ -12,8 +12,7 @@ import uk.co.nickdrummond.parsejs.ParseResult;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
@@ -37,7 +36,7 @@ public class ParserServiceTest {
 
         ParseResult results = service.parse(validOWLExpression, df, checker);
 
-        assertThat(results.toString(), containsString("OK"));
+        assertThat(results.toString(), containsString("success"));
     }
 
     @Test
@@ -59,7 +58,6 @@ public class ParserServiceTest {
             fail("Should have thrown ParseException");
         }
         catch (ParseException e) {
-            assertThat(e.toString(), not(containsString("OK")));
             assertThat(e.toString(), containsString("error  pos=\"16\""));
         }
     }

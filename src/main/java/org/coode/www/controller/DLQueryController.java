@@ -28,6 +28,7 @@ public class DLQueryController extends ApplicationController {
 
     @RequestMapping(method=RequestMethod.GET)
     public String dlQuery(
+            @RequestParam(required = false, defaultValue = "") final String expression,
             @RequestParam(required = false) final String label,
             HttpServletRequest request,
             Model model) throws OntServerException, ParseException {
@@ -37,6 +38,7 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("expression", expression);
 
         return "dlquery";
     }

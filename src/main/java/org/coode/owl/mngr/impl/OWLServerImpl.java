@@ -140,10 +140,10 @@ public class OWLServerImpl implements OWLServer {
         };
         mngr.addIRIMapper(mapper);
 
-        for (IRI iri : ontMap.keySet()){
+        for (Map.Entry<IRI, IRI> entry : ontMap.entrySet()){
             try {
-                if (!iri.equals(ServerConstants.ROOT_ONTOLOGY)){
-                    mngr.loadOntology(iri);
+                if (!entry.getKey().equals(ServerConstants.ROOT_ONTOLOGY)){
+                    mngr.loadOntology(entry.getValue());
                 }
             }
             catch (OWLOntologyDocumentAlreadyExistsException e){

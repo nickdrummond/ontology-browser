@@ -29,28 +29,6 @@ public class URLUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(URLUtils.class.getName());
 
-
-    public static URL createURL(String s) {
-        try {
-            return new URL(s);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-//    public static String createRelativeURL(URL current, URL target) {
-//        try {
-//            URI currentURI = current.toURI();
-//            URI targetURI = target.toURI();
-//            URI rel = currentURI.relativize(targetURI);
-//            logger.debug("rel = " + rel);
-//            return rel.toString();
-//        }
-//        catch (URISyntaxException e) {
-//            logger.error(e);
-//        }
-//        return "";
-//    }
-
     public static String createRelativeURL(URL current, URL target) {
 
         try{
@@ -132,37 +110,6 @@ public class URLUtils {
         else{
             return relativeURL.toString();
         }
-    }
-
-    public static Map<OWLHTMLParam, String> getParams(URL url) {
-        Map<OWLHTMLParam, String> paramMap = new HashMap<OWLHTMLParam, String>();
-        String query = url.getQuery();
-        if (query != null){
-            String[] params = query.split(OWLHTMLConstants.PARAM_SEP);
-            for (String param : params) {
-                String[] pair = param.split(OWLHTMLConstants.EQUALS);
-                paramMap.put(OWLHTMLParam.valueOf(pair[0]), pair[1]);
-            }
-        }
-        return paramMap;
-
-    }
-
-
-    public static String renderParams(Map<OWLHTMLParam, String> map) {
-        StringBuilder sb = new StringBuilder();
-        for (OWLHTMLParam param : map.keySet()){
-            if (sb.length() == 0){
-                sb.append(OWLHTMLConstants.START_QUERY);
-            }
-            else{
-                sb.append(OWLHTMLConstants.PARAM_SEP);
-            }
-            sb.append(param.toString());
-            sb.append(OWLHTMLConstants.EQUALS);
-            sb.append(map.get(param));
-        }
-        return sb.toString();
     }
 
     public static boolean isImageURL(IRI iri) {
