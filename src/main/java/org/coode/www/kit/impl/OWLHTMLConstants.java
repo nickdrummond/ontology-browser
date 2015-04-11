@@ -38,52 +38,8 @@ import java.net.URL;
 @Deprecated
 public class OWLHTMLConstants extends ServerConstants {
 
-    public static final URL HOME_PAGE = createURL("http://code.google.com/p/ontology-browser/");
-
-    public static String ONTOLOGY_SERVER_NAME = "Ontology Browser";
-
-    public static final String DOCLET_CONFIG = "doclets.properties";
-
     public static final String DEFAULT_ENCODING = "UTF-8";
 
-    public static final String JS_ROOT = "static/js/";
-    public static final String CSS_BASE= "static/css/";
-    public static final String IMAGES_BASE = "static/images/";
-
-    // Javascript
-    public static final String JS_DEFAULT = JS_ROOT + "default.js";
-    public static final String JS_DL_QUERY = JS_ROOT + "dlquery.js";
-    public static final String JS_TREE = JS_ROOT + "tree.js";
-    public static final String AUTO_SUGGEST_JS = JS_ROOT + "bsn.AutoSuggest_2.1_multiword.js";
-    public static final String JQUERY_JS = JS_ROOT + "jquery-1.4.3.min.js";
-    public static final String GAPHU_JS = JS_ROOT + "gaphu-0.0.9.js";
-
-    // Styles
-    public static final String CSS_DEFAULT = CSS_BASE + "default.css";
-    public static final String AUTO_SUGGEST_CSS = CSS_BASE + "autosuggest_inquisitor.css";
-    public static final String GAPHU_CSS = CSS_BASE + "gaphu-0.0.9.css";
-
-    // Images
-    public static final String EXTERNAL_IMAGE = OWLHTMLConstants.IMAGES_BASE + "external.png";
-    public static final String LOAD_IMAGE = OWLHTMLConstants.IMAGES_BASE + "download.png";
-    public static final String MINIMISE_IMAGE = IMAGES_BASE + "min.png";
-
-    public static final String DEFAULT_EXTENSION = ".html";
-
-    public static final String INDEX_HTML = "index" + DEFAULT_EXTENSION;
-
-    public static final String CONTENTS_HTML = "contents" + DEFAULT_EXTENSION;
-    public static final String DL_QUERY_HTML = "dlquery/";
-    public static final String QUERY_HTML = "query/";
-    public static final String OPTIONS_HTML = "options/";
-    public static final String HEADER_HTML = "header" + DEFAULT_EXTENSION;
-    public static final String SIGNOUT_HTML = "signout";
-
-    public static final String DL_QUERY_LABEL = "DL Query";
-    public static final String LOAD_LABEL = "Load";
-    public static final String CONTENTS_LABEL = "Contents";
-    public static final String RESTART_LABEL = "Restart";
-    public static final String BOOKMARKS_LABEL = "Bookmarks";
     public static final String PERMALINK_LABEL = "permalink";
 
     public static final String EQUIV_CHAR = "&equiv;";
@@ -94,35 +50,8 @@ public class OWLHTMLConstants extends ServerConstants {
     public static final String PARAM_SEP = "&";
     public static final String SLASH = "/";
 
-    // how far towards the root do we trim the trees
-    public static final int DEFAULT_TREE_ANCESTORS_COUNT = 10;
-
-     // actually needs one more layer than displayed, as this is required for determining if leaf
-    public static final int DEFAULT_TREE_DESCENDANTS_COUNT = 2;
-
     public static final String INFERRED_CSS_CLASS = "inferred";
     public static final String ASSERTED_CSS_CLASS = "asserted";
 
-
     public enum LinkTarget{_top, content, nav, subnav, header, _blank}
-
-    // window modes
-    public static final String NO_FRAMES = "no_frames";
-    public static final String SHOW_FRAMES = "frames";
-
-
-    // keys for options on the kit
-
-    // non-external values
-    public static final String DEFAULT_INDEX_ALL_URL = "index-all" + DEFAULT_EXTENSION;
-
-
-    private static URL createURL(String s) {
-        try {
-            return new URL(s);
-        }
-        catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

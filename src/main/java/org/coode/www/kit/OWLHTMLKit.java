@@ -52,9 +52,6 @@ public interface OWLHTMLKit {
     ServerOptionsAdapter<OWLHTMLProperty> getHTMLProperties();
 
     @Deprecated
-    void resetProperties();
-
-    @Deprecated
     URL getBaseURL();
     
     URLScheme getURLScheme();
@@ -68,9 +65,6 @@ public interface OWLHTMLKit {
      * @return ontologies that are to be rendered in the interface (not including the 'system' meta ontology)
      */
     Set<OWLOntology> getVisibleOntologies();
-
-//    void setOntologyVisible(OWLOntology ontology, boolean visible);
-
 
     /**
      * @param label

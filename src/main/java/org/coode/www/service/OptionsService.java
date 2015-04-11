@@ -5,15 +5,19 @@ import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.www.exception.OntServerException;
-import org.coode.www.mngr.Application;
+import org.coode.www.mngr.KitRepository;
 import org.coode.www.model.OptionSet;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
 public class OptionsService {
+
+    @Autowired
+    private KitRepository kitRepository;
 
     public boolean setOption(final OptionSet optionSet, final OWLHTMLKit kit) throws OntServerException {
         // TODO get rid of this split of properties
@@ -35,7 +39,7 @@ public class OptionsService {
         }
 
         if (success){
-            Application.getRepo().saveKit(kit);
+            kitRepository.saveKit(kit);
         }
 
         return success;

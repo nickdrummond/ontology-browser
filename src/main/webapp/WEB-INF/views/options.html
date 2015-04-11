@@ -48,14 +48,6 @@
             </tr>
 
             <tr>
-                <td class='key'>CSS file</td>
-                <td>
-                    <form method='POST' action='.'>
-                        <input type='hidden' name='property' value='optionDefaultCSS' />
-                        <input type='text' name='value' th:value='${options.optionDefaultCSS}' />
-                        <input type='submit' value='ok' /></form>
-                </td></tr>
-            <tr>
                 <td class='key'>Show hierarchies</td>
                 <td>
 
@@ -64,7 +56,8 @@
                         <input type='checkbox' class="option" name="value"
                                th:checked='${options.optionShowMiniHierarchies == "true"}'/>
                     </form>
-                </td></tr>
+                </td>
+            </tr>
 
             <tr>
                 <td class='key'>Render permalinks</td>
@@ -74,7 +67,8 @@
                         <input type='checkbox' class="option" name="value"
                                th:checked='${options.optionShowMiniHierarchies == "true"}'/>
                     </form>
-                </td></tr>
+                </td>
+            </tr>
 
         </table>
     </div>

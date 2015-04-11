@@ -1,8 +1,8 @@
 package org.coode.owl.mngr.impl;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.coode.owl.mngr.*;
 import org.coode.owl.util.OWLObjectComparator;
 import org.coode.owl.util.OWLUtils;
@@ -13,7 +13,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
@@ -21,19 +20,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
-
-/**
- * Author: drummond<br>
- * The University Of Manchester<br>
- * Medical Informatics Group<br>
- * Date: Jul 4, 2006<br><br>
- * <p/>
- * nick.drummond@cs.manchester.ac.uk<br>
- * www.cs.man.ac.uk/~drummond<br><br>
- */
 public class OWLServerImpl implements OWLServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(OWLServerImpl.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OWLServerImpl.class);
 
     private OWLOntologyManager mngr;
 
@@ -54,8 +43,6 @@ public class OWLServerImpl implements OWLServer {
     private OWLEntityFinder finder;
 
     private OWLObjectComparator<OWLObject> comparator;
-
-    private Map<String, OWLClassExpressionParser> parsers = new HashMap<String, OWLClassExpressionParser>();
 
     private Map<Class<? extends OWLObject>, HierarchyProvider> hps = new HashMap<Class<? extends OWLObject>, HierarchyProvider>();
 
@@ -278,13 +265,6 @@ public class OWLServerImpl implements OWLServer {
         return properties;
     }
 
-    public void resetProperties() {
-        properties.removePropertyChangeListener(propertyChangeListener);
-        properties = null;
-        clear();
-    }
-
-
     public OWLOntology getActiveOntology() {
         if (activeOntology == null){
             String ont = getProperties().get(ServerProperty.optionActiveOnt);
@@ -478,30 +458,11 @@ public class OWLServerImpl implements OWLServer {
         return uriShortFormProvider;
     }
 
-
-    public final OWLClassExpressionParser getClassExpressionParser(String type){
-        if (isDead()){
-            throw new RuntimeException("Cannot getClassExpressionParser - server is dead");
-        }
-
-        return parsers.get(type);
-    }
-
-    public final void registerDescriptionParser(String syntax, OWLClassExpressionParser parser) {
-        parsers.put(syntax, parser);
-    }
-
-    public Set<String> getSupportedSyntaxes() {
-        return parsers.keySet();
-    }
-
     public void dispose() {
 
         clearOntologies();
 
         mngr = null;
-
-        parsers.clear();
 
         if (properties != null){
             properties.removePropertyChangeListener(propertyChangeListener);

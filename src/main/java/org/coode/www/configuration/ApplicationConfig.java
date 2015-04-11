@@ -1,7 +1,7 @@
 package org.coode.www.configuration;
 
+import org.coode.www.mngr.KitRepository;
 import org.coode.www.model.ApplicationInfo;
-import org.coode.www.mngr.Application;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.Bookmarks;
 import org.coode.www.service.*;
@@ -126,7 +126,12 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public KitRepository kitRepository() {
+        return new KitRepository();
+    }
+
+    @Bean
     public SessionManager sessionManager() {
-        return  Application.getSessionManager();
+        return new SessionManager();
     }
 }

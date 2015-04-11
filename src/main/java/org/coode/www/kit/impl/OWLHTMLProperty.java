@@ -38,15 +38,9 @@ import java.util.Map;
 @Deprecated
 public enum OWLHTMLProperty {
 
-    optionContentWindow("Content window", true, "content-window"),
-    optionIndexAllURL("Index all URL", true, "index-all-url"),
-    optionDefaultCSS("CSS file", "css"),
-    optionUseFrames("Use frames", true, "frames"),
     optionShowMiniHierarchies("Show hierarchies", "option_show_mini_hierarchies"),
     optionShowInferredHierarchies("Show inferred hierarchies", true, "option_show_inferred_hierarchies"),
     optionRenderPermalink("Render permalinks", "option_render_permalink"),
-    optionRenderOntologySummaryCloud("Ontology summary cloud links", true, "option_render_ontology_summary_cloud"),
-    optionRenderSubs("Render children", true, "option_render_subs"),
     optionShowInferences("Show inferences");
 
     private String[] altNames;

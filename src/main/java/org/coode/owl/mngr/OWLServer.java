@@ -28,10 +28,6 @@ public interface OWLServer extends ActiveOntologyProvider {
 
     void loadOntologies(Map<IRI, IRI> ontMap);
 
-    OWLOntology reloadOntology(OWLOntology ontology) throws OWLOntologyCreationException;
-
-    void removeOntology(OWLOntology ont);
-
     /**
      * First get an ontology with a matching version IRI if one exists.
      * If not, get an ontology with a matching ontology IRI.
@@ -56,19 +52,7 @@ public interface OWLServer extends ActiveOntologyProvider {
 
     OntologyIRIShortFormProvider getOntologyShortFormProvider();
 
-    @Deprecated
-    OWLClassExpressionParser getClassExpressionParser(String type);
-
-    @Deprecated
-    void registerDescriptionParser(String syntax, OWLClassExpressionParser parser);
-
-    @Deprecated
-    Set<String> getSupportedSyntaxes();
-
     ServerOptionsAdapter<ServerProperty> getProperties();
-
-    void resetProperties();
-
 
     /**
      * Get rid of all caches (such as renderings) and clear the reasoner.

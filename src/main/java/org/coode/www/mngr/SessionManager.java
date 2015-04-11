@@ -3,6 +3,8 @@ package org.coode.www.mngr;
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.OntServerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,6 +21,7 @@ import java.net.URL;
  * can 2 sessions ever use the same reasoner if the ontology loaded is the same? Probably not as we don't
  * know this is the same version of the same ontology (as changes are not forbidden)
  */
+@Service
 public class SessionManager {
 
     private static Logger logger = LoggerFactory.getLogger(SessionManager.class);
@@ -26,11 +29,8 @@ public class SessionManager {
     private static final String KIT_KEY = "kit";
     private static final String KIT_CLEANUP = "kitcleanup";
 
-    private final KitRepository repo;
-
-    public SessionManager(final KitRepository repo) {
-        this.repo = repo;
-    }
+    @Autowired
+    private KitRepository kitRepository;
 
     /**
      * Get a server (creates a new one if you have a new session)
@@ -59,16 +59,9 @@ public class SessionManager {
     public OWLHTMLKit getHTMLKit(final HttpServletRequest request, final String label) throws OntServerException {
         OWLHTMLKit kit = getHTMLKit(request);
         if (label != null && !label.equals(kit.getCurrentLabel())){
-            repo.loadKit(kit, label);
+            kitRepository.loadKit(kit, label);
         }
         return kit;
-    }
-
-    public void closeSession(final HttpServletRequest request) {
-        HttpSession mySession = request.getSession(false);
-        if (mySession != null){
-            mySession.invalidate();
-        }
     }
 
     private void create(final HttpSession mySession, final HttpServletRequest request) {
@@ -90,7 +83,7 @@ public class SessionManager {
 
             URL basePath = new URL(url);
 
-            OWLHTMLKit kit = repo.createHTMLKit(basePath);
+            OWLHTMLKit kit = kitRepository.createHTMLKit(basePath);
             KitCleanupAdapter adapter = new KitCleanupAdapter(kit);
 
             mySession.setAttribute(KIT_KEY, kit);

@@ -1,19 +1,18 @@
 package org.coode.www.mngr;
 
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLKitImpl;
 import org.coode.www.kit.impl.OWLHTMLProperty;
-import org.coode.html.url.RestURLScheme;
-import org.coode.owl.mngr.ServerConstants;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
-import org.coode.owl.mngr.impl.ManchesterOWLSyntaxParser;
 import org.coode.owl.util.OWLUtils;
 import org.coode.www.exception.OntServerException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.net.URL;
@@ -22,19 +21,21 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Repository
 public class KitRepository {
 
     private static Logger logger = LoggerFactory.getLogger(KitRepository.class);
 
-    @Deprecated
-    private static String VERSION = "2.0.0-SNAPSHOT";
+    @Value("${application.version}")
+    private String appVersion;
 
-    private static final String SERVER_STATES_DIR = "caches/";
+    @Value("${cache.location}")
+    private String cacheLocation;
+
     private static final String PROPERTIES_PREFIX = "properties.";
-    private static final String PROPERTIES_EXT = ".xml";
     private static final String ONTOLOGIES_PREFIX = "ontologies.";
+    private static final String PROPERTIES_EXT = ".xml";
     private static final String ONTOLOGIES_EXT = ".properties";
-
     private static final String LABEL_SPLITTER = "_";
 
     /**
@@ -53,6 +54,73 @@ public class KitRepository {
         catch (IOException e) {
             throw new OntServerException(e);
         }
+    }
+
+
+    /**
+     * Clears the given server and replaces its state with that specified by the label given
+     * @param kit
+     * @param label
+     * @throws OntServerException
+     */
+    public synchronized void loadKit(OWLHTMLKit kit, String label) throws OntServerException {
+
+        logger.info("Loading kit for label: " + label);
+
+        String[] parts = label.split(LABEL_SPLITTER);
+
+        try{
+            Map<IRI, IRI> ontMap = loadOntologies(parts[0]);
+            kit.getOWLServer().loadOntologies(ontMap);
+
+            loadProperties(parts[1], kit);
+
+            kit.setCurrentLabel(label);
+        }
+        catch(IOException e){
+            throw new OntServerException(e);
+        }
+    }
+
+    public OWLHTMLKit createHTMLKit(URL basePath) {
+
+        OWLHTMLKit kit = new OWLHTMLKitImpl(basePath);
+
+        // TODO remove me? Not available in OWLAPI 2014
+//        // set silent error handling for missing imports
+//        kit.getOWLServer().getOWLOntologyManager().setSilentMissingImportsHandling(true);
+
+        boolean defaultsLoaded = false;
+
+        // we will likely want different defaults for different versions (or run versions on the same server)
+        File file = getFile("default" + appVersion + PROPERTIES_EXT);
+
+        if (file.exists()){
+            try {
+                BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+                kit.getHTMLProperties().load(in);
+                in.close();
+                defaultsLoaded = true;
+            }
+            catch (IOException e) {
+                logger.error("Could not load default properties");
+            }
+        }
+
+        if (!defaultsLoaded){
+
+            setupDefaultServerProperties(kit);
+
+            try {
+                OutputStream out = new FileOutputStream(file);
+                kit.getHTMLProperties().save(out);
+            }
+            catch (IOException e) {
+                logger.error("Could not save default properties");
+            }
+        }
+
+        return kit;
     }
 
     private String saveOntologies(OWLHTMLKit kit) throws IOException {
@@ -90,8 +158,12 @@ public class KitRepository {
         out.close();
         byte[] bytes = out.toByteArray();
         String propLabel = md5(bytes);
-        save(bytes, PROPERTIES_PREFIX + propLabel + PROPERTIES_EXT);
+        save(bytes, getCacheFile(propLabel));
         return propLabel;
+    }
+
+    private String getCacheFile(String propLabel) {
+        return PROPERTIES_PREFIX + propLabel + PROPERTIES_EXT;
     }
 
     private void save(byte[] bytes, String filename) throws IOException {
@@ -129,33 +201,8 @@ public class KitRepository {
         return stringBuffer.toString();
     }
 
-    /**
-     * Clears the given server and replaces its state with that specified by the label given
-     * @param kit
-     * @param label
-     * @throws OntServerException
-     */
-    public synchronized void loadKit(OWLHTMLKit kit, String label) throws OntServerException {
-
-        logger.info("Loading kit for label: " + label);
-
-        String[] parts = label.split(LABEL_SPLITTER);
-
-        try{
-            Map<IRI, IRI> ontMap = loadOntologies(parts[0]);
-            kit.getOWLServer().loadOntologies(ontMap);
-
-            loadProperties(parts[1], kit);
-
-            kit.setCurrentLabel(label);
-        }
-        catch(IOException e){
-            throw new OntServerException(e);
-        }
-    }
-
     private void loadProperties(final String label, OWLHTMLKit kit) throws IOException {
-        File propsFile = getFile(PROPERTIES_PREFIX + label + PROPERTIES_EXT);
+        File propsFile = getFile(getCacheFile(label));
 
         if (!propsFile.exists()){
             throw new FileNotFoundException("Cannot find stored properties: " + propsFile.getAbsolutePath());
@@ -164,7 +211,6 @@ public class KitRepository {
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(propsFile));
         kit.getHTMLProperties().load(in);
         in.close();
-        cleanupProperties(kit);
     }
 
     private Map<IRI, IRI> loadOntologies(final String label) throws IOException {
@@ -193,71 +239,12 @@ public class KitRepository {
         return ontMap;
     }
 
-    // TODO is this needed anymore?
-    private void cleanupProperties(OWLHTMLKit kit) {
-        // fix the default css that was in the root
-        String css = kit.getHTMLProperties().get(OWLHTMLProperty.optionDefaultCSS);
-        if (!css.startsWith("http") && !css.startsWith(OWLHTMLConstants.CSS_BASE)){
-            kit.getHTMLProperties().set(OWLHTMLProperty.optionDefaultCSS, OWLHTMLConstants.CSS_BASE + css);
-        }
-    }
-
-
-    public File getFile(String name) {
-        File cacheDir = new File(SERVER_STATES_DIR);
+    private File getFile(String name) {
+        File cacheDir = new File(cacheLocation);
         if (!cacheDir.exists()){
             cacheDir.mkdir();
         }
-        return new File(SERVER_STATES_DIR + name);
-    }
-
-    public OWLHTMLKit createHTMLKit(URL basePath) {
-
-        OWLHTMLKit kit = new OWLHTMLKitImpl(basePath);
-
-        // TODO remove me? Not available in OWLAPI 2014
-//        // set silent error handling for missing imports
-//        kit.getOWLServer().getOWLOntologyManager().setSilentMissingImportsHandling(true);
-
-        // use a servlet URL scheme which encodes the names in params
-        kit.setURLScheme(new RestURLScheme(kit));
-
-        // register parsers
-        kit.getOWLServer().registerDescriptionParser(ServerConstants.Syntax.man.toString(),
-                new ManchesterOWLSyntaxParser(kit.getOWLServer()));
-
-        boolean defaultsLoaded = false;
-
-        // we will likely want different defaults for different versions (or run versions on the same server)
-        File file = getFile("default" + VERSION + PROPERTIES_EXT);
-
-        if (file.exists()){
-            try {
-                BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-                kit.getHTMLProperties().load(in);
-                in.close();
-                defaultsLoaded = true;
-            }
-            catch (IOException e) {
-                logger.error("Could not load default properties");
-            }
-        }
-
-        if (!defaultsLoaded){
-
-            setupDefaultServerProperties(kit);
-
-            try {
-                OutputStream out = new FileOutputStream(file);
-                kit.getHTMLProperties().save(out);
-            }
-            catch (IOException e) {
-                logger.error("Could not save default properties");
-            }
-        }
-
-
-        return kit;
+        return new File(cacheLocation + name);
     }
 
     private void setupDefaultServerProperties(OWLHTMLKit kit) {
@@ -265,14 +252,7 @@ public class KitRepository {
         // make sure the reasoner is enabled to allow dl query etc
         kit.getOWLServer().getProperties().setBoolean(ServerProperty.optionReasonerEnabled, true);
 
-
         ServerOptionsAdapter<OWLHTMLProperty> properties = kit.getHTMLProperties();
-
-//        // by default, do not use frames navigation
-//        properties.set(OWLHTMLProperty.optionContentWindow, null);
-
-        // the default entities index is at the location "entities/"
-        properties.set(OWLHTMLProperty.optionIndexAllURL, "entities/");
 
         // render a permalink
         properties.setBoolean(OWLHTMLProperty.optionRenderPermalink, true);

@@ -26,6 +26,11 @@ public class URLUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(URLUtils.class.getName());
 
+    public static final String IMAGES_BASE = "static/images/";
+
+    public static final String EXTERNAL_IMAGE = IMAGES_BASE + "external.png";
+    public static final String LOAD_IMAGE = IMAGES_BASE + "download.png";
+
     public static String createRelativeURL(URL current, URL target) {
 
         try{
@@ -128,7 +133,7 @@ public class URLUtils {
 
             out.println(" ");
             
-            renderImageLink(kit.getURLScheme().getURLForRelativePage(OWLHTMLConstants.EXTERNAL_IMAGE),
+            renderImageLink(kit.getURLScheme().getURLForRelativePage(EXTERNAL_IMAGE),
                             "Attempt to open link in another window",
                             url, OWLHTMLConstants.LinkTarget._blank, "urlOption", true, pageURL, out);
 
@@ -141,7 +146,7 @@ public class URLUtils {
                 // need the redirect to be relative to the load URL
                 final String relRedirect = URLUtils.createRelativeURL(loadBaseURL, pageURL);
 
-                final String img = kit.getURLScheme().getURLForRelativePage(OWLHTMLConstants.LOAD_IMAGE).toString();
+                final String img = kit.getURLScheme().getURLForRelativePage(LOAD_IMAGE).toString();
 
                 out.println(" ");
                 out.println("<form method='POST' style='display:inline' action='"+ loadBaseURL +"'>");

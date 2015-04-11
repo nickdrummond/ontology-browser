@@ -1,7 +1,7 @@
 package org.coode.www.kit.impl;
 
+import org.coode.html.url.RestURLScheme;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.url.StaticFilesURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerOptionsAdapter;
@@ -89,14 +89,10 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
             properties = new ServerOptionsAdapterImpl<OWLHTMLProperty>((ServerOptionsAdapterImpl)getOWLServer().getProperties());
             properties.addDeprecatedNames(OWLHTMLProperty.generateDeprecatedNamesMap());
 
-            properties.set(OWLHTMLProperty.optionIndexAllURL, OWLHTMLConstants.DEFAULT_INDEX_ALL_URL);
-            properties.set(OWLHTMLProperty.optionDefaultCSS, OWLHTMLConstants.CSS_DEFAULT);
-            properties.setBoolean(OWLHTMLProperty.optionRenderSubs, true);
             properties.setBoolean(OWLHTMLProperty.optionShowInferences, true);
 
             // Allowed values
             List<String> booleanValues = Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString());
-            properties.setAllowedValues(OWLHTMLProperty.optionRenderSubs, booleanValues);
             properties.setAllowedValues(OWLHTMLProperty.optionRenderPermalink, booleanValues);
             properties.setAllowedValues(OWLHTMLProperty.optionShowMiniHierarchies, booleanValues);
             properties.setAllowedValues(OWLHTMLProperty.optionShowInferredHierarchies, booleanValues);
@@ -104,12 +100,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         }
         return properties;
     }
-
-    public void resetProperties() {
-        properties = null;
-        getOWLServer().resetProperties();
-    }
-
 
     public String getID() {
         return id;
@@ -127,7 +117,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public URLScheme getURLScheme() {
         if (urlScheme == null && !owlServer.isDead()){
-            urlScheme = new StaticFilesURLScheme(this);
+            urlScheme = new RestURLScheme(this);
         }
         return urlScheme;
     }
