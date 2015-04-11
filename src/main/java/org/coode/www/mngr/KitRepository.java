@@ -11,7 +11,6 @@ import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.owl.mngr.impl.ManchesterOWLSyntaxParser;
 import org.coode.owl.util.OWLUtils;
-import org.coode.www.OntologyBrowserConstants;
 import org.coode.www.exception.OntServerException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -27,7 +26,16 @@ public class KitRepository {
 
     private static Logger logger = LoggerFactory.getLogger(KitRepository.class);
 
-    public static final String LABEL_SPLITTER = "_";
+    @Deprecated
+    private static String VERSION = "2.0.0-SNAPSHOT";
+
+    private static final String SERVER_STATES_DIR = "caches/";
+    private static final String PROPERTIES_PREFIX = "properties.";
+    private static final String PROPERTIES_EXT = ".xml";
+    private static final String ONTOLOGIES_PREFIX = "ontologies.";
+    private static final String ONTOLOGIES_EXT = ".properties";
+
+    private static final String LABEL_SPLITTER = "_";
 
     /**
      * Persist the current loaded ontologies with their mappings
@@ -69,7 +77,7 @@ public class KitRepository {
 
         byte[] bytes = out.toByteArray();
         String ontsLabel = md5(bytes);
-        save(bytes, OntologyBrowserConstants.ONTOLOGIES_PREFIX + ontsLabel + OntologyBrowserConstants.ONTOLOGIES_EXT);
+        save(bytes, ONTOLOGIES_PREFIX + ontsLabel + ONTOLOGIES_EXT);
         return ontsLabel;
     }
 
@@ -82,7 +90,7 @@ public class KitRepository {
         out.close();
         byte[] bytes = out.toByteArray();
         String propLabel = md5(bytes);
-        save(bytes, OntologyBrowserConstants.PROPERTIES_PREFIX + propLabel + OntologyBrowserConstants.PROPERTIES_EXT);
+        save(bytes, PROPERTIES_PREFIX + propLabel + PROPERTIES_EXT);
         return propLabel;
     }
 
@@ -147,8 +155,7 @@ public class KitRepository {
     }
 
     private void loadProperties(final String label, OWLHTMLKit kit) throws IOException {
-        File propsFile = getFile(
-                OntologyBrowserConstants.PROPERTIES_PREFIX + label + OntologyBrowserConstants.PROPERTIES_EXT);
+        File propsFile = getFile(PROPERTIES_PREFIX + label + PROPERTIES_EXT);
 
         if (!propsFile.exists()){
             throw new FileNotFoundException("Cannot find stored properties: " + propsFile.getAbsolutePath());
@@ -162,8 +169,7 @@ public class KitRepository {
 
     private Map<IRI, IRI> loadOntologies(final String label) throws IOException {
 
-        File ontsFile = getFile(
-                OntologyBrowserConstants.ONTOLOGIES_PREFIX + label + OntologyBrowserConstants.ONTOLOGIES_EXT);
+        File ontsFile = getFile(ONTOLOGIES_PREFIX + label + ONTOLOGIES_EXT);
 
         if (!ontsFile.exists()){
             throw new FileNotFoundException("Cannot find stored ontologies: " + ontsFile.getAbsolutePath());
@@ -198,11 +204,11 @@ public class KitRepository {
 
 
     public File getFile(String name) {
-        File cacheDir = new File(OntologyBrowserConstants.SERVER_STATES_DIR);
+        File cacheDir = new File(SERVER_STATES_DIR);
         if (!cacheDir.exists()){
             cacheDir.mkdir();
         }
-        return new File(OntologyBrowserConstants.SERVER_STATES_DIR + name);
+        return new File(SERVER_STATES_DIR + name);
     }
 
     public OWLHTMLKit createHTMLKit(URL basePath) {
@@ -223,7 +229,7 @@ public class KitRepository {
         boolean defaultsLoaded = false;
 
         // we will likely want different defaults for different versions (or run versions on the same server)
-        File file = getFile("default" + OntologyBrowserConstants.VERSION + OntologyBrowserConstants.PROPERTIES_EXT);
+        File file = getFile("default" + VERSION + PROPERTIES_EXT);
 
         if (file.exists()){
             try {

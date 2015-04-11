@@ -1,4 +1,4 @@
-package org.coode.www;
+package org.coode.html.util;
 
 import org.coode.www.kit.impl.OWLHTMLParam;
 
@@ -23,17 +23,6 @@ public class ServletUtils {
         try {
             // if the request is for an html-frag and we have a referer page we return the url of the referer
             String query = request.getQueryString();
-            if (query != null){
-                String referer = request.getHeader("Referer");
-                if (referer != null){
-                    for (String param : query.split("&")){
-                        if (param.startsWith(OWLHTMLParam.format.toString()) && param.endsWith(OntologyBrowserConstants.HTML_FRAG)){
-                            return new URL(referer);
-                        }
-                    }
-                }
-            }
-
             StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
             boolean appendedParams = false;
 

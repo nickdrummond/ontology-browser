@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.Doclet;
-import org.coode.www.ServletUtils;
+import org.coode.html.util.ServletUtils;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.ApplicationInfo;
 import org.slf4j.Logger;
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.List;
 
 abstract public class ApplicationController {
 

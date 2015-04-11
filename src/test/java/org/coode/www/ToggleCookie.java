@@ -1,7 +1,5 @@
 package org.coode.www;
 
-import org.coode.www.OntologyBrowserConstants;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +17,8 @@ import java.io.IOException;
  */
 public class ToggleCookie extends HttpServlet{
 
+    private static final String LABEL_COOKIE_NAME = "label";
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean clearing = false;
@@ -26,9 +26,9 @@ public class ToggleCookie extends HttpServlet{
         final Cookie[] cookies = req.getCookies();
         if (cookies != null){
             for (Cookie cookie : cookies){
-                if (cookie.getName().equals(OntologyBrowserConstants.LABEL_COOKIE_NAME)){
+                if (cookie.getName().equals(LABEL_COOKIE_NAME)){
                     resp.getWriter().print("clearing cookie " + cookie.getValue());
-                    cookie = new Cookie(OntologyBrowserConstants.LABEL_COOKIE_NAME, "");
+                    cookie = new Cookie(LABEL_COOKIE_NAME, "");
                     cookie.setPath(req.getContextPath() + "/");
                     cookie.setMaxAge(0); // until session expires
                     resp.addCookie(cookie);
@@ -37,7 +37,7 @@ public class ToggleCookie extends HttpServlet{
             }
         }
         if (!clearing){
-            Cookie cookie = new Cookie(OntologyBrowserConstants.LABEL_COOKIE_NAME, "test");
+            Cookie cookie = new Cookie(LABEL_COOKIE_NAME, "test");
             cookie.setPath(req.getContextPath() + "/");
             cookie.setMaxAge(-1); // until session expires
             resp.addCookie(cookie);

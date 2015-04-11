@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.url.OWLObjectURLRenderer;
-import org.coode.www.util.URLUtils;
+import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.model.*;

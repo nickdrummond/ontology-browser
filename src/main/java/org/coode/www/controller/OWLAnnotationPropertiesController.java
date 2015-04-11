@@ -1,24 +1,21 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.NodeDoclet;
+import org.coode.html.doclet.OWLAnnotationPropertySummaryDoclet;
 import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.page.SummaryPageFactory;
+import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;
-import org.coode.www.ServletUtils;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.service.OWLAnnotationPropertiesService;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 
 @Controller
@@ -54,10 +51,11 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         OWLAnnotationProperty owlAnnotationProperty = service.getOWLAnnotationPropertyFor(propertyId, kit);
 
         // TODO yuck replace this adapter
-        SummaryPageFactory summaryPageFactory = new SummaryPageFactory(kit);
-        HTMLDoclet hierarchyDoclet = summaryPageFactory.getHierarchy(OWLAnnotationProperty.class);
+        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
+        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLAnnotationProperty.class);
         hierarchyDoclet.setUserObject(owlAnnotationProperty);
-        HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(owlAnnotationProperty);
+        HTMLDoclet summaryDoclet = new OWLAnnotationPropertySummaryDoclet(kit);
+        summaryDoclet.setUserObject(owlAnnotationProperty);
 
         model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());

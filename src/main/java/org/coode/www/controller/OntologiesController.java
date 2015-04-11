@@ -1,17 +1,16 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.NodeDoclet;
+import org.coode.html.doclet.OWLOntologySummaryDoclet;
 import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.page.SummaryPageFactory;
+import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.OWLObjectIndexDoclet;
-import org.coode.www.ServletUtils;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.service.OntologiesService;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.model.LoadOntology;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,8 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.Set;
 
@@ -45,16 +42,10 @@ public class OntologiesController extends ApplicationController {
         doclet.setTitle("Ontologies");
         doclet.addAll(results);
 
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        URL pageUrl = ServletUtils.getPageURL(request);
-        doclet.renderAll(pageUrl, writer);
-        String content = stringWriter.toString();
-
         model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", content);
+        model.addAttribute("content", renderDoclets(request, doclet));
 
         return "doclet";
     }
@@ -69,10 +60,11 @@ public class OntologiesController extends ApplicationController {
         OWLOntology ontology = service.getOntologyFor(ontId, kit);
 
         // TODO yuck replace this adapter
-        SummaryPageFactory summaryPageFactory = new SummaryPageFactory(kit);
-        HTMLDoclet hierarchyDoclet = summaryPageFactory.getHierarchy(OWLOntology.class);
+        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
+        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLOntology.class);
         hierarchyDoclet.setUserObject(ontology);
-        HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(ontology);
+        HTMLDoclet summaryDoclet = new OWLOntologySummaryDoclet(kit);
+        summaryDoclet.setUserObject(ontology);
 
         model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());

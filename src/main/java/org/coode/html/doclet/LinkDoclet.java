@@ -5,8 +5,7 @@ package org.coode.html.doclet;
 
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
-import org.coode.html.page.HTMLPage;
-import org.coode.www.util.URLUtils;
+import org.coode.html.util.URLUtils;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.io.PrintWriter;
@@ -77,14 +76,6 @@ public class LinkDoclet<O extends OWLEntity> implements HTMLDoclet<O>{
 
     public boolean isPinned() {
         return true;
-    }
-
-    public boolean isFullPage() {
-        return false;
-    }
-
-    public HTMLPage asPage() {
-        return null;
     }
 
     public Set<URL> getRequiredCSS() {

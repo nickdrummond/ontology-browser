@@ -1,7 +1,6 @@
 package org.coode.www.kit.impl;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.doclet.HTMLDocletFactory;
 import org.coode.html.url.StaticFilesURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
@@ -63,8 +62,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private Comparator<OWLObject> comparator;
 
-    private HTMLDocletFactory fac;
-
     private List<String> errorMessages = new ArrayList<String>();
 
     private Date timestamp;
@@ -80,27 +77,11 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         this.owlServer = server;
         this.baseURL = baseURL;
         this.comparator = new OWLObjectComparator<OWLObject>(server);
-        createDocletFactory();
     }
 
     private String createID() {
         return Long.toHexString(System.currentTimeMillis());
     }
-
-    // TODO get rid of this when doclets gone or move to Spring config
-    private void createDocletFactory() {
-        this.fac = new HTMLDocletFactory(this);
-
-        try {
-            Properties config = new Properties();
-            config.load(getClass().getClassLoader().getResourceAsStream(OWLHTMLConstants.DOCLET_CONFIG));
-            fac.load(config);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public ServerOptionsAdapter<OWLHTMLProperty> getHTMLProperties() {
         if (properties == null){
@@ -153,10 +134,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public void setURLScheme(URLScheme urlScheme) {
         this.urlScheme = urlScheme;
-    }
-
-    public HTMLDocletFactory getDocletFactory() {
-        return fac;
     }
 
     public Comparator<OWLObject> getOWLObjectComparator() {

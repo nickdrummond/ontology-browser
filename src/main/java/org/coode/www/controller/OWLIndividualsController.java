@@ -1,16 +1,13 @@
 package org.coode.www.controller;
 
-import org.coode.html.doclet.NodeDoclet;
-import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.html.doclet.OWLIndividualSummaryDoclet;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.page.SummaryPageFactory;
+import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.OWLObjectIndexDoclet;
-import org.coode.www.ServletUtils;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.service.OWLIndividualsService;
-import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 import java.util.Set;
 
 @Controller
@@ -45,16 +39,10 @@ public class OWLIndividualsController extends ApplicationController {
         doclet.setTitle("Individuals");
         doclet.addAll(individuals);
 
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        URL pageUrl = ServletUtils.getPageURL(request);
-        doclet.renderAll(pageUrl, writer);
-        String content = stringWriter.toString();
-
         model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", content);
+        model.addAttribute("content", renderDoclets(request, doclet));
 
         return "doclet";
     }
@@ -71,10 +59,11 @@ public class OWLIndividualsController extends ApplicationController {
         OWLIndividual owlIndividual = service.getOWLIndividualFor(propertyId, kit);
 
         // TODO yuck replace this adapter
-        SummaryPageFactory summaryPageFactory = new SummaryPageFactory(kit);
-        HTMLDoclet hierarchyDoclet = summaryPageFactory.getHierarchy(OWLNamedIndividual.class);
+        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
+        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLNamedIndividual.class);
         hierarchyDoclet.setUserObject(owlIndividual);
-        HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(owlIndividual);
+        HTMLDoclet summaryDoclet = new OWLIndividualSummaryDoclet(kit);
+        summaryDoclet.setUserObject(owlIndividual);
 
         model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());

@@ -1,16 +1,15 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.NodeDoclet;
+import org.coode.html.doclet.OWLDatatypeSummaryDoclet;
 import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.page.SummaryPageFactory;
+import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;
-import org.coode.www.ServletUtils;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.service.OWLDatatypesService;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,8 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 
 @Controller
@@ -57,10 +54,11 @@ public class OWLDatatypesController extends ApplicationController {
         OWLDatatype owlDatatype = service.getOWLDatatypeFor(propertyId, kit);
 
         // TODO yuck replace this adapter
-        SummaryPageFactory summaryPageFactory = new SummaryPageFactory(kit);
-        HTMLDoclet hierarchyDoclet = summaryPageFactory.getHierarchy(OWLDatatype.class);
+        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
+        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLDatatype.class);
         hierarchyDoclet.setUserObject(owlDatatype);
-        HTMLDoclet summaryDoclet = summaryPageFactory.getSummaryDoclet(owlDatatype);
+        HTMLDoclet summaryDoclet = new OWLDatatypeSummaryDoclet(kit);
+        summaryDoclet.setUserObject(owlDatatype);
 
         model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());

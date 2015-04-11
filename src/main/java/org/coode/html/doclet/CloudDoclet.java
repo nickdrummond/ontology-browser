@@ -3,7 +3,7 @@ package org.coode.html.doclet;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.cloud.*;
 import org.coode.www.kit.impl.OWLHTMLConstants;
-import org.coode.www.util.HTMLUtils;
+import org.coode.html.util.HTMLUtils;
 import org.semanticweb.owlapi.model.*;
 
 import java.awt.*;

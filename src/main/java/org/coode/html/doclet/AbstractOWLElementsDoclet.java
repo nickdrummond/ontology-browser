@@ -8,7 +8,7 @@ import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.www.renderer.ElementRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.www.util.URLUtils;
+import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;

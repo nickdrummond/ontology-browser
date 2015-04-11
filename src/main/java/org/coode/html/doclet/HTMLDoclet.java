@@ -3,8 +3,6 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.html.page.HTMLPage;
-
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.List;
@@ -43,17 +41,6 @@ public interface HTMLDoclet<O> extends Doclet{
      * @return false if the doclet should follow its parent's selection
      */
     boolean isPinned();
-
-    /**
-     * @return true if this doclet implements HTMLPage
-     */
-    boolean isFullPage();
-
-    /**
-     * Gets this doclet as a page (if it is one).
-     * @return this HTMLDoclet as an HTMLPage or null if isFullPage returns false
-     */
-    HTMLPage asPage();
 
     Set<URL> getRequiredCSS();
 

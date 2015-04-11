@@ -100,10 +100,6 @@ public class OWLHTMLConstants extends ServerConstants {
      // actually needs one more layer than displayed, as this is required for determining if leaf
     public static final int DEFAULT_TREE_DESCENDANTS_COUNT = 2;
 
-    // Clouds
-    public static final int DEFAULT_CLOUD_THRESHOLD = 8;
-    public static final int DEFAULT_CLOUD_ZOOM = 10;
-
     public static final String INFERRED_CSS_CLASS = "inferred";
     public static final String ASSERTED_CSS_CLASS = "asserted";
 

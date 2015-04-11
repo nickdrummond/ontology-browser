@@ -3,7 +3,7 @@ package org.coode.html.doclet;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.url.URLScheme;
-import org.coode.www.util.URLUtils;
+import org.coode.html.util.URLUtils;
 
 import java.io.PrintWriter;
 import java.net.URL;

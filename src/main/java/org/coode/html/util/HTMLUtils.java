@@ -1,4 +1,4 @@
-package org.coode.www.util;
+package org.coode.html.util;
 
 import org.coode.www.kit.impl.OWLHTMLConstants;
 

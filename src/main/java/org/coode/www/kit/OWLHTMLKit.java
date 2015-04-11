@@ -1,6 +1,5 @@
 package org.coode.www.kit;
 
-import org.coode.html.doclet.HTMLDocletFactory;
 import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
@@ -61,9 +60,6 @@ public interface OWLHTMLKit {
     URLScheme getURLScheme();
 
     void setURLScheme(URLScheme urlScheme);
-
-    @Deprecated
-    HTMLDocletFactory getDocletFactory();
 
     Comparator<OWLObject> getOWLObjectComparator();
 

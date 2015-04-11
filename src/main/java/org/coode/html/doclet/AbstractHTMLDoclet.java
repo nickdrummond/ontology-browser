@@ -3,8 +3,7 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.html.page.HTMLPage;
-import org.coode.www.util.HTMLUtils;
+import org.coode.html.util.HTMLUtils;
 
 import java.io.PrintWriter;
 import java.net.URL;
@@ -117,10 +116,6 @@ public abstract class AbstractHTMLDoclet<O> implements NestedHTMLDoclet<O> {
 
     public boolean isFullPage() {
         return false;
-    }
-
-    public HTMLPage asPage() {
-        return null; // not a page
     }
 
     public Set<URL> getRequiredCSS() {
