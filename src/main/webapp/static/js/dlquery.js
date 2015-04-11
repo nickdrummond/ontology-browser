@@ -60,14 +60,13 @@ function sendSubQuery(expression, syntax, querytype, xmlHttpReq){
         alert ("Browser does not support HTTP Request");
     }
     else{
-        xmlHttpReq.open("POST", queryURL, true);
+        var req = queryURL + "?" + PARAM_QUERYTYPE + "=" + querytype + "&" +
+                             PARAM_EXPRESSION + "=" + expression
+        xmlHttpReq.open("GET", req, true);
 
         xmlHttpReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
-        xmlHttpReq.send(PARAM_QUERYTYPE + "=" + querytype + "&" +
-                        PARAM_EXPRESSION + "=" + expression + "&" +
-                        PARAM_SYNTAX + "=" + syntax + "&" +
-                        "format=html-frag");
+        xmlHttpReq.send();
 
         var busy = document.createElement('div');
         busy.setAttribute('id', querytype);

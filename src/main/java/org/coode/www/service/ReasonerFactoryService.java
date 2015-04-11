@@ -14,8 +14,10 @@ public class ReasonerFactoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(ReasonerFactoryService.class);
 
+    // TODO urgh!
     public static String STRUCTURAL;
 
+    // TODO urgh!
     public static String OWLLINK;
 
     private final String OWLLINK_CONFIG = "org.semanticweb.owlapi.owllink.OWLlinkReasonerConfiguration";

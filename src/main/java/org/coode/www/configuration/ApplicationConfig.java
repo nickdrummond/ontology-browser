@@ -62,6 +62,11 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public ReasonerService reasonerService() {
+        return new ReasonerService();
+    }
+
+    @Bean
     public OntologiesService ontologiesService() {
         return new OntologiesService();
     }
