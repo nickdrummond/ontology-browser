@@ -5,7 +5,6 @@ package org.coode.html.url;
 
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -38,13 +37,13 @@ public class PermalinkURLScheme implements URLScheme {
     private URL append(URL url) {
         if (getOWLHTMLKit().getCurrentLabel() != null){
             String link = url.toString();
-            if (!link.contains(OWLHTMLConstants.START_QUERY)){
-                link += OWLHTMLConstants.START_QUERY;
+            if (!link.contains("?")){
+                link += "?";
             }
             else{
-                link += OWLHTMLConstants.PARAM_SEP;
+                link += "&";
             }
-            link += OWLHTMLParam.label + OWLHTMLConstants.EQUALS + getOWLHTMLKit().getCurrentLabel();
+            link += OWLHTMLParam.label + "=" + getOWLHTMLKit().getCurrentLabel();
 
             try {
                 return new URL(link);
