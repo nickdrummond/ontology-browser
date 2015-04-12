@@ -34,10 +34,11 @@ var queryArray = [
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 $(document).ready(function(){
-    sendQuery();
+    if(document.getElementById('dlQuery')) {
+        sendQuery();
+    }
 });
 
-// have to pass the servlet base in dynamically
 function sendQuery(){
     var expression = getValueOfElementByID("dlQuery");
 

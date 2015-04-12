@@ -122,7 +122,7 @@ function reloadAllFrames(){
         // we have to strip out the session if it is in the url
         // otherwise the previous state will just be reloaded
         var url = location.toString();
-        url = url.replace(/[&|?]session=[^&]+/, "");
+        url = url.replace(/[&|?]label=[^&]+/, "");
         location.replace(url);
     }
 }

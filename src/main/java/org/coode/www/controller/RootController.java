@@ -22,7 +22,7 @@ public class RootController extends ApplicationController {
                         final HttpServletRequest request) throws OntServerException {
         OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("bookmarks", bookmarks.getBookmarks());
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -30,8 +30,12 @@ public class RootController extends ApplicationController {
     }
 
     @RequestMapping("/signout")
-    public String signout(final Model model) {
-        model.addAttribute("applicationInfo", applicationInfo);
+    public String signout(final Model model,
+                          final HttpServletRequest request) throws OntServerException {
+        OWLHTMLKit kit = sessionManager.getHTMLKit(request);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
+        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
+        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         return "signout";
     }
 
