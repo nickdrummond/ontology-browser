@@ -58,8 +58,6 @@ public interface OWLHTMLKit {
 
     void setURLScheme(URLScheme urlScheme);
 
-    Comparator<OWLObject> getOWLObjectComparator();
-
     /**
      * The ontologies that are visible in the browser (reasoner should always use getActiveOntologies)
      * @return ontologies that are to be rendered in the interface (not including the 'system' meta ontology)

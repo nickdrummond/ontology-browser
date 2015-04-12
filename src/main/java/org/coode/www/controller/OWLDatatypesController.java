@@ -2,7 +2,7 @@ package org.coode.www.controller;
 
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.html.doclet.OWLDatatypeSummaryDoclet;
-import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;

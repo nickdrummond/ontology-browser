@@ -2,7 +2,6 @@ package org.coode.html.util;
 
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.*;
 
@@ -71,18 +70,17 @@ public class URLUtils {
         StringBuffer relativeURL = new StringBuffer();
 
         int currentSubCount = currentPath.size();
-        if (!current.getPath().endsWith(OWLHTMLConstants.SLASH)){ // then there must be a file at the end
+        if (!current.getPath().endsWith("/")){ // then there must be a file at the end
             currentSubCount--;
         }
 
         for (int i=0; i<currentSubCount; i++){
-            relativeURL.append("..");
-            relativeURL.append(OWLHTMLConstants.SLASH);
+            relativeURL.append("../");
         }
 
         for (String s: targetPath){
             relativeURL.append(s);
-            relativeURL.append(OWLHTMLConstants.SLASH);
+            relativeURL.append("/");
         }
 
 //        if (relativeURL.equals("")){
@@ -93,16 +91,15 @@ public class URLUtils {
         int len = relativeURL.length();
         if (len > 0 &&
             relativeURL.charAt(len -1)=='/' &&
-            !target.getPath().endsWith(OWLHTMLConstants.SLASH)){
+            !target.getPath().endsWith("/")){
             relativeURL.deleteCharAt(len -1);
         }
 
         if (target.getQuery() != null){
             if (len == 0){
-                relativeURL.append("."); // otherwise it won't work
-                relativeURL.append(OWLHTMLConstants.SLASH);
+                relativeURL.append("./"); // otherwise it won't work
             }
-            relativeURL.append(OWLHTMLConstants.START_QUERY);
+            relativeURL.append("?");
             relativeURL.append(target.getQuery());
         }
 
@@ -135,7 +132,7 @@ public class URLUtils {
             
             renderImageLink(kit.getURLScheme().getURLForRelativePage(EXTERNAL_IMAGE),
                             "Attempt to open link in another window",
-                            url, OWLHTMLConstants.LinkTarget._blank, "urlOption", true, pageURL, out);
+                            url, "urlOption", pageURL, out);
 
 
             // if the ontology at this location has not already been loaded
@@ -165,17 +162,12 @@ public class URLUtils {
         }
     }
 
-    public static void renderImageLink(URL imageURL, String altText, URL href, OWLHTMLConstants.LinkTarget target, String cssClass, boolean singleFrame, URL pageURL, PrintWriter out) {
+    public static void renderImageLink(URL imageURL, String altText, URL href, String cssClass, URL pageURL, PrintWriter out) {
         final String relURL = URLUtils.createRelativeURL(pageURL, href);
             out.print("<a href='" + relURL + "'");
 
             if (cssClass != null){
                 out.print(" class='" + cssClass + "'");
-            }
-
-            // if the linktarget is another window or we are in a frames view add the target
-            if (target != null && (target == OWLHTMLConstants.LinkTarget._blank || !singleFrame)){
-                out.print(" target='" + target + "'");
             }
 
             out.print(" ><img src=\"");

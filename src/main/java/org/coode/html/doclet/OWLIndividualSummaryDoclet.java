@@ -61,7 +61,7 @@ public class OWLIndividualSummaryDoclet extends AbstractOWLDocDoclet<OWLNamedInd
 
         final List<OWLPropertyExpression> orderedProps = new ArrayList<OWLPropertyExpression>(assertedProps.keySet());
 
-        Collections.sort(orderedProps, getOWLHTMLKit().getOWLObjectComparator());
+        Collections.sort(orderedProps, getOWLHTMLKit().getOWLServer().getComparator());
         
         for (final OWLPropertyExpression prop : orderedProps){
             addDoclet(new AbstractOWLElementsDoclet<OWLNamedIndividual, OWLPropertyAssertionObject>(prop.toString(), ElementsDoclet.Format.list, getOWLHTMLKit()){
@@ -91,7 +91,7 @@ public class OWLIndividualSummaryDoclet extends AbstractOWLDocDoclet<OWLNamedInd
 
         final List<OWLAnnotationProperty> orderedProps = new ArrayList<OWLAnnotationProperty>(assertedProps.keySet());
 
-        Collections.sort(orderedProps, getOWLHTMLKit().getOWLObjectComparator());
+        Collections.sort(orderedProps, getOWLHTMLKit().getOWLServer().getComparator());
 
         for (final OWLAnnotationProperty prop : orderedProps){
             addDoclet(new AbstractOWLElementsDoclet<OWLNamedIndividual, OWLAnnotationValue>(prop.toString(), ElementsDoclet.Format.list, getOWLHTMLKit()){

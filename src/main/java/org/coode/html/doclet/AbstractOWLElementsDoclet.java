@@ -4,7 +4,6 @@
 package org.coode.html.doclet;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.www.renderer.ElementRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
@@ -32,6 +31,9 @@ import java.util.Set;
  */
 @Deprecated
 public abstract class AbstractOWLElementsDoclet<O extends OWLObject, E extends OWLObject> extends ElementsDoclet<O, E> {
+
+    private static final String INFERRED_CSS_CLASS = "inferred";
+    private static final String ASSERTED_CSS_CLASS = "asserted";
 
     private OWLHTMLKit kit;
 
@@ -85,10 +87,10 @@ public abstract class AbstractOWLElementsDoclet<O extends OWLObject, E extends O
     @Override
     protected String getCSSClass(E object) { // TODO: should we cache to prevent multiple queries?
         if (showInferences() && !getAssertedElements(getOWLHTMLKit().getVisibleOntologies()).contains(object)){
-            return OWLHTMLConstants.INFERRED_CSS_CLASS;
+            return INFERRED_CSS_CLASS;
         }
         else{
-            return OWLHTMLConstants.ASSERTED_CSS_CLASS;
+            return ASSERTED_CSS_CLASS;
         }
     }
 

@@ -1,7 +1,7 @@
-package org.coode.owl.mngr.impl;
+package org.coode.owl.hierarchy;
 
 import org.coode.owl.mngr.ActiveOntologyProvider;
-import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;

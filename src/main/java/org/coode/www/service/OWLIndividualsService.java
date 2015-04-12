@@ -1,11 +1,10 @@
 package org.coode.www.service;
 
-import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 

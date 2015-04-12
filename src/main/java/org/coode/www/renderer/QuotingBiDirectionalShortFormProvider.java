@@ -1,4 +1,4 @@
-package org.coode.owl.mngr.impl;
+package org.coode.www.renderer;
 
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;

@@ -1,7 +1,7 @@
 package org.coode.owl;
 
 import junit.framework.TestCase;
-import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.impl.OWLServerImpl;
 import org.semanticweb.owlapi.apibinding.OWLManager;

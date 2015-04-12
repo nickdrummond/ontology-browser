@@ -4,7 +4,6 @@
 package org.coode.html.doclet;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.util.URLUtils;
 import org.semanticweb.owlapi.model.OWLEntity;
 
@@ -26,8 +25,6 @@ public class LinkDoclet<O extends OWLEntity> implements HTMLDoclet<O>{
     private O object;
 
     private OWLHTMLKit kit;
-
-    private OWLHTMLConstants.LinkTarget target;
 
     private Map<String, String> attributes = new HashMap<String, String>();
 
@@ -55,9 +52,6 @@ public class LinkDoclet<O extends OWLEntity> implements HTMLDoclet<O>{
             out.print("='");
             out.print(attributes.get(attr));
             out.print("'");
-        }
-        if (target != null && !isSingleFrameNavigation()){
-            out.print(" target='" + target + "'");
         }
         out.println(" >" + shortName + "</a>");
     }
@@ -92,10 +86,6 @@ public class LinkDoclet<O extends OWLEntity> implements HTMLDoclet<O>{
 
     public void setCSS(String css){
         attributes.put("style", css);
-    }
-
-    public void setTarget(OWLHTMLConstants.LinkTarget target){
-        this.target = target;
     }
 
     private boolean isSingleFrameNavigation() {

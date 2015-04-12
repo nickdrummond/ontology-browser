@@ -3,12 +3,12 @@
 */
 package org.coode.html.doclet;
 
+import org.coode.www.renderer.OWLHTMLVisitor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import java.io.PrintWriter;
@@ -66,7 +66,7 @@ public class LeafNodeDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O>
     }
 
     protected Comparator<? super O> getComparator() {
-        return getOWLHTMLKit().getOWLObjectComparator();
+        return getOWLHTMLKit().getOWLServer().getComparator();
     }
 
     protected O getFocus() {
@@ -149,7 +149,7 @@ public class LeafNodeDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O>
 
         for (O synonym : asOrderedList(hp.getEquivalents(node))){
             out.print(" ");
-            out.print(OWLHTMLConstants.EQUIV_CHAR);
+            out.print(OWLHTMLVisitor.EQUIV_CHAR);
             out.print(" ");
             objRenderer.render(synonym, pageURL, out);
         }

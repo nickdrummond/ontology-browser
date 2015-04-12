@@ -1,7 +1,7 @@
 package org.coode.www.service;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.exception.NotFoundException;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -36,7 +36,7 @@ public class OWLAnnotationPropertiesService {
         Set<OWLAnnotationProperty> annotationProperties = hp.getRoots();
         if (!annotationProperties.isEmpty()){
             List<OWLAnnotationProperty> aps = new ArrayList<OWLAnnotationProperty>(annotationProperties);
-            Collections.sort(aps, kit.getOWLObjectComparator());
+            Collections.sort(aps, kit.getOWLServer().getComparator());
             return aps.get(0);
         }
         throw new NotFoundException("OWLAnnotationProperty", "any");

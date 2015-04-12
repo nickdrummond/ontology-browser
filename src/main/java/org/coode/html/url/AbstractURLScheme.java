@@ -5,7 +5,6 @@ package org.coode.html.url;
 
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 
@@ -43,13 +42,13 @@ public abstract class AbstractURLScheme implements URLScheme {
 
     public String getTypeString(URL url){
         String relativeURL = URLUtils.createRelativeURL(kit.getBaseURL(), url);
-        String[] path = relativeURL.split(OWLHTMLConstants.SLASH);
+        String[] path = relativeURL.split("/");
         return path[0]; // always the first element
     }
 
     public URL getURLForIndex(NamedObjectType type) {
         try {
-            return new URL(kit.getBaseURL(), type.toString() + OWLHTMLConstants.SLASH);
+            return new URL(kit.getBaseURL(), type.toString() + "/");
         }
         catch (MalformedURLException e) {
             logger.error("Could not create URL for index: " + type, e);

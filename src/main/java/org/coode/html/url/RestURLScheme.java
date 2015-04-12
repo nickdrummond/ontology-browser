@@ -5,7 +5,6 @@ package org.coode.html.url;
 
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
@@ -47,6 +46,8 @@ public class RestURLScheme extends AbstractURLScheme {
 
     private static final Logger logger = LoggerFactory.getLogger(RestURLScheme.class.getName());
 
+    public static final String DEFAULT_ENCODING = "UTF-8";
+
     private String additionalLinkArguments;
 
     public RestURLScheme(OWLHTMLKit kit) {
@@ -76,9 +77,9 @@ public class RestURLScheme extends AbstractURLScheme {
         }
 
         StringBuilder sb = new StringBuilder(type);
-        sb.append(OWLHTMLConstants.SLASH);
+        sb.append("/");
         sb.append(code);
-        sb.append(OWLHTMLConstants.SLASH);
+        sb.append("/");
 
         if (additionalLinkArguments != null){
             sb.append(additionalLinkArguments);
@@ -125,13 +126,12 @@ public class RestURLScheme extends AbstractURLScheme {
 
     public URL getURLForOntologyIndex(OWLOntology ont, NamedObjectType type) {
         try {
-            String encodedURI = URLEncoder.encode(OWLUtils.getOntologyIdString(ont), OWLHTMLConstants.DEFAULT_ENCODING);
+            String encodedURI = URLEncoder.encode(OWLUtils.getOntologyIdString(ont), DEFAULT_ENCODING);
 
             StringBuilder sb = new StringBuilder(type.toString());
-            sb.append(OWLHTMLConstants.SLASH);
-            sb.append(OWLHTMLConstants.START_QUERY);
+            sb.append("/?");
             sb.append(OWLHTMLParam.ontology);
-            sb.append(OWLHTMLConstants.EQUALS);
+            sb.append("=");
             sb.append(encodedURI);
 
             return new URL(getBaseURL(), sb.toString());
@@ -153,7 +153,7 @@ public class RestURLScheme extends AbstractURLScheme {
     @Override
     public URL getURLForApi(NamedObjectType type) {
         try {
-            return new URL(kit.getBaseURL() + "api" + OWLHTMLConstants.SLASH + type.getPluralRendering().toLowerCase());
+            return new URL(kit.getBaseURL() + "api/" + type.getPluralRendering().toLowerCase());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -161,7 +161,7 @@ public class RestURLScheme extends AbstractURLScheme {
 
     private int getID(URL url) throws MalformedURLException {
         String relativeURL = URLUtils.createRelativeURL(kit.getBaseURL(), url);
-        String[] path = relativeURL.split(OWLHTMLConstants.SLASH);
+        String[] path = relativeURL.split("/");
         if (path.length >= 2){
             try{
                 return Integer.parseInt(path[1]); // always the second element

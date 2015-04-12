@@ -1,7 +1,6 @@
-package org.coode.owl.mngr.impl;
+package org.coode.owl.hierarchy;
 
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
-import org.coode.owl.mngr.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;

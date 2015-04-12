@@ -7,9 +7,7 @@ import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.impl.OWLServerImpl;
 import org.coode.owl.mngr.impl.ServerOptionsAdapterImpl;
-import org.coode.owl.util.OWLObjectComparator;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.io.*;
@@ -60,8 +58,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private String id;
 
-    private Comparator<OWLObject> comparator;
-
     private List<String> errorMessages = new ArrayList<String>();
 
     private Date timestamp;
@@ -76,7 +72,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         this.id = createID();
         this.owlServer = server;
         this.baseURL = baseURL;
-        this.comparator = new OWLObjectComparator<OWLObject>(server);
     }
 
     private String createID() {
@@ -124,10 +119,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public void setURLScheme(URLScheme urlScheme) {
         this.urlScheme = urlScheme;
-    }
-
-    public Comparator<OWLObject> getOWLObjectComparator() {
-        return comparator;
     }
 
     public Set<OWLOntology> getVisibleOntologies() {

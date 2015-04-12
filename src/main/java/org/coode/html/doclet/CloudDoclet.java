@@ -2,7 +2,6 @@ package org.coode.html.doclet;
 
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.cloud.*;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.util.HTMLUtils;
 import org.semanticweb.owlapi.model.*;
 
@@ -50,8 +49,6 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
 //    private int count = -1; // number of entities shown
 
     private O currentSelection;
-
-    private OWLHTMLConstants.LinkTarget target;
 
 
     public CloudDoclet(OWLHTMLKit kit){
@@ -160,7 +157,6 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
 
         LinkDoclet link = new LinkDoclet<O>(entity, kit);
         link.setCSS("color: " + colour + "; font-size: " + size + "pt;");
-        link.setTarget(target);
         link.addAttribute("title", Integer.toString(score));
 
         link.renderAll(pageURL, out);
@@ -200,10 +196,6 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
 
     public void setSelection(O currentSelection) {
         this.currentSelection = currentSelection;
-    }
-
-    public void setTarget(OWLHTMLConstants.LinkTarget target) {
-        this.target = target;
     }
 
     public String getID() {

@@ -1,5 +1,6 @@
 package org.coode.owl.mngr;
 
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;

@@ -1,4 +1,4 @@
-package org.coode.owl.mngr.impl;
+package org.coode.www.renderer;
 
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerOptionsAdapter;

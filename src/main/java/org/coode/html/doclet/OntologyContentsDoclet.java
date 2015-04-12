@@ -4,7 +4,6 @@
 package org.coode.html.doclet;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.util.HTMLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.util.OWLUtils;
@@ -66,8 +65,7 @@ public class OntologyContentsDoclet extends AbstractOWLDocDoclet<OWLOntology> {
             StringWriter writer = new StringWriter();
             PrintWriter out = new PrintWriter(writer);
             HTMLUtils.renderLink(getOntologyName(), ontURL,
-                       OWLHTMLConstants.LinkTarget.content,
-                       null, isSingleFrameNavigation(), pageURL, out);
+                       null, pageURL, out);
             out.flush();
             return writer.getBuffer().toString();
         }
@@ -82,7 +80,7 @@ public class OntologyContentsDoclet extends AbstractOWLDocDoclet<OWLOntology> {
             URL indexURL = getOWLHTMLKit().getURLScheme().getURLForOntologyIndex(getUserObject(), type);
             out.println("<li>");
             String label = type.getPluralRendering();
-            HTMLUtils.renderLink(label, indexURL, OWLHTMLConstants.LinkTarget.subnav, null, isSingleFrameNavigation(), pageURL, out);
+            HTMLUtils.renderLink(label, indexURL, null, pageURL, out);
             out.println(" (" + count + ")");
             out.println("</li>");
         }

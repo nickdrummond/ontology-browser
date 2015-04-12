@@ -1,9 +1,6 @@
-package org.coode.www.kit.impl;
+package org.coode.owl.hierarchy;
 
-import org.coode.owl.mngr.ServerConstants;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Set;
 /*
 * Copyright (C) 2007, University of Manchester
 *
@@ -28,30 +25,34 @@ import java.net.URL;
 */
 
 /**
- * Author: Nick Drummond<br>
+ * Author: drummond<br>
  * http://www.cs.man.ac.uk/~drummond/<br><br>
  * <p/>
  * The University Of Manchester<br>
  * Bio Health Informatics Group<br>
- * Date: Oct 2, 2007<br><br>
+ * Date: Aug 6, 2009<br><br>
  */
-@Deprecated
-public class OWLHTMLConstants extends ServerConstants {
+public interface HierarchyProvider<O> {
 
-    public static final String DEFAULT_ENCODING = "UTF-8";
+    Class<? extends O> getNodeClass();
 
-    public static final String PERMALINK_LABEL = "permalink";
+    Set<O> getRoots();
 
-    public static final String EQUIV_CHAR = "&equiv;";
-    public static final String SUBCLASS_CHAR = "&sube;";
+    boolean isRoot(O node);
 
-    public static final String START_QUERY = "?";
-    public static final String EQUALS = "=";
-    public static final String PARAM_SEP = "&";
-    public static final String SLASH = "/";
+    boolean isLeaf(O node);
 
-    public static final String INFERRED_CSS_CLASS = "inferred";
-    public static final String ASSERTED_CSS_CLASS = "asserted";
+    Set<O> getParents(O node);
 
-    public enum LinkTarget{_top, content, nav, subnav, header, _blank}
+    Set<O> getChildren(O node);
+
+    Set<O> getEquivalents(O node);
+
+    Set<O> getDescendants(O node);
+
+    Set<O> getAncestors(O node);
+
+    boolean hasAncestor(O node, O ancestor);
+
+    void dispose();
 }

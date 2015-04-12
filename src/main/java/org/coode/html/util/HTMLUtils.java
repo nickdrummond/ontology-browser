@@ -1,7 +1,5 @@
 package org.coode.html.util;
 
-import org.coode.www.kit.impl.OWLHTMLConstants;
-
 import java.io.PrintWriter;
 import java.net.URL;
 
@@ -20,13 +18,11 @@ public class HTMLUtils {
      *
      * @param name readable link text
      * @param href page to link to
-     * @param target may be null. If set, this is only added if in multiframe mode
      * @param cssClass may be null. The CSS class applied to the anchor element
-     * @param singleFrame - if true, the target should be ignored
      * @param pageURL the current page URL, so that links can be made relative
      * @param out printwriter to write to
      */
-    public static void renderLink(String name, URL href, OWLHTMLConstants.LinkTarget target, String cssClass, boolean singleFrame, URL pageURL, PrintWriter out) {
+    public static void renderLink(String name, URL href, String cssClass, URL pageURL, PrintWriter out) {
         final String relURL = URLUtils.createRelativeURL(pageURL, href);
         if (relURL.length() == 0){
             out.print("<span class='currentpage'>");
@@ -38,11 +34,6 @@ public class HTMLUtils {
 
             if (cssClass != null){
                 out.print(" class='" + cssClass + "'");
-            }
-
-            // if the linktarget is another window or we are in a frames view add the target
-            if (target != null && (target == OWLHTMLConstants.LinkTarget._blank || !singleFrame)){
-                out.print(" target='" + target + "'");
             }
 
             out.print(" >" + name + "</a>");

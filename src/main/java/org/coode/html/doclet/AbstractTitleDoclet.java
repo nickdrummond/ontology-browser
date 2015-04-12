@@ -4,7 +4,6 @@
 package org.coode.html.doclet;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.html.url.PermalinkURLScheme;
 import org.coode.html.util.HTMLUtils;
@@ -29,6 +28,7 @@ import java.net.URL;
 public abstract class AbstractTitleDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O> {
 
     public static final String ID = "doclet.summary.title";
+    public static final String PERMALINK_LABEL = "permalink";
 
     public AbstractTitleDoclet(OWLHTMLKit kit) {
         super(kit);
@@ -45,11 +45,9 @@ public abstract class AbstractTitleDoclet<O extends OWLObject> extends AbstractO
 
         final boolean permalink = kit.getHTMLProperties().isSet(OWLHTMLProperty.optionRenderPermalink);
         if (permalink){
-            HTMLUtils.renderLink(OWLHTMLConstants.PERMALINK_LABEL,
+            HTMLUtils.renderLink(PERMALINK_LABEL,
                        new PermalinkURLScheme(kit.getURLScheme()).getURLForAbsolutePage(pageURL),
-                       null,
                        "permalink",
-                       isSingleFrameNavigation(),
                        pageURL,
                        out);
         }

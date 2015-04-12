@@ -21,16 +21,11 @@ public abstract class AbstractOWLDocDoclet<O extends OWLObject> extends Abstract
 
     private OWLHTMLKit kit;
 
-
     public AbstractOWLDocDoclet(OWLHTMLKit kit) {
         this.kit = kit;
     }
 
     protected final OWLHTMLKit getOWLHTMLKit(){
         return kit;
-    }
-
-    protected boolean isSingleFrameNavigation() {
-        return true;
     }
 }

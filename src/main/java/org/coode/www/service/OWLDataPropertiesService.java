@@ -1,12 +1,10 @@
 package org.coode.www.service;
 
-import org.coode.owl.mngr.HierarchyProvider;
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 public class OWLDataPropertiesService {

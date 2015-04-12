@@ -6,7 +6,6 @@ package org.coode.www.renderer;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLConstants;
 import org.coode.html.url.OWLObjectURLRenderer;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
@@ -46,6 +45,9 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private static final String CSS_VALUE = "value";
     private static final String CSS_LITERAL = "literal";
     private static final String CSS_ANNOTATION_URI = "annotation-uri";
+
+    public static final String EQUIV_CHAR = "&equiv;";
+    public static final String SUBCLASS_CHAR = "&sube;";
 
     // the subset and equivalence symbols can be encoded in HTML
     private static final boolean USE_SYMBOLS = true;
@@ -619,7 +621,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(OWLSubClassOfAxiom axiom) {
         axiom.getSubClass().accept(this);
         write(" ");
-        writeKeyword(USE_SYMBOLS ? OWLHTMLConstants.SUBCLASS_CHAR : ManchesterOWLSyntax.SUBCLASS_OF.toString());
+        writeKeyword(USE_SYMBOLS ? SUBCLASS_CHAR : ManchesterOWLSyntax.SUBCLASS_OF.toString());
         write(" ");
         axiom.getSuperClass().accept(this);
         writeAnnotations(axiom);
@@ -628,7 +630,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(OWLSubObjectPropertyOfAxiom axiom) {
         axiom.getSubProperty().accept(this);
         write(" ");
-        writeKeyword(USE_SYMBOLS ? OWLHTMLConstants.SUBCLASS_CHAR : ManchesterOWLSyntax.SUB_PROPERTY_OF.toString());
+        writeKeyword(USE_SYMBOLS ? SUBCLASS_CHAR : ManchesterOWLSyntax.SUB_PROPERTY_OF.toString());
         write(" ");
         axiom.getSuperProperty().accept(this);
         writeAnnotations(axiom);
@@ -637,7 +639,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(OWLSubDataPropertyOfAxiom axiom) {
         axiom.getSubProperty().accept(this);
         write(" ");
-        writeKeyword(USE_SYMBOLS ? OWLHTMLConstants.SUBCLASS_CHAR : ManchesterOWLSyntax.SUB_PROPERTY_OF.toString());
+        writeKeyword(USE_SYMBOLS ? SUBCLASS_CHAR : ManchesterOWLSyntax.SUB_PROPERTY_OF.toString());
         write(" ");
         axiom.getSuperProperty().accept(this);
         writeAnnotations(axiom);
@@ -739,7 +741,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private void writeEquivalence(Collection<? extends OWLObject> objects, OWLAxiom axiom) {
-        String equiv = USE_SYMBOLS ? OWLHTMLConstants.EQUIV_CHAR : ManchesterOWLSyntax.EQUIVALENT_TO.toString();
+        String equiv = USE_SYMBOLS ? EQUIV_CHAR : ManchesterOWLSyntax.EQUIVALENT_TO.toString();
         writeKeywordOpList(objects, equiv, false);
         writeAnnotations(axiom);
     }
