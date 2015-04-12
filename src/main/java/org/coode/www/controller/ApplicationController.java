@@ -4,9 +4,11 @@ import org.coode.html.doclet.Doclet;
 import org.coode.html.util.ServletUtils;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.ApplicationInfo;
+import org.coode.www.service.OptionsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
@@ -23,6 +25,14 @@ abstract public class ApplicationController {
     @Autowired
     protected SessionManager sessionManager;
 
+    @Autowired
+    protected OptionsService optionsService;
+
+    @ModelAttribute("applicationInfo")
+    public ApplicationInfo getApplicationInfo() {
+        return applicationInfo;
+    }
+
     // TODO remove me
     protected String renderDoclets(final HttpServletRequest request, Doclet... doclets) {
         return renderDoclets(ServletUtils.getPageURL(request), doclets);
@@ -30,7 +40,6 @@ abstract public class ApplicationController {
 
     // TODO remove me
     protected String renderDoclets(final URL pageUrl, Doclet... doclets) {
-        logger.warn("Using deprecated doclets");
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
 

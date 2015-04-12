@@ -69,7 +69,8 @@
         <a class='optionLink' th:href='@{/options/}' >Options</a>
         <form id='rendererForm'>
             <label for='renderLabels'>Labels</label>
-            <input type='checkbox' name='renderLabels' id="renderLabels" checked='checked' />
+            <input type='checkbox' name='renderLabels' id="renderLabels"
+                   th:checked='${options.optionRenderer == "label"}'/>
         </form>
     </div> <!-- options -->
 

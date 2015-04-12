@@ -20,9 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 public class OptionsController extends ApplicationController {
 
     @Autowired
-    private OptionsService optionsService;
-
-    @Autowired
     private ReasonerFactoryService reasonerService;
 
     @Autowired
@@ -34,7 +31,6 @@ public class OptionsController extends ApplicationController {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
-        model.addAttribute("applicationInfo", applicationInfo);
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("reasoners", reasonerService.getAvailableReasoners());
         model.addAttribute("activeOntology", ontologiesService.getActiveOntology(kit));

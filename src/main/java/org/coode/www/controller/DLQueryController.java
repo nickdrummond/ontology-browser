@@ -48,7 +48,7 @@ public class DLQueryController extends ApplicationController {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("expression", expression);

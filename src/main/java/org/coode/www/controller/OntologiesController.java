@@ -42,7 +42,7 @@ public class OntologiesController extends ApplicationController {
         doclet.setTitle("Ontologies");
         doclet.addAll(results);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, doclet));
@@ -66,7 +66,7 @@ public class OntologiesController extends ApplicationController {
         HTMLDoclet summaryDoclet = new OWLOntologySummaryDoclet(kit);
         summaryDoclet.setUserObject(ontology);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));

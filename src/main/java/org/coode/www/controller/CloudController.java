@@ -41,7 +41,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
@@ -65,7 +65,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
@@ -90,7 +90,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
@@ -114,7 +114,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
@@ -138,7 +138,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
@@ -162,7 +162,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
-        model.addAttribute("applicationInfo", applicationInfo);
+        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
