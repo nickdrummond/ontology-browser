@@ -9,13 +9,16 @@ public class Characteristic {
 
     private OWLObject subject;
 
-    private OWLProperty name;
+    private String name;
 
-    private List<OWLObject> objects;
+    private List<? extends OWLObject> objects;
 
-    public Characteristic(OWLObject subject, OWLProperty predicate, List<OWLObject> objects) {
+    public Characteristic() {
+    }
+
+    public Characteristic(OWLObject subject, String name, List<? extends OWLObject> objects) {
         this.subject = subject;
-        this.name = predicate;
+        this.name = name;
         this.objects = objects;
     }
 
@@ -23,11 +26,23 @@ public class Characteristic {
         return subject;
     }
 
-    public OWLProperty getName() {
+    public void setSubject(OWLObject subject) {
+        this.subject = subject;
+    }
+
+    public String getName() {
         return name;
     }
 
-    public List<OWLObject> getObjects() {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<? extends OWLObject> getObjects() {
         return objects;
+    }
+
+    public void setObjects(List<? extends OWLObject> objects) {
+        this.objects = objects;
     }
 }

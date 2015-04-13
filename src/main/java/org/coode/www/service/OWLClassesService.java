@@ -4,13 +4,15 @@ import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.Characteristic;
+import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.InferredDataPropertyCharacteristicAxiomGenerator;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class OWLClassesService {
@@ -45,6 +47,14 @@ public class OWLClassesService {
     }
 
     public List<Characteristic> getCharacteristics(final OWLClass owlClass, final OWLHTMLKit kit) {
-        return Collections.emptyList();
+        List<Characteristic> characteristics = new ArrayList<>();
+        List<OWLAnnotation> annots = new ArrayList<>();
+        for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
+            annots.addAll(EntitySearcher.getAnnotations(owlClass.getIRI(), ont));
+        }
+        Characteristic annotations = new Characteristic(owlClass, "Annotations", annots);
+        characteristics.add(annotations);
+
+        return characteristics;
     }
 }
