@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>
+
+    <link rel='stylesheet' type='text/css'     href='../../static/css/default.css'/>
+</head>
+
+<body>
+
+<div class="characteristic" th:fragment="characteristic(characteristic)">
+
+    <h3 th:text='${characteristic.predicate + " (" + characteristic.objects.size() + ")"}'>Some Characteristic (2)</h3>
+
+    <ul th:remove="all-but-first">
+        <li class="asserted" th:each="object : ${characteristic.objects}" th:text="${object}">
+
+        <a href="../../classes/1934778517/" class='Class'
+           title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
+            <span class='keyword'>&equiv;</span>
+            <a href="../../classes/140023861/" class='Class'
+               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza">Pizza</a>
+            <span class='keyword'>and</span>
+            <span class='active-entity Object Property'>hasBase</span>
+            <span class='only'>only</span>
+            <a href="../../classes/677040734/" class='Class'
+               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
+        </li>
+        <li class="asserted">
+            <span class="keyword">Functional</span>
+            (
+            <span class="active-entity Object Property">hasBase</span>
+            )
+        </li>
+        <li class="asserted">
+            <span class="keyword">InverseFunctional</span>
+            (
+            <span class="active-entity Object Property">hasBase</span>
+            )
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

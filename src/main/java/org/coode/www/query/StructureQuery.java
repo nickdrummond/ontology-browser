@@ -54,7 +54,7 @@ public class StructureQuery {
 //
 //            // merge the values into the results performing AND operation
 //            if (descrVisitor.getVisitedRestriction()){
-//                Set<OWLEntity> newValues = descrVisitor.getValues();
+//                Set<OWLEntity> newValues = descrVisitor.getObjects();
 //                if (newValues.size() > 0){
 //                    if (results.size() > 0){
 //                        for (Iterator<OWLEntity> i = results.iterator(); i.hasNext();){
@@ -184,7 +184,7 @@ public class StructureQuery {
 //            this.mngr = mngr;
 //        }
 //
-//        public Set<OWLEntity>getValues(){
+//        public Set<OWLEntity>getObjects(){
 //            return accumulator;
 //        }
 //

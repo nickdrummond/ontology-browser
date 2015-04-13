@@ -65,13 +65,15 @@ public class OWLClassesController extends ApplicationController {
         summaryDoclet.setUserObject(owlClass);
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlClass);
+
         model.addAttribute("title", entityName + " (Class)");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("characteristics", service.getCharacteristics(owlClass, kit));
         model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
 
-        return "doclet";
+        return "owlclass";
     }
 
     @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)

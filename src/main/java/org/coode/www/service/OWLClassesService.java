@@ -3,9 +3,14 @@ package org.coode.www.service;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
+import org.coode.www.model.Characteristic;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.util.InferredDataPropertyCharacteristicAxiomGenerator;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class OWLClassesService {
@@ -37,5 +42,9 @@ public class OWLClassesService {
 
     public HierarchyProvider<OWLClass> getHierarchyProvider(final OWLHTMLKit kit) {
         return kit.getOWLServer().getHierarchyProvider(OWLClass.class);
+    }
+
+    public List<Characteristic> getCharacteristics(final OWLClass owlClass, final OWLHTMLKit kit) {
+        return Collections.emptyList();
     }
 }

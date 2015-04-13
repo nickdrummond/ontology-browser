@@ -28,6 +28,25 @@ div {
     margin-top: 0;
 }
 
+.characteristic ul {
+    border: solid 1px #c7cfd5;
+    background: #ffffff;
+    overflow: hidden;
+    padding: 5px 5px 5px 25px;
+    margin: 0 0 10px 0;
+}
+
+.characteristic h3 {
+    font-size: 10pt;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+}
+
+.characteristic li {
+    margin: 5px;
+}
+
+
 div.codebox, div.error, div.message {
     border: solid 1px #c7cfd5;
     background: #ffffff;
