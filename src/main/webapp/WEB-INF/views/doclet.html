@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<head th:replace='base :: header'></head>
+<head th:replace='base :: header (title=${title})'></head>
 
 <body>
 
@@ -9,7 +9,9 @@
 <div th:replace='base :: menu'/>
 <div th:replace='base :: tabs'/>
 
-<div th:utext='${content}'>Some Content</div>
+<div id="content">
+    <div th:utext='${content}'>Some Content</div>
+</div>
 
 <div th:replace='base :: footer'></div>
 

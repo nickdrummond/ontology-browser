@@ -15,9 +15,9 @@ import java.util.Set;
 public class OWLIndividualsService {
 
     // TODO need to index the entities by ID
-    public OWLIndividual getOWLIndividualFor(final String propertyId, final OWLHTMLKit kit) throws NotFoundException {
+    public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final OWLHTMLKit kit) throws NotFoundException {
         for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
-            for (OWLIndividual owlIndividual: ont.getIndividualsInSignature()) {
+            for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature()) {
                 if (getIdFor(owlIndividual).equals(propertyId)) {
                     return owlIndividual;
                 }

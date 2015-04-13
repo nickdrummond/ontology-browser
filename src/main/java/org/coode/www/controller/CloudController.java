@@ -41,6 +41,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
+        model.addAttribute("title", "Classes Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -65,6 +66,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
+        model.addAttribute("title", "Individuals Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -90,6 +92,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
+        model.addAttribute("title", "Object Properties Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -114,6 +117,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
+        model.addAttribute("title", "Data Properties Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -138,6 +142,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
+        model.addAttribute("title", "Annotation Properties Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -162,6 +167,7 @@ public class CloudController extends ApplicationController {
         cloudDoclet.setThreshold(threshold);
         cloudDoclet.setZoom(zoom);
 
+        model.addAttribute("title", "Datatypes Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());

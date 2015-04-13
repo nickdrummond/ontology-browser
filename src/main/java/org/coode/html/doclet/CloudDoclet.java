@@ -81,30 +81,6 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
         HTMLUtils.renderBoxEnd(getTitle(), out);
     }
 
-    @Override
-    public void setUserObject(O object) {
-        if (model == null){
-            model = getModel(object);
-        }
-        super.setUserObject(object);
-    }
-
-    private CloudModel<O> getModel(O object) {
-        if (object instanceof OWLClass){
-            return (CloudModel<O>)new ClassesByUsageCloud(kit);
-        }
-        else if (object instanceof OWLObjectProperty){
-            return (CloudModel<O>)new ObjectPropsByUsageCloud(kit);
-        }
-        else if (object instanceof OWLDataProperty){
-            return (CloudModel<O>)new DataPropsByUsageCloud(kit);
-        }
-        else if (object instanceof OWLNamedIndividual){
-            return (CloudModel<O>)new IndividualsByUsageCloud(kit);
-        }
-        return null;
-    }
-
     public String getTitle() {
         return model.getTitle();
     }

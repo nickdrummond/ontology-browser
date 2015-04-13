@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 
-<head th:fragment='header'>
-<title th:text='${applicationInfo.name}'>Application Name</title>
+<head th:fragment='header (title)'>
+
+    <title th:text='${applicationInfo.name + " : " + title}'>Application Name : Page Name</title>
 
     <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>

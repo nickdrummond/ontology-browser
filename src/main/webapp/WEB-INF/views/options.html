@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<head th:replace='base :: header'></head>
+<head th:replace='base :: header (title=${"Options}")'></head>
 
 <body>
 
@@ -9,128 +9,135 @@
 <div th:replace='base :: menu'/>
 <div th:replace='base :: tabs'/>
 
-<div id='look_and_feel'>
+<div id='content'>
 
-    <h4>Look and Feel</h4>
+<h2>Options</h2>
 
-    <div class='codebox'>
-        <table style='margin-bottom: 10px;'>
+    <div id='look_and_feel'>
 
-            <tr>
-                <td class='key'>Label annotation</td>
-                <td>
-                    <form method='POST' action='.'>
-                        <input type='hidden' name='property' value='optionLabelUri' />
-                        <input type='text' name='value' th:value='${options.optionLabelUri}' />
-                        <input type='submit' value='ok' /></form>
-                </td>
-            </tr>
+        <h4>Look and Feel</h4>
 
-            <tr>
-                <td class='key'>Label language</td>
-                <td>
-                    <form method='POST' action='.'>
-                        <input type='hidden' name='property' value='optionLabelLang' />
-                        <input type='text' name='value' th:value='${options.optionLabelLang}' />
-                        <input type='submit' value='ok' />
-                    </form>
-                </td>
-            </tr>
+        <div class='codebox'>
+            <table style='margin-bottom: 10px;'>
 
-            <tr>
-                <td class='key'>Label property</td>
-                <td>
-                    <form method='POST' action='.'>
-                        <input type='hidden' name='property' value='optionLabelPropertyUri' />
-                        <input type='text' name='value' th:value='${options.optionLabelPropertyUri}' />
-                        <input type='submit' value='ok' /></form>
-                </td>
-            </tr>
+                <tr>
+                    <td class='key'>Label annotation</td>
+                    <td>
+                        <form method='POST' action='.'>
+                            <input type='hidden' name='property' value='optionLabelUri' />
+                            <input type='text' name='value' th:value='${options.optionLabelUri}' />
+                            <input type='submit' value='ok' /></form>
+                    </td>
+                </tr>
 
-            <tr>
-                <td class='key'>Show hierarchies</td>
-                <td>
+                <tr>
+                    <td class='key'>Label language</td>
+                    <td>
+                        <form method='POST' action='.'>
+                            <input type='hidden' name='property' value='optionLabelLang' />
+                            <input type='text' name='value' th:value='${options.optionLabelLang}' />
+                            <input type='submit' value='ok' />
+                        </form>
+                    </td>
+                </tr>
 
-                    <form>
-                        <input type='hidden' name='property' value='optionShowMiniHierarchies' />
-                        <input type='checkbox' class="option" name="value"
-                               th:checked='${options.optionShowMiniHierarchies == "true"}'/>
-                    </form>
-                </td>
-            </tr>
+                <tr>
+                    <td class='key'>Label property</td>
+                    <td>
+                        <form method='POST' action='.'>
+                            <input type='hidden' name='property' value='optionLabelPropertyUri' />
+                            <input type='text' name='value' th:value='${options.optionLabelPropertyUri}' />
+                            <input type='submit' value='ok' /></form>
+                    </td>
+                </tr>
 
-            <tr>
-                <td class='key'>Render permalinks</td>
-                <td>
-                    <form>
-                        <input type='hidden' name='property' value='optionRenderPermalink' />
-                        <input type='checkbox' class="option" name="value"
-                               th:checked='${options.optionShowMiniHierarchies == "true"}'/>
-                    </form>
-                </td>
-            </tr>
+                <tr>
+                    <td class='key'>Show hierarchies</td>
+                    <td>
 
-        </table>
-    </div>
-</div><!-- look and feel -->
+                        <form>
+                            <input type='hidden' name='property' value='optionShowMiniHierarchies' />
+                            <input type='checkbox' class="option" name="value"
+                                   th:checked='${options.optionShowMiniHierarchies == "true"}'/>
+                        </form>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class='key'>Render permalinks</td>
+                    <td>
+                        <form>
+                            <input type='hidden' name='property' value='optionRenderPermalink' />
+                            <input type='checkbox' class="option" name="value"
+                                   th:checked='${options.optionShowMiniHierarchies == "true"}'/>
+                        </form>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    </div><!-- look and feel -->
 
 
-<div id='model'>
-    <h4>Reasoner</h4>
-    <div class='codebox'>
-        <table style='margin-bottom: 10px;'>
+    <div id='model'>
+        <h4>Reasoner</h4>
+        <div class='codebox'>
+            <table style='margin-bottom: 10px;'>
 
-            <tr>
-                <td class='key'>Reasoner</td>
-                <td>
-                    <form>
-                        <input type='hidden' name='property' value='optionReasoner' />
-                        <select class="option" name="value">
+                <tr>
+                    <td class='key'>Reasoner</td>
+                    <td>
+                        <form>
+                            <input type='hidden' name='property' value='optionReasoner' />
+                            <select class="option" name="value">
                                 <option th:each='reasoner : ${reasoners}'
                                         th:value='${reasoner}'
                                         th:selected='${reasoner == options.optionReasoner}'
                                         th:text='${reasoner}'>A reasoner</option>
-                        </select>
-                    </form>
-                </td>
-            </tr>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
 
-            <!--<tr>-->
+                <!--<tr>-->
                 <!--<td class='key'>Reasoner URL</td>-->
                 <!--<td>-->
-                    <!--<form method='POST' action='.'>-->
-                        <!--<input type='hidden' name='property' value='optionRemote' />-->
-                        <!--<input type='text' name='value' th:value='${options.optionRemote}' />-->
-                        <!--<input type='submit' value='ok' />-->
-                    <!--</form>-->
+                <!--<form method='POST' action='.'>-->
+                <!--<input type='hidden' name='property' value='optionRemote' />-->
+                <!--<input type='text' name='value' th:value='${options.optionRemote}' />-->
+                <!--<input type='submit' value='ok' />-->
+                <!--</form>-->
                 <!--</td>-->
-            <!--</tr>-->
+                <!--</tr>-->
 
-            <tr>
-                <td class='key'>Reasoner enabled</td>
-                <td>
+                <tr>
+                    <td class='key'>Reasoner enabled</td>
+                    <td>
 
-                    <form>
-                        <input type='hidden' name='property' value='optionReasonerEnabled' />
-                        <input type='checkbox' class="option" name="value"
-                               th:checked='${options.optionReasonerEnabled == "true"}'/>
-                    </form>
-                </td>
-            </tr>
+                        <form>
+                            <input type='hidden' name='property' value='optionReasonerEnabled' />
+                            <input type='checkbox' class="option" name="value"
+                                   th:checked='${options.optionReasonerEnabled == "true"}'/>
+                        </form>
+                    </td>
+                </tr>
 
-            <tr>
-                <td class='key'>Show inferences</td>
-                <td>
-                    <form>
-                        <input type='hidden' name='property' value='optionShowInferences' />
-                        <input type='checkbox' class="option" name="value"
-                               th:checked='${options.optionShowInferences == "true"}'/>
-                    </form>
-                </td></tr>
+                <tr>
+                    <td class='key'>Show inferences</td>
+                    <td>
+                        <form>
+                            <input type='hidden' name='property' value='optionShowInferences' />
+                            <input type='checkbox' class="option" name="value"
+                                   th:checked='${options.optionShowInferences == "true"}'/>
+                        </form>
+                    </td>
+                </tr>
 
-        </table>
-    </div>
-</div><!-- model -->
+            </table>
+        </div>
+    </div><!-- model -->
+
+</div><!-- content -->
 
 <div th:replace='base :: footer'></div>
 

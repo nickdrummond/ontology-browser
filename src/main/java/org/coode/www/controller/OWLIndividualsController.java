@@ -39,6 +39,7 @@ public class OWLIndividualsController extends ApplicationController {
         doclet.setTitle("Individuals");
         doclet.addAll(individuals);
 
+        model.addAttribute("title", "Individuals");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -56,7 +57,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        OWLIndividual owlIndividual = service.getOWLIndividualFor(propertyId, kit);
+        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(propertyId, kit);
 
         // TODO yuck replace this adapter
         HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
@@ -65,6 +66,9 @@ public class OWLIndividualsController extends ApplicationController {
         HTMLDoclet summaryDoclet = new OWLIndividualSummaryDoclet(kit);
         summaryDoclet.setUserObject(owlIndividual);
 
+        String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlIndividual);
+
+        model.addAttribute("title", entityName + " (Individual)");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());

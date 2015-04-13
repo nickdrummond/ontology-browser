@@ -42,6 +42,7 @@ public class OntologiesController extends ApplicationController {
         doclet.setTitle("Ontologies");
         doclet.addAll(results);
 
+        model.addAttribute("title", "Ontologies");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -66,6 +67,9 @@ public class OntologiesController extends ApplicationController {
         HTMLDoclet summaryDoclet = new OWLOntologySummaryDoclet(kit);
         summaryDoclet.setUserObject(ontology);
 
+        String ontologyName = kit.getOWLServer().getOntologyShortFormProvider().getShortForm(ontology);
+
+        model.addAttribute("title", ontologyName + " (Ontology)");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
@@ -79,8 +83,6 @@ public class OntologiesController extends ApplicationController {
                                @RequestParam(required=false) final String label,
                                HttpServletRequest request,
                                Model model) throws OntServerException {
-
-        logger.info("Loading ontology from " + loadOntology.getUri());
 
         OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 

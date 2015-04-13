@@ -60,6 +60,9 @@ public class OWLDataPropertiesController extends ApplicationController {
         HTMLDoclet summaryDoclet = new OWLDataPropertySummaryDoclet(kit);
         summaryDoclet.setUserObject(owlDataProperty);
 
+        String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlDataProperty);
+
+        model.addAttribute("title", entityName + " (Data Property)");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
