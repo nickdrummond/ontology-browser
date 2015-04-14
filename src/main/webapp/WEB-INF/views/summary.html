@@ -12,7 +12,7 @@
 
 <div class="characteristic" th:fragment="characteristic (ch)">
 
-    <h3 th:text='${ch.name + " (" + ch.objects.size() + ")"}'>Some Characteristic (2)</h3>
+    <h4 th:text='${ch.name + " (" + ch.objects.size() + ")"}'>Some Characteristic (2)</h4>
 
     <ul th:remove="all-but-first">
         <li class="asserted" th:each="object : ${ch.objects}" th:text="${object}">
