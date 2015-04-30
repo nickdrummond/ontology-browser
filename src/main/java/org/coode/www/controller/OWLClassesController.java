@@ -8,6 +8,7 @@ import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLClassesService;
 
 import org.coode.www.service.OWLIndividualsService;
@@ -66,11 +67,14 @@ public class OWLClassesController extends ApplicationController {
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlClass);
 
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+
         model.addAttribute("title", entityName + " (Class)");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("characteristics", service.getCharacteristics(owlClass, kit));
+        model.addAttribute("mos", owlRenderer);
         model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
 
         return "owlclass";

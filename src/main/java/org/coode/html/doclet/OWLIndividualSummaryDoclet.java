@@ -77,7 +77,7 @@ public class OWLIndividualSummaryDoclet extends AbstractOWLDocDoclet<OWLNamedInd
 //                    }
 
                 protected void renderBoxStart(String name, String id, PrintWriter out, URL pageURL) {
-                    name = new OWLHTMLRenderer(getOWLHTMLKit()).render(prop, pageURL);
+                    name = new OWLHTMLRenderer(getOWLHTMLKit()).render(prop);
                     super.renderBoxStart(name, id, out, pageURL);
                 }
             });
@@ -101,7 +101,7 @@ public class OWLIndividualSummaryDoclet extends AbstractOWLDocDoclet<OWLNamedInd
                 }
 
                 protected void renderBoxStart(String name, String id, PrintWriter out, URL pageURL) {
-                    name = new OWLHTMLRenderer(getOWLHTMLKit()).render(prop, pageURL);
+                    name = new OWLHTMLRenderer(getOWLHTMLKit()).render(prop);
                     super.renderBoxStart(name, id, out, pageURL);
                 }
             });

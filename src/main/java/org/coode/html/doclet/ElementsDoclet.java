@@ -72,7 +72,7 @@ public abstract class ElementsDoclet<O, E> extends AbstractHTMLDoclet<O> {
                             out.print("\"");
                         }
                         out.print(">");
-                        elementRenderer.render(object, pageURL, out);
+                        out.println(elementRenderer.render(object));
                         out.println("</li>");
                     }
                     out.println("</ul>");
@@ -86,7 +86,7 @@ public abstract class ElementsDoclet<O, E> extends AbstractHTMLDoclet<O> {
                             out.print(cls);
                             out.print("\">");
                         }
-                        elementRenderer.render(object, pageURL, out);
+                        out.print(elementRenderer.render(object));
                         if (cls != null){
                             out.print("</span>");
                         }

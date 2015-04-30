@@ -1,7 +1,8 @@
 package org.coode.html.util;
 
+import org.coode.html.url.OWLObjectURLRenderer;
+import org.coode.html.url.URLScheme;
 import org.slf4j.LoggerFactory; import org.slf4j.Logger;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.*;
 
@@ -125,25 +126,25 @@ public class URLUtils {
                iriStr.endsWith(".wav");
     }
 
-    public static void renderURLLinks(URL url, OWLHTMLKit kit, URL pageURL, PrintWriter out) {
+    public static void renderURLLinks(URL url, URLScheme urlScheme, Set<OWLOntology> ontologies, URL pageURL, PrintWriter out) {
         try{
 
             out.println(" ");
             
-            renderImageLink(kit.getURLScheme().getURLForRelativePage(EXTERNAL_IMAGE),
+            renderImageLink(urlScheme.getURLForRelativePage(EXTERNAL_IMAGE),
                             "Attempt to open link in another window",
                             url, "urlOption", pageURL, out);
 
 
             // if the ontology at this location has not already been loaded
-            if (kit.getOWLServer().getOntologyForIRI(IRI.create(url.toURI())) == null){
+            if (!containsOntology(ontologies, IRI.create(url.toURI()))){
 
-                final URL loadBaseURL = kit.getURLScheme().getURLForIndex(NamedObjectType.ontologies);
+                final URL loadBaseURL = urlScheme.getURLForIndex(NamedObjectType.ontologies);
 
                 // need the redirect to be relative to the load URL
                 final String relRedirect = URLUtils.createRelativeURL(loadBaseURL, pageURL);
 
-                final String img = kit.getURLScheme().getURLForRelativePage(LOAD_IMAGE).toString();
+                final String img = urlScheme.getURLForRelativePage(LOAD_IMAGE).toString();
 
                 out.println(" ");
                 out.println("<form method='POST' style='display:inline' action='"+ loadBaseURL +"'>");
@@ -160,6 +161,15 @@ public class URLUtils {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static boolean containsOntology(Set<OWLOntology> ontologies, IRI iri) {
+        for (OWLOntology ont : ontologies) {
+            if (iri.equals(ont.getOntologyID().getOntologyIRI().orNull())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void renderImageLink(URL imageURL, String altText, URL href, String cssClass, URL pageURL, PrintWriter out) {

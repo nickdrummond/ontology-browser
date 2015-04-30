@@ -1,24 +1,12 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
-package org.coode.owl.mngr.impl;
+package org.coode.owl.hierarchy;
 
 import org.coode.owl.mngr.ActiveOntologyProvider;
-import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.*;
 
-/**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jan 23, 2008<br><br>
- */
 public class OWLObjectPropertyHierarchyProvider implements HierarchyProvider<OWLObjectProperty> {
 
     private OWLServer server;

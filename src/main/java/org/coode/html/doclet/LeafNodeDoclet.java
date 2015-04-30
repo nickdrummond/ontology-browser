@@ -145,13 +145,13 @@ public class LeafNodeDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O>
 
     protected void renderNode(O node, OWLHTMLRenderer objRenderer, URL pageURL, PrintWriter out) {
 
-        objRenderer.render(node, pageURL, out);
+        out.println(objRenderer.render(node));
 
         for (O synonym : asOrderedList(hp.getEquivalents(node))){
             out.print(" ");
             out.print(OWLHTMLVisitor.EQUIV_CHAR);
             out.print(" ");
-            objRenderer.render(synonym, pageURL, out);
+            out.println(objRenderer.render(synonym));
         }
     }
 

@@ -3,10 +3,8 @@
 */
 package org.coode.www.renderer;
 
+import org.coode.html.url.URLScheme;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.url.OWLObjectURLRenderer;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.util.OWLUtils;
@@ -32,8 +30,6 @@ import java.util.*;
  */
 public class OWLHTMLVisitor implements OWLObjectVisitor {
 
-    private Logger logger = LoggerFactory.getLogger(getClass().getName());
-
     // These should match the css class names
     private static final String CSS_DEPRECATED = "deprecated";
     private static final String CSS_ACTIVE_ENTITY = "active-entity";
@@ -56,7 +52,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     private URL pageURL = null;
 
-    private OWLObjectURLRenderer urlRenderer;
+    private URLScheme urlScheme;
 
     private ShortFormProvider sfProvider;
 
@@ -70,41 +66,32 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     private boolean writeStats = false;
 
-    private OWLHTMLKit kit;
+    public OWLHTMLVisitor(
+            ShortFormProvider sfProvider,
+            OntologyIRIShortFormProvider ontologySFProvider,
+            URLScheme urlScheme,
+            Set<OWLOntology> ontologies,
+            OWLOntology activeOntology) {
 
-    public OWLHTMLVisitor(OWLHTMLKit kit, PrintWriter out) {
-        this.kit = kit;
-        this.urlRenderer = kit.getURLScheme();
-        this.sfProvider = kit.getOWLServer().getShortFormProvider();
-        this.ontologyIriSFProvider = kit.getOWLServer().getOntologyShortFormProvider();
-        this.out = out;
-    }
-
-    /**
-     * Sets the current page URL. All links will be rendered relative to this page
-     * @param pageURL
-     */
-    public void setPageURL(URL pageURL){
-        this.pageURL = pageURL;
-    }
-
-    public void setOntologies(Set<OWLOntology> ontologies){
+        this.sfProvider = sfProvider;
+        this.ontologyIriSFProvider = ontologySFProvider;
+        this.urlScheme = urlScheme;
         this.ontologies = ontologies;
+        this.activeOntology = activeOntology;
     }
 
-    public void setActiveOntology(OWLOntology activeOnt){
-        this.activeOntology = activeOnt;
+    public void setWriter(PrintWriter out) {
+        this.out = out;
     }
 
     private void write(String s) {
         out.write(s);
     }
 
-
     ////////// Ontology
 
     public void visit(OWLOntology ontology) {
-        final URL urlForOntology = urlRenderer.getURLForOWLObject(ontology);
+        final URL urlForOntology = urlScheme.getURLForOWLObject(ontology);
         String link = urlForOntology.toString();
         String cssClass = CSS_ONTOLOGY_URI;
         if (activeOntology != null && ontology.equals(activeOntology)){
@@ -181,7 +168,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         writeIRIWithBoldFragment(iri, iri.getFragment());
         try {
             URL url = iri.toURI().toURL();
-            URLUtils.renderURLLinks(url, kit, pageURL, out);
+            URLUtils.renderURLLinks(url, urlScheme, ontologies, pageURL, out);
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -843,13 +830,13 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         if (pageURL == null){
-            final URL urlForTarget = urlRenderer.getURLForOWLObject(entity);
+            final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);
             write(" title=\"" + uri + "\">" + name + "</a>");
         }
         else{
-            OWLObject currentTarget = urlRenderer.getOWLObjectForURL(pageURL);
+            OWLObject currentTarget = urlScheme.getOWLObjectForURL(pageURL);
             if (currentTarget != null && currentTarget.equals(entity)){
                 cssClasses.add(CSS_ACTIVE_ENTITY);
                 write("<span");
@@ -857,7 +844,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
                 write(">" + name + "</span>");
             }
             else{
-                final URL urlForTarget = urlRenderer.getURLForOWLObject(entity);
+                final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
                 write("<a href=\"" + URLUtils.createRelativeURL(pageURL, urlForTarget) + "\"");
 
                 writeCSSClasses(cssClasses);
