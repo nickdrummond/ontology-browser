@@ -1,16 +1,17 @@
 package org.coode.www.service;
 
+import com.google.common.base.Optional;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.Characteristic;
-import org.coode.www.renderer.UsageVisibilityVisitor;
+import org.coode.www.model.CharacteristicsFactory;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.search.EntitySearcher;
-import org.semanticweb.owlapi.util.InferredDataPropertyCharacteristicAxiomGenerator;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static java.util.Arrays.asList;
 
 @Service
 public class OWLClassesService {
@@ -49,44 +50,20 @@ public class OWLClassesService {
         Set<OWLOntology> activeOntologies = kit.getOWLServer().getActiveOntologies();
         Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
 
+        CharacteristicsFactory fac = new CharacteristicsFactory();
+
         List<Characteristic> characteristics = new ArrayList<>();
-
-        List<OWLAnnotation> annots = new ArrayList<>();
-        for (OWLOntology ont : activeOntologies){
-            annots.addAll(EntitySearcher.getAnnotations(owlClass.getIRI(), ont));
-        }
-        if (!annots.isEmpty()) {
-            Characteristic annotations = new Characteristic(owlClass, "Annotations", annots);
-            characteristics.add(annotations);
-        }
-
-        List<OWLClassExpression> equivs = new ArrayList<>(EntitySearcher.getEquivalentClasses(owlClass, activeOntologies));
-        if (!equivs.isEmpty()) {
-            Collections.sort(equivs, comparator);
-            Characteristic equivalents = new Characteristic(owlClass, "Equivalents", equivs);
-            characteristics.add(equivalents);
-        }
-
-//        addDoclet(new OWLEntityTitleDoclet<OWLClass>(kit));
-//        addDoclet(new AnnotationsDoclet<OWLClass>(kit));
-//        addDoclet(new AssertedEquivalentsDoclet(kit));
-//        addDoclet(new SuperclassesDoclet(kit));
-//        addDoclet(new DisjointsDoclet(kit));
-//        addDoclet(new MembersDoclet(kit));
-
-        UsageVisibilityVisitor usageVisibilityVisitor = new UsageVisibilityVisitor();
-        List<OWLObject> usage = new ArrayList<>();
-        for (OWLOntology ont : activeOntologies){
-            for (OWLAxiom ax : ont.getReferencingAxioms(owlClass)){
-                if (usageVisibilityVisitor.getShowUsage(ax, owlClass)){
-                    usage.add(ax);
-                }
+        for (Optional<Characteristic> c : asList(
+                fac.getAnnotations(owlClass, activeOntologies, comparator),
+                fac.getEquivalents(owlClass, activeOntologies, comparator),
+                fac.getSuperclasses(owlClass, activeOntologies, comparator),
+                fac.getDisjointClasses(owlClass, activeOntologies, comparator),
+                fac.getMembers(owlClass, activeOntologies, comparator),
+                fac.getUsage(owlClass, activeOntologies, comparator)
+        )) {
+            if (c.isPresent()) {
+                characteristics.add(c.get());
             }
-        }
-        if (!usage.isEmpty()) {
-            Collections.sort(usage, comparator);
-            Characteristic usageC = new Characteristic(owlClass, "Usage", usage);
-            characteristics.add(usageC);
         }
 
         return characteristics;

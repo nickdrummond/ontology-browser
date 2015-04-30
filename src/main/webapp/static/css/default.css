@@ -47,7 +47,7 @@ div {
 }
 
 
-div.codebox, div.error, div.message {
+.codebox, .error, .message {
     border: solid 1px #c7cfd5;
     background: #ffffff;
     overflow: hidden;

@@ -62,8 +62,6 @@ public class OWLClassesController extends ApplicationController {
         HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
         HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLClass.class);
         hierarchyDoclet.setUserObject(owlClass);
-        HTMLDoclet summaryDoclet = new OWLClassSummaryDoclet(kit);
-        summaryDoclet.setUserObject(owlClass);
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlClass);
 
@@ -75,7 +73,7 @@ public class OWLClassesController extends ApplicationController {
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("characteristics", service.getCharacteristics(owlClass, kit));
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
+        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
         return "owlclass";
     }

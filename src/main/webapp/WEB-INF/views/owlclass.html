@@ -11,10 +11,14 @@
 
 <div id="content">
 
-    <div th:each="ch : ${characteristics}">
-        <div th:replace='summary :: characteristic (${ch})'>
-          A characteristic
-         </div>
+    <div class="summary">
+        <h2 th:text="${title}">An OWLClass</h2>
+        <div th:each="ch : ${characteristics}">
+            <div th:replace="summary :: characteristic (${ch})">
+              A characteristic
+             </div>
+        </div>
+
     </div>
 
     <div th:utext='${content}'>Some Content</div>
