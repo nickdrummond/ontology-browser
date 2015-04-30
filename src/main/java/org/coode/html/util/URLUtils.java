@@ -126,14 +126,14 @@ public class URLUtils {
                iriStr.endsWith(".wav");
     }
 
-    public static void renderURLLinks(URL url, URLScheme urlScheme, Set<OWLOntology> ontologies, URL pageURL, PrintWriter out) {
+    public static void renderURLLinks(URL url, URLScheme urlScheme, Set<OWLOntology> ontologies, PrintWriter out) {
         try{
 
             out.println(" ");
             
             renderImageLink(urlScheme.getURLForRelativePage(EXTERNAL_IMAGE),
                             "Attempt to open link in another window",
-                            url, "urlOption", pageURL, out);
+                            url, "urlOption", out);
 
 
             // if the ontology at this location has not already been loaded
@@ -141,15 +141,12 @@ public class URLUtils {
 
                 final URL loadBaseURL = urlScheme.getURLForIndex(NamedObjectType.ontologies);
 
-                // need the redirect to be relative to the load URL
-                final String relRedirect = URLUtils.createRelativeURL(loadBaseURL, pageURL);
-
                 final String img = urlScheme.getURLForRelativePage(LOAD_IMAGE).toString();
 
                 out.println(" ");
                 out.println("<form method='POST' style='display:inline' action='"+ loadBaseURL +"'>");
                 out.println("<input name='uri' type='hidden' value='" + url + "' />");
-                out.println("<input name='redirect' type='hidden' value='" + relRedirect + "' />");
+                out.println("<input name='redirect' type='hidden' value='" + loadBaseURL + "' />");
                 out.println("<input type='image' alt='Attempt to load owl/rdf' src='" + img + "' />");
                 out.println("</form>");
 
@@ -172,16 +169,15 @@ public class URLUtils {
         return false;
     }
 
-    public static void renderImageLink(URL imageURL, String altText, URL href, String cssClass, URL pageURL, PrintWriter out) {
-        final String relURL = URLUtils.createRelativeURL(pageURL, href);
-            out.print("<a href='" + relURL + "'");
+    public static void renderImageLink(URL imageURL, String altText, URL href, String cssClass, PrintWriter out) {
+            out.print("<a href='" + href + "'");
 
             if (cssClass != null){
                 out.print(" class='" + cssClass + "'");
             }
 
             out.print(" ><img src=\"");
-            out.print(URLUtils.createRelativeURL(pageURL, imageURL));
+            out.print(imageURL);
             out.print("\" title=\"");
             out.print(altText);
             out.print("\" /></a>");

@@ -38,7 +38,7 @@ public abstract class AbstractOWLElementsDoclet<O extends OWLObject, E extends O
     public AbstractOWLElementsDoclet(String name, Format format, OWLHTMLKit kit) {
         super(name, format);
         this.kit = kit;
-        this.renderer = new MediaRenderer(kit);
+        this.renderer = new MediaRenderer(kit, getUserObject());
         setComparator(kit.getOWLServer().getComparator());
     }
 

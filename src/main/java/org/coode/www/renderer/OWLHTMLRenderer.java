@@ -10,13 +10,14 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
 
     private final OWLHTMLVisitor rendererVisitor;
 
-    public OWLHTMLRenderer(OWLHTMLKit kit) {
+    public OWLHTMLRenderer(OWLHTMLKit kit, OWLObject activeObject) {
         rendererVisitor = new OWLHTMLVisitor(
                 kit.getOWLServer().getShortFormProvider(),
                 kit.getOWLServer().getOntologyShortFormProvider(),
                 kit.getURLScheme(),
                 kit.getVisibleOntologies(),
-                kit.getOWLServer().getActiveOntology());
+                kit.getOWLServer().getActiveOntology(),
+                activeObject);
     }
 
     public String render(OWLObject obj){

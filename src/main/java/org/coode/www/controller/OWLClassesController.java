@@ -67,7 +67,7 @@ public class OWLClassesController extends ApplicationController {
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlClass);
 
         model.addAttribute("title", entityName + " (Class)");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));

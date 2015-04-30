@@ -48,9 +48,10 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     // the subset and equivalence symbols can be encoded in HTML
     private static final boolean USE_SYMBOLS = true;
 
-    private PrintWriter out;
+    // the object currently on the page (will be highlighted)
+    private final OWLObject activeObject;
 
-    private URL pageURL = null;
+    private PrintWriter out;
 
     private URLScheme urlScheme;
 
@@ -71,13 +72,15 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             OntologyIRIShortFormProvider ontologySFProvider,
             URLScheme urlScheme,
             Set<OWLOntology> ontologies,
-            OWLOntology activeOntology) {
+            OWLOntology activeOntology,
+            OWLObject activeObject) {
 
         this.sfProvider = sfProvider;
         this.ontologyIriSFProvider = ontologySFProvider;
         this.urlScheme = urlScheme;
         this.ontologies = ontologies;
         this.activeOntology = activeOntology;
+        this.activeObject = activeObject;
     }
 
     public void setWriter(PrintWriter out) {
@@ -100,12 +103,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         boolean writeLink = false;
 
-        if (pageURL == null){
+        if (activeObject == null){
             writeLink = true;
         }
         else{
-            if (!pageURL.equals(urlForOntology)){
-                link = URLUtils.createRelativeURL(pageURL, urlForOntology);
+            if (!ontology.equals(activeObject)){
                 writeLink = true;
             }
             else{
@@ -168,7 +170,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         writeIRIWithBoldFragment(iri, iri.getFragment());
         try {
             URL url = iri.toURI().toURL();
-            URLUtils.renderURLLinks(url, urlScheme, ontologies, pageURL, out);
+            URLUtils.renderURLLinks(url, urlScheme, ontologies, out);
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);
@@ -829,15 +831,14 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             cssClasses.add(CSS_DEPRECATED);
         }
 
-        if (pageURL == null){
+        if (activeObject == null){
             final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);
             write(" title=\"" + uri + "\">" + name + "</a>");
         }
         else{
-            OWLObject currentTarget = urlScheme.getOWLObjectForURL(pageURL);
-            if (currentTarget != null && currentTarget.equals(entity)){
+            if (activeObject != null && activeObject.equals(entity)){
                 cssClasses.add(CSS_ACTIVE_ENTITY);
                 write("<span");
                 writeCSSClasses(cssClasses);
@@ -845,7 +846,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             }
             else{
                 final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
-                write("<a href=\"" + URLUtils.createRelativeURL(pageURL, urlForTarget) + "\"");
+                write("<a href=\"" + urlForTarget + "\"");
 
                 writeCSSClasses(cssClasses);
                 write(" title=\"" + uri + "\">");

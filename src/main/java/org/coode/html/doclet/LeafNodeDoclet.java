@@ -134,7 +134,7 @@ public class LeafNodeDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O>
 
         final O node = getNodeObject();
         if (node != null){
-            renderNode(node, new OWLHTMLRenderer(getOWLHTMLKit()), pageURL, out);
+            renderNode(node, new OWLHTMLRenderer(getOWLHTMLKit(), getUserObject()), pageURL, out);
         }
 
         if (getSubDocletCount() > 0){

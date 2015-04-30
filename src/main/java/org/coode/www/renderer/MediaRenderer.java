@@ -24,8 +24,8 @@ public class MediaRenderer extends OWLHTMLRenderer {
 
     private boolean inlineMedia = true;
 
-    public MediaRenderer(OWLHTMLKit kit) {
-        super(kit);
+    public MediaRenderer(OWLHTMLKit kit, OWLObject activeObject) {
+        super(kit, activeObject);
         this.entityFinder = kit.getOWLServer().getFinder();
     }
 

@@ -59,7 +59,7 @@ public abstract class AbstractTitleDoclet<O extends OWLObject> extends AbstractO
             try {
                 // cannot just do new URL() as this allows just about anything
                 URL url = new URI(subtitle).toURL();
-                URLUtils.renderURLLinks(url, kit.getURLScheme(), kit.getVisibleOntologies(), pageURL, out);
+                URLUtils.renderURLLinks(url, kit.getURLScheme(), kit.getVisibleOntologies(), out);
             }
             catch (URISyntaxException|MalformedURLException|IllegalArgumentException e) {
                 // do nothing - no load URL for this entity
