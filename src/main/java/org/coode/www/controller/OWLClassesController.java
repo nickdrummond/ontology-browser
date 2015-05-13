@@ -68,6 +68,7 @@ public class OWLClassesController extends ApplicationController {
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlClass);
 
         model.addAttribute("title", entityName + " (Class)");
+        model.addAttribute("iri", owlClass.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());

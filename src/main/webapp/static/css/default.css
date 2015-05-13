@@ -342,9 +342,24 @@ span.expandable{
     cursor: pointer;
 }
 
-a.urlOption{
+/* deprecated */
+.urlOption{
     color: blue;
     font-size: smaller;
+}
+
+.iri{
+    color: blue;
+    font-size: smaller;
+    margin: 8px;
+}
+
+.iri a, .iri form, .iri h3{
+    display: inline;
+}
+
+.iri h3 {
+    margin-left: 0;
 }
 
 img.min {
