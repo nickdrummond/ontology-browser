@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.NodeDoclet;
-import org.coode.html.doclet.OWLClassSummaryDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.HierarchyDocletFactory;
@@ -76,7 +75,7 @@ public class OWLClassesController extends ApplicationController {
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
-        return "owlclass";
+        return "owlentity";
     }
 
     @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)

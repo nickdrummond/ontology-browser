@@ -1,13 +1,13 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.NodeDoclet;
-import org.coode.html.doclet.OWLObjectPropertySummaryDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLObjectPropertiesService;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -57,18 +57,21 @@ public class OWLObjectPropertiesController extends ApplicationController {
         HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
         HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLObjectProperty.class);
         hierarchyDoclet.setUserObject(owlObjectProperty);
-        HTMLDoclet summaryDoclet = new OWLObjectPropertySummaryDoclet(kit);
-        summaryDoclet.setUserObject(owlObjectProperty);
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlObjectProperty);
 
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlObjectProperty);
+
         model.addAttribute("title", entityName + " (Object Property)");
+        model.addAttribute("iri", owlObjectProperty.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
+        model.addAttribute("characteristics", service.getCharacteristics(owlObjectProperty, kit));
+        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
-        return "doclet";
+        return "owlentity";
     }
 
 

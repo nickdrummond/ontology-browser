@@ -126,6 +126,7 @@ public class URLUtils {
                iriStr.endsWith(".wav");
     }
 
+    @Deprecated
     public static void renderURLLinks(URL url, URLScheme urlScheme, Set<OWLOntology> ontologies, PrintWriter out) {
         try{
 

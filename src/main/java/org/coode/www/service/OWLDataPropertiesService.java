@@ -1,10 +1,20 @@
 package org.coode.www.service;
 
+import com.google.common.base.Optional;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
+import org.coode.www.model.Characteristic;
+import org.coode.www.model.CharacteristicsFactory;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.Arrays.asList;
 
 @Service
 public class OWLDataPropertiesService {
@@ -39,5 +49,32 @@ public class OWLDataPropertiesService {
 
     public HierarchyProvider<OWLDataProperty> getHierarchyProvider(final OWLHTMLKit kit) {
         return kit.getOWLServer().getHierarchyProvider(OWLDataProperty.class);
+    }
+
+
+    public List<Characteristic> getCharacteristics(final OWLDataProperty owlDataProperty, final OWLHTMLKit kit) {
+
+        Set<OWLOntology> activeOntologies = kit.getOWLServer().getActiveOntologies();
+        Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
+
+        CharacteristicsFactory fac = new CharacteristicsFactory();
+
+        List<Characteristic> characteristics = new ArrayList<>();
+        for (Optional<Characteristic> c : asList(
+                fac.getAnnotations(owlDataProperty, activeOntologies, comparator),
+                fac.getPropertyCharacteristics(owlDataProperty, activeOntologies, comparator),
+                fac.getDomains(owlDataProperty, activeOntologies, comparator),
+                fac.getRanges(owlDataProperty, activeOntologies, comparator),
+                fac.getEquivalents(owlDataProperty, activeOntologies, comparator),
+                fac.getSupers(owlDataProperty, activeOntologies, comparator),
+                fac.getDisjoints(owlDataProperty, activeOntologies, comparator),
+                fac.getUsage(owlDataProperty, activeOntologies, comparator)
+        )) {
+            if (c.isPresent()) {
+                characteristics.add(c.get());
+            }
+        }
+
+        return characteristics;
     }
 }

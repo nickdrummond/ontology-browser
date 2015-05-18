@@ -1,13 +1,13 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.NodeDoclet;
-import org.coode.html.doclet.OWLDataPropertySummaryDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLDataPropertiesService;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -57,18 +57,21 @@ public class OWLDataPropertiesController extends ApplicationController {
         HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
         HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLDataProperty.class);
         hierarchyDoclet.setUserObject(owlDataProperty);
-        HTMLDoclet summaryDoclet = new OWLDataPropertySummaryDoclet(kit);
-        summaryDoclet.setUserObject(owlDataProperty);
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlDataProperty);
 
-        model.addAttribute("title", entityName + " (Data Property)");
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlDataProperty);
+
+        model.addAttribute("title", entityName + " (Object Property)");
+        model.addAttribute("iri", owlDataProperty.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
+        model.addAttribute("characteristics", service.getCharacteristics(owlDataProperty, kit));
+        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
-        return "doclet";
+        return "owlentity";
     }
     
     @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
