@@ -1,12 +1,10 @@
 package org.coode.www.controller;
 
-import org.coode.html.doclet.OWLIndividualSummaryDoclet;
+import org.coode.html.doclet.*;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.doclet.HierarchyDocletFactory;
-import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.doclet.OWLObjectIndexDoclet;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLIndividualsService;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -63,17 +61,20 @@ public class OWLIndividualsController extends ApplicationController {
         HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
         HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLNamedIndividual.class);
         hierarchyDoclet.setUserObject(owlIndividual);
-        HTMLDoclet summaryDoclet = new OWLIndividualSummaryDoclet(kit);
-        summaryDoclet.setUserObject(owlIndividual);
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlIndividual);
 
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlIndividual);
+
         model.addAttribute("title", entityName + " (Individual)");
+        model.addAttribute("iri", owlIndividual.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
+        model.addAttribute("characteristics", service.getCharacteristics(owlIndividual, kit));
+        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
-        return "doclet";
+        return "owlentity";
     }
 }

@@ -3,16 +3,17 @@
 */
 package org.coode.www.renderer;
 
+import com.google.common.base.Function;
 import org.coode.html.url.URLScheme;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
-import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
+import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -119,11 +120,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         if (writeLink){
             write("<a class='" + cssClass + "'");
-            String id = OWLUtils.getOntologyIdString(ontology);
+            String id = getOntologyIdString(ontology);
             write(" href=\"" + link + "\" title='" + id + "'");
-//            if (targetWindow != null){
-//                write(" target=\"" + targetWindow + "\"");
-//            }
             write(">");
             write(ontologyIriSFProvider.getShortForm(ontology));
             write("</a>");
@@ -139,6 +137,15 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
     }
 
+    private String getOntologyIdString(final OWLOntology ont){
+        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
+            @Nullable
+            @Override
+            public String apply(IRI iri) {
+                return iri.toString();
+            }
+        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
+    }
 
     ////////// Entities
 
@@ -827,7 +834,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         Set<String> cssClasses = new HashSet<String>();
         cssClasses.add(cssClass);
-        if (OWLUtils.isDeprecated(entity, ontologies)){
+        if (isDeprecated(entity, ontologies)){
             cssClasses.add(CSS_DEPRECATED);
         }
 
@@ -854,6 +861,10 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
                 write("</a>");
             }
         }
+    }
+
+    private boolean isDeprecated(OWLEntity entity, Set<OWLOntology> ontologies) {
+        return false; // there is currently no implementation of deprecated in the OWL API
     }
 
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {

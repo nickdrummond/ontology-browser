@@ -9,6 +9,7 @@ import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.www.service.GeoService;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
+import org.coode.www.service.MediaService;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.io.PrintWriter;
@@ -26,6 +27,7 @@ import java.net.URL;
 public class OWLEntityTitleDoclet<O extends OWLEntity> extends AbstractTitleDoclet<O> {
 
     private final GeoService locService;
+    private final MediaService mediaService;
 
     public OWLEntityTitleDoclet(OWLHTMLKit kit) {
         super(kit);
@@ -33,6 +35,7 @@ public class OWLEntityTitleDoclet<O extends OWLEntity> extends AbstractTitleDocl
                 "http://www.w3.org/2003/01/geo/wgs84_pos#lat",
                 "http://www.w3.org/2003/01/geo/wgs84_pos#long",
                 "http://www.georss.org/georss/point");
+        mediaService = new MediaService();
     }
 
     public String getTitle() {
@@ -56,12 +59,12 @@ public class OWLEntityTitleDoclet<O extends OWLEntity> extends AbstractTitleDocl
     protected void renderHeader(URL pageURL, PrintWriter out) {
         super.renderHeader(pageURL, out);
 
-        if (URLUtils.isImageURL(getUserObject().getIRI())){
+        if (mediaService.isImageURL(getUserObject().getIRI())){
             out.print("<div class=\"imageHolder\"><img src=\"");
             out.print(getUserObject().getIRI());
             out.println("\" /></div>");
         }
-        else if (URLUtils.isSoundURL(getUserObject().getIRI())){
+        else if (mediaService.isSoundURL(getUserObject().getIRI())){
             out.print("<EMBED src=\"");
             out.print(getUserObject().getIRI());
             out.println("\" autostart=\"true\" hidden=\"true\"/>");

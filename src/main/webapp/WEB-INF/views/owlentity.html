@@ -26,8 +26,8 @@
                        value='http://example.com/entity-url'
                        th:value="${iri}"/>
                 <input name='redirect' type='hidden'
-                       value='./'
-                       th:value="@{./}"/>
+                       value='.'
+                       th:value="@{.}"/>
                 <input type='image' alt='Attempt to load owl/rdf'
                        src='../../static/images/download.png'
                        th:src="@{/static/images/download.png}"/>

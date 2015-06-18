@@ -1,15 +1,21 @@
 package org.coode.www.service;
 
+import com.google.common.base.Optional;
 import org.coode.owl.hierarchy.HierarchyProvider;
+import org.coode.owl.util.OWLUtils;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.NotFoundException;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.coode.www.model.Characteristic;
+import org.coode.www.model.CharacteristicsFactory;
+import org.semanticweb.owlapi.io.OWLRenderer;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.search.EntitySearcher;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 @Service
 public class OWLIndividualsService {
@@ -45,5 +51,31 @@ public class OWLIndividualsService {
 
     public HierarchyProvider<OWLNamedIndividual> getHierarchyProvider(OWLHTMLKit kit) {
         return kit.getOWLServer().getHierarchyProvider(OWLNamedIndividual.class);
+    }
+
+    public Object getCharacteristics(OWLNamedIndividual owlIndividual, OWLHTMLKit kit) {
+        Set<OWLOntology> activeOntologies = kit.getOWLServer().getActiveOntologies();
+        Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
+
+        CharacteristicsFactory fac = new CharacteristicsFactory();
+
+        List<Characteristic> characteristics = new ArrayList<>();
+        for (Optional<Characteristic> c : asList(
+                fac.getTypes(owlIndividual, activeOntologies, comparator),
+                fac.getSameAs(owlIndividual, activeOntologies, comparator),
+                fac.getDifferentFrom(owlIndividual, activeOntologies, comparator)
+        )) {
+            if (c.isPresent()) {
+                characteristics.add(c.get());
+            }
+        }
+
+        ShortFormProvider shortFormProvider = kit.getOWLServer().getShortFormProvider();
+
+        characteristics.addAll(fac.getAnnotationCharacterists (owlIndividual, activeOntologies, comparator, shortFormProvider));
+        characteristics.addAll(fac.getDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
+        characteristics.addAll(fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator, shortFormProvider));
+
+        return characteristics;
     }
 }

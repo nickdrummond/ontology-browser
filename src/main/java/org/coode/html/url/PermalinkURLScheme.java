@@ -59,10 +59,6 @@ public class PermalinkURLScheme implements URLScheme {
         return append(baseScheme.getURLForOWLObject(entity));
     }
 
-    public OWLObject getOWLObjectForURL(URL url) {
-        return baseScheme.getOWLObjectForURL(url);
-    }
-
     public OWLHTMLKit getOWLHTMLKit() {
         return baseScheme.getOWLHTMLKit();
     }

@@ -112,20 +112,6 @@ public class URLUtils {
         }
     }
 
-    public static boolean isImageURL(IRI iri) {
-        String iriStr = iri.toString();
-        return iriStr.endsWith(".png") ||
-               iriStr.endsWith(".gif") ||
-               iriStr.endsWith(".jpg") ||
-               iriStr.endsWith(".jpeg");
-    }
-
-    public static boolean isSoundURL(IRI iri) {
-        String iriStr = iri.toString();
-        return iriStr.endsWith(".mp3") ||
-               iriStr.endsWith(".wav");
-    }
-
     @Deprecated
     public static void renderURLLinks(URL url, URLScheme urlScheme, Set<OWLOntology> ontologies, PrintWriter out) {
         try{

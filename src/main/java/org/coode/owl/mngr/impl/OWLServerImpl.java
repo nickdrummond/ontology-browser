@@ -1,5 +1,6 @@
 package org.coode.owl.mngr.impl;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import org.coode.owl.hierarchy.*;
 import org.coode.www.renderer.LabelShortFormProvider;
@@ -8,7 +9,6 @@ import org.coode.www.renderer.QuotingBiDirectionalShortFormProvider;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.coode.owl.mngr.*;
-import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
 import org.semanticweb.owlapi.model.*;
@@ -16,6 +16,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.MalformedURLException;
@@ -175,7 +176,7 @@ public class OWLServerImpl implements OWLServer {
 
     private void loadedOntology(OWLOntology ont) {
         if (ont != null){
-            logger.info("loaded " + OWLUtils.getOntologyIdString(ont));
+            logger.info("loaded " + getOntologyIdString(ont));
         }
 
         resetRootImports();
@@ -280,8 +281,19 @@ public class OWLServerImpl implements OWLServer {
 
         final OWLOntology activeOnt = getActiveOntology();
         if (!activeOnt.equals(ont)){
-            getProperties().set(ServerProperty.optionActiveOnt, OWLUtils.getOntologyIdString(ont));
+            getProperties().set(ServerProperty.optionActiveOnt, getOntologyIdString(ont));
         }
+    }
+
+    private String getOntologyIdString(final OWLOntology ont){
+        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
+
+            @Nullable
+            @Override
+            public String apply(IRI iri) {
+                return iri.toString();
+            }
+        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
     }
 
     public Set<OWLOntology> getOntologies() {
@@ -503,7 +515,7 @@ public class OWLServerImpl implements OWLServer {
         Set<OWLOntology> onts = getOntologies();
         onts.remove(rootOntology);
 
-        final Set<OWLOntology> newRoots = OWLUtils.getImportRoots(onts);
+        final Set<OWLOntology> newRoots = getImportRoots(onts);
         final Set<OWLOntology> oldRoots = rootOntology.getImports();
         oldRoots.removeAll(newRoots);
         newRoots.removeAll(rootOntology.getImports());
@@ -527,6 +539,15 @@ public class OWLServerImpl implements OWLServer {
         }
 
         mngr.applyChanges(changes);
+    }
+
+    private Set<OWLOntology> getImportRoots(Set<OWLOntology> onts){
+        // TODO: handle cyclic imports
+        Set<OWLOntology> roots = new HashSet<OWLOntology>(onts);
+        for (OWLOntology ont : onts){
+            roots.removeAll(ont.getImports());
+        }
+        return roots;
     }
 
     private Optional<IRI> getImportIRIForOntology(OWLOntology root) {
@@ -559,7 +580,7 @@ public class OWLServerImpl implements OWLServer {
     private void resetAllowedActiveOntology() {
         List<String> ontologies = new ArrayList<String>();
         for (OWLOntology ontology : getOntologies()){
-            ontologies.add(OWLUtils.getOntologyIdString(ontology));
+            ontologies.add(getOntologyIdString(ontology));
         }
         getProperties().setAllowedValues(ServerProperty.optionActiveOnt, ontologies);
     }

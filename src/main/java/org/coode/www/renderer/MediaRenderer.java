@@ -5,6 +5,7 @@ import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.service.MediaService;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -22,11 +23,15 @@ public class MediaRenderer extends OWLHTMLRenderer {
 
     private final OWLEntityFinder entityFinder;
 
+    // TODO inject
+    private final MediaService mediaService;
+
     private boolean inlineMedia = true;
 
     public MediaRenderer(OWLHTMLKit kit, OWLObject activeObject) {
         super(kit, activeObject);
         this.entityFinder = kit.getOWLServer().getFinder();
+        this.mediaService = new MediaService();
     }
 
     @Override
@@ -55,7 +60,7 @@ public class MediaRenderer extends OWLHTMLRenderer {
             iri = (IRI)obj;
         }
         if (iri != null){
-            if (URLUtils.isImageURL(iri)){
+            if (mediaService.isImageURL(iri)){
                 return "<img class=\"thumb\" src=\"" + iri + "\" height=\"100\" />";
             }
             else{

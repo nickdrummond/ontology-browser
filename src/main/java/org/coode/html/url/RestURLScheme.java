@@ -3,21 +3,22 @@
 */
 package org.coode.html.url;
 
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
+import com.google.common.base.Function;
+import org.semanticweb.owlapi.model.IRI;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
-import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Author: Nick Drummond<br>
@@ -93,40 +94,9 @@ public class RestURLScheme extends AbstractURLScheme {
         }
     }
 
-
-    public OWLObject getOWLObjectForURL(URL url) {
-        try {
-            NamedObjectType type = getType(url);
-            int hashCode = getID(url);
-            if (type.equals(NamedObjectType.ontologies)){
-                for (OWLOntology ont : kit.getOWLServer().getOntologies()){
-                    if (ont.getOntologyID().hashCode() == hashCode){
-                        return ont;
-                    }
-                }
-            }
-            else{
-                Set<OWLEntity> objs = new HashSet<OWLEntity>();
-                for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
-                    objs.addAll(OWLUtils.getOWLEntitiesFromOntology(type, ont));
-                }
-                for (OWLEntity obj : objs){
-                    if (obj.getIRI().hashCode() == hashCode){
-                        return obj;
-                    }
-                }
-            }
-        }
-        catch (Exception e) {
-            // do nothing - there is no object specified
-        }
-        return null;
-    }
-
-
     public URL getURLForOntologyIndex(OWLOntology ont, NamedObjectType type) {
         try {
-            String encodedURI = URLEncoder.encode(OWLUtils.getOntologyIdString(ont), DEFAULT_ENCODING);
+            String encodedURI = URLEncoder.encode(getOntologyIdString(ont), DEFAULT_ENCODING);
 
             StringBuilder sb = new StringBuilder(type.toString());
             sb.append("/?");
@@ -140,6 +110,17 @@ public class RestURLScheme extends AbstractURLScheme {
             logger.error("Cannot get URL for ont index", e);
         }
         return null;
+    }
+
+    private String getOntologyIdString(final OWLOntology ont){
+        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
+
+            @Nullable
+            @Override
+            public String apply(IRI iri) {
+                return iri.toString();
+            }
+        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
     }
 
     public void setAdditionalLinkArguments(String s) {

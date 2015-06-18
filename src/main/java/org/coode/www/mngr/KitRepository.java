@@ -1,5 +1,6 @@
 package org.coode.www.mngr;
 
+import com.google.common.base.Function;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.coode.www.kit.OWLHTMLKit;
@@ -7,13 +8,13 @@ import org.coode.www.kit.impl.OWLHTMLKitImpl;
 import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
-import org.coode.owl.util.OWLUtils;
 import org.coode.www.exception.OntServerException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -131,12 +132,12 @@ public class KitRepository {
 
         // always print the active ontology first
         OWLOntology activeOnt = kit.getOWLServer().getActiveOntology();
-        writer.println(OWLUtils.getOntologyIdString(activeOnt) + "=" +
+        writer.println(getOntologyIdString(activeOnt) + "=" +
                 kit.getOWLServer().getOWLOntologyManager().getOntologyDocumentIRI(activeOnt));
 
         for (OWLOntology ont : kit.getOWLServer().getOntologies()){
             if (!ont.equals(activeOnt)){
-                writer.println(OWLUtils.getOntologyIdString(ont) + "=" +
+                writer.println(getOntologyIdString(ont) + "=" +
                         kit.getOWLServer().getOWLOntologyManager().getOntologyDocumentIRI(ont));
             }
         }
@@ -147,6 +148,17 @@ public class KitRepository {
         String ontsLabel = md5(bytes);
         save(bytes, ONTOLOGIES_PREFIX + ontsLabel + ONTOLOGIES_EXT);
         return ontsLabel;
+    }
+
+    private String getOntologyIdString(final OWLOntology ont){
+        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
+
+            @Nullable
+            @Override
+            public String apply(IRI iri) {
+                return iri.toString();
+            }
+        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
     }
 
     private String saveProperties(OWLHTMLKit kit) throws IOException {

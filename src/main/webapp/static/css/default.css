@@ -1,7 +1,7 @@
 @import url("owl.css");
 
 html {
-    font-family: Verdana, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     overflow-y: scroll;
 }
 
@@ -309,10 +309,6 @@ form#load {
 form#bookmarks{
     float: right;
     width: 45%;
-}
-
-pre {
-    font-family: Verdana, Arial, sans-serif;
 }
 
 #find {

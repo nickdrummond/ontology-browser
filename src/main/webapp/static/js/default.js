@@ -24,7 +24,10 @@ $(document).ready(function(){
 function scrollTreeToSelection() {
     var minihierarchy = $(".minihierarchy").parent();
     if (minihierarchy.size() > 0){
-        scroll($("span.active-entity", minihierarchy).first(), minihierarchy);
+    var active = $("span.active-entity", minihierarchy);
+        if (active.size() > 0) {
+            scroll(active.first(), minihierarchy);
+        }
     }
 }
 

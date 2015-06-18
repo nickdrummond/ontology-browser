@@ -1,9 +1,13 @@
 package org.coode.www.model;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Multimap;
+import org.coode.owl.util.OWLUtils;
 import org.coode.www.renderer.UsageVisibilityVisitor;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.util.*;
 
@@ -129,11 +133,122 @@ public class CharacteristicsFactory {
         return asCharacteristic("Characteristics", owlDataProperty, axioms, comparator);
     }
 
+    public Optional<Characteristic> getTypes(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
+        List<OWLClassExpression> types = new ArrayList<>(EntitySearcher.getTypes(owlIndividual, ontologies));
+        return asCharacteristic("Types", owlIndividual, types, comparator);
+    }
+
+    public Optional<Characteristic> getSameAs(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
+        List<OWLIndividual> sameAs = new ArrayList<>(EntitySearcher.getSameIndividuals(owlIndividual, ontologies));
+        return asCharacteristic("Same As", owlIndividual, sameAs, comparator);
+    }
+
+    public Optional<Characteristic> getDifferentFrom(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
+        List<OWLIndividual> differentFrom = new ArrayList<>(EntitySearcher.getDifferentIndividuals(owlIndividual, ontologies));
+        return asCharacteristic("Different From", owlIndividual, differentFrom, comparator);
+    }
+
     private Optional<Characteristic> asCharacteristic(String name, OWLObject owlObject, List<? extends OWLObject> results, Comparator<OWLObject> comparator) {
         if (!results.isEmpty()) {
             Collections.sort(results, comparator);
             return Optional.of(new Characteristic(owlObject, name, results));
         }
         return Optional.absent();
+    }
+
+    public Collection<? extends Characteristic> getObjectPropertyAssertions(
+            OWLNamedIndividual owlIndividual,
+            Set<OWLOntology> ontologies,
+            Comparator<OWLObject> comparator,
+            ShortFormProvider shortFormProvider) {
+
+        final Map<OWLObjectPropertyExpression, Collection<OWLIndividual>> propMap =
+                EntitySearcher.getObjectPropertyValues(owlIndividual, ontologies).asMap();
+
+        final List<OWLObjectPropertyExpression> orderedProps = new ArrayList<>(propMap.keySet());
+        Collections.sort(orderedProps, comparator);
+
+        List<Characteristic> characteristics = new ArrayList<>();
+
+        for (OWLObjectPropertyExpression p : orderedProps) {
+            // TODO improved expression rendering
+            String label = p.isAnonymous() ? p.toString() : shortFormProvider.getShortForm(p.asOWLObjectProperty());
+            characteristics.add(new Characteristic(
+                            owlIndividual,
+                            label,
+                            new ArrayList<>(propMap.get(p)))
+            );
+        }
+
+        return characteristics;
+    }
+
+    public Collection<? extends Characteristic> getDataPropertyAssertions(
+            OWLNamedIndividual owlIndividual,
+            Set<OWLOntology> ontologies,
+            Comparator<OWLObject> comparator,
+            ShortFormProvider shortFormProvider) {
+
+        final Map<OWLDataPropertyExpression, Collection<OWLLiteral>> propMap =
+                EntitySearcher.getDataPropertyValues(owlIndividual, ontologies).asMap();
+
+        final List<OWLDataPropertyExpression> orderedProps = new ArrayList<>(propMap.keySet());
+        Collections.sort(orderedProps, comparator);
+
+        List<Characteristic> characteristics = new ArrayList<>();
+
+        for (OWLDataPropertyExpression p : orderedProps) {
+            // TODO improved expression rendering
+            String label = p.isAnonymous() ? p.toString() : shortFormProvider.getShortForm(p.asOWLDataProperty());
+            characteristics.add(new Characteristic(
+                            owlIndividual,
+                            label,
+                            new ArrayList<>(propMap.get(p)))
+            );
+        }
+
+        return characteristics;
+    }
+
+    public List<Characteristic> getAnnotationCharacterists(
+            OWLNamedIndividual owlIndividual,
+            Set<OWLOntology> ontologies,
+            Comparator<OWLObject> comparator,
+            ShortFormProvider shortFormProvider) {
+        final Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> assertedProps =
+                getAnnotationPropertyMap(owlIndividual, ontologies);
+
+        final List<OWLAnnotationProperty> orderedProps = new ArrayList<>(assertedProps.keySet());
+        Collections.sort(orderedProps, comparator);
+
+        List<Characteristic> characteristics = new ArrayList<>();
+
+        for (OWLAnnotationProperty p : orderedProps) {
+            characteristics.add(new Characteristic(
+                            owlIndividual,
+                            shortFormProvider.getShortForm(p),
+                            new ArrayList<>(assertedProps.get(p)))
+            );
+        }
+
+        return characteristics;
+    }
+
+    private Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> getAnnotationPropertyMap(
+            OWLNamedIndividual individual,
+            Set<OWLOntology> onts) {
+        Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> props = new HashMap<OWLAnnotationProperty, Set<OWLAnnotationValue>>();
+        for (OWLOntology ont : onts){
+            for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(individual.getIRI())){
+                OWLAnnotationProperty p = ax.getProperty();
+                Set<OWLAnnotationValue> objects = props.get(p);
+                if (objects == null){
+                    objects = new HashSet<>();
+                    props.put(p, objects);
+                }
+                objects.add(ax.getAnnotation().getValue());
+            }
+        }
+        return props;
     }
 }
