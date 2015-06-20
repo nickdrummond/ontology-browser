@@ -1,9 +1,7 @@
 package org.coode.www.model;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Multimap;
 import org.coode.www.renderer.UsageVisibilityVisitor;
-import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -50,6 +48,11 @@ public class CharacteristicsFactory {
         return asCharacteristic("Superproperties", owlDataProperty, supers, comparator);
     }
 
+    public Optional<Characteristic> getSupers(OWLAnnotationProperty owlAnnotationProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
+        List<OWLAnnotationProperty> supers = new ArrayList<>(EntitySearcher.getSuperProperties(owlAnnotationProperty, ontologies));
+        return asCharacteristic("Superproperties", owlAnnotationProperty, supers, comparator);
+    }
+
     public Optional<Characteristic> getDisjoints(OWLClass owlClass, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLClassExpression> disjoints = new ArrayList<>(EntitySearcher.getDisjointClasses(owlClass, ontologies));
         return asCharacteristic("Disjoints", owlClass, disjoints, comparator);
@@ -79,7 +82,12 @@ public class CharacteristicsFactory {
         List<OWLClassExpression> domains = new ArrayList<>(EntitySearcher.getDomains(owlDataProperty, ontologies));
         return asCharacteristic("Domains", owlDataProperty, domains, comparator);
     }
-    
+
+    public Optional<Characteristic> getDomains(OWLAnnotationProperty owlAnnotationProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
+        List<IRI> domains = new ArrayList<>(EntitySearcher.getDomains(owlAnnotationProperty, ontologies));
+        return asCharacteristic("Domains", owlAnnotationProperty, domains, comparator);
+    }
+
     public Optional<Characteristic> getRanges(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLClassExpression> ranges = new ArrayList<>(EntitySearcher.getRanges(owlObjectProperty, ontologies));
         return asCharacteristic("Ranges", owlObjectProperty, ranges, comparator);
@@ -88,6 +96,11 @@ public class CharacteristicsFactory {
     public Optional<Characteristic> getRanges(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLDataRange> ranges = new ArrayList<>(EntitySearcher.getRanges(owlDataProperty, ontologies));
         return asCharacteristic("Ranges", owlDataProperty, ranges, comparator);
+    }
+
+    public Optional<Characteristic> getRanges(OWLAnnotationProperty owlAnnotationProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
+        List<IRI> ranges = new ArrayList<>(EntitySearcher.getRanges(owlAnnotationProperty, ontologies));
+        return asCharacteristic("Ranges", owlAnnotationProperty, ranges, comparator);
     }
 
     public Optional<Characteristic> getInverses(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
