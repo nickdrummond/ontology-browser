@@ -1,11 +1,10 @@
 package org.coode.www.configuration;
 
 import org.coode.www.mngr.KitRepository;
-import org.coode.www.model.ApplicationInfo;
 import org.coode.www.mngr.SessionManager;
+import org.coode.www.model.ApplicationInfo;
 import org.coode.www.model.Bookmarks;
 import org.coode.www.service.*;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

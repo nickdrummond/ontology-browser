@@ -3,9 +3,9 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.QueryType;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;

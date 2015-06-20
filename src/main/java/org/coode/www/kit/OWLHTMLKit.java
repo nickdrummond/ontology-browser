@@ -1,14 +1,12 @@
 package org.coode.www.kit;
 
-import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerOptionsAdapter;
-import org.semanticweb.owlapi.model.OWLObject;
+import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 /*

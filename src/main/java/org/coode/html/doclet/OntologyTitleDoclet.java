@@ -1,7 +1,6 @@
 package org.coode.html.doclet;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;

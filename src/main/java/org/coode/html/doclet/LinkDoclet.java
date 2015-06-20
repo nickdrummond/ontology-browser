@@ -3,8 +3,8 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.util.URLUtils;
+import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.io.PrintWriter;

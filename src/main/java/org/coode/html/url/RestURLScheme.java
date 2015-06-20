@@ -4,16 +4,16 @@
 package org.coode.html.url;
 
 import com.google.common.base.Function;
-import org.semanticweb.owlapi.model.IRI;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLParam;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.net.MalformedURLException;

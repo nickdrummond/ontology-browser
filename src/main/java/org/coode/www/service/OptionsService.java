@@ -1,13 +1,12 @@
 package org.coode.www.service;
 
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.www.mngr.KitRepository;
 import org.coode.www.model.OptionSet;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

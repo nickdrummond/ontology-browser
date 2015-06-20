@@ -1,7 +1,8 @@
 package org.coode.www.model;
 
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -9,7 +10,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedHashMap;

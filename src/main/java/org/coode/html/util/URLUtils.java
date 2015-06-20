@@ -1,14 +1,18 @@
 package org.coode.html.util;
 
-import org.coode.html.url.OWLObjectURLRenderer;
 import org.coode.html.url.URLScheme;
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.owl.mngr.NamedObjectType;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Author: Nick Drummond<br>

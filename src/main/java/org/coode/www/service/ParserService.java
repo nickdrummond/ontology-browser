@@ -1,20 +1,16 @@
 package org.coode.www.service;
 
 import org.coode.owl.mngr.OWLEntityFinder;
-
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.io.OWLParserException;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-
+import org.springframework.stereotype.Service;
 import uk.co.nickdrummond.parsejs.AutocompleteResult;
 import uk.co.nickdrummond.parsejs.ParseException;
 import uk.co.nickdrummond.parsejs.ParseResult;
-
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 

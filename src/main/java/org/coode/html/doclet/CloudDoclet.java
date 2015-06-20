@@ -1,9 +1,10 @@
 package org.coode.html.doclet;
 
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.cloud.*;
 import org.coode.html.util.HTMLUtils;
-import org.semanticweb.owlapi.model.*;
+import org.coode.www.cloud.CloudModel;
+import org.coode.www.cloud.OWLCloudModel;
+import org.coode.www.kit.OWLHTMLKit;
+import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.awt.*;
 import java.io.PrintWriter;

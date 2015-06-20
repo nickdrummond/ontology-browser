@@ -1,8 +1,9 @@
 package org.coode.www.mngr;
 
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.kit.OWLHTMLKit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,16 +1,16 @@
 package org.coode.www.mngr;
 
 import com.google.common.base.Function;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLKitImpl;
-import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLKitImpl;
+import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 

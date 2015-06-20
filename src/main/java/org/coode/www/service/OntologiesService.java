@@ -1,10 +1,10 @@
 package org.coode.www.service;
 
 import org.coode.owl.hierarchy.HierarchyProvider;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.mngr.KitRepository;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.OWLOntology;

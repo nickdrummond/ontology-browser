@@ -1,12 +1,12 @@
 package org.coode.www.controller;
 
+import org.coode.html.doclet.HTMLDoclet;
+import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.doclet.HierarchyDocletFactory;
-import org.coode.html.doclet.HTMLDoclet;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLAnnotationPropertiesService;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;

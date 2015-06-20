@@ -1,10 +1,10 @@
 package org.coode.html.doclet;
 
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.NamedObjectType;
-import org.semanticweb.owlapi.model.*;
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.kit.impl.OWLHTMLProperty;
+import org.semanticweb.owlapi.model.OWLObject;
 
 /**
  * Author: drummond<br>

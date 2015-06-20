@@ -3,12 +3,13 @@
 */
 package org.coode.html.url;
 
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
+import org.coode.owl.mngr.NamedObjectType;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLParam;
-import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;

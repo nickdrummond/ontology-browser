@@ -1,7 +1,8 @@
 package org.coode.www.service;
 
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

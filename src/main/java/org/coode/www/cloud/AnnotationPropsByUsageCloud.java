@@ -1,7 +1,7 @@
 package org.coode.www.cloud;
 
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.url.URLScheme;
+import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 

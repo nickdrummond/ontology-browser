@@ -1,7 +1,6 @@
 package org.coode.html.doclet;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.doclet.*;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 

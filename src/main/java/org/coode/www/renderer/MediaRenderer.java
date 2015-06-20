@@ -1,7 +1,6 @@
 package org.coode.www.renderer;
 
 
-import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.kit.OWLHTMLKit;
@@ -10,8 +9,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 
-import java.io.PrintWriter;
-import java.net.URL;
 import java.util.Set;
 
 /**

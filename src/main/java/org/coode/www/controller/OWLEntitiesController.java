@@ -7,7 +7,6 @@ import org.coode.www.model.SearchResults;
 import org.coode.www.service.NameService;
 import org.coode.www.service.SearchService;
 import org.semanticweb.owlapi.model.OWLEntity;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

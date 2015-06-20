@@ -5,9 +5,9 @@ package org.coode.www.renderer;
 
 import com.google.common.base.Function;
 import org.coode.html.url.URLScheme;
-import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
+import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;

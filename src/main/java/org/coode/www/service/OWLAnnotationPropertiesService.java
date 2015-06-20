@@ -1,9 +1,9 @@
 package org.coode.www.service;
 
 import com.google.common.base.Optional;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.exception.NotFoundException;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;

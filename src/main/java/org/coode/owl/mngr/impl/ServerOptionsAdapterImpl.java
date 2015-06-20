@@ -3,8 +3,8 @@
 */
 package org.coode.owl.mngr.impl;
 
-import org.coode.owl.mngr.ServerProperties;
 import org.coode.owl.mngr.ServerOptionsAdapter;
+import org.coode.owl.mngr.ServerProperties;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;

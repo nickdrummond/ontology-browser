@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Bookmarks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

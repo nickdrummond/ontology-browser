@@ -1,16 +1,17 @@
 package org.coode.www.kit.impl;
 
 import org.coode.html.url.RestURLScheme;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.impl.OWLServerImpl;
 import org.coode.owl.mngr.impl.ServerOptionsAdapterImpl;
+import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.*;
 /*

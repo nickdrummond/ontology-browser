@@ -1,7 +1,6 @@
 package org.coode.www.model;
 
 import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLProperty;
 
 import java.util.List;
 

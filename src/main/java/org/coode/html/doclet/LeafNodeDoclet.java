@@ -3,13 +3,13 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.www.renderer.OWLHTMLVisitor;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.owl.hierarchy.HierarchyProvider;
+import org.coode.www.renderer.OWLHTMLVisitor;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.net.URL;

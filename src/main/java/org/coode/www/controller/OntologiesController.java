@@ -1,16 +1,12 @@
 package org.coode.www.controller;
 
-import org.coode.html.doclet.NodeDoclet;
-import org.coode.html.doclet.OWLOntologySummaryDoclet;
+import org.coode.html.doclet.*;
 import org.coode.owl.hierarchy.HierarchyProvider;
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.html.doclet.HierarchyDocletFactory;
-import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.doclet.OWLObjectIndexDoclet;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.service.OntologiesService;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.LoadOntology;
+import org.coode.www.service.OntologiesService;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

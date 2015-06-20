@@ -6,7 +6,6 @@ package org.coode.html.doclet;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.OWLAxiomVisitorAdapter;
 
 import java.util.Collection;
 import java.util.HashSet;
