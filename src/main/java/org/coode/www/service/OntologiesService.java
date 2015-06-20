@@ -1,20 +1,24 @@
 package org.coode.www.service;
 
+import com.google.common.base.Optional;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.mngr.KitRepository;
+import org.coode.www.model.Characteristic;
+import org.coode.www.model.CharacteristicsFactory;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 @Service
 public class OntologiesService {
@@ -91,5 +95,23 @@ public class OntologiesService {
 
     public HierarchyProvider<OWLOntology> getHierarchyProvider(final OWLHTMLKit kit) {
         return kit.getOWLServer().getHierarchyProvider(OWLOntology.class);
+    }
+
+    public List<Characteristic> getCharacteristics(final OWLOntology owlOntology, final OWLHTMLKit kit) {
+        Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
+
+        CharacteristicsFactory fac = new CharacteristicsFactory();
+
+        List<Characteristic> characteristics = new ArrayList<>();
+        for (Optional<Characteristic> c : asList(
+                fac.getAnnotations(owlOntology, comparator),
+                fac.getImports(owlOntology, comparator),
+                fac.getGeneralClassAxioms(owlOntology, comparator)
+        )) {
+            if (c.isPresent()) {
+                characteristics.add(c.get());
+            }
+        }
+        return characteristics;
     }
 }

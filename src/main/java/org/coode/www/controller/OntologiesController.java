@@ -6,7 +6,9 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.LoadOntology;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OntologiesService;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -54,24 +56,27 @@ public class OntologiesController extends ApplicationController {
                               Model model) throws OntServerException, NotFoundException {
         OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
-        OWLOntology ontology = service.getOntologyFor(ontId, kit);
+        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
         // TODO yuck replace this adapter
         HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
         HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLOntology.class);
-        hierarchyDoclet.setUserObject(ontology);
-        HTMLDoclet summaryDoclet = new OWLOntologySummaryDoclet(kit);
-        summaryDoclet.setUserObject(ontology);
+        hierarchyDoclet.setUserObject(owlOntology);
 
-        String ontologyName = kit.getOWLServer().getOntologyShortFormProvider().getShortForm(ontology);
+        String ontologyName = kit.getOWLServer().getOntologyShortFormProvider().getShortForm(owlOntology);
+
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlOntology);
 
         model.addAttribute("title", ontologyName + " (Ontology)");
+        model.addAttribute("iri", owlOntology.getOntologyID().getDefaultDocumentIRI().or(IRI.create("?")));
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
+        model.addAttribute("characteristics", service.getCharacteristics(owlOntology, kit));
+        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
-        return "doclet";
+        return "owlentity";
     }
 
     @RequestMapping(method= RequestMethod.POST)

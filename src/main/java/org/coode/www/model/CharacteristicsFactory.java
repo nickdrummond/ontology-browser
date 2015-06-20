@@ -18,6 +18,21 @@ public class CharacteristicsFactory {
         return asCharacteristic("Annotations", owlEntity, annots, comparator);
     }
 
+    public Optional<Characteristic> getAnnotations(OWLOntology owlOntology, Comparator<OWLObject> comparator) {
+        List<OWLAnnotation> annotations = new ArrayList<>(owlOntology.getAnnotations());
+        return asCharacteristic("Annotations", owlOntology, annotations, comparator);
+    }
+
+    public Optional<Characteristic> getImports(OWLOntology owlOntology, Comparator<OWLObject> comparator) {
+        List<IRI> imports = new ArrayList<>(owlOntology.getDirectImportsDocuments());
+        return asCharacteristic("Imports", owlOntology, imports, comparator);
+    }
+
+    public Optional<Characteristic> getGeneralClassAxioms(OWLOntology owlOntology, Comparator<OWLObject> comparator) {
+        List<OWLClassAxiom> axioms = new ArrayList<>(owlOntology.getGeneralClassAxioms());
+        return asCharacteristic("General Class Axioms", owlOntology, axioms, comparator);
+    }
+
     public Optional<Characteristic> getEquivalents(OWLClass owlClass, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLClassExpression> equivs = new ArrayList<>(EntitySearcher.getEquivalentClasses(owlClass, ontologies));
         return asCharacteristic("Equivalents", owlClass, equivs, comparator);
