@@ -46,11 +46,11 @@ public class OWLIndividualsService {
         return individuals;
     }
 
-    public HierarchyProvider<OWLNamedIndividual> getHierarchyProvider(OWLHTMLKit kit) {
+    public HierarchyProvider<OWLNamedIndividual> getHierarchyProvider(final OWLHTMLKit kit) {
         return kit.getOWLServer().getHierarchyProvider(OWLNamedIndividual.class);
     }
 
-    public Object getCharacteristics(OWLNamedIndividual owlIndividual, OWLHTMLKit kit) {
+    public List<Characteristic> getCharacteristics(OWLNamedIndividual owlIndividual, OWLHTMLKit kit) {
         Set<OWLOntology> activeOntologies = kit.getOWLServer().getActiveOntologies();
         Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
 

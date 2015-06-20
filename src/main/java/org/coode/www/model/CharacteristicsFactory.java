@@ -132,6 +132,16 @@ public class CharacteristicsFactory {
         return asCharacteristic("Characteristics", owlDataProperty, axioms, comparator);
     }
 
+    public Optional<Characteristic> getDatatypeDefinitions(OWLDatatype owlDatatype, Set<OWLOntology> activeOntologies, Comparator<OWLObject> comparator) {
+        List<OWLDataRange> ranges = new ArrayList<>();
+        for (OWLOntology ont : activeOntologies){
+            for (OWLDatatypeDefinitionAxiom ax : ont.getDatatypeDefinitions(owlDatatype)){
+                ranges.add(ax.getDataRange());
+            }
+        }
+        return asCharacteristic("Datatype Definitions", owlDatatype, ranges, comparator);
+    }
+
     public Optional<Characteristic> getTypes(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLClassExpression> types = new ArrayList<>(EntitySearcher.getTypes(owlIndividual, ontologies));
         return asCharacteristic("Types", owlIndividual, types, comparator);

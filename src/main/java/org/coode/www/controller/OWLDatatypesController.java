@@ -1,13 +1,13 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.NodeDoclet;
-import org.coode.html.doclet.OWLDatatypeSummaryDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLDatatypesService;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
@@ -57,18 +57,21 @@ public class OWLDatatypesController extends ApplicationController {
         HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
         HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLDatatype.class);
         hierarchyDoclet.setUserObject(owlDatatype);
-        HTMLDoclet summaryDoclet = new OWLDatatypeSummaryDoclet(kit);
-        summaryDoclet.setUserObject(owlDatatype);
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlDatatype);
 
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlDatatype);
+
         model.addAttribute("title", entityName + " (Datatype)");
+        model.addAttribute("iri", owlDatatype.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", renderDoclets(request, summaryDoclet, hierarchyDoclet));
+        model.addAttribute("characteristics", service.getCharacteristics(owlDatatype, kit));
+        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
-        return "doclet";
+        return "owlentity";
     }
 
     @RequestMapping(value="/{datatypeId}/children", method=RequestMethod.GET)
