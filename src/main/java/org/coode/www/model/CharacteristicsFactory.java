@@ -2,7 +2,6 @@ package org.coode.www.model;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
-import org.coode.owl.util.OWLUtils;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;

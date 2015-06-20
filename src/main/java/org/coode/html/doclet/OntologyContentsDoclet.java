@@ -6,7 +6,6 @@ package org.coode.html.doclet;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.html.util.HTMLUtils;
 import org.coode.owl.mngr.NamedObjectType;
-import org.coode.owl.util.OWLUtils;
 import org.semanticweb.owlapi.model.*;
 
 import java.io.PrintWriter;
