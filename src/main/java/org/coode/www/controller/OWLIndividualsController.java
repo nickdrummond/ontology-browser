@@ -7,6 +7,7 @@ import org.coode.html.doclet.OWLObjectIndexDoclet;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.renderer.MediaRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.GeoService;
 import org.coode.www.service.MediaService;
@@ -76,7 +77,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlIndividual);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlIndividual);
+        OWLHTMLRenderer owlRenderer = new MediaRenderer(kit, owlIndividual);
 
         Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
 
