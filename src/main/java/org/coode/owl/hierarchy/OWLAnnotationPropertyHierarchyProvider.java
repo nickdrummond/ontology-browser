@@ -9,14 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Author: drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jun 6, 2010<br><br>
- */
 public class OWLAnnotationPropertyHierarchyProvider implements HierarchyProvider<OWLAnnotationProperty> {
 
    private OWLServer server;

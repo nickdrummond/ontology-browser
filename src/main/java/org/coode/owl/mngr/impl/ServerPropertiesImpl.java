@@ -1,6 +1,3 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.owl.mngr.impl;
 
 import org.coode.owl.mngr.ServerProperties;
@@ -14,14 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-/**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jan 22, 2008<br><br>
- */
 public class ServerPropertiesImpl implements ServerProperties {
 
     private Properties properties = new Properties();

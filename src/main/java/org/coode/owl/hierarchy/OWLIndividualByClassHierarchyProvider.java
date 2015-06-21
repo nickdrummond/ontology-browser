@@ -7,14 +7,6 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 
 import java.util.*;
 
-/**
- * Author: drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jun 6, 2010<br><br>
- */
 public class OWLIndividualByClassHierarchyProvider implements HierarchyProvider<OWLObject> {
 
     private OWLServer server;

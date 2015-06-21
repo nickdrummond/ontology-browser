@@ -8,13 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jul 24, 2007<br><br>
- *
  * Wrapper for any OWLReasoner that implements methods as synchronized to allow safe multithread access
  */
 public class SynchronizedOWLReasoner implements OWLReasoner {
@@ -181,7 +174,6 @@ public class SynchronizedOWLReasoner implements OWLReasoner {
     public synchronized boolean isSatisfiable(OWLClassExpression classExpression) throws ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
         return r.isSatisfiable(classExpression);
     }
-
 
 // OWLAPI v3.0
 //    public synchronized NodeSet<OWLObjectProperty> getDisjointObjectProperties(OWLObjectPropertyExpression pe, boolean direct) throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException, TimeOutException {

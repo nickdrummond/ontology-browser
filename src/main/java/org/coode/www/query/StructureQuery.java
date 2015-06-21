@@ -11,15 +11,6 @@ package org.coode.www.query;
  *  logically, no ingredients are always ingredients of the Frutti Di MAre pizza
  *  realistically, Frutti Di Mare hasToppings MixedSeafood, Tomato and Garlic
  *  this is what we wish to return -
- *
- *
- * Author: drummond<br>
- * The University Of Manchester<br>
- * Medical Informatics Group<br>
- * Date: Jul 13, 2006<br><br>
- * <p/>
- * nick.drummond@cs.manchester.ac.uk<br>
- * www.cs.man.ac.uk/~drummond<br><br>
  */
 public class StructureQuery {
 //

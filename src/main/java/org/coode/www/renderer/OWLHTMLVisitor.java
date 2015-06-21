@@ -1,6 +1,3 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.www.renderer;
 
 import com.google.common.base.Function;
@@ -21,14 +18,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-/**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Feb 12, 2008<br><br>
- */
 public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     // These should match the css class names

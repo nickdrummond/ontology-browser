@@ -1,18 +1,7 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.www.cloud;
 
 import org.coode.owl.mngr.NamedObjectType;
 
-/**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jan 15, 2008<br><br>
- */
 public enum CloudType {
     classusage ("Class Usage", NamedObjectType.classes),
     objpropusage ("Object Property Usage", NamedObjectType.objectproperties),

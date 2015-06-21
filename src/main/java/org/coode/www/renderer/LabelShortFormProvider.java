@@ -11,13 +11,6 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import java.util.*;
 
 /**
- * Author: drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Feb 2, 2011<br><br>
- *
  * A shortformProvider that uses the server properties to render
  * 1) An annotation value on the label (in the given language), if available otherwise
  * 2) A property value on the label property (again, given the language), otherwise

@@ -4,19 +4,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.util.*;
 
-
-/**
- * Author: Nick Drummond<br>
- * nick.drummond@cs.manchester.ac.uk<br>
- * http://www.cs.man.ac.uk/~drummond<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jun 15, 2007<br><br>
- * <p/>
- * code made available under Mozilla Public License (http://www.mozilla.org/MPL/MPL-1.1.html)<br>
- * copyright 2006, The University of Manchester<br>
- */
 public abstract class AbstractCloudModel<O> implements CloudModel<O> {
 
     private Map<O, Integer> entityValueMap = new HashMap<O, Integer>();

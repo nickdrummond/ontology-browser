@@ -1,6 +1,3 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.www;
 
 import org.coode.www.kit.OWLHTMLKit;
@@ -11,14 +8,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Feb 6, 2008<br><br>
- */
 public enum QueryType {
     subclasses,
     superclasses,

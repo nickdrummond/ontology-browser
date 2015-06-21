@@ -16,14 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Author: drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Mar 24, 2011<br><br>
- */
 public class OWLReasonerManagerImpl implements OWLReasonerManager {
 
     public static final Logger logger = LoggerFactory.getLogger(OWLReasonerManagerImpl.class);

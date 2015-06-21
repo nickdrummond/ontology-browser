@@ -1,6 +1,3 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.www.bookmarks;
 
 import org.semanticweb.owlapi.model.*;
@@ -11,14 +8,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
-/**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Feb 11, 2008<br><br>
- */
 public class OntologyBookmarks {
 
     private static final Logger logger = LoggerFactory.getLogger(OntologyBookmarks.class);

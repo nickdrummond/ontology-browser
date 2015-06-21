@@ -14,14 +14,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Author: drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Aug 6, 2009<br><br>
- */
 public class ClassHierarchyProvider implements HierarchyProvider<OWLClass>{
 
     private Logger logger = LoggerFactory.getLogger(ClassHierarchyProvider.class);

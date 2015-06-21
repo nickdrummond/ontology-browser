@@ -7,14 +7,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Author: drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jul 26, 2010<br><br>
- */
 public class OntologyHierarchyProvider implements HierarchyProvider<OWLOntology> {
 
     private OWLServer server;

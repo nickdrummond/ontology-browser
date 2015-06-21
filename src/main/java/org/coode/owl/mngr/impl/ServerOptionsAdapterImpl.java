@@ -1,6 +1,3 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.owl.mngr.impl;
 
 import org.coode.owl.mngr.ServerOptionsAdapter;
@@ -15,14 +12,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Author: Nick Drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jan 22, 2008<br><br>
- */
 public class ServerOptionsAdapterImpl<E extends Enum> implements ServerOptionsAdapter<E> {
 
     protected ServerProperties delegate;
