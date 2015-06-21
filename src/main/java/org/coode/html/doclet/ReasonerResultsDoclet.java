@@ -3,7 +3,7 @@
 */
 package org.coode.html.doclet;
 
-import org.coode.www.QueryType;
+import org.coode.www.model.QueryType;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLClassExpression;

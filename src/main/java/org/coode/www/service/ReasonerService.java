@@ -1,6 +1,6 @@
 package org.coode.www.service;
 
-import org.coode.www.QueryType;
+import org.coode.www.model.QueryType;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;

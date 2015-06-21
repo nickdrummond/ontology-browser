@@ -3,7 +3,7 @@ package org.coode.www.controller;
 import org.coode.html.doclet.ReasonerResultsDoclet;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.www.QueryType;
+import org.coode.www.model.QueryType;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.service.ParserService;

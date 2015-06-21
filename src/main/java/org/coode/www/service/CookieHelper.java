@@ -1,4 +1,4 @@
-package org.coode.www;
+package org.coode.www.service;
 
 import org.coode.www.kit.OWLHTMLKit;
 import org.slf4j.Logger;
