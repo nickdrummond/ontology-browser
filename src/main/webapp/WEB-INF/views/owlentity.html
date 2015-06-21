@@ -27,7 +27,7 @@
                        th:value="${iri}"/>
                 <input name='redirect' type='hidden'
                        value='.'
-                       th:value="@{.}"/>
+                       th:value="@{__${#httpServletRequest.requestURI}__}"/>
                 <input type='image' alt='Attempt to load owl/rdf'
                        src='../../static/images/download.png'
                        th:src="@{/static/images/download.png}"/>
