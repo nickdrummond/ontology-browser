@@ -7,9 +7,11 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.LoadOntology;
 import org.coode.www.renderer.OWLHTMLRenderer;
+import org.coode.www.renderer.OntologyShortFormProvider;
 import org.coode.www.service.OntologiesService;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +28,9 @@ public class OntologiesController extends ApplicationController {
 
     @Autowired
     private OntologiesService service;
+
+    @Autowired
+    private OntologyIRIShortFormProvider sfp;
 
     @RequestMapping(method=RequestMethod.GET)
     public String getOntologies(@RequestParam(required=false) final String label,
@@ -63,12 +68,12 @@ public class OntologiesController extends ApplicationController {
         HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLOntology.class);
         hierarchyDoclet.setUserObject(owlOntology);
 
-        String ontologyName = kit.getOWLServer().getOntologyShortFormProvider().getShortForm(owlOntology);
+        String ontologyName = sfp.getShortForm(owlOntology);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlOntology);
 
         model.addAttribute("title", ontologyName + " (Ontology)");
-        model.addAttribute("iri", owlOntology.getOntologyID().getDefaultDocumentIRI().or(IRI.create("?")));
+        model.addAttribute("iri", owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous")));
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
