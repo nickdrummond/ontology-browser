@@ -3,7 +3,6 @@ package org.coode.www.controller;
 import com.google.common.base.Optional;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.HierarchyDocletFactory;
-import org.coode.html.doclet.OWLObjectIndexDoclet;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -12,7 +11,6 @@ import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.GeoService;
 import org.coode.www.service.MediaService;
 import org.coode.www.service.OWLIndividualsService;
-import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,23 +38,15 @@ public class OWLIndividualsController extends ApplicationController {
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLIndividuals(@RequestParam(required=false) final String label,
                                 final HttpServletRequest request,
-                                final Model model) throws OntServerException {
+                                final Model model) throws OntServerException, NotFoundException {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
-        Set<OWLIndividual> individuals = service.getAllIndividuals(kit);
+        OWLNamedIndividual firstIndividual = service.getFirstIndividual(kit);
 
-        OWLObjectIndexDoclet doclet = new OWLObjectIndexDoclet(kit);
-        doclet.setTitle("Individuals");
-        doclet.addAll(individuals);
+        String id = service.getIdFor(firstIndividual);
 
-        model.addAttribute("title", "Individuals");
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", renderDoclets(request, doclet));
-
-        return "doclet";
+        return "redirect:/individuals/" + id;
     }
 
 

@@ -45,7 +45,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     public String getOWLAnnotationProperty(@PathVariable final String propertyId,
                               @RequestParam(required=false) final String label,
                               final HttpServletRequest request,
-                              Model model) throws OntServerException, NotFoundException {
+                              final Model model) throws OntServerException, NotFoundException {
 
         final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 

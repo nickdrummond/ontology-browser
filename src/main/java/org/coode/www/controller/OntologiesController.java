@@ -34,31 +34,24 @@ public class OntologiesController extends ApplicationController {
     @RequestMapping(method=RequestMethod.GET)
     public String getOntologies(@RequestParam(required=false) final String label,
                                 final HttpServletRequest request,
-                                Model model) throws OntServerException {
+                                final Model model) throws OntServerException {
 
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
-        // TODO yuck replace this adapter
-        Set<OWLOntology> results = kit.getOWLServer().getActiveOntologies();
-        OWLObjectIndexDoclet doclet = new OWLObjectIndexDoclet(kit);
-        doclet.setTitle("Ontologies");
-        doclet.addAll(results);
+        OWLOntology rootOntology = kit.getOWLServer().getRootOntology();
 
-        model.addAttribute("title", "Ontologies");
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
-        model.addAttribute("content", renderDoclets(request, doclet));
+        String id = service.getIdFor(rootOntology);
 
-        return "doclet";
+        return "redirect:/ontologies/" + id;
     }
 
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET)
     public String getOntology(@PathVariable final String ontId,
                               @RequestParam(required=false) final String label,
                               final HttpServletRequest request,
-                              Model model) throws OntServerException, NotFoundException {
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+                              final Model model) throws OntServerException, NotFoundException {
+
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
@@ -86,10 +79,10 @@ public class OntologiesController extends ApplicationController {
     @RequestMapping(method= RequestMethod.POST)
     public String loadOntology(@ModelAttribute final LoadOntology loadOntology,
                                @RequestParam(required=false) final String label,
-                               HttpServletRequest request,
-                               Model model) throws OntServerException {
+                               final HttpServletRequest request,
+                               final Model model) throws OntServerException {
 
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         String ontologyId = service.load(loadOntology.getUri(), loadOntology.isClear(), kit);
 
