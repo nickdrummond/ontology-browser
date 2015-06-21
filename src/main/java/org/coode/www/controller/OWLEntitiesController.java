@@ -10,6 +10,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,9 +31,10 @@ public class OWLEntitiesController extends ApplicationController {
     public @ResponseBody SearchResults find(
             @RequestParam(required=false) final String label,
             @RequestParam(required=true) final String name,
-            final HttpServletRequest request) throws OntServerException {
+            final HttpServletRequest request,
+            final Model model) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         List<OWLEntity> entities = service.findByName(name, kit);
 

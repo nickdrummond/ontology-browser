@@ -42,7 +42,7 @@ public class OWLIndividualsController extends ApplicationController {
                                 final HttpServletRequest request,
                                 final Model model) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         Set<OWLIndividual> individuals = service.getAllIndividuals(kit);
 
@@ -60,15 +60,15 @@ public class OWLIndividualsController extends ApplicationController {
     }
 
 
-    @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
-    public String getOWLIndividual(@PathVariable final String propertyId,
+    @RequestMapping(value= "/{individualId}", method=RequestMethod.GET)
+    public String getOWLIndividual(@PathVariable final String individualId,
                               @RequestParam(required=false) final String label,
                               final HttpServletRequest request,
                               final Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
-        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(propertyId, kit);
+        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, kit);
 
         // TODO yuck replace this adapter
         HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);

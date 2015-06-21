@@ -29,9 +29,10 @@ public class OWLDataPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLDataProperties(@RequestParam(required=false) final String label,
-                                final HttpServletRequest request) throws OntServerException {
+                                final HttpServletRequest request,
+                                final Model model) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         final OWLDataFactory df = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory();
 
@@ -49,7 +50,7 @@ public class OWLDataPropertiesController extends ApplicationController {
                               final HttpServletRequest request,
                               Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
 
@@ -79,9 +80,10 @@ public class OWLDataPropertiesController extends ApplicationController {
     public String getChildren(@PathVariable final String propertyId,
                               @RequestParam(required=false) final String label,
                               @RequestHeader final URL referer,
-                              final HttpServletRequest request) throws OntServerException, NotFoundException {
+                              final HttpServletRequest request,
+                              final Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLDataProperty property = service.getOWLDataPropertyFor(propertyId, kit);
         HierarchyProvider<OWLDataProperty> hp = service.getHierarchyProvider(kit);

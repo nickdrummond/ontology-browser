@@ -29,9 +29,10 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLObjectProperties(@RequestParam(required=false) final String label,
-                                final HttpServletRequest request) throws OntServerException {
+                                final HttpServletRequest request,
+                                final Model model) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         final OWLDataFactory df = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory();
 
@@ -49,7 +50,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
                               final HttpServletRequest request,
                               Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLObjectProperty owlObjectProperty = service.getOWLObjectPropertyFor(propertyId, kit);
 
@@ -80,9 +81,10 @@ public class OWLObjectPropertiesController extends ApplicationController {
     public String getChildren(@PathVariable final String propertyId,
                               @RequestParam(required=false) final String label,
                               @RequestHeader final URL referer,
-                              final HttpServletRequest request) throws OntServerException, NotFoundException {
+                              final HttpServletRequest request,
+                              final Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);
         HierarchyProvider<OWLObjectProperty> hp = service.getHierarchyProvider(kit);

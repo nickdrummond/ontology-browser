@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,11 +40,11 @@ public class SessionManager {
      * @return
      * @throws OntServerException
      */
-    public OWLHTMLKit getHTMLKit(final HttpServletRequest request) throws OntServerException {
+    public OWLHTMLKit getHTMLKit(final HttpServletRequest request, final Model model) throws OntServerException {
         HttpSession session = request.getSession(true);
 
         if (session.getAttribute(KIT_KEY) == null){
-            create(session, request);
+            create(session, request, model);
         }
 
         return (OWLHTMLKit)session.getAttribute(KIT_KEY);
@@ -54,18 +55,19 @@ public class SessionManager {
      * Copy a server that has been created/saved by another user - dumps all current state
      * @param request
      * @param label
+     * @param model
      * @return
      * @throws OntServerException
      */
-    public OWLHTMLKit getHTMLKit(final HttpServletRequest request, final String label) throws OntServerException {
-        OWLHTMLKit kit = getHTMLKit(request);
+    public OWLHTMLKit getHTMLKit(final HttpServletRequest request, final String label, final Model model) throws OntServerException {
+        OWLHTMLKit kit = getHTMLKit(request, model);
         if (label != null && !label.equals(kit.getCurrentLabel())){
             kitRepository.loadKit(kit, label);
         }
         return kit;
     }
 
-    private void create(final HttpSession mySession, final HttpServletRequest request) {
+    private void create(final HttpSession mySession, final HttpServletRequest request, final Model model) {
         try{
             logger.debug("Creating a new Session: " + mySession.getId());
 
@@ -89,6 +91,8 @@ public class SessionManager {
 
             mySession.setAttribute(KIT_KEY, kit);
             mySession.setAttribute(KIT_CLEANUP, adapter);
+
+            model.addAttribute(KIT_KEY, kit);
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);

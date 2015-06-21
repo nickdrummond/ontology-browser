@@ -31,7 +31,7 @@ public class CloudController extends ApplicationController {
             final Model model,
             final HttpServletRequest request) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit);
 
@@ -56,7 +56,7 @@ public class CloudController extends ApplicationController {
             final Model model,
             final HttpServletRequest request) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit);
 
@@ -82,7 +82,7 @@ public class CloudController extends ApplicationController {
             final Model model,
             final HttpServletRequest request) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit);
 
@@ -107,7 +107,7 @@ public class CloudController extends ApplicationController {
             final Model model,
             final HttpServletRequest request) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit);
 
@@ -132,7 +132,7 @@ public class CloudController extends ApplicationController {
             final Model model,
             final HttpServletRequest request) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit);
 
@@ -157,7 +157,7 @@ public class CloudController extends ApplicationController {
             final Model model,
             final HttpServletRequest request) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit);
 

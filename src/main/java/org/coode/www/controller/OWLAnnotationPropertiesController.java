@@ -28,9 +28,10 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLAnnotationProperties(@RequestParam(required=false) final String label,
-                                final HttpServletRequest request) throws OntServerException, NotFoundException {
+                                final HttpServletRequest request,
+                                final Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLAnnotationProperty firstAnnotationProperty = service.getFirstAnnotationProperty(kit);
 
@@ -46,7 +47,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
                               final HttpServletRequest request,
                               Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLAnnotationProperty owlAnnotationProperty = service.getOWLAnnotationPropertyFor(propertyId, kit);
 
@@ -76,9 +77,10 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     public String getChildren(@PathVariable final String propertyId,
                               @RequestParam(required=false) final String label,
                               @RequestHeader final URL referer,
-                              final HttpServletRequest request) throws OntServerException, NotFoundException {
+                              final HttpServletRequest request,
+                              final Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLAnnotationProperty property = service.getOWLAnnotationPropertyFor(propertyId, kit);
         HierarchyProvider<OWLAnnotationProperty> hp = service.getHierarchyProvider(kit);

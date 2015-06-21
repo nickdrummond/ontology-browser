@@ -7,7 +7,6 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.LoadOntology;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.www.renderer.OntologyShortFormProvider;
 import org.coode.www.service.OntologiesService;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -37,7 +36,7 @@ public class OntologiesController extends ApplicationController {
                                 final HttpServletRequest request,
                                 Model model) throws OntServerException {
 
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         // TODO yuck replace this adapter
         Set<OWLOntology> results = kit.getOWLServer().getActiveOntologies();
@@ -59,7 +58,7 @@ public class OntologiesController extends ApplicationController {
                               @RequestParam(required=false) final String label,
                               final HttpServletRequest request,
                               Model model) throws OntServerException, NotFoundException {
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
@@ -90,7 +89,7 @@ public class OntologiesController extends ApplicationController {
                                HttpServletRequest request,
                                Model model) throws OntServerException {
 
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         String ontologyId = service.load(loadOntology.getUri(), loadOntology.isClear(), kit);
 
@@ -109,9 +108,10 @@ public class OntologiesController extends ApplicationController {
     public String getChildren(@PathVariable final String ontologyId,
                               @RequestParam(required=false) final String label,
                               @RequestHeader final URL referer,
-                              final HttpServletRequest request) throws OntServerException, NotFoundException {
+                              final HttpServletRequest request,
+                              final Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLOntology ontology = service.getOntologyFor(ontologyId, kit);
         HierarchyProvider<OWLOntology> hp = service.getHierarchyProvider(kit);

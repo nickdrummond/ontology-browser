@@ -20,7 +20,7 @@ public class RootController extends ApplicationController {
     @RequestMapping("/")
     public String index(final Model model,
                         final HttpServletRequest request) throws OntServerException {
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request);
+        OWLHTMLKit kit = sessionManager.getHTMLKit(request, model);
 
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("bookmarks", bookmarks.getBookmarks());
@@ -33,7 +33,7 @@ public class RootController extends ApplicationController {
     public String signout(final Model model,
                           final HttpServletRequest request) throws OntServerException {
 
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request);
+        OWLHTMLKit kit = sessionManager.getHTMLKit(request, model);
 
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());

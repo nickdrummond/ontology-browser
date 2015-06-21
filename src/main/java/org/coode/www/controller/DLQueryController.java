@@ -46,7 +46,7 @@ public class DLQueryController extends ApplicationController {
             HttpServletRequest request,
             Model model) throws OntServerException, ParseException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
@@ -62,9 +62,10 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = true) final QueryType query,
             @RequestParam(required = false) final String label,
             HttpServletRequest request,
-            HttpServletResponse response) throws OntServerException {
+            HttpServletResponse response,
+            Model model) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLServer owlServer = kit.getOWLServer();
         OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
@@ -85,9 +86,10 @@ public class DLQueryController extends ApplicationController {
     public @ResponseBody String autocompleteOWLClassExpression(
             @RequestParam(required = true) String expression,
             @RequestParam(required = false) final String label,
-            HttpServletRequest request) throws OntServerException {
+            HttpServletRequest request,
+            Model model) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLServer owlServer = kit.getOWLServer();
         OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
@@ -103,9 +105,10 @@ public class DLQueryController extends ApplicationController {
     public @ResponseBody String parseOWLClassExpression(
             @RequestParam(required = true) String expression,
             @RequestParam(required = false) final String label,
-            HttpServletRequest request) throws OntServerException {
+            HttpServletRequest request,
+            Model model) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLServer owlServer = kit.getOWLServer();
         OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
