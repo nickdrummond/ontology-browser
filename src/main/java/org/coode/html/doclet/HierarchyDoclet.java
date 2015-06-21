@@ -1,9 +1,5 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.html.doclet;
 
-import org.coode.html.util.HTMLUtils;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -39,7 +35,7 @@ public class HierarchyDoclet<O extends OWLObject> extends LeafNodeDoclet<O> {
 
     protected void renderFooter(URL pageURL, PrintWriter out) {
         out.println("</ul>");
-        HTMLUtils.renderBoxEnd(title, out);
+        renderBoxEnd(title, out);
         out.println("</div><!-- owlselector -->");
     }
 

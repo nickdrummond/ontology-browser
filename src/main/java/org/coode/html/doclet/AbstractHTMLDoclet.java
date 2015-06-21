@@ -1,9 +1,4 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.html.doclet;
-
-import org.coode.html.util.HTMLUtils;
 
 import java.io.PrintWriter;
 import java.net.URL;
@@ -140,10 +135,33 @@ public abstract class AbstractHTMLDoclet<O> implements NestedHTMLDoclet<O> {
     }
 
     protected void renderBoxStart(String name, String id, PrintWriter out, URL pageURL) {
-        HTMLUtils.renderBoxStart(name, id, out, pageURL);        
+        out.println();
+        if (name != null){
+            out.print("<div id='");
+            out.print(id);
+            out.println("'>");
+
+            out.print("<h4>");
+            out.print(name);
+            out.println("</h4>");
+        }
+
+        out.print("<div class='codebox");
+        if (name == null){
+            out.print("' id='");
+            out.print(id);
+        }
+        out.println("'>");
     }
 
     protected final void renderBoxEnd(String name, PrintWriter out) {
-        HTMLUtils.renderBoxEnd(name, out);
+        out.println("</div>");
+        if (name != null){
+            out.print("</div>");
+            out.print("<!-- ");
+            out.print(name.toLowerCase());
+            out.println(" -->");
+        }
+        out.println();
     }
 }

@@ -1,6 +1,5 @@
 package org.coode.html.doclet;
 
-import org.coode.html.util.HTMLUtils;
 import org.coode.www.cloud.CloudModel;
 import org.coode.www.cloud.OWLCloudModel;
 import org.coode.www.kit.OWLHTMLKit;
@@ -79,7 +78,7 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
     }
 
     protected void renderFooter(URL pageURL, PrintWriter out) {
-        HTMLUtils.renderBoxEnd(getTitle(), out);
+        renderBoxEnd(getTitle(), out);
     }
 
     public String getTitle() {
