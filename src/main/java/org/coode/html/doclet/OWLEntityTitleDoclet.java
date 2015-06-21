@@ -25,15 +25,10 @@ import java.net.URL;
 @Deprecated
 public class OWLEntityTitleDoclet<O extends OWLEntity> extends AbstractTitleDoclet<O> {
 
-    private final GeoService locService;
     private final MediaService mediaService;
 
     public OWLEntityTitleDoclet(OWLHTMLKit kit) {
         super(kit);
-        locService = new GeoService(
-                "http://www.w3.org/2003/01/geo/wgs84_pos#lat",
-                "http://www.w3.org/2003/01/geo/wgs84_pos#long",
-                "http://www.georss.org/georss/point");
         mediaService = new MediaService();
     }
 
@@ -67,22 +62,6 @@ public class OWLEntityTitleDoclet<O extends OWLEntity> extends AbstractTitleDocl
             out.print("<EMBED src=\"");
             out.print(getUserObject().getIRI());
             out.println("\" autostart=\"true\" hidden=\"true\"/>");
-        }
-
-        Optional<GeoService.Loc> maybeLoc = locService.getLocation(getUserObject(), getOWLHTMLKit().getVisibleOntologies());
-        if (maybeLoc.isPresent()){
-            GeoService.Loc loc = maybeLoc.get();
-            out.println("<div class=\"googlemaps\">");
-            out.print("<iframe width=\"425\" height=\"350\" frameborder=\"0\" scrolling=\"no\" src=\"http://maps.google.com/maps?q=");
-            out.print(loc.latitude);
-            out.print(",");
-            out.print(loc.longitude);
-            out.print("&amp;ie=UTF8&amp;z=14&amp;ll=");
-            out.print(loc.latitude);
-            out.print(",");
-            out.print(loc.longitude);
-            out.print("&amp;output=embed\"></iframe>");
-            out.println("</div>");
         }
     }
 }

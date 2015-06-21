@@ -35,6 +35,10 @@
             <h3 th:text="${iri}">http://example.com/entity-url</h3>
         </div>
 
+        <div th:replace="summary :: map (${geo})">
+            Possibly a map
+        </div>
+
         <div th:each="ch : ${characteristics}">
             <div th:replace="summary :: characteristic (${ch})">
                 A characteristic

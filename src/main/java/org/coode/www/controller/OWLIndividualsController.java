@@ -1,5 +1,6 @@
 package org.coode.www.controller;
 
+import com.google.common.base.Optional;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.OWLObjectIndexDoclet;
@@ -7,9 +8,11 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
+import org.coode.www.service.GeoService;
 import org.coode.www.service.OWLIndividualsService;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +28,9 @@ public class OWLIndividualsController extends ApplicationController {
 
     @Autowired
     private OWLIndividualsService service;
+
+    @Autowired
+    private GeoService geoService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLIndividuals(@RequestParam(required=false) final String label,
@@ -68,11 +74,19 @@ public class OWLIndividualsController extends ApplicationController {
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlIndividual);
 
+        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+
+        Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ontologies);
+        if (maybeLoc.isPresent()) {
+            GeoService.Loc loc = maybeLoc.get();
+            model.addAttribute("geo", loc);
+        }
+
         model.addAttribute("title", entityName + " (Individual)");
         model.addAttribute("iri", owlIndividual.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("ontologies", ontologies);
         model.addAttribute("characteristics", service.getCharacteristics(owlIndividual, kit));
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
