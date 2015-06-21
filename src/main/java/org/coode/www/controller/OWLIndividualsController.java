@@ -9,6 +9,7 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.GeoService;
+import org.coode.www.service.MediaService;
 import org.coode.www.service.OWLIndividualsService;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -31,6 +32,9 @@ public class OWLIndividualsController extends ApplicationController {
 
     @Autowired
     private GeoService geoService;
+
+    @Autowired
+    private MediaService mediaService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLIndividuals(@RequestParam(required=false) final String label,
@@ -80,6 +84,14 @@ public class OWLIndividualsController extends ApplicationController {
         if (maybeLoc.isPresent()) {
             GeoService.Loc loc = maybeLoc.get();
             model.addAttribute("geo", loc);
+        }
+
+        if (mediaService.isImageURL(owlIndividual.getIRI())) {
+            model.addAttribute("image", owlIndividual.getIRI().toString());
+        }
+
+        if (mediaService.isSoundURL(owlIndividual.getIRI())) {
+            model.addAttribute("sound", owlIndividual.getIRI().toString());
         }
 
         model.addAttribute("title", entityName + " (Individual)");

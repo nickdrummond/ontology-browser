@@ -53,6 +53,11 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public MediaService mediaService() {
+        return new MediaService();
+    }
+
+    @Bean
     public NameService nameService() {
         return new NameService();
     }

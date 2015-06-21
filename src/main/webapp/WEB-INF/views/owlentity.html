@@ -35,6 +35,14 @@
             <h3 th:text="${iri}">http://example.com/entity-url</h3>
         </div>
 
+        <div th:replace="summary :: image (${image})">
+            Possibly an image
+        </div>
+
+        <div th:replace="summary :: sound (${sound})">
+            Possibly a sound
+        </div>
+
         <div th:replace="summary :: map (${geo})">
             Possibly a map
         </div>
