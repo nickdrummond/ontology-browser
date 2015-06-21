@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import org.coode.owl.hierarchy.*;
 import org.coode.owl.mngr.*;
+import org.coode.www.renderer.FixedSimpleShortFormProvider;
 import org.coode.www.renderer.LabelShortFormProvider;
 import org.coode.www.renderer.OntologyShortFormProvider;
 import org.coode.www.renderer.QuotingBiDirectionalShortFormProvider;
@@ -418,7 +419,7 @@ public class OWLServerImpl implements OWLServer {
 
         if (shortFormProvider == null){
             String ren = getProperties().get(ServerProperty.optionRenderer);
-            shortFormProvider = new SimpleShortFormProvider();
+            shortFormProvider = new FixedSimpleShortFormProvider();
             if (ren.equals(RENDERER_LABEL)){
                 shortFormProvider = new LabelShortFormProvider(this, shortFormProvider);
             }
