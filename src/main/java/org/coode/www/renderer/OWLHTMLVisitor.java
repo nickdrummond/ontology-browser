@@ -1,11 +1,13 @@
 package org.coode.www.renderer;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Multimap;
 import org.coode.html.url.URLScheme;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLFacet;
@@ -118,11 +120,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         if (writeStats){
             write(" <span style='color:gray;'>(" +
-                  "c:" + ontology.getClassesInSignature().size() +
-                  ", op:" + ontology.getObjectPropertiesInSignature().size() +
-                  ", dp:" + ontology.getDataPropertiesInSignature().size() +
-                  ", i:" + ontology.getIndividualsInSignature().size() +
-                  ")</span>");
+                    "c:" + ontology.getClassesInSignature().size() +
+                    ", op:" + ontology.getObjectPropertiesInSignature().size() +
+                    ", dp:" + ontology.getDataPropertiesInSignature().size() +
+                    ", i:" + ontology.getIndividualsInSignature().size() +
+                    ")</span>");
         }
     }
 
@@ -169,7 +171,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             URLUtils.renderURLLinks(url, urlScheme, ontologies, out);
         }
         catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            // do nothing - not a URL that can be linked to
         }
     }
 
@@ -555,7 +557,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         annotation.getValue().accept(this);
     }
 
-// OWLAPI v3.1
+    // OWLAPI v3.1
     public void visit(OWLLiteral node) {
         write("<span class='" + CSS_LITERAL + "'>");
         final OWLDatatype dt = node.getDatatype();
@@ -788,10 +790,10 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     // useful to add brackets around the anonymous operators of unions and intersections and the fillers of restrictions
     private void writeOp(OWLObject op, boolean wrap) {
         if (op instanceof OWLEntity ||
-            op instanceof OWLObjectOneOf ||
-            op instanceof OWLDataOneOf ||
-            op instanceof OWLDatatypeRestriction ||
-            op instanceof OWLLiteral){
+                op instanceof OWLObjectOneOf ||
+                op instanceof OWLDataOneOf ||
+                op instanceof OWLDatatypeRestriction ||
+                op instanceof OWLLiteral){
             op.accept(this);
         }
         else{ // provide brackets for clarity
@@ -821,7 +823,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         String name = getName(entity);
 
-        Set<String> cssClasses = new HashSet<String>();
+        Set<String> cssClasses = new HashSet<>();
         cssClasses.add(cssClass);
         if (isDeprecated(entity, ontologies)){
             cssClasses.add(CSS_DEPRECATED);
@@ -857,71 +859,67 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {
-        write("<span class=\"anon\">Anonymous Individual");
-//        final Set<OWLClassExpression> types = individual.getTypes(ontologies);
-//        if (!types.isEmpty()){
-//            writeOpList(types, ", ", false);
-//        }
-//
-//        // TODO tidy this up - we shouldn't really group by ontology
-//        for (OWLOntology ont : ontologies){
-//            Map<OWLDataPropertyExpression, Set<OWLLiteral>> dataValues = individual.getDataPropertyValues(ont);
-//            if (!dataValues.isEmpty()){
-//                write("<ul>");
-//                for (OWLDataPropertyExpression p : dataValues.keySet()){
-//                    write("<li>");
-//                    p.accept(this);
-//                    write("<ul><li>");
-//                    writeOpList(dataValues.get(p), "</li><li>", false);
-//                    write("</ul></li>");
-//                }
-//                write("</ul>");
-//            }
-//            Map<OWLDataPropertyExpression, Set<OWLLiteral>> negDataValues = individual.getNegativeDataPropertyValues(ont);
-//            if (!negDataValues.isEmpty()){
-//                write("<ul>");
-//
-//                for (OWLDataPropertyExpression p : negDataValues.keySet()){
-//                    write("<li>not ");
-//                    p.accept(this);
-//                    write("<ul><li>");
-//                    writeOpList(negDataValues.get(p), "</li><li>", false);
-//                    write("</ul></li>");
-//                }
-//                write("</ul>");
-//            }
-//
-//            Map<OWLObjectPropertyExpression, Set<OWLIndividual>> objValues = individual.getObjectPropertyValues(ont);
-//            if (!objValues.isEmpty()){
-//                write("<ul>");
-//
-//                for (OWLObjectPropertyExpression p : objValues.keySet()){
-//                    write("<li>");
-//                    p.accept(this);
-//                    write("<ul><li>");
-//                    writeOpList(objValues.get(p), "</li><li>", false);
-//                    write("</ul></li>");
-//                }
-//                write("</ul>");
-//
-//            }
-//            Map<OWLObjectPropertyExpression, Set<OWLIndividual>> negbjValues = individual.getNegativeObjectPropertyValues(ont);
-//            if (!negbjValues.isEmpty()){
-//                write("<ul>");
-//
-//                for (OWLObjectPropertyExpression p : negbjValues.keySet()){
-//                    write("<li>not ");
-//                    p.accept(this);
-//                    write("<ul><li>");
-//                    writeOpList(negbjValues.get(p), "</li><li>", false);
-//                    write("</ul></li>");
-//                }
-//                write("</ul>");
-//            }
-//        }
-        write("</span>");
-    }
+        final Collection<OWLClassExpression> types = EntitySearcher.getTypes(individual, ontologies);
+        if (!types.isEmpty()){
+            writeOpList(types, ", ", false);
+        }
 
+        Multimap<OWLDataPropertyExpression, OWLLiteral> dataValues = EntitySearcher.getDataPropertyValues(individual, ontologies);
+        if (!dataValues.isEmpty()){
+            write("<ul>");
+            for (OWLDataPropertyExpression p : dataValues.keySet()){
+                write("<li>");
+                p.accept(this);
+                write("<ul><li>");
+                writeOpList(dataValues.get(p), "</li><li>", false);
+                write("</ul></li>");
+            }
+            write("</ul>");
+        }
+
+        Multimap<OWLDataPropertyExpression, OWLLiteral> negDataValues = EntitySearcher.getNegativeDataPropertyValues(individual, ontologies);
+        if (!negDataValues.isEmpty()){
+            write("<ul>");
+
+            for (OWLDataPropertyExpression p : negDataValues.keySet()){
+                write("<li>not ");
+                p.accept(this);
+                write("<ul><li>");
+                writeOpList(negDataValues.get(p), "</li><li>", false);
+                write("</ul></li>");
+            }
+            write("</ul>");
+        }
+
+        Multimap<OWLObjectPropertyExpression, OWLIndividual> objValues = EntitySearcher.getObjectPropertyValues(individual, ontologies);
+        if (!objValues.isEmpty()){
+            write("<ul>");
+
+            for (OWLObjectPropertyExpression p : objValues.keySet()){
+                write("<li>");
+                p.accept(this);
+                write("<ul><li>");
+                writeOpList(objValues.get(p), "</li><li>", false);
+                write("</ul></li>");
+            }
+            write("</ul>");
+
+        }
+
+        Multimap<OWLObjectPropertyExpression, OWLIndividual> negbjValues = EntitySearcher.getNegativeObjectPropertyValues(individual, ontologies);
+        if (!negbjValues.isEmpty()){
+            write("<ul>");
+
+            for (OWLObjectPropertyExpression p : negbjValues.keySet()){
+                write("<li>not ");
+                p.accept(this);
+                write("<ul><li>");
+                writeOpList(negbjValues.get(p), "</li><li>", false);
+                write("</ul></li>");
+            }
+            write("</ul>");
+        }
+    }
 
     private void writeCardinality(OWLCardinalityRestriction desc, String cardinalityType) {
         desc.getProperty().accept(this);
