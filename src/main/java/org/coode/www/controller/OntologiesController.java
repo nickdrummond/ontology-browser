@@ -1,5 +1,7 @@
 package org.coode.www.controller;
 
+import com.google.common.net.HttpHeaders;
+import org.apache.commons.io.output.WriterOutputStream;
 import org.coode.html.doclet.*;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.exception.NotFoundException;
@@ -8,8 +10,8 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.LoadOntology;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OntologiesService;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,8 +19,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.Writer;
 import java.net.URL;
-import java.util.Set;
 
 @Controller
 @RequestMapping(value="/ontologies")
@@ -76,6 +79,29 @@ public class OntologiesController extends ApplicationController {
         return "owlentity";
     }
 
+    @RequestMapping(value="/{ontId}", method=RequestMethod.GET, produces="application/rdf+xml")
+    public void exportOntology(@PathVariable final String ontId,
+                              @RequestParam(required=false) final String label,
+                              final HttpServletRequest request,
+                              final HttpServletResponse response,
+                              final Model model,
+                              final Writer writer) throws OntServerException, NotFoundException {
+
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+
+        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
+
+        try {
+            OWLDocumentFormat format = new RDFXMLDocumentFormat();
+            WriterOutputStream out = new WriterOutputStream(writer);
+            response.addHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
+            kit.getOWLServer().getOWLOntologyManager().saveOntology(owlOntology, format, out);
+        }
+        catch (OWLOntologyStorageException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @RequestMapping(method= RequestMethod.POST)
     public String loadOntology(@ModelAttribute final LoadOntology loadOntology,
                                @RequestParam(required=false) final String label,
@@ -96,8 +122,8 @@ public class OntologiesController extends ApplicationController {
         }
     }
 
-    @RequestMapping(value="/{ontologyId}/children", method=RequestMethod.GET)
     @ResponseBody
+    @RequestMapping(value="/{ontologyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String ontologyId,
                               @RequestParam(required=false) final String label,
                               @RequestHeader final URL referer,
