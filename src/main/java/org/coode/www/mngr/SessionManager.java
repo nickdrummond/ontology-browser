@@ -43,7 +43,7 @@ public class SessionManager {
     public OWLHTMLKit getHTMLKit(final HttpServletRequest request, final Model model) throws OntServerException {
         HttpSession session = request.getSession(true);
 
-        if (session.getAttribute(KIT_KEY) == null){
+        if (session.getAttribute(KIT_KEY) == null || !((OWLHTMLKit)session.getAttribute(KIT_KEY)).isActive()){
             create(session, request, model);
         }
 
