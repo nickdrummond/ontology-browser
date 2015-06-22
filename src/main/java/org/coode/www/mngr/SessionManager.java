@@ -92,7 +92,6 @@ public class SessionManager {
             mySession.setAttribute(KIT_KEY, kit);
             mySession.setAttribute(KIT_CLEANUP, adapter);
 
-            model.addAttribute(KIT_KEY, kit);
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);

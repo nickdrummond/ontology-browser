@@ -36,11 +36,7 @@ public class OWLIndividualsController extends ApplicationController {
     private MediaService mediaService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLIndividuals(@RequestParam(required=false) final String label,
-                                final HttpServletRequest request,
-                                final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getOWLIndividuals(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException, NotFoundException {
 
         OWLNamedIndividual firstIndividual = service.getFirstIndividual(kit);
 
@@ -52,11 +48,9 @@ public class OWLIndividualsController extends ApplicationController {
 
     @RequestMapping(value= "/{individualId}", method=RequestMethod.GET)
     public String getOWLIndividual(@PathVariable final String individualId,
-                              @RequestParam(required=false) final String label,
-                              final HttpServletRequest request,
-                              final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+                                   @ModelAttribute("kit") final OWLHTMLKit kit,
+                                   final HttpServletRequest request,
+                                   final Model model) throws OntServerException, NotFoundException {
 
         OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, kit);
 

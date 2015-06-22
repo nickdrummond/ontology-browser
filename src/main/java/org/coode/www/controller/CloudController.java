@@ -7,6 +7,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -26,12 +27,9 @@ public class CloudController extends ApplicationController {
     private int zoom;
 
     @RequestMapping(value = "/classes")
-    public String getClassesCloud(
-            @RequestParam(required = false) final String label,
-            final Model model,
-            final HttpServletRequest request) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                  final Model model,
+                                  final HttpServletRequest request) throws OntServerException {
 
         ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit);
 
@@ -51,12 +49,9 @@ public class CloudController extends ApplicationController {
     }
 
     @RequestMapping(value = "/individuals")
-    public String getIndividualsCloud(
-            @RequestParam(required = false) final String label,
-            final Model model,
-            final HttpServletRequest request) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getIndividualsCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                      final Model model,
+                                      final HttpServletRequest request) throws OntServerException {
 
         IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit);
 
@@ -77,12 +72,9 @@ public class CloudController extends ApplicationController {
 
 
     @RequestMapping(value = "/objectproperties")
-    public String getObjectPropertiesCloud(
-            @RequestParam(required = false) final String label,
-            final Model model,
-            final HttpServletRequest request) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getObjectPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                           final Model model,
+                                           final HttpServletRequest request) throws OntServerException {
 
         ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit);
 
@@ -102,12 +94,9 @@ public class CloudController extends ApplicationController {
     }
 
     @RequestMapping(value = "/dataproperties")
-    public String getDataPropertiesCloud(
-            @RequestParam(required = false) final String label,
-            final Model model,
-            final HttpServletRequest request) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getDataPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                         final Model model,
+                                         final HttpServletRequest request) throws OntServerException {
 
         DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit);
 
@@ -127,12 +116,9 @@ public class CloudController extends ApplicationController {
     }
 
     @RequestMapping(value = "/annotationproperties")
-    public String getAnnotationPropertiesCloud(
-            @RequestParam(required = false) final String label,
-            final Model model,
-            final HttpServletRequest request) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getAnnotationPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                               final Model model,
+                                               final HttpServletRequest request) throws OntServerException {
 
         AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit);
 
@@ -152,12 +138,9 @@ public class CloudController extends ApplicationController {
     }
 
     @RequestMapping(value = "/datatypes")
-    public String getDatatypesCloud(
-            @RequestParam(required = false) final String label,
-            final Model model,
-            final HttpServletRequest request) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getDatatypesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                    final Model model,
+                                    final HttpServletRequest request) throws OntServerException {
 
         DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit);
 

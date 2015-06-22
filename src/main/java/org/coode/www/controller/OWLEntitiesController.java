@@ -29,12 +29,8 @@ public class OWLEntitiesController extends ApplicationController {
 
     @RequestMapping(value="/", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody SearchResults find(
-            @RequestParam(required=false) final String label,
-            @RequestParam(required=true) final String name,
-            final HttpServletRequest request,
-            final Model model) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+            @ModelAttribute("kit") final OWLHTMLKit kit,
+            @RequestParam(required=true) final String name) throws OntServerException {
 
         List<OWLEntity> entities = service.findByName(name, kit);
 

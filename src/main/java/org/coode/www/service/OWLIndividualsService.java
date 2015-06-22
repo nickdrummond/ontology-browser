@@ -39,14 +39,6 @@ public class OWLIndividualsService {
         }
     }
 
-    public Set<OWLIndividual> getAllIndividuals(final OWLHTMLKit kit) {
-        Set<OWLIndividual> individuals = new HashSet<OWLIndividual>();
-        for (OWLOntology ont : kit.getVisibleOntologies()) {
-            individuals.addAll(ont.getIndividualsInSignature());
-        }
-        return individuals;
-    }
-
     public HierarchyProvider<OWLNamedIndividual> getHierarchyProvider(final OWLHTMLKit kit) {
         return kit.getOWLServer().getHierarchyProvider(OWLNamedIndividual.class);
     }
@@ -73,6 +65,8 @@ public class OWLIndividualsService {
         characteristics.addAll(fac.getAnnotationCharacterists (owlIndividual, activeOntologies, comparator, shortFormProvider));
         characteristics.addAll(fac.getDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
         characteristics.addAll(fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator, shortFormProvider));
+
+        // TODO negative property assertions
 
         return characteristics;
     }

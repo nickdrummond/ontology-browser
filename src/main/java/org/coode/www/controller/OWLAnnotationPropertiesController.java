@@ -27,11 +27,8 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     private OWLAnnotationPropertiesService service;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLAnnotationProperties(@RequestParam(required=false) final String label,
-                                final HttpServletRequest request,
-                                final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getOWLAnnotationProperties(@ModelAttribute("kit") final OWLHTMLKit kit)
+            throws OntServerException, NotFoundException {
 
         OWLAnnotationProperty firstAnnotationProperty = service.getFirstAnnotationProperty(kit);
 
@@ -43,11 +40,9 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLAnnotationProperty(@PathVariable final String propertyId,
-                              @RequestParam(required=false) final String label,
+                                           @ModelAttribute("kit") final OWLHTMLKit kit,
                               final HttpServletRequest request,
                               final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLAnnotationProperty owlAnnotationProperty = service.getOWLAnnotationPropertyFor(propertyId, kit);
 
@@ -72,15 +67,11 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         return "owlentity";
     }
 
-    @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
     @ResponseBody
+    @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String propertyId,
-                              @RequestParam(required=false) final String label,
-                              @RequestHeader final URL referer,
-                              final HttpServletRequest request,
-                              final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+                              @ModelAttribute("kit") final OWLHTMLKit kit,
+                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
 
         OWLAnnotationProperty property = service.getOWLAnnotationPropertyFor(propertyId, kit);
         HierarchyProvider<OWLAnnotationProperty> hp = service.getHierarchyProvider(kit);

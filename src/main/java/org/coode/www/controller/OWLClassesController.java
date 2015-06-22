@@ -32,11 +32,7 @@ public class OWLClassesController extends ApplicationController {
     private OWLIndividualsService individualsService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLClasses(@RequestParam(required=false) final String label,
-                                final HttpServletRequest request,
-                                final Model model) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getOWLClasses(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
 
         OWLClass owlThing = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory().getOWLThing();
 
@@ -48,11 +44,9 @@ public class OWLClassesController extends ApplicationController {
 
     @RequestMapping(value="/{classId}", method=RequestMethod.GET)
     public String getOWLClass(@PathVariable final String classId,
-                              @RequestParam(required=false) final String label,
+                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final HttpServletRequest request,
                               final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
@@ -77,15 +71,11 @@ public class OWLClassesController extends ApplicationController {
         return "owlentity";
     }
 
-    @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)
     @ResponseBody
+    @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String classId,
-                              @RequestParam(required=false) final String label,
-                              @RequestHeader final URL referer,
-                              final HttpServletRequest request,
-                              final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+                              @ModelAttribute("kit") final OWLHTMLKit kit,
+                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
         HierarchyProvider<OWLClass> hp = service.getHierarchyProvider(kit);
@@ -95,15 +85,11 @@ public class OWLClassesController extends ApplicationController {
         return renderDoclets(referer, nodeDoclet);
     }
 
-    @RequestMapping(value="/{classId}/instances", method=RequestMethod.GET)
     @ResponseBody
+    @RequestMapping(value="/{classId}/instances", method=RequestMethod.GET)
     public String getInstances(@PathVariable final String classId,
-                               @RequestParam(required=false) final String label,
-                               @RequestHeader final URL referer,
-                               final HttpServletRequest request,
-                               final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+                               @ModelAttribute("kit") final OWLHTMLKit kit,
+                               @RequestHeader final URL referer) throws OntServerException, NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
         HierarchyProvider<OWLNamedIndividual> hp = individualsService.getHierarchyProvider(kit);

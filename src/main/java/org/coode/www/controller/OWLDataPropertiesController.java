@@ -28,11 +28,7 @@ public class OWLDataPropertiesController extends ApplicationController {
     private OWLDataPropertiesService service;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLDataProperties(@RequestParam(required=false) final String label,
-                                final HttpServletRequest request,
-                                final Model model) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getOWLDataProperties(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
 
         final OWLDataFactory df = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory();
 
@@ -46,11 +42,9 @@ public class OWLDataPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLDataProperty(@PathVariable final String propertyId,
-                              @RequestParam(required=false) final String label,
-                              final HttpServletRequest request,
-                              Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+                                     @ModelAttribute("kit") final OWLHTMLKit kit,
+                                     final HttpServletRequest request,
+                                     final Model model) throws OntServerException, NotFoundException {
 
         OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
 
@@ -74,16 +68,12 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         return "owlentity";
     }
-    
-    @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
-    @ResponseBody
-    public String getChildren(@PathVariable final String propertyId,
-                              @RequestParam(required=false) final String label,
-                              @RequestHeader final URL referer,
-                              final HttpServletRequest request,
-                              final Model model) throws OntServerException, NotFoundException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    @ResponseBody
+    @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
+    public String getChildren(@PathVariable final String propertyId,
+                              @ModelAttribute("kit") final OWLHTMLKit kit,
+                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
 
         OWLDataProperty property = service.getOWLDataPropertyFor(propertyId, kit);
         HierarchyProvider<OWLDataProperty> hp = service.getHierarchyProvider(kit);

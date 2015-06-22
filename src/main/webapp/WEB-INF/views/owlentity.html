@@ -14,7 +14,7 @@
 
     <div class="summary">
         <h2 th:text="${title}">An OWLClass</h2>
-        <a th:href="@{./(label=${kit.getCurrentLabel()})}" href='./' class='permalink'>permalink</a>
+        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}" href='./' class='permalink'>permalink</a>
 
         <div class="iri">
             <a th:href="${iri}" href='http://example.com/entity-url' >

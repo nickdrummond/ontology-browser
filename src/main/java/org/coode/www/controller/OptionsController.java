@@ -27,25 +27,21 @@ public class OptionsController extends ApplicationController {
     private OntologiesService ontologiesService;
 
     @RequestMapping
-    public String getOptions(final HttpServletRequest request,
+    public String getOptions(@ModelAttribute("kit") final OWLHTMLKit kit,
                              final Model model) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, model);
 
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("reasoners", reasonerService.getAvailableReasoners());
         model.addAttribute("activeOntology", ontologiesService.getActiveOntology(kit));
         model.addAttribute("ontologies", ontologiesService.getOntologies(kit));
+
         return "options";
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String setOption(
-            final HttpServletRequest request,
-            final Model model,
+            @ModelAttribute("kit") final OWLHTMLKit kit,
             @ModelAttribute final OptionSet optionSet) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, model);
 
         optionsService.setOption(optionSet, kit);
 
@@ -54,11 +50,8 @@ public class OptionsController extends ApplicationController {
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody OptionSet setOptionJson(
-            final HttpServletRequest request,
-            final Model model,
+            @ModelAttribute("kit") final OWLHTMLKit kit,
             @ModelAttribute() final OptionSet optionSet) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, model);
 
         return optionsService.getOption(optionSet.getProperty(), kit);
     }

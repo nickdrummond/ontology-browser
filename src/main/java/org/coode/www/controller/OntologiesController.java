@@ -35,11 +35,7 @@ public class OntologiesController extends ApplicationController {
     private OntologyIRIShortFormProvider sfp;
 
     @RequestMapping(method=RequestMethod.GET)
-    public String getOntologies(@RequestParam(required=false) final String label,
-                                final HttpServletRequest request,
-                                final Model model) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+    public String getOntologies(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
 
         OWLOntology rootOntology = kit.getOWLServer().getRootOntology();
 
@@ -50,11 +46,9 @@ public class OntologiesController extends ApplicationController {
 
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET)
     public String getOntology(@PathVariable final String ontId,
-                              @RequestParam(required=false) final String label,
+                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final HttpServletRequest request,
                               final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
@@ -81,13 +75,9 @@ public class OntologiesController extends ApplicationController {
 
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET, produces="application/rdf+xml")
     public void exportOntology(@PathVariable final String ontId,
-                              @RequestParam(required=false) final String label,
-                              final HttpServletRequest request,
+                               @ModelAttribute("kit") final OWLHTMLKit kit,
                               final HttpServletResponse response,
-                              final Model model,
                               final Writer writer) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
@@ -104,15 +94,9 @@ public class OntologiesController extends ApplicationController {
 
     @RequestMapping(method= RequestMethod.POST)
     public String loadOntology(@ModelAttribute final LoadOntology loadOntology,
-                               @RequestParam(required=false) final String label,
-                               final HttpServletRequest request,
-                               final Model model) throws OntServerException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+                               @ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
 
         String ontologyId = service.load(loadOntology.getUri(), loadOntology.isClear(), kit);
-
-        model.addAttribute("kit", kit); // this will add it to the session
 
         if (loadOntology.getRedirect() != null) {
             return "redirect:" + loadOntology.getRedirect();
@@ -125,16 +109,12 @@ public class OntologiesController extends ApplicationController {
     @ResponseBody
     @RequestMapping(value="/{ontologyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String ontologyId,
-                              @RequestParam(required=false) final String label,
-                              @RequestHeader final URL referer,
-                              final HttpServletRequest request,
-                              final Model model) throws OntServerException, NotFoundException {
-
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+                              @ModelAttribute("kit") final OWLHTMLKit kit,
+                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
 
         OWLOntology ontology = service.getOntologyFor(ontologyId, kit);
         HierarchyProvider<OWLOntology> hp = service.getHierarchyProvider(kit);
-        NodeDoclet<OWLOntology> nodeDoclet = new NodeDoclet<OWLOntology>(kit, ontology, hp);
+        NodeDoclet<OWLOntology> nodeDoclet = new NodeDoclet<>(kit, ontology, hp);
         nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
 
         return renderDoclets(referer, nodeDoclet);
