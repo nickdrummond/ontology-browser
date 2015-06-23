@@ -1,11 +1,13 @@
 package org.coode.www.controller;
 
-import org.coode.html.doclet.ReasonerResultsDoclet;
+import com.google.common.base.Optional;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.www.model.QueryType;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.Characteristic;
+import org.coode.www.model.QueryType;
+import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.ParserService;
 import org.coode.www.service.ReasonerService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -13,6 +15,8 @@ import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +26,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.co.nickdrummond.parsejs.ParseException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping(value="/dlquery")
@@ -41,7 +46,7 @@ public class DLQueryController extends ApplicationController {
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
             @ModelAttribute("kit") final OWLHTMLKit kit,
-            Model model) throws OntServerException, ParseException {
+            final Model model) throws OntServerException, ParseException {
 
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
@@ -52,22 +57,32 @@ public class DLQueryController extends ApplicationController {
     }
 
     @RequestMapping(value="results",method=RequestMethod.GET)
-    public @ResponseBody String getResults(
+    public String getResults(
             @RequestParam(required = true) final String expression,
             @RequestParam(required = true) final QueryType query,
             @ModelAttribute("kit") final OWLHTMLKit kit,
-            HttpServletRequest request,
-            HttpServletResponse response) throws OntServerException {
+            HttpServletResponse response,
+            final Model model) throws OntServerException {
 
         OWLServer owlServer = kit.getOWLServer();
         OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = owlServer.getOWLEntityChecker();
+        OWLReasoner reasoner = owlServer.getOWLReasoner();
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.<OWLObject>absent());
 
         try {
             OWLClassExpression owlClassExpression = service.getOWLClassExpression(expression, df, checker);
-            Set<OWLEntity> results = reasonerService.getResults(owlClassExpression, query, kit.getOWLServer().getOWLReasoner());
-            ReasonerResultsDoclet resultsDoclet = new ReasonerResultsDoclet(query, results, kit);
-            return renderDoclets(request, resultsDoclet);
+            List<OWLEntity> results = new ArrayList<>(reasonerService.getResults(owlClassExpression, query, reasoner));
+
+            logger.debug("Results count: " + results.size());
+
+            Collections.sort(results, owlServer.getComparator());
+            Characteristic resultsCharacteristic = new Characteristic(null, query.name(), results);
+
+            model.addAttribute("results", resultsCharacteristic);
+            model.addAttribute("mos", owlRenderer);
+
+            return "base :: results";
         } catch (ParserException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return "Bad OWLClassExpression: " + expression;

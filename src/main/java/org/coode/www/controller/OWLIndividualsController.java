@@ -61,7 +61,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlIndividual);
 
-        OWLHTMLRenderer owlRenderer = new MediaRenderer(kit, owlIndividual);
+        OWLHTMLRenderer owlRenderer = new MediaRenderer(kit, Optional.of(owlIndividual));
 
         Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
 

@@ -1,8 +1,11 @@
 package org.coode.www.controller;
 
+import com.google.common.base.Optional;
 import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.output.WriterOutputStream;
-import org.coode.html.doclet.*;
+import org.coode.html.doclet.HTMLDoclet;
+import org.coode.html.doclet.HierarchyDocletFactory;
+import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
@@ -11,7 +14,10 @@ import org.coode.www.model.LoadOntology;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OntologiesService;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLDocumentFormat;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,7 +65,7 @@ public class OntologiesController extends ApplicationController {
 
         String ontologyName = sfp.getShortForm(owlOntology);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlOntology);
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlOntology));
 
         model.addAttribute("title", ontologyName + " (Ontology)");
         model.addAttribute("iri", owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous")));

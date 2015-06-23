@@ -1,5 +1,6 @@
 package org.coode.www.controller;
 
+import com.google.common.base.Optional;
 import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
@@ -55,7 +56,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlObjectProperty);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlObjectProperty);
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlObjectProperty));
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("iri", owlObjectProperty.getIRI().toString());

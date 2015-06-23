@@ -1,6 +1,7 @@
 package org.coode.www.renderer;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
 import org.coode.html.url.URLScheme;
 import org.coode.html.util.URLUtils;
@@ -41,7 +42,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private static final boolean USE_SYMBOLS = true;
 
     // the object currently on the page (will be highlighted)
-    private final OWLObject activeObject;
+    private final Optional<? extends OWLObject> activeObject;
 
     private PrintWriter out;
 
@@ -65,7 +66,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             URLScheme urlScheme,
             Set<OWLOntology> ontologies,
             OWLOntology activeOntology,
-            OWLObject activeObject) {
+            Optional<? extends OWLObject> activeObject) {
 
         this.sfProvider = sfProvider;
         this.ontologyIriSFProvider = ontologySFProvider;
@@ -95,11 +96,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         boolean writeLink = false;
 
-        if (activeObject == null){
+        if (!activeObject.isPresent()){
             writeLink = true;
         }
         else{
-            if (!ontology.equals(activeObject)){
+            if (!activeObject.get().equals(ontology)){
                 writeLink = true;
             }
             else{
@@ -829,14 +830,14 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             cssClasses.add(CSS_DEPRECATED);
         }
 
-        if (activeObject == null){
+        if (!activeObject.isPresent()){
             final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);
             write(" title=\"" + uri + "\">" + name + "</a>");
         }
         else{
-            if (activeObject != null && activeObject.equals(entity)){
+            if (activeObject.get().equals(entity)){
                 cssClasses.add(CSS_ACTIVE_ENTITY);
                 write("<span");
                 writeCSSClasses(cssClasses);

@@ -14,7 +14,8 @@
 
     <div class="summary">
         <h2 th:text="${title}">An OWLClass</h2>
-        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}" href='./' class='permalink'>permalink</a>
+        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
+           href='./' class='permalink'>permalink</a>
 
         <div class="iri">
             <a th:href="${iri}" href='http://example.com/entity-url' >
@@ -36,20 +37,20 @@
             <h3 th:text="${iri}">http://example.com/entity-url</h3>
         </div>
 
-        <div th:replace="summary :: image (${image})">
+        <div th:replace="base :: image (${image})">
             Possibly an image
         </div>
 
-        <div th:replace="summary :: sound (${sound})">
+        <div th:replace="base :: sound (${sound})">
             Possibly a sound
         </div>
 
-        <div th:replace="summary :: map (${geo})">
+        <div th:replace="base :: map (${geo})">
             Possibly a map
         </div>
 
         <div th:each="ch : ${characteristics}">
-            <div th:replace="summary :: characteristic (${ch})">
+            <div th:replace="base :: characteristic (${ch})">
                 A characteristic
             </div>
         </div>

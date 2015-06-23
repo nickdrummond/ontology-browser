@@ -92,6 +92,55 @@
 
 <div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
 
+<div class="results" th:fragment="results" th:replace="base :: characteristic (${results})">
+</div>
+
+<div class="characteristic" th:fragment="characteristic (ch)">
+
+    <h4 th:text='${ch.name + " (" + ch.objects.size() + ")"}'>Some Characteristic (2)</h4>
+
+    <ul th:remove="all-but-first">
+        <li class="asserted" th:each="object : ${ch.objects}" th:utext="${mos.render(object)}">
+
+            <a href="../../classes/1934778517/" class='Class'
+               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
+            <span class='keyword'>&equiv;</span>
+            <a href="../../classes/140023861/" class='Class'
+               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza">Pizza</a>
+            <span class='keyword'>and</span>
+            <span class='active-entity Object Property'>hasBase</span>
+            <span class='only'>only</span>
+            <a href="../../classes/677040734/" class='Class'
+               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
+        </li>
+        <li class="asserted">
+            <span class="keyword">Functional</span>
+            (
+            <span class="active-entity Object Property">hasBase</span>
+            )
+        </li>
+        <li class="asserted">
+            <span class="keyword">InverseFunctional</span>
+            (
+            <span class="active-entity Object Property">hasBase</span>
+            )
+        </li>
+    </ul>
+</div>
+
+<div class="googlemaps" th:fragment="map (geo)" th:if="${geo != null}">
+    <iframe width="425" height="350" frameborder="0" scrolling="no"
+            src="http://maps.google.com/maps"
+            th:src="'http://maps.google.com/maps?q=' + ${geo.latitude} + ',' + ${geo.longitude} + '&amp;ie=UTF8&amp;z=14&amp;output=embed'">
+    </iframe>
+</div>
+
+<div class="imageHolder" th:fragment="image (url)" th:if="${image != null}">
+    <img src="/notfound.jpg" th:src="${url}"/>
+</div>
+
+<EMBED th:fragment="sound (url)" th:if="${sound != null}" src="/notfound.mp3" th:src="${url}" autostart="true" hidden="true"/>
+
 <p class='footer' th:fragment='footer'>
   <a th:href='${applicationInfo.url + "/"}' th:text='${"OWL Browser v" + applicationInfo.version}'>Version info</a>
   <a th:href='${applicationInfo.url + "/wiki/GettingStarted"}' class='help' target='_blank'>Help</a>

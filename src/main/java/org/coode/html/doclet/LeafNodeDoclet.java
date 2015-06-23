@@ -3,6 +3,7 @@
 */
 package org.coode.html.doclet;
 
+import com.google.common.base.Optional;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
@@ -134,7 +135,7 @@ public class LeafNodeDoclet<O extends OWLObject> extends AbstractOWLDocDoclet<O>
 
         final O node = getNodeObject();
         if (node != null){
-            renderNode(node, new OWLHTMLRenderer(getOWLHTMLKit(), getUserObject()), pageURL, out);
+            renderNode(node, new OWLHTMLRenderer(getOWLHTMLKit(), Optional.fromNullable(getUserObject())), pageURL, out);
         }
 
         if (getSubDocletCount() > 0){
