@@ -35,16 +35,19 @@ public class CharacteristicsFactory {
 
     public Optional<Characteristic> getEquivalents(OWLClass owlClass, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLClassExpression> equivs = new ArrayList<>(EntitySearcher.getEquivalentClasses(owlClass, ontologies));
+        equivs.remove(owlClass);
         return asCharacteristic("Equivalents", owlClass, equivs, comparator);
     }
 
     public Optional<Characteristic> getEquivalents(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLObjectPropertyExpression> equivs = new ArrayList<>(EntitySearcher.getEquivalentProperties(owlObjectProperty, ontologies));
+        equivs.remove(owlObjectProperty);
         return asCharacteristic("Equivalents", owlObjectProperty, equivs, comparator);
     }
 
     public Optional<Characteristic> getEquivalents(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLDataPropertyExpression> equivs = new ArrayList<>(EntitySearcher.getEquivalentProperties(owlDataProperty, ontologies));
+        equivs.remove(owlDataProperty);
         return asCharacteristic("Equivalents", owlDataProperty, equivs, comparator);
     }
 
@@ -70,16 +73,19 @@ public class CharacteristicsFactory {
 
     public Optional<Characteristic> getDisjoints(OWLClass owlClass, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLClassExpression> disjoints = new ArrayList<>(EntitySearcher.getDisjointClasses(owlClass, ontologies));
+        disjoints.remove(owlClass);
         return asCharacteristic("Disjoints", owlClass, disjoints, comparator);
     }
 
     public Optional<Characteristic> getDisjoints(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLObjectPropertyExpression> disjoints = new ArrayList<>(EntitySearcher.getDisjointProperties(owlObjectProperty, ontologies));
+        disjoints.remove(owlObjectProperty);
         return asCharacteristic("Disjoints", owlObjectProperty, disjoints, comparator);
     }
 
     public Optional<Characteristic> getDisjoints(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLDataPropertyExpression> disjoints = new ArrayList<>(EntitySearcher.getDisjointProperties(owlDataProperty, ontologies));
+        disjoints.remove(owlDataProperty);
         return asCharacteristic("Disjoints", owlDataProperty, disjoints, comparator);
     }
 
@@ -177,20 +183,14 @@ public class CharacteristicsFactory {
 
     public Optional<Characteristic> getSameAs(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLIndividual> sameAs = new ArrayList<>(EntitySearcher.getSameIndividuals(owlIndividual, ontologies));
+        sameAs.remove(owlIndividual);
         return asCharacteristic("Same As", owlIndividual, sameAs, comparator);
     }
 
     public Optional<Characteristic> getDifferentFrom(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
         List<OWLIndividual> differentFrom = new ArrayList<>(EntitySearcher.getDifferentIndividuals(owlIndividual, ontologies));
+        differentFrom.remove(owlIndividual);
         return asCharacteristic("Different From", owlIndividual, differentFrom, comparator);
-    }
-
-    private Optional<Characteristic> asCharacteristic(String name, OWLObject owlObject, List<? extends OWLObject> results, Comparator<OWLObject> comparator) {
-        if (!results.isEmpty()) {
-            Collections.sort(results, comparator);
-            return Optional.of(new Characteristic(owlObject, name, results));
-        }
-        return Optional.absent();
     }
 
     public Collection<? extends Characteristic> getObjectPropertyAssertions(
@@ -203,6 +203,7 @@ public class CharacteristicsFactory {
                 EntitySearcher.getObjectPropertyValues(owlIndividual, ontologies).asMap();
 
         final List<OWLObjectPropertyExpression> orderedProps = new ArrayList<>(propMap.keySet());
+
         Collections.sort(orderedProps, comparator);
 
         List<Characteristic> characteristics = new ArrayList<>();
@@ -230,6 +231,7 @@ public class CharacteristicsFactory {
                 EntitySearcher.getDataPropertyValues(owlIndividual, ontologies).asMap();
 
         final List<OWLDataPropertyExpression> orderedProps = new ArrayList<>(propMap.keySet());
+
         Collections.sort(orderedProps, comparator);
 
         List<Characteristic> characteristics = new ArrayList<>();
@@ -252,10 +254,12 @@ public class CharacteristicsFactory {
             Set<OWLOntology> ontologies,
             Comparator<OWLObject> comparator,
             ShortFormProvider shortFormProvider) {
+
         final Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> assertedProps =
                 getAnnotationPropertyMap(owlIndividual, ontologies);
 
         final List<OWLAnnotationProperty> orderedProps = new ArrayList<>(assertedProps.keySet());
+
         Collections.sort(orderedProps, comparator);
 
         List<Characteristic> characteristics = new ArrayList<>();
@@ -274,9 +278,11 @@ public class CharacteristicsFactory {
     private Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> getAnnotationPropertyMap(
             OWLNamedIndividual individual,
             Set<OWLOntology> onts) {
-        Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> props = new HashMap<OWLAnnotationProperty, Set<OWLAnnotationValue>>();
+
+        Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> props = new HashMap<>();
+
         for (OWLOntology ont : onts){
-            for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(individual.getIRI())){
+            for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(individual.getIRI())) {
                 OWLAnnotationProperty p = ax.getProperty();
                 Set<OWLAnnotationValue> objects = props.get(p);
                 if (objects == null){
@@ -287,5 +293,13 @@ public class CharacteristicsFactory {
             }
         }
         return props;
+    }
+
+    private Optional<Characteristic> asCharacteristic(String name, OWLObject owlObject, List<? extends OWLObject> results, Comparator<OWLObject> comparator) {
+        if (!results.isEmpty()) {
+            Collections.sort(results, comparator);
+            return Optional.of(new Characteristic(owlObject, name, results));
+        }
+        return Optional.absent();
     }
 }
