@@ -7,6 +7,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
@@ -73,16 +74,13 @@ public class OWLIndividualsService {
 
     public OWLNamedIndividual getFirstIndividual(final OWLHTMLKit kit) throws NotFoundException {
 
-        HierarchyProvider hp = kit.getOWLServer().getHierarchyProvider(OWLNamedIndividual.class);
-
-        Set roots = hp.getRoots();
-        if (!roots.isEmpty()){
-            List<OWLClass> aps = new ArrayList<>(roots);
-            Collections.sort(aps, kit.getOWLServer().getComparator());
-            List<OWLNamedIndividual> inds = new ArrayList<>(hp.getChildren(aps.get(0)));
+        List<OWLNamedIndividual> inds = new ArrayList<>(kit.getOWLServer().getActiveOntology().getIndividualsInSignature(Imports.INCLUDED));
+        if (inds.isEmpty()) {
+            throw new NotFoundException("OWLIndividual", "any");
+        }
+        else {
             Collections.sort(inds, kit.getOWLServer().getComparator());
             return inds.get(0);
         }
-        throw new NotFoundException("OWLAnnotationProperty", "any");
     }
 }
