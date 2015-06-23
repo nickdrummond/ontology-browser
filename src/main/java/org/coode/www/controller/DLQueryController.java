@@ -28,6 +28,7 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(value="/dlquery")
+@SessionAttributes("kit")
 public class DLQueryController extends ApplicationController {
 
     @Autowired
