@@ -1,6 +1,3 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.html.url;
 
 import org.semanticweb.owlapi.model.OWLObject;

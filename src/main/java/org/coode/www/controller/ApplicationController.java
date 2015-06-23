@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.Doclet;
-import org.coode.www.kit.impl.OWLHTMLParam;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.ApplicationInfo;
 import org.coode.www.service.OptionsService;
@@ -45,16 +44,14 @@ abstract public class ApplicationController {
 
             if (query != null){
                 for (String param : query.split("&")){
-                    if (!param.startsWith(OWLHTMLParam.label.name())){
-                        if (appendedParams){
-                            requestURL.append("&");
-                        }
-                        else{
-                            requestURL.append("?");
-                            appendedParams = true;
-                        }
-                        requestURL.append(param);
+                    if (appendedParams){
+                        requestURL.append("&");
                     }
+                    else{
+                        requestURL.append("?");
+                        appendedParams = true;
+                    }
+                    requestURL.append(param);
                 }
             }
             URL pageUrl = new URL(requestURL.toString());

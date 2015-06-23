@@ -1,37 +1,15 @@
-/*
-* Copyright (C) 2007, University of Manchester
-*/
 package org.coode.html.url;
 
-import com.google.common.base.Function;
-import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLParam;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 
 /**
- * Author: Nick Drummond<br>
- * nick.drummond@cs.manchester.ac.uk<br>
- * http://www.cs.man.ac.uk/~drummond<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Jun 11, 2007<br><br>
- * <p/>
- * code made available under Mozilla Public License (http://www.mozilla.org/MPL/MPL-1.1.html)<br>
- * copyright 2006, The University of Manchester<br>
- *
  * URL scheme for dynamic server-side resolution
  *
  * This will ONLY work if the hashCode() method for URIs is 1-1 mapping and completely deterministic
@@ -45,16 +23,9 @@ import java.net.URLEncoder;
  */
 public class RestURLScheme extends AbstractURLScheme {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestURLScheme.class.getName());
-
-    public static final String DEFAULT_ENCODING = "UTF-8";
-
-    private String additionalLinkArguments;
-
     public RestURLScheme(OWLHTMLKit kit) {
         super(kit);
     }
-
 
     public URL getURLForOWLObject(OWLObject owlObject) {
         if (owlObject == null){
@@ -82,75 +53,11 @@ public class RestURLScheme extends AbstractURLScheme {
         sb.append(code);
         sb.append("/");
 
-        if (additionalLinkArguments != null){
-            sb.append(additionalLinkArguments);
-        }
-
         try {
             return new URL(getBaseURL(), sb.toString());
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public URL getURLForOntologyIndex(OWLOntology ont, NamedObjectType type) {
-        try {
-            String encodedURI = URLEncoder.encode(getOntologyIdString(ont), DEFAULT_ENCODING);
-
-            StringBuilder sb = new StringBuilder(type.toString());
-            sb.append("/?");
-            sb.append(OWLHTMLParam.ontology);
-            sb.append("=");
-            sb.append(encodedURI);
-
-            return new URL(getBaseURL(), sb.toString());
-        }
-        catch (Exception e) {
-            logger.error("Cannot get URL for ont index", e);
-        }
-        return null;
-    }
-
-    private String getOntologyIdString(final OWLOntology ont){
-        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
-
-            @Nullable
-            @Override
-            public String apply(IRI iri) {
-                return iri.toString();
-            }
-        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
-    }
-
-    public void setAdditionalLinkArguments(String s) {
-        additionalLinkArguments = s;
-    }
-
-    public void clearAdditionalLinkArguments() {
-        additionalLinkArguments = null;
-    }
-
-    @Override
-    public URL getURLForApi(NamedObjectType type) {
-        try {
-            return new URL(kit.getBaseURL() + "api/" + type.getPluralRendering().toLowerCase());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private int getID(URL url) throws MalformedURLException {
-        String relativeURL = URLUtils.createRelativeURL(kit.getBaseURL(), url);
-        String[] path = relativeURL.split("/");
-        if (path.length >= 2){
-            try{
-                return Integer.parseInt(path[1]); // always the second element
-            }
-            catch (NumberFormatException e){
-                throw new MalformedURLException("Cannot find a valid ID: " + path[1]);
-            }
-        }
-        throw new MalformedURLException("The URL specified does not contain an object identifier: " + url);
     }
 }
