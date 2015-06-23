@@ -4,7 +4,6 @@ import org.coode.www.mngr.KitRepository;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.ApplicationInfo;
 import org.coode.www.model.Bookmarks;
-import org.coode.www.renderer.OntologyShortFormProvider;
 import org.coode.www.service.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Value;
