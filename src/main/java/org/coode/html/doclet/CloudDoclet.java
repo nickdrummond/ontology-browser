@@ -3,6 +3,7 @@ package org.coode.html.doclet;
 import org.coode.www.cloud.CloudModel;
 import org.coode.www.cloud.OWLCloudModel;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.awt.*;
@@ -33,26 +34,19 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
 
     private static final String SELECTION_COLOR = "#0000FF";
 
-    // capped maximum size of the font used to display entities
-    private static final int MAX_SIZE = 40;
-
-    private Comparator<? super O> comparator;
-
     private OWLHTMLKit kit;
-
-    private CloudModel<O> model;
-
-    private int threshold = 0;
-    private int zoom = 0;
-    private boolean normalise = false;
-    private boolean inverted = false;
-//    private int count = -1; // number of entities shown
 
     private O currentSelection;
 
+    private CloudHelper<O> cloudHelper;
 
-    public CloudDoclet(OWLHTMLKit kit){
+    public CloudDoclet(OWLHTMLKit kit, CloudHelper<O> cloudHelper){
         this.kit = kit;
+        this.cloudHelper = cloudHelper;
+    }
+
+    public void setCurrentSelection(O currentSelection) {
+        this.currentSelection = currentSelection;
     }
 
     protected void renderHeader(URL pageURL, PrintWriter out) {
@@ -61,15 +55,7 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
 
         out.println("<div class='cloud'>");
 
-        model.reload();
-
-        List<O> entities = new ArrayList<O>(model.getEntities(threshold));
-
-        if (comparator != null){
-            Collections.sort(entities, comparator);
-        }
-
-        for (O entity : entities){
+        for (O entity : cloudHelper.getModel().getEntities()){
             renderLabel(entity, pageURL, out);
             out.print(" ");
         }
@@ -78,58 +64,18 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
     }
 
     protected void renderFooter(URL pageURL, PrintWriter out) {
-        renderBoxEnd(getTitle(), out);
-    }
-
-    public String getTitle() {
-        return model.getTitle();
-    }
-
-    private Color getColor(int value) {
-        int score;
-        if (normalise) {
-            int relativeScore = value - model.getMin();
-            int scoreRange = model.getRange();
-            score = 50 + ((relativeScore * 205) / scoreRange);
-        }
-        else {
-            score = Math.min(255, 50 + (zoom * value / 2));
-        }
-        if (!inverted) {
-            score = 255 - score;
-        }
-        return new Color(score, score, score);
-    }
-
-    private int getFontSize(int value) {
-        int size;
-        if (normalise) {
-            int displayMin = zoom;
-            int displayRange = MAX_SIZE - displayMin;
-            int scoreRange = model.getRange();
-            int relativeScore = value - model.getMin();
-            size = displayMin + ((relativeScore * displayRange) / scoreRange);
-        }
-        else {
-            size = Math.min(MAX_SIZE, zoom + (value / 2));
-        }
-
-        if (size > MAX_SIZE) {
-            throw new RuntimeException("ERROR, OVER MAX SIZE: " + size);
-        }
-
-        return size;
+        renderBoxEnd(cloudHelper.getModel().getTitle(), out);
     }
 
     private void renderLabel(O entity, URL pageURL, PrintWriter out) {
-        int score = model.getValue(entity);
+        int score = cloudHelper.getModel().getValue(entity);
 
         String colour = SELECTION_COLOR;
         if (!entity.equals(currentSelection)){
-            final String rgb = Integer.toHexString(getColor(score).getRGB());
+            final String rgb = Integer.toHexString(cloudHelper.getColor(score).getRGB());
             colour = "#" + rgb.substring(2, rgb.length());
         }
-        int size = getFontSize(score);
+        int size = cloudHelper.getFontSize(score);
 
         LinkDoclet link = new LinkDoclet<O>(entity, kit);
         link.setCSS("color: " + colour + "; font-size: " + size + "pt;");
@@ -138,47 +84,7 @@ public class CloudDoclet<O extends OWLEntity> extends AbstractHTMLDoclet<O> {
         link.renderAll(pageURL, out);
     }
 
-    public void setComparator(Comparator<? super O> comparator) {
-        this.comparator = comparator;
-    }
-
-    public Comparator<? super O> getComparator(){
-        return comparator;
-    }
-
-    public boolean getNormalise() {
-        return normalise;
-    }
-
-    public void setNormalise(boolean normalise) {
-        this.normalise = normalise;
-    }
-
-    public int getZoom(){
-        return zoom;
-    }
-
-    public void setZoom(int zoom) {
-        this.zoom = zoom;
-    }
-
-    public int getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
-    }
-
-    public void setSelection(O currentSelection) {
-        this.currentSelection = currentSelection;
-    }
-
     public String getID() {
         return ID;
-    }
-
-    public void setModel(OWLCloudModel cloudModel) {
-        this.model = cloudModel;
     }
 }

@@ -1,9 +1,13 @@
 package org.coode.www.controller;
 
 import org.coode.html.doclet.CloudDoclet;
+import org.coode.html.url.URLScheme;
 import org.coode.www.cloud.*;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.service.CloudHelper;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 /**
  * Could have gone in each OWLEntity type Controller, but this is a bit tangential.
@@ -32,18 +37,18 @@ public class CloudController extends ApplicationController {
                                   final Model model,
                                   final HttpServletRequest request) throws OntServerException {
 
-        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit);
+        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
+        URLScheme urlScheme = kit.getURLScheme();
 
-        CloudDoclet cloudDoclet = new CloudDoclet(kit);
-        cloudDoclet.setModel(cloudModel);
-        cloudDoclet.setComparator(kit.getOWLServer().getComparator());
-        cloudDoclet.setThreshold(threshold);
-        cloudDoclet.setZoom(zoom);
+        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(ontologies, sfp, urlScheme);
+        CloudHelper<OWLClass> helper = new CloudHelper<>(cloudModel, threshold, zoom);
+        CloudDoclet<OWLClass> cloudDoclet = new CloudDoclet<>(kit, helper);
 
         model.addAttribute("title", "Classes Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("ontologies", ontologies);
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
 
         return "doclet";
@@ -54,18 +59,19 @@ public class CloudController extends ApplicationController {
                                       final Model model,
                                       final HttpServletRequest request) throws OntServerException {
 
-        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit);
+        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
+        URLScheme urlScheme = kit.getURLScheme();
 
-        CloudDoclet cloudDoclet = new CloudDoclet(kit);
-        cloudDoclet.setModel(cloudModel);
-        cloudDoclet.setComparator(kit.getOWLServer().getComparator());
-        cloudDoclet.setThreshold(threshold);
-        cloudDoclet.setZoom(zoom);
+        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(ontologies, sfp, urlScheme);
+
+        CloudHelper<OWLNamedIndividual> helper = new CloudHelper<>(cloudModel, threshold, zoom);
+        CloudDoclet<OWLNamedIndividual> cloudDoclet = new CloudDoclet<>(kit, helper);
 
         model.addAttribute("title", "Individuals Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("ontologies", ontologies);
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
 
         return "doclet";
@@ -77,18 +83,19 @@ public class CloudController extends ApplicationController {
                                            final Model model,
                                            final HttpServletRequest request) throws OntServerException {
 
-        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit);
+        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
+        URLScheme urlScheme = kit.getURLScheme();
 
-        CloudDoclet cloudDoclet = new CloudDoclet(kit);
-        cloudDoclet.setModel(cloudModel);
-        cloudDoclet.setComparator(kit.getOWLServer().getComparator());
-        cloudDoclet.setThreshold(threshold);
-        cloudDoclet.setZoom(zoom);
+        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(ontologies, sfp, urlScheme);
+
+        CloudHelper<OWLObjectProperty> helper = new CloudHelper<>(cloudModel, threshold, zoom);
+        CloudDoclet<OWLObjectProperty> cloudDoclet = new CloudDoclet<>(kit, helper);
 
         model.addAttribute("title", "Object Properties Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("ontologies", ontologies);
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
 
         return "doclet";
@@ -99,18 +106,19 @@ public class CloudController extends ApplicationController {
                                          final Model model,
                                          final HttpServletRequest request) throws OntServerException {
 
-        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit);
+        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
+        URLScheme urlScheme = kit.getURLScheme();
 
-        CloudDoclet cloudDoclet = new CloudDoclet(kit);
-        cloudDoclet.setModel(cloudModel);
-        cloudDoclet.setComparator(kit.getOWLServer().getComparator());
-        cloudDoclet.setThreshold(threshold);
-        cloudDoclet.setZoom(zoom);
+        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(ontologies, sfp, urlScheme);
+
+        CloudHelper<OWLDataProperty> helper = new CloudHelper<>(cloudModel, threshold, zoom);
+        CloudDoclet<OWLDataProperty> cloudDoclet = new CloudDoclet<>(kit, helper);
 
         model.addAttribute("title", "Data Properties Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("ontologies", ontologies);
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
 
         return "doclet";
@@ -121,18 +129,19 @@ public class CloudController extends ApplicationController {
                                                final Model model,
                                                final HttpServletRequest request) throws OntServerException {
 
-        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit);
+        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
+        URLScheme urlScheme = kit.getURLScheme();
 
-        CloudDoclet cloudDoclet = new CloudDoclet(kit);
-        cloudDoclet.setModel(cloudModel);
-        cloudDoclet.setComparator(kit.getOWLServer().getComparator());
-        cloudDoclet.setThreshold(threshold);
-        cloudDoclet.setZoom(zoom);
+        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(ontologies, sfp, urlScheme);
+
+        CloudHelper<OWLAnnotationProperty> helper = new CloudHelper<>(cloudModel, threshold, zoom);
+        CloudDoclet<OWLAnnotationProperty> cloudDoclet = new CloudDoclet<>(kit, helper);
 
         model.addAttribute("title", "Annotation Properties Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("ontologies", ontologies);
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
 
         return "doclet";
@@ -143,18 +152,19 @@ public class CloudController extends ApplicationController {
                                     final Model model,
                                     final HttpServletRequest request) throws OntServerException {
 
-        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit);
+        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
+        URLScheme urlScheme = kit.getURLScheme();
 
-        CloudDoclet cloudDoclet = new CloudDoclet(kit);
-        cloudDoclet.setModel(cloudModel);
-        cloudDoclet.setComparator(kit.getOWLServer().getComparator());
-        cloudDoclet.setThreshold(threshold);
-        cloudDoclet.setZoom(zoom);
+        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(ontologies, sfp, urlScheme);
+
+        CloudHelper<OWLDatatype> helper = new CloudHelper<>(cloudModel, threshold, zoom);
+        CloudDoclet<OWLDatatype> cloudDoclet = new CloudDoclet<>(kit, helper);
 
         model.addAttribute("title", "Datatypes Usage Cloud");
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("ontologies", ontologies);
         model.addAttribute("content", renderDoclets(request, cloudDoclet));
 
         return "doclet";

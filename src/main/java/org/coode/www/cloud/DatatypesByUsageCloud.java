@@ -1,9 +1,9 @@
 package org.coode.www.cloud;
 
 import org.coode.html.url.URLScheme;
-import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.net.URL;
 import java.util.HashSet;
@@ -11,24 +11,16 @@ import java.util.Set;
 
 public class DatatypesByUsageCloud extends AbstractOWLCloudModel<OWLDatatype>{
 
-    private URLScheme urlScheme;
-
-    public DatatypesByUsageCloud(OWLHTMLKit kit) {
-        super(kit.getOWLServer().getShortFormProvider());
-        this.urlScheme = kit.getURLScheme();
-        setOntologies(kit.getVisibleOntologies());
+    public DatatypesByUsageCloud(Set<OWLOntology> onts, ShortFormProvider renderer, URLScheme urlScheme) {
+        super(onts, renderer, urlScheme);
     }
 
     public Set<OWLDatatype> getEntities() {
         Set<OWLDatatype> entities = new HashSet<OWLDatatype>();
-        for (OWLOntology ont : getOntologies()) {
+        for (OWLOntology ont : ontologies) {
             entities.addAll(ont.getDatatypesInSignature());
         }
         return entities;
-    }
-
-    public URL getURL(OWLDatatype entity) {
-        return urlScheme.getURLForOWLObject(entity);
     }
 
     public String getTitle() {
@@ -37,7 +29,7 @@ public class DatatypesByUsageCloud extends AbstractOWLCloudModel<OWLDatatype>{
 
     protected int calculateValue(OWLDatatype entity) {
         int count = 0;
-        for (OWLOntology ont : getOntologies()){
+        for (OWLOntology ont : ontologies){
             count += ont.getReferencingAxioms(entity).size();
         }
         return count;

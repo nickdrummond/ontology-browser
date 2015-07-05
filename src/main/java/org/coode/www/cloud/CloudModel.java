@@ -24,7 +24,5 @@ public interface CloudModel<O> {
 
     URL getURL(O entity);
 
-    void reload();
-
     String getTitle();
 }

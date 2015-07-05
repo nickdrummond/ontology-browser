@@ -13,7 +13,7 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
 
     private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
 
-    public void reload() {
+    protected void reload() {
         min = Integer.MAX_VALUE;
         max = 0;
 
