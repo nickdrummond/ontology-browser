@@ -1,5 +1,6 @@
 package org.coode.owl.hierarchy;
 
+import com.google.common.collect.Sets;
 import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.semanticweb.owlapi.model.*;
@@ -76,7 +77,7 @@ public class OWLIndividualByClassHierarchyProvider implements HierarchyProvider<
         if (node instanceof OWLIndividual){
             return Collections.emptySet();
         }
-        return new HashSet<OWLObject>(cache.get((OWLClassExpression)node));
+        return Sets.<OWLObject>newHashSet(cache.get((OWLClassExpression)node));
     }
 
 

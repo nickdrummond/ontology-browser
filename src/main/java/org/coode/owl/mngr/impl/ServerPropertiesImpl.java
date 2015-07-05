@@ -1,5 +1,6 @@
 package org.coode.owl.mngr.impl;
 
+import com.google.common.collect.Sets;
 import org.coode.owl.mngr.ServerProperties;
 
 import java.beans.PropertyChangeEvent;
@@ -66,7 +67,7 @@ public class ServerPropertiesImpl implements ServerProperties {
 
 
     public Set<String> keySet() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = Sets.newHashSet();
         Enumeration<?> it = properties.propertyNames();
         while(it.hasMoreElements()){
             keys.add((String)it.nextElement());

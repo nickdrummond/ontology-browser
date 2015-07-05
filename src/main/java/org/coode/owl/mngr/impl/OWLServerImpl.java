@@ -2,6 +2,8 @@ package org.coode.owl.mngr.impl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.coode.owl.hierarchy.*;
 import org.coode.owl.mngr.*;
 import org.coode.www.renderer.FixedSimpleShortFormProvider;
@@ -59,13 +61,13 @@ public class OWLServerImpl implements OWLServer {
 
     private OWLObjectComparator comparator;
 
-    private Map<Class<? extends OWLObject>, HierarchyProvider> hps = new HashMap<Class<? extends OWLObject>, HierarchyProvider>();
-
-    private Map<URI, OWLOntologyIRIMapper> baseMapper = new HashMap<URI, OWLOntologyIRIMapper>();
-
     private ServerOptionsAdapter<ServerProperty> properties;
 
-    private final Set<Listener> listeners = new HashSet<Listener>();
+    private Map<Class<? extends OWLObject>, HierarchyProvider> hps = Maps.newHashMap();
+
+    private Map<URI, OWLOntologyIRIMapper> baseMapper = Maps.newHashMap();
+
+    private final Set<Listener> listeners = Sets.newHashSet();
 
     private boolean serverIsDead = false;
 
@@ -543,7 +545,7 @@ public class OWLServerImpl implements OWLServer {
 
     private Set<OWLOntology> getImportRoots(Set<OWLOntology> onts){
         // TODO: handle cyclic imports
-        Set<OWLOntology> roots = new HashSet<OWLOntology>(onts);
+        Set<OWLOntology> roots = Sets.newHashSet(onts);
         for (OWLOntology ont : onts){
             roots.removeAll(ont.getImports());
         }
@@ -560,7 +562,7 @@ public class OWLServerImpl implements OWLServer {
     }
 
     private void resetAllowedLabels() {
-        Set<String> uriStrings = new HashSet<String>();
+        Set<String> uriStrings = Sets.newHashSet();
         for (OWLOntology ont : getActiveOntologies()){
             for (OWLAnnotationProperty p : ont.getAnnotationPropertiesInSignature()){
                 uriStrings.add(p.getIRI().toString());
@@ -568,7 +570,7 @@ public class OWLServerImpl implements OWLServer {
         }
         getProperties().setAllowedValues(ServerProperty.optionLabelUri, new ArrayList<String>(uriStrings));
 
-        Set<String> dataPropStrings = new HashSet<String>();
+        Set<String> dataPropStrings = Sets.newHashSet();
         for (OWLOntology ont : getActiveOntologies()){
             for (OWLDataProperty p : ont.getDataPropertiesInSignature()){
                 dataPropStrings.add(p.getIRI().toString());

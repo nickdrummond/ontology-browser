@@ -2,9 +2,6 @@ package org.coode.owl.mngr;
 
 import org.semanticweb.owlapi.model.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public enum NamedObjectType {
 
     ontologies ("Ontologies", "Ontology"),
@@ -16,7 +13,8 @@ public enum NamedObjectType {
     individuals ("Individuals", "Individual"),
     datatypes ("Datatypes", "Datatype");
 
-    private static NamedObjectType[] entitySubTypes = new NamedObjectType[]{classes, objectproperties, dataproperties, annotationproperties, individuals, datatypes};
+    private static NamedObjectType[] entitySubTypes =
+            new NamedObjectType[]{classes, objectproperties, dataproperties, annotationproperties, individuals, datatypes};
 
     private String plural;
     private String singular;
@@ -26,30 +24,17 @@ public enum NamedObjectType {
         this.singular = singular;
     }
 
-
     public String getPluralRendering(){
         return plural;
     }
-
 
     public String getSingularRendering() {
         return singular;
     }
 
-    
-    public static Set<String> getRenderings() {
-        Set<String> renderings = new HashSet<String>();
-        for (NamedObjectType type : NamedObjectType.values()){
-            renderings.add(type.toString());
-        }
-        return renderings;
-    }
-
-
     public static NamedObjectType[] entitySubtypes() {
         return entitySubTypes;
     }
-
 
     public Class getCls() {
         switch(this){
@@ -64,7 +49,6 @@ public enum NamedObjectType {
         }
         throw new RuntimeException("Unknown named object type: " + this);
     }
-
 
     public OWLEntity getOWLEntity(IRI iri, OWLDataFactory df){
         switch(this){

@@ -1,5 +1,6 @@
 package org.coode.www.service;
 
+import com.google.common.collect.ImmutableSet;
 import org.coode.www.model.QueryType;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -15,15 +16,14 @@ public class ReasonerService {
     public Set<OWLEntity> getResults(final OWLClassExpression owlClassExpression,
                                      final QueryType query,
                                      final OWLReasoner r) {
-        Set<OWLEntity> results = new HashSet<OWLEntity>();
         switch(query){
-            case equivalents: results.addAll(r.getEquivalentClasses(owlClassExpression).getEntities()); break;
-            case subclasses: results.addAll(r.getSubClasses(owlClassExpression, true).getFlattened()); break;
-            case descendants: results.addAll(r.getSubClasses(owlClassExpression, false).getFlattened()); break;
-            case superclasses: results.addAll(r.getSuperClasses(owlClassExpression, true).getFlattened()); break;
-            case ancestors: results.addAll(r.getSuperClasses(owlClassExpression, false).getFlattened()); break;
-            case instances: results.addAll(r.getInstances(owlClassExpression, false).getFlattened()); break;
+            case equivalents: return ImmutableSet.<OWLEntity>copyOf(r.getEquivalentClasses(owlClassExpression).getEntities());
+            case subclasses: return ImmutableSet.<OWLEntity>copyOf(r.getSubClasses(owlClassExpression, true).getFlattened());
+            case descendants: return ImmutableSet.<OWLEntity>copyOf(r.getSubClasses(owlClassExpression, false).getFlattened());
+            case superclasses: return ImmutableSet.<OWLEntity>copyOf(r.getSuperClasses(owlClassExpression, true).getFlattened());
+            case ancestors: return ImmutableSet.<OWLEntity>copyOf(r.getSuperClasses(owlClassExpression, false).getFlattened());
+            case instances: return ImmutableSet.<OWLEntity>copyOf(r.getInstances(owlClassExpression, false).getFlattened());
         }
-        return results;
+        throw new IllegalArgumentException("Unexpected query: " + query);
     }
 }

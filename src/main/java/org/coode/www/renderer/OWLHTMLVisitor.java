@@ -2,7 +2,9 @@ package org.coode.www.renderer;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import org.coode.html.url.URLScheme;
 import org.coode.html.util.URLUtils;
 import org.coode.owl.mngr.NamedObjectType;
@@ -52,7 +54,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     private OntologyIRIShortFormProvider ontologyIriSFProvider;
 
-    private Set<OWLOntology> ontologies = new HashSet<OWLOntology>();
+    private final Set<OWLOntology> ontologies;
 
     private OWLOntology activeOntology = null;
 
@@ -71,7 +73,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         this.sfProvider = sfProvider;
         this.ontologyIriSFProvider = ontologySFProvider;
         this.urlScheme = urlScheme;
-        this.ontologies = ontologies;
+        this.ontologies = ImmutableSet.copyOf(ontologies);
         this.activeOntology = activeOntology;
         this.activeObject = activeObject;
     }
@@ -494,7 +496,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         final OWLAnnotationSubject subject = axiom.getSubject();
         // extract the entities with this IRI
         if (subject instanceof IRI){
-            Set<OWLEntity> entities = new HashSet<OWLEntity>();
+            Set<OWLEntity> entities = Sets.newHashSet();
             for (OWLOntology ont : ontologies){
                 entities.addAll(ont.getEntitiesInSignature((IRI)subject));
             }

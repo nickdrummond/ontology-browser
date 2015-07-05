@@ -1,6 +1,7 @@
 package org.coode.www.model;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
@@ -286,7 +287,7 @@ public class CharacteristicsFactory {
                 OWLAnnotationProperty p = ax.getProperty();
                 Set<OWLAnnotationValue> objects = props.get(p);
                 if (objects == null){
-                    objects = new HashSet<>();
+                    objects = Sets.newHashSet();
                     props.put(p, objects);
                 }
                 objects.add(ax.getAnnotation().getValue());

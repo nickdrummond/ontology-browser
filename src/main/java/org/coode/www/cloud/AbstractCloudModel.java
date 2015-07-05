@@ -1,5 +1,7 @@
 package org.coode.www.cloud;
 
+import com.google.common.collect.Sets;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.util.*;
@@ -38,7 +40,7 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
 
         threshold = normalize(threshold);
 
-        Set<O> result = new HashSet<O>();
+        Set<O> result = Sets.newHashSet();
 
         for (O entity : entityValueMap.keySet()) {
             if (entityValueMap.get(entity) >= threshold) {

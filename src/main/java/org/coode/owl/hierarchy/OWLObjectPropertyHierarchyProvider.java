@@ -1,5 +1,6 @@
 package org.coode.owl.hierarchy;
 
+import com.google.common.collect.Sets;
 import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.semanticweb.owlapi.model.*;
@@ -79,7 +80,7 @@ public class OWLObjectPropertyHierarchyProvider implements HierarchyProvider<OWL
             supers = Collections.emptySet();
         }
         else{
-            supers = new HashSet<OWLObjectProperty>();
+            supers = Sets.newHashSet();
             for (OWLObjectPropertyExpression pe :  EntitySearcher.getSuperProperties(node, getOntologies())){
                 if (!pe.isAnonymous()) {
                     supers.add(pe.asOWLObjectProperty());
@@ -97,7 +98,7 @@ public class OWLObjectPropertyHierarchyProvider implements HierarchyProvider<OWL
             return getImplicitRoots();
         }
 
-        Set<OWLObjectProperty> subs = new HashSet<OWLObjectProperty>();
+        Set<OWLObjectProperty> subs = Sets.newHashSet();
 
         for (OWLObjectPropertyExpression pe :  EntitySearcher.getSubProperties(node, getOntologies())){
             if (!pe.isAnonymous()) {
@@ -109,7 +110,7 @@ public class OWLObjectPropertyHierarchyProvider implements HierarchyProvider<OWL
     }
 
     public Set<OWLObjectProperty> getEquivalents(OWLObjectProperty node) {
-        Set<OWLObjectProperty> equivs = new HashSet<OWLObjectProperty>();
+        Set<OWLObjectProperty> equivs = Sets.newHashSet();
         for (OWLObjectPropertyExpression pe :  EntitySearcher.getEquivalentProperties(node, getOntologies())){
             if (!pe.isAnonymous()) {
                 equivs.add(pe.asOWLObjectProperty());
@@ -124,7 +125,7 @@ public class OWLObjectPropertyHierarchyProvider implements HierarchyProvider<OWL
             return getAllReferencedProperties();
         }
 
-        Set<OWLObjectProperty> descendants = new HashSet<OWLObjectProperty>();
+        Set<OWLObjectProperty> descendants = Sets.newHashSet();
         List<OWLObjectProperty> nodes = new ArrayList<OWLObjectProperty>();
         nodes.add(node);
         for(int i=0; i<nodes.size(); i++){
@@ -179,7 +180,7 @@ public class OWLObjectPropertyHierarchyProvider implements HierarchyProvider<OWL
     }
 
     private Set<OWLObjectProperty> getAllReferencedProperties() {
-        Set<OWLObjectProperty> props = new HashSet<OWLObjectProperty>();
+        Set<OWLObjectProperty> props = Sets.newHashSet();
         for (OWLOntology ont : getOntologies()){
             props.addAll(getPropertiesInSignature(ont));
         }
