@@ -44,7 +44,7 @@ public class OntologiesService {
      */
     public String load(URI uri, boolean clear, OWLHTMLKit kit) throws OntServerException {
 
-        Map<URI, Throwable> fail = new HashMap<URI, Throwable>();
+        Map<URI, Throwable> fail = new HashMap<>();
 
         OWLServer server = kit.getOWLServer();
 

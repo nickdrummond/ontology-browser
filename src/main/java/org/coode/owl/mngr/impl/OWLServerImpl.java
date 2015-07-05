@@ -133,7 +133,6 @@ public class OWLServerImpl implements OWLServer {
         return mngr.loadOntologyFromOntologyDocument(iri);
     }
 
-
     public void loadOntologies(final Map<IRI, IRI> ontMap) {
         OWLOntologyIRIMapper mapper = new OWLOntologyIRIMapper(){
             public IRI getDocumentIRI(IRI ontologyIRI) {
@@ -143,19 +142,16 @@ public class OWLServerImpl implements OWLServer {
         mngr.addIRIMapper(mapper);
 
         for (Map.Entry<IRI, IRI> entry : ontMap.entrySet()){
-            try {
-                if (!entry.getKey().equals(ROOT_ONTOLOGY)){
+            if (!entry.getKey().equals(ROOT_ONTOLOGY)){
+                try {
                     mngr.loadOntology(entry.getValue());
                 }
-            }
-            catch (OWLOntologyDocumentAlreadyExistsException e){
-                // do nothing - as we're not trying to load in order just keep going 
-            }
-            catch (OWLOntologyAlreadyExistsException e){
-                // do nothing - as we're not trying to load in order just keep going
-            }
-            catch (OWLOntologyCreationException e) {
-                e.printStackTrace();
+                catch (OWLOntologyDocumentAlreadyExistsException | OWLOntologyAlreadyExistsException e){
+                    // do nothing - as we're not trying to load in order just keep going
+                }
+                catch (OWLOntologyCreationException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -610,12 +606,10 @@ public class OWLServerImpl implements OWLServer {
         }
         URI baseURI = URI.create(baseURIStr);
 
-        if (baseURI != null){
-            if (baseMapper.get(baseURI) == null){
-                final BaseURIMapper mapper = new BaseURIMapper(baseURI);
-                baseMapper.put(baseURI, mapper);
-                mngr.addIRIMapper(mapper);
-            }
+        if (baseMapper.get(baseURI) == null){
+            final BaseURIMapper mapper = new BaseURIMapper(baseURI);
+            baseMapper.put(baseURI, mapper);
+            mngr.addIRIMapper(mapper);
         }
     }
 
