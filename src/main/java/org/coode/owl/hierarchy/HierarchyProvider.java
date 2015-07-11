@@ -2,6 +2,7 @@ package org.coode.owl.hierarchy;
 
 import java.util.Set;
 
+@Deprecated // Use reasoner directly as it uses
 public interface HierarchyProvider<O> {
 
     Class<? extends O> getNodeClass();
