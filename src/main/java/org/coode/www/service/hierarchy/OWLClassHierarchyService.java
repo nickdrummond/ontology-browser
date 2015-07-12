@@ -12,9 +12,12 @@ import java.util.Set;
 
 public class OWLClassHierarchyService extends AbstractOWLHierarchyService<OWLClass> {
 
+    private final OWLReasoner reasoner;
+
     public OWLClassHierarchyService(final OWLReasoner reasoner,
                                     final Comparator<? super Tree<OWLClass>> comparator) {
-        super(reasoner, comparator);
+        super(comparator);
+        this.reasoner = reasoner;
     }
 
     @Override

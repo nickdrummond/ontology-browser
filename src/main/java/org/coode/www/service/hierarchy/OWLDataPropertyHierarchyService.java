@@ -12,9 +12,12 @@ import java.util.Set;
 
 public class OWLDataPropertyHierarchyService extends AbstractOWLHierarchyService<OWLDataProperty> {
 
+    private final OWLReasoner reasoner;
+
     public OWLDataPropertyHierarchyService(final OWLReasoner reasoner,
                                            final Comparator<? super Tree<OWLDataProperty>> comparator) {
-        super(reasoner, comparator);
+        super(comparator);
+        this.reasoner = reasoner;
     }
 
     @Override
