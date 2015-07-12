@@ -1,6 +1,7 @@
 package org.coode.www.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.reasoner.Node;
@@ -27,29 +28,23 @@ public class OWLClassHierarchyService {
     }
 
     public Tree<OWLClass> getPrunedTree(final OWLClass aClass) {
-        Node<OWLClass> top = reasoner.getTopClassNode();
-        if (aClass.isTopEntity()) {
-            return new Tree<>(top);
-        }
-        else {
-            NodeSet<OWLClass> ancestors = reasoner.getSuperClasses(aClass, false);
-            Set<Node<OWLClass>> nodes = ancestors.getNodes();
-            nodes.add(new OWLClassNode(aClass));
-            return buildTree(top, nodeSetWithout(new OWLClassNodeSet(nodes), top));
-        }
+        NodeSet<OWLClass> ancestors = reasoner.getSuperClasses(aClass, false);
+        Set<Node<OWLClass>> nodes = Sets.newHashSet(ancestors.getNodes());
+        nodes.add(reasoner.getEquivalentClasses(aClass));
+        return buildTree(reasoner.getTopClassNode(), new OWLClassNodeSet(nodes));
     }
 
     private Tree<OWLClass> buildTree(final Node<OWLClass> current, final NodeSet<OWLClass> ancestors) {
         List<Tree<OWLClass>> subs = Lists.newArrayList();
-        for (Node<OWLClass> s : reasoner.getSubClasses(current.getRepresentativeElement(), true)) {
-            if (s.isBottomNode()) {
+        for (Node<OWLClass> subNode : reasoner.getSubClasses(current.getRepresentativeElement(), true)) {
+            if (subNode.isBottomNode()) {
                 // ignore Nothing
             }
-            else if (ancestors.containsEntity(s.getRepresentativeElement())) { // recurse
-                subs.add(buildTree(s, nodeSetWithout(ancestors, s)));
+            else if (ancestors.getNodes().contains(subNode)) { // recurse
+                subs.add(buildTree(subNode, nodeSetWithout(ancestors, subNode)));
             }
             else {
-                subs.add(new Tree<>(s));
+                subs.add(new Tree<>(subNode));
             }
         }
         subs.sort(comparator);

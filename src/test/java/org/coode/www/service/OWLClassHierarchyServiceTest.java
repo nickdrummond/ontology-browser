@@ -103,6 +103,23 @@ public class OWLClassHierarchyServiceTest {
     }
 
     /**
+     * owl:Thing <- requested
+     * - a <- gets subclasses
+     */
+    @Test
+    public void subclasses() {
+        addAxiom(dataFactory.getOWLDeclarationAxiom(a));
+
+        Tree<OWLClass> hierarchy = service.getPrunedTree(owlThing);
+
+        assertThat(hierarchy, looksLike(
+                t(owlThing,
+                        t(a)
+                )
+        ));
+    }
+
+    /**
      * owl:Thing
      * - a
      *   - b <- requested
