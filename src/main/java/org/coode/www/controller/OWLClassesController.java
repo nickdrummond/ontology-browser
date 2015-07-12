@@ -57,9 +57,9 @@ public class OWLClassesController extends ApplicationController {
 
         OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(owlServer.getOWLReasoner(), comparator);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlClass));
-
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);
+
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlClass));
 
         String entityName = owlServer.getShortFormProvider().getShortForm(owlClass);
 

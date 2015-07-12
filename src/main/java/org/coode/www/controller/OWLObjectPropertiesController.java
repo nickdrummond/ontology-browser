@@ -5,13 +5,19 @@ import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
+import org.coode.www.service.OWLClassHierarchyService;
 import org.coode.www.service.OWLObjectPropertiesService;
+import org.coode.www.service.OWLObjectPropertyHierarchyService;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
+import java.util.Comparator;
 
 @Controller
 @RequestMapping(value="/objectproperties")
@@ -44,28 +51,32 @@ public class OWLObjectPropertiesController extends ApplicationController {
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLObjectProperty(@PathVariable final String propertyId,
                                        @ModelAttribute("kit") final OWLHTMLKit kit,
-                                       final HttpServletRequest request,
                                        final Model model) throws OntServerException, NotFoundException {
 
         OWLObjectProperty owlObjectProperty = service.getOWLObjectPropertyFor(propertyId, kit);
 
-        // TODO yuck replace this adapter
-        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
-        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLObjectProperty.class);
-        hierarchyDoclet.setUserObject(owlObjectProperty);
+        OWLServer owlServer = kit.getOWLServer();
 
-        String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlObjectProperty);
+        Comparator<Tree<OWLObjectPropertyExpression>> comparator = (o1, o2) ->
+                o1.value.getRepresentativeElement().compareTo(o2.value.getRepresentativeElement());
+
+        OWLObjectPropertyHierarchyService hierarchyService =
+                new OWLObjectPropertyHierarchyService(owlServer.getOWLReasoner(), comparator);
+
+        Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getPrunedTree(owlObjectProperty);
+
+        String entityName = owlServer.getShortFormProvider().getShortForm(owlObjectProperty);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlObjectProperty));
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("iri", owlObjectProperty.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("activeOntology", owlServer.getActiveOntology());
+        model.addAttribute("ontologies", owlServer.getOntologies());
+        model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlObjectProperty, kit));
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
         return "owlentity";
     }

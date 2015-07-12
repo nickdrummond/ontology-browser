@@ -3,17 +3,16 @@ package org.coode.www.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
-import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.impl.OWLClassNodeSet;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractOWLHierarchyService<T extends OWLEntity> {
+public abstract class AbstractOWLHierarchyService<T extends OWLObject> {
 
     protected final OWLReasoner reasoner;
     private final Comparator<? super Tree<T>> comparator;

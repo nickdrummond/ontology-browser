@@ -5,13 +5,18 @@ import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLDataPropertiesService;
+import org.coode.www.service.OWLDataPropertyHierarchyService;
+import org.coode.www.service.OWLObjectPropertyHierarchyService;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
+import java.util.Comparator;
 
 @Controller
 @RequestMapping(value="/dataproperties")
@@ -44,15 +50,20 @@ public class OWLDataPropertiesController extends ApplicationController {
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLDataProperty(@PathVariable final String propertyId,
                                      @ModelAttribute("kit") final OWLHTMLKit kit,
-                                     final HttpServletRequest request,
                                      final Model model) throws OntServerException, NotFoundException {
 
         OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
 
-        // TODO yuck replace this adapter
-        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
-        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLDataProperty.class);
-        hierarchyDoclet.setUserObject(owlDataProperty);
+
+        OWLServer owlServer = kit.getOWLServer();
+
+        Comparator<Tree<OWLDataProperty>> comparator = (o1, o2) ->
+                o1.value.getRepresentativeElement().compareTo(o2.value.getRepresentativeElement());
+
+        OWLDataPropertyHierarchyService hierarchyService =
+                new OWLDataPropertyHierarchyService(owlServer.getOWLReasoner(), comparator);
+
+        Tree<OWLDataProperty> prunedTree = hierarchyService.getPrunedTree(owlDataProperty);
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlDataProperty);
 
@@ -63,9 +74,9 @@ public class OWLDataPropertiesController extends ApplicationController {
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlDataProperty, kit));
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
         return "owlentity";
     }

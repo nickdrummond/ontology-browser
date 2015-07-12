@@ -1,13 +1,13 @@
 package org.coode.www.model;
 
-import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-public class Tree<T extends OWLEntity> {
+public class Tree<T extends OWLObject> {
     public final Node<T> value;
     public final List<Tree<T>> children;
 
