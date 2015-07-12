@@ -1,5 +1,6 @@
 package org.coode.www.service;
 
+import org.coode.www.model.Tree;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -8,8 +9,6 @@ import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 
 import java.util.Comparator;
-
-import static org.coode.www.service.OWLClassHierarchyService.Tree;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;

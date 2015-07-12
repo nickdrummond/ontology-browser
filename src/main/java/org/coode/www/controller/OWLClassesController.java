@@ -1,17 +1,15 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLClassHierarchyService;
-import org.coode.www.service.OWLClassHierarchyService.Tree;
 import org.coode.www.service.OWLClassesService;
 import org.coode.www.service.OWLIndividualsService;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 import java.util.Comparator;
 

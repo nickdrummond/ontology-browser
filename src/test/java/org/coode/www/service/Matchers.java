@@ -1,22 +1,16 @@
 package org.coode.www.service;
 
 import com.google.common.collect.Sets;
-import info.aduna.text.StringUtil;
+import org.coode.www.model.Tree;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
-import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.coode.www.service.OWLClassHierarchyService.Tree;
 
 /**
  * Custom matchers
