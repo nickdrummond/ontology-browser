@@ -1,6 +1,7 @@
 package org.coode.www.service;
 
 import org.coode.www.model.Tree;
+import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;

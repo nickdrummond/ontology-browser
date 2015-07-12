@@ -1,4 +1,4 @@
-package org.coode.www.service;
+package org.coode.www.service.hierarchy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

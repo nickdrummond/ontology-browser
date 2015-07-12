@@ -1,4 +1,4 @@
-package org.coode.www.service;
+package org.coode.www.service.hierarchy;
 
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;

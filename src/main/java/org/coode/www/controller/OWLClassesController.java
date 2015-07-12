@@ -9,7 +9,7 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.www.service.OWLClassHierarchyService;
+import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.coode.www.service.OWLClassesService;
 import org.coode.www.service.OWLIndividualsService;
 import org.semanticweb.owlapi.model.OWLClass;
