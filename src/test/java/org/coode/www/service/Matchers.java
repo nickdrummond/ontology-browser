@@ -1,9 +1,21 @@
 package org.coode.www.service;
 
+import com.google.common.collect.Sets;
+import info.aduna.text.StringUtil;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.reasoner.Node;
+import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
+import org.springframework.util.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static org.coode.www.service.OWLClassHierarchyService.Tree;
 
 /**
@@ -11,14 +23,18 @@ import static org.coode.www.service.OWLClassHierarchyService.Tree;
  */
 public class Matchers {
 
-    public static final String PREFIX = "http://example.com/";
-
     /**
      * Handy sugar for creating the comparison arrays
-     * t("a", t("b"), t("c"))
+     * t(a, t(b), t(c))
      */
     public static Object[] t(Object... o) {
-        return o;
+        return Arrays.stream(o)
+                .map(i -> i instanceof OWLClass ? new OWLClassNode((OWLClass)i) : i)
+                .collect(Collectors.toList()).toArray();
+    }
+
+    public static Node<OWLClass> all(OWLClass... clses) {
+        return new OWLClassNode(Sets.newHashSet(clses));
     }
 
     public static Matcher<? super Tree<OWLClass>> looksLike(final Object[] expected) {
@@ -27,7 +43,7 @@ public class Matchers {
 
             private Tree<OWLClass> parentNode;
             private Tree<OWLClass> actualNode;
-            private String expectedNode = "";
+            private Node expectedNode;
 
             @Override
             protected boolean matchesSafely(Tree<OWLClass> actual) {
@@ -40,7 +56,7 @@ public class Matchers {
                 mismatchDescription
                         .appendText(parentNode != null ? parentNode.value.toString() : "no parent")
                         .appendText(" -> ")
-                        .appendValue(expectedNode)
+                        .appendText(expectedNode != null ? expectedNode.toString() : "not expected")
                         .appendText(" was actually ")
                         .appendText(actualNode != null ? actualNode.value.toString() : "not there")
                         .appendText("\n\n")
@@ -54,7 +70,7 @@ public class Matchers {
 
                     parentNode = actual;
                     if (actual.children.size() < i) {
-                        expectedNode = expectedChild[0].toString();
+                        expectedNode = (Node)expectedChild[0];
                         actualNode = null;
                         return false;
                     }
@@ -64,7 +80,6 @@ public class Matchers {
                 }
                 if (actual.children.size() > expected.length-1) {
                     parentNode = actual;
-                    expectedNode = "expected no more nodes";
                     actualNode = actual.children.get(expected.length-1);
                     return false;
                 }
@@ -72,13 +87,13 @@ public class Matchers {
             }
 
             private boolean matches(final Tree<OWLClass> actual, final Object[] expected) {
-                String nodeString = actual.value.getRepresentativeElement().toString();
-                boolean nodeMatches = nodeString.equals(expected[0]) || nodeString.equals("<" + PREFIX + expected[0] + ">");
-                if (!nodeMatches) {
-                    expectedNode = expected[0].toString();
+
+                if (!actual.value.equals(expected[0])) {
+                    expectedNode = (Node)expected[0];
                     actualNode = actual;
+                    return false;
                 }
-                return nodeMatches && childrenMatch(actual, expected);
+                return childrenMatch(actual, expected);
             }
         };
     }

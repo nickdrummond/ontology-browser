@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
+import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 
 import java.util.Comparator;
@@ -44,12 +45,7 @@ public class OWLClassHierarchyServiceTest {
 
         ontology = mngr.createOntology();
         reasoner = new StructuralReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
-        comparator = new Comparator<Tree<OWLClass>>() {
-            @Override
-            public int compare(Tree<OWLClass> o1, Tree<OWLClass> o2) {
-                return o1.value.getRepresentativeElement().compareTo(o2.value.getRepresentativeElement());
-            }
-        };
+        comparator = (o1, o2) -> o1.value.getRepresentativeElement().compareTo(o2.value.getRepresentativeElement());
         service = new OWLClassHierarchyService(reasoner, comparator);
 
         a = cls("a");
@@ -67,7 +63,7 @@ public class OWLClassHierarchyServiceTest {
     }
 
     private OWLClass cls(String name) {
-        return dataFactory.getOWLClass(IRI.create(PREFIX + name));
+        return dataFactory.getOWLClass(IRI.create(name));
     }
 
     private void build(OWLClass superCls, Set<OWLClass> subClses) {
@@ -81,7 +77,7 @@ public class OWLClassHierarchyServiceTest {
         Tree<OWLClass> hierarchy = service.getPrunedTree(owlThing);
 
         assertThat(hierarchy, looksLike(
-                t("owl:Thing")
+                t(owlThing)
         ));
     }
 
@@ -98,8 +94,8 @@ public class OWLClassHierarchyServiceTest {
         assertThat(hierarchy.value.isTopNode(), equalTo(true));
 
         assertThat(hierarchy, looksLike(
-                t("owl:Thing",
-                        t("a")
+                t(owlThing,
+                        t(a)
                 )
         ));
     }
@@ -118,9 +114,9 @@ public class OWLClassHierarchyServiceTest {
         Tree<OWLClass> hierarchy = service.getPrunedTree(b);
 
         assertThat(hierarchy, looksLike(
-                t("owl:Thing",
-                        t("a",
-                                t("b")
+                t(owlThing,
+                        t(a,
+                                t(b)
                         )
                 )
         ));
@@ -142,12 +138,12 @@ public class OWLClassHierarchyServiceTest {
         Tree<OWLClass> hierarchy = service.getPrunedTree(b);
 
         assertThat(hierarchy, looksLike(
-                t("owl:Thing",
-                        t("a",
-                                t("b"),
-                                t("b2")
+                t(owlThing,
+                        t(a,
+                                t(b),
+                                t(b2)
                         ),
-                        t("a2")
+                        t(a2)
                 )
         ));
     }
@@ -172,11 +168,36 @@ public class OWLClassHierarchyServiceTest {
         Tree<OWLClass> hierarchy = service.getPrunedTree(b4);
 
         assertThat(hierarchy, looksLike(
-                t("owl:Thing",
-                        t("a"),
-                        t("a2",
-                                t("b3"),
-                                t("b4")
+                t(owlThing,
+                        t(a),
+                        t(a2,
+                                t(b3),
+                                t(b4)
+                        )
+                )
+        ));
+    }
+
+    /**
+     * owl:Thing
+     * - a
+     *   - [b, b2]
+     *   - [b3, b4] <- requested
+     */
+    @Test
+    public void equivalentClasses() {
+        build(owlThing, Sets.newHashSet(a));
+        build(a, Sets.newHashSet(b, b3));
+        addAxiom(dataFactory.getOWLEquivalentClassesAxiom(b, b2));
+        addAxiom(dataFactory.getOWLEquivalentClassesAxiom(b3, b4));
+
+        Tree<OWLClass> hierarchy = service.getPrunedTree(b4);
+
+        assertThat(hierarchy, looksLike(
+                t(owlThing,
+                        t(a,
+                                t(all(b, b2)),
+                                t(all(b3, b4))
                         )
                 )
         ));
