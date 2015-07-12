@@ -5,7 +5,6 @@ import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
-import org.semanticweb.owlapi.reasoner.NodeSet;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,20 +19,19 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> {
     }
 
     public Tree<T> getPrunedTree(final T entity) {
-        NodeSet<T> ancestors = ancestors(entity);
-        Set<Node<T>> nodes = Sets.newHashSet(ancestors.getNodes());
+        Set<Node<T>> nodes = Sets.newHashSet(ancestors(entity));
         nodes.add(equivs(entity));
-        return buildTree(topNode(), newNodeSet(nodes));
+        return buildTree(topNode(), nodes);
     }
 
-    private Tree<T> buildTree(final Node<T> current, final NodeSet<T> ancestors) {
+    private Tree<T> buildTree(final Node<T> current, final Set<Node<T>> ancestors) {
         List<Tree<T>> subs = Lists.newArrayList();
         for (Node<T> subNode : subs(current.getRepresentativeElement())) {
             if (subNode.isBottomNode()) {
                 // ignore Nothing
             }
-            else if (ancestors.getNodes().contains(subNode)) { // recurse
-                subs.add(buildTree(subNode, nodeSetWithout(ancestors, subNode)));
+            else if (ancestors.contains(subNode)) { // recurse
+                subs.add(buildTree(subNode, without(ancestors, subNode)));
             }
             else {
                 subs.add(new Tree<>(subNode));
@@ -43,15 +41,14 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> {
         return new Tree<>(current, subs);
     }
 
-    private NodeSet<T> nodeSetWithout(final NodeSet<T> original, final Node<T> node) {
-        Set<Node<T>> nodes = original.getNodes();
+    private Set<Node<T>> without(final Set<Node<T>> original, final Node<T> node) {
+        Set<Node<T>> nodes = Sets.newHashSet(original);
         nodes.remove(node);
-        return newNodeSet(nodes);
+        return nodes;
     }
 
-    protected abstract NodeSet<T> newNodeSet(Set<Node<T>> nodes);
     protected abstract Node<T> topNode();
-    protected abstract NodeSet<T> subs(T entity);
-    protected abstract NodeSet<T> ancestors(T entity);
+    protected abstract Set<Node<T>> subs(T entity);
+    protected abstract Set<Node<T>> ancestors(T entity);
     protected abstract Node<T> equivs(T entity);
 }

@@ -6,12 +6,12 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.Node;
-import org.semanticweb.owlapi.reasoner.NodeSet;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.impl.OWLDatatypeNode;
-import org.semanticweb.owlapi.reasoner.impl.OWLDatatypeNodeSet;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class OWLDatatypeHierarchyService extends AbstractOWLHierarchyService<OWLDatatype> {
@@ -28,32 +28,27 @@ public class OWLDatatypeHierarchyService extends AbstractOWLHierarchyService<OWL
     }
 
     @Override
-    protected NodeSet<OWLDatatype> newNodeSet(Set<Node<OWLDatatype>> nodes) {
-        return new OWLDatatypeNodeSet(nodes);
-    }
-
-    @Override
     protected Node<OWLDatatype> topNode() {
         return topNode;
     }
 
     @Override
-    protected NodeSet<OWLDatatype> subs(OWLDatatype cls) {
+    protected Set<Node<OWLDatatype>> subs(OWLDatatype cls) {
         Set<Node<OWLDatatype>> subs = new HashSet<>();
         if (topNode.contains(cls)){
             for (OWLOntology ont : ontologies){
                 subs.addAll(ont.getDatatypesInSignature().stream().map(OWLDatatypeNode::new).collect(Collectors.toSet()));
             }
         }
-        return newNodeSet(subs);
+        return subs;
     }
 
     @Override
-    protected NodeSet<OWLDatatype> ancestors(OWLDatatype cls) {
+    protected Set<Node<OWLDatatype>> ancestors(OWLDatatype cls) {
         if (!topNode.contains(cls)){
-            return newNodeSet(Sets.<Node<OWLDatatype>>newHashSet(topNode));
+            return Sets.<Node<OWLDatatype>>newHashSet(topNode);
         }
-        return newNodeSet(Collections.emptySet());
+        return Collections.emptySet();
     }
 
     @Override
