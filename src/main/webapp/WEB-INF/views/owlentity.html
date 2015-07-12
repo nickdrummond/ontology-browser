@@ -57,6 +57,10 @@
 
     </div>
 
+    <div th:replace="base :: hierarchy(${hierarchy})">
+        A hierarchy
+    </div>
+
     <div th:utext='${content}'>Some Content</div>
 </div>
 

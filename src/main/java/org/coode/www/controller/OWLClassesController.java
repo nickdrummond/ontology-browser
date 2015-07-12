@@ -5,10 +5,13 @@ import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
+import org.coode.www.service.OWLClassHierarchyService;
+import org.coode.www.service.OWLClassHierarchyService.Tree;
 import org.coode.www.service.OWLClassesService;
 import org.coode.www.service.OWLIndividualsService;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
+import java.util.Comparator;
 
 @Controller
 @RequestMapping(value="/classes")
@@ -42,32 +46,34 @@ public class OWLClassesController extends ApplicationController {
         return "redirect:/classes/" + id;
     }
 
-
     @RequestMapping(value="/{classId}", method=RequestMethod.GET)
     public String getOWLClass(@PathVariable final String classId,
                               @ModelAttribute("kit") final OWLHTMLKit kit,
-                              final HttpServletRequest request,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
-        // TODO yuck replace this adapter
-        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
-        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLClass.class);
-        hierarchyDoclet.setUserObject(owlClass);
+        OWLServer owlServer = kit.getOWLServer();
 
-        String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlClass);
+        Comparator<Tree<OWLClass>> comparator = (o1, o2) ->
+                o1.value.getRepresentativeElement().compareTo(o2.value.getRepresentativeElement());
+
+        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(owlServer.getOWLReasoner(), comparator);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlClass));
+
+        Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);
+
+        String entityName = owlServer.getShortFormProvider().getShortForm(owlClass);
 
         model.addAttribute("title", entityName + " (Class)");
         model.addAttribute("iri", owlClass.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("activeOntology", owlServer.getActiveOntology());
+        model.addAttribute("hierarchy", prunedTree);
+        model.addAttribute("ontologies", owlServer.getOntologies());
         model.addAttribute("characteristics", service.getCharacteristics(owlClass, kit));
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
         return "owlentity";
     }

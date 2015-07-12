@@ -92,7 +92,7 @@
 
 <div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
 
-<div class="results" th:fragment="results" th:replace="base :: characteristic (${results})">
+<div class="results" th:fragment="results" th:replace="::characteristic (${results})">
 </div>
 
 <div class="characteristic" th:fragment="characteristic (ch)">
@@ -140,6 +140,27 @@
 </div>
 
 <EMBED th:fragment="sound (url)" th:if="${sound != null}" src="/notfound.mp3" th:src="${url}" autostart="true" hidden="true"/>
+
+<li th:fragment="tree (t)" th:if="${t != null}">
+    <a th:each='synonym : ${t.value}' th:utext="${mos.render(synonym)}"></a>
+
+    <ul th:if="${!t.children.isEmpty()}">
+        <div class="removeme" th:each="child : ${t.children}" th:remove="tag">
+            <li th:replace="base::tree(${child})"></li>
+        </div>
+    </ul>
+</li>
+
+<div class="owlselector" th:fragment="hierarchy (hierarchy)" th:if="${hierarchy != null}">
+    <div id="classes">
+        <h4>Classes</h4>
+        <div class="codebox">
+            <ul class="minihierarchy OWLClass">
+                <li th:replace="base::tree(${hierarchy})"></li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 <p class='footer' th:fragment='footer'>
   <a th:href='${applicationInfo.url + "/"}' th:text='${"OWL Browser v" + applicationInfo.version}'>Version info</a>
