@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
-import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 
 import java.util.Comparator;
@@ -66,10 +65,14 @@ public class OWLClassHierarchyServiceTest {
         return dataFactory.getOWLClass(IRI.create(name));
     }
 
-    private void build(OWLClass superCls, Set<OWLClass> subClses) {
+    private void subs(OWLClass superCls, Set<OWLClass> subClses) {
         for (OWLClass sub: subClses) {
             addAxiom(dataFactory.getOWLSubClassOfAxiom(sub, superCls));
         }
+    }
+
+    private void equiv(final OWLClass... clses) {
+        addAxiom(dataFactory.getOWLEquivalentClassesAxiom(clses));
     }
 
     @Test
@@ -108,8 +111,8 @@ public class OWLClassHierarchyServiceTest {
     @Test
     public void simplePath() {
 
-        build(owlThing, Sets.newHashSet(a));
-        build(a, Sets.newHashSet(b));
+        subs(owlThing, Sets.newHashSet(a));
+        subs(a, Sets.newHashSet(b));
 
         Tree<OWLClass> hierarchy = service.getPrunedTree(b);
 
@@ -132,8 +135,8 @@ public class OWLClassHierarchyServiceTest {
     @Test
     public void keepsSiblings() {
 
-        build(owlThing, Sets.newHashSet(a, a2));
-        build(a, Sets.newHashSet(b, b2));
+        subs(owlThing, Sets.newHashSet(a, a2));
+        subs(a, Sets.newHashSet(b, b2));
 
         Tree<OWLClass> hierarchy = service.getPrunedTree(b);
 
@@ -160,10 +163,10 @@ public class OWLClassHierarchyServiceTest {
      */
     @Test
     public void prunes() {
-        build(owlThing, Sets.newHashSet(a, a2));
-        build(a, Sets.newHashSet(b, b2));
-        build(a2, Sets.newHashSet(b3, b4));
-        build(b4, Sets.newHashSet(c));
+        subs(owlThing, Sets.newHashSet(a, a2));
+        subs(a, Sets.newHashSet(b, b2));
+        subs(a2, Sets.newHashSet(b3, b4));
+        subs(b4, Sets.newHashSet(c));
 
         Tree<OWLClass> hierarchy = service.getPrunedTree(b4);
 
@@ -186,10 +189,10 @@ public class OWLClassHierarchyServiceTest {
      */
     @Test
     public void equivalentClasses() {
-        build(owlThing, Sets.newHashSet(a));
-        build(a, Sets.newHashSet(b, b3));
-        addAxiom(dataFactory.getOWLEquivalentClassesAxiom(b, b2));
-        addAxiom(dataFactory.getOWLEquivalentClassesAxiom(b3, b4));
+        subs(owlThing, Sets.newHashSet(a));
+        subs(a, Sets.newHashSet(b, b3));
+        equiv(b, b2);
+        equiv(b3, b4);
 
         Tree<OWLClass> hierarchy = service.getPrunedTree(b4);
 
