@@ -1,6 +1,5 @@
 package org.coode.www.service;
 
-import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -9,7 +8,6 @@ import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 
 import java.util.Comparator;
-import java.util.Set;
 
 import static org.coode.www.service.OWLClassHierarchyService.Tree;
 
@@ -18,7 +16,9 @@ import static org.junit.Assert.assertThat;
 import static org.coode.www.service.Matchers.*;
 
 /**
- * Integration test using OWLReasoner implementation.
+ * Integration test using StructuralReasoner implementation.
+ * To check that the behaviour of the reasoner and tree builder is correct.
+ *
  */
 public class OWLClassHierarchyServiceTest {
 
@@ -32,7 +32,7 @@ public class OWLClassHierarchyServiceTest {
 
     private OWLOntologyManager mngr;
 
-    private OWLClass owlThing, a, a2, a3, b, b2, b3, b4, c;
+    private OWLClass owlThing, a, a2, b, b2, b3, b4, c;
 
     private Comparator<? super Tree<OWLClass>> comparator;
 
@@ -49,7 +49,6 @@ public class OWLClassHierarchyServiceTest {
 
         a = cls("a");
         a2 = cls("a2");
-        a3 = cls("a3");
         b = cls("b");
         b2 = cls("b2");
         b3 = cls("b3");
@@ -65,7 +64,7 @@ public class OWLClassHierarchyServiceTest {
         return dataFactory.getOWLClass(IRI.create(name));
     }
 
-    private void subs(OWLClass superCls, Set<OWLClass> subClses) {
+    private void subs(OWLClass superCls, OWLClass... subClses) {
         for (OWLClass sub: subClses) {
             addAxiom(dataFactory.getOWLSubClassOfAxiom(sub, superCls));
         }
@@ -111,8 +110,8 @@ public class OWLClassHierarchyServiceTest {
     @Test
     public void simplePath() {
 
-        subs(owlThing, Sets.newHashSet(a));
-        subs(a, Sets.newHashSet(b));
+        subs(owlThing, a);
+        subs(a, b);
 
         Tree<OWLClass> hierarchy = service.getPrunedTree(b);
 
@@ -135,8 +134,8 @@ public class OWLClassHierarchyServiceTest {
     @Test
     public void keepsSiblings() {
 
-        subs(owlThing, Sets.newHashSet(a, a2));
-        subs(a, Sets.newHashSet(b, b2));
+        subs(owlThing, a, a2);
+        subs(a, b, b2);
 
         Tree<OWLClass> hierarchy = service.getPrunedTree(b);
 
@@ -163,10 +162,10 @@ public class OWLClassHierarchyServiceTest {
      */
     @Test
     public void prunes() {
-        subs(owlThing, Sets.newHashSet(a, a2));
-        subs(a, Sets.newHashSet(b, b2));
-        subs(a2, Sets.newHashSet(b3, b4));
-        subs(b4, Sets.newHashSet(c));
+        subs(owlThing, a, a2);
+        subs(a, b, b2);
+        subs(a2, b3, b4);
+        subs(b4, c);
 
         Tree<OWLClass> hierarchy = service.getPrunedTree(b4);
 
@@ -188,9 +187,9 @@ public class OWLClassHierarchyServiceTest {
      *   - [b3, b4] <- requested
      */
     @Test
-    public void equivalentClasses() {
-        subs(owlThing, Sets.newHashSet(a));
-        subs(a, Sets.newHashSet(b, b3));
+    public void equivalents() {
+        subs(owlThing, a);
+        subs(a, b, b3);
         equiv(b, b2);
         equiv(b3, b4);
 
