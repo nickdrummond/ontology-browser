@@ -158,7 +158,7 @@ public class OWLClassHierarchyServiceTest {
      * - a2
      *   - b3
      *   - b4 <- requested
-     *     - c <- pruned
+     *     - c <- not pruned
      */
     @Test
     public void prunes() {
@@ -174,7 +174,9 @@ public class OWLClassHierarchyServiceTest {
                         t(a),
                         t(a2,
                                 t(b3),
-                                t(b4)
+                                t(b4,
+                                        t(c)
+                                )
                         )
                 )
         ));

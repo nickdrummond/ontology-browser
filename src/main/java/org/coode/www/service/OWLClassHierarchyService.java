@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNodeSet;
 import org.springframework.util.StringUtils;
 
@@ -32,7 +33,9 @@ public class OWLClassHierarchyService {
         }
         else {
             NodeSet<OWLClass> ancestors = reasoner.getSuperClasses(aClass, false);
-            return buildTree(top, nodeSetWithout(ancestors, top));
+            Set<Node<OWLClass>> nodes = ancestors.getNodes();
+            nodes.add(new OWLClassNode(aClass));
+            return buildTree(top, nodeSetWithout(new OWLClassNodeSet(nodes), top));
         }
     }
 
