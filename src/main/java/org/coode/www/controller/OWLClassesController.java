@@ -53,7 +53,7 @@ public class OWLClassesController extends ApplicationController {
         OWLServer owlServer = kit.getOWLServer();
 
         Comparator<Tree<OWLClass>> comparator = (o1, o2) ->
-                o1.value.getRepresentativeElement().compareTo(o2.value.getRepresentativeElement());
+                o1.value.iterator().next().compareTo(o2.value.iterator().next());
 
         OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(owlServer.getOWLReasoner(), comparator);
 

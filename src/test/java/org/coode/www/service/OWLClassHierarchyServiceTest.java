@@ -44,7 +44,7 @@ public class OWLClassHierarchyServiceTest {
 
         ontology = mngr.createOntology();
         reasoner = new StructuralReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
-        comparator = (o1, o2) -> o1.value.getRepresentativeElement().compareTo(o2.value.getRepresentativeElement());
+        comparator = (o1, o2) -> o1.value.iterator().next().compareTo(o2.value.iterator().next());
         service = new OWLClassHierarchyService(reasoner, comparator);
 
         a = cls("a");
@@ -92,8 +92,6 @@ public class OWLClassHierarchyServiceTest {
         addAxiom(dataFactory.getOWLDeclarationAxiom(a));
 
         Tree<OWLClass> hierarchy = service.getPrunedTree(a);
-
-        assertThat(hierarchy.value.isTopNode(), equalTo(true));
 
         assertThat(hierarchy, looksLike(
                 t(owlThing,

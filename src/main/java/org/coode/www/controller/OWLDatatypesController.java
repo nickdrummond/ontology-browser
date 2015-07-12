@@ -61,7 +61,7 @@ public class OWLDatatypesController extends ApplicationController {
         Set<OWLOntology> ontologies = owlServer.getOntologies();
 
         Comparator<Tree<OWLDatatype>> comparator = (o1, o2) ->
-                o1.value.getRepresentativeElement().compareTo(o2.value.getRepresentativeElement());
+                o1.value.iterator().next().compareTo(o2.value.iterator().next());
 
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(
                         owlServer.getOWLOntologyManager().getOWLDataFactory(),
