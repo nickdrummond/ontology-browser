@@ -45,12 +45,7 @@ function createLabelRendererListener() {
 function createSlideToggles() {
     $("<img class=\"min\" src=\"" + baseURL + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
         $(this).nextAll("ul").first().slideToggle('fast');
-    }).prependTo(".characteristic");
-
-    // add a listener for all codeboxes TODO remove once all replaced
-    $("<img class=\"min\" src=\"" + baseURL + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
-        $(this).next(".codebox").slideToggle('fast');
-    }).insertBefore(".codebox");
+    }).prependTo(".characteristic, .owlselector");
 }
 
 function createTreeListeners(){

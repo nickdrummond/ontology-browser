@@ -156,11 +156,9 @@
 
 <div class="owlselector" th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
     <h4 th:text="${title}">Title</h4>
-    <div class="codebox">
-        <ul class="minihierarchy">
-            <li th:replace="base::tree(${hierarchy})"></li>
-        </ul>
-    </div>
+    <ul class="minihierarchy">
+        <li th:replace="base::tree(${hierarchy})">Top Thing</li>
+    </ul>
 </div>
 
 <p class='footer' th:fragment='footer'>

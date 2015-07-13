@@ -28,12 +28,14 @@ div {
     margin-top: 0;
 }
 
-.characteristic ul {
+.characteristic ul, .owlselector ul {
     border: solid 1px #c7cfd5;
     background: #ffffff;
     overflow: hidden;
     padding: 5px 5px 5px 25px;
     margin: 0 0 10px 0;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
 }
 
 .characteristic h3 {
@@ -44,18 +46,6 @@ div {
 
 .characteristic li {
     margin: 5px;
-}
-
-
-.codebox, .error, .message {
-    border: solid 1px #c7cfd5;
-    background: #ffffff;
-    overflow: hidden;
-    position: relative; /* force everything to be contained and positioned inside */
-    padding: 5px;
-    margin: 8px 0 12px 0;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
 }
 
 .clearfix {
@@ -130,6 +120,12 @@ h2, h3, h4 {
     font-weight: normal;
 }
 
+h2 {
+    font-size: 16pt;
+    display: inline;
+    margin-top: 0; margin-bottom: 12px; margin-left: 6px; margin-right: 6px;
+}
+
 h3 {font-size: 10pt;
     color: #444444;
     margin-left: 12px; margin-top: 6px; margin-bottom: 12px;
@@ -139,12 +135,6 @@ h4 {
     font-size: 10pt;
     line-height: 9pt;
     display: inline;
-}
-
-h2, .owlselector h4 {
-    font-size: 16pt;
-    display: inline;
-    margin-top: 0; margin-bottom: 12px; margin-left: 6px; margin-right: 6px;
 }
 
 #menu{
@@ -210,7 +200,7 @@ div.cloud{
 }
 
 .codebox{
-    margin-bottom: 12px;    
+    margin-bottom: 12px;
 }
 
 div.owlselector .codebox {
@@ -242,17 +232,29 @@ a.subsexpand {
 }
 
 a.help {
-  float: right;
+    float: right;
 }
 
-a.permalink {font-size: smaller;}
+a.permalink {
+    font-size: smaller;
+}
 
-ul {margin-top: 1px; margin-bottom: 1px; margin-left: 1.5em; padding-left: 0.5em;}
-ul.minihierarchy {list-style-type: none; margin-left: 0;}
-ul.minihierarchy ul {list-style-type: none;}
-ul.minihierarchy li {white-space: nowrap; color: black;}
+.minihierarchy ul {
+    list-style-type: disc;
+    border: none;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-left: 15px;
+    padding-bottom: 0
+}
 
-li {margin-bottom: 0; margin-top: 2px;}
+.minihierarchy ul li {
+    white-space: nowrap;
+}
+
+li {
+    margin-top: 3px;
+}
 
 ul.minihierarchy li{}
 ul.minihierarchy li.expandable {}
@@ -360,7 +362,9 @@ span.expandable{
 
 img.min {
     display: inline;
-    margin 6px; margin-right: 3px;
+    margin 6px;
+    margin-right: 0;
+    margin-bottom: 3px;
     cursor: pointer;
     vertical-align: middle;
 }
