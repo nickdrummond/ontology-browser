@@ -6,9 +6,9 @@
 
 <body>
 
-<div th:replace='base :: title'/>
 <div th:replace='base :: menu'/>
-<div th:replace='base :: tabs'/>
+
+<div th:replace='base :: title'/>
 
 <div id="content">
 
@@ -56,12 +56,6 @@
         </div>
 
     </div>
-
-    <div th:replace="base :: hierarchy(${type}, ${hierarchy})">
-        A hierarchy
-    </div>
-
-    <div th:utext='${content}'>Some Content</div>
 </div>
 
 <div th:replace='base :: footer'></div>

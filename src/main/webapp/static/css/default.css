@@ -7,7 +7,10 @@ html {
 
 body {
     background-color: #f1f5f9;
+    height:100%;
     font-size: 9pt;
+    margin: 0;
+    padding: 0;
 }
 
 img {
@@ -15,6 +18,8 @@ img {
 }
 
 img.icon {
+    position: relative;
+    top: 4px;
     width: 24px;
     height: 24px;
 }
@@ -137,25 +142,53 @@ h4 {
     display: inline;
 }
 
+#title {
+    padding: 0;
+}
+
 #menu{
-    background-color: #ffffff;
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+    width: 300px;
+    min-height:100%;
+    height: 100%;
+    display: inline-block;
+    float: left;
+    top:0;
+        bottom:0;
+        left:0;
+        right:0;
+        overflow:hidden;
+}
+
+a.burger, a.burger:hover, a.burger:active {
+    background-color: #000;
+    color: #fff;
     padding: 5px;
-    border: solid 1px #c7cfd5;
+    font-size: 14pt;
+    text-decoration: none;
+    -moz-border-top-right-radius: 6px;
+    -moz-border-bottom-right-radius: 6px;
+    -webkit-border-top-right-radius: 6px;
+    -webkit-border-bottom-right-radius: 6px;
 }
 
 #signout {
-  float: right;
-  margin-top: 12px;
+}
+
+#signout img {
+    position: relative;
+    top: 4px;
 }
 
 #options{
-    clear: right;
-    float: right;
 }
 
 #options a {
-    border-right: solid 2px #c7cfd5;
-    padding-right: 5px;
+    color: inherit;
+    padding-left: 25px;
+    padding-right: 25px;
 }
 
 #activeOnt {
@@ -164,47 +197,41 @@ h4 {
 
 #activeOnt select {
     height: 24px;
-    width: 376px;
-    margin-bottom: 10px;
+    width: 100%;
+    margin: 10px 0;
 }
-
 
 #tabs {
     color: #aaaacc;
     margin-bottom: 16px;
 }
+
 #tabs a, #tabs span.currentpage {
-    color: #000000;
-    background-color: #ffffff;
-    border: solid 1px #c7cfd5;
-    border-top: none;
+    color: #fff;
     padding: 2px;
 }
 
 div.owlselector {
-    float: left;
-    width: 30%;
-    margin-right: 5%;
-    padding: 0;
+}
+
+#content {
+    display: inline;
+    width: auto;
+    vertical-align: top;
+    margin-right: 10px;
+    margin-left: 10px;
 }
 
 div.summary, #resultsForm {
-    width: 65%;
-    clear: right;
-    float: right;
-    overflow-x: hidden;
+    padding-left: 10px;
 }
 
 div.cloud{
     text-align: center;
 }
 
-.codebox{
-    margin-bottom: 12px;
-}
-
-div.owlselector .codebox {
-    height: 500px;
+div.owlselector {
+    height: 800px;
     overflow: auto;
 }
 
@@ -299,7 +326,6 @@ form.autocomplete {
 }
 
 #findForm{
-    float: right;
 }
 
 form#load {
@@ -314,18 +340,16 @@ form#bookmarks{
 }
 
 #find {
-    width: 200px;
+    width: 97.8%;
     height: 18px;
     margin-bottom: 10px;
 }
 
 #rendererForm {
-    display: inline
+    display: inline;
 }
 
 #rendererForm input[type=checkbox] {
-    position: relative;
-    top: 2px;
 }
 
 #dlQuery{
@@ -404,18 +428,13 @@ img.thumb{
     }
 
     #tabs {
-        clear: both;
         background-color: #ffffff;
-        border: solid 1px #c7cfd5;
-        border-top: none;
         position: relative;
         top: -1px;
     }
 
     #tabs a, #tabs span.currentpage {
         background-color: none;
-        border: none;
-        border-right: solid 2px #c7cfd5;
         margin: 5px;
         padding: 0;
         padding-right: 6px;

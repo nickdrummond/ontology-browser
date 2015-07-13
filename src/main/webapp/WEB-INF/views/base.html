@@ -34,14 +34,26 @@
 <div id='title' th:fragment='title'>
     <img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
     <h1><a th:href='@{/}' th:text='${applicationInfo.name}'>Application Name</a></h1>
-    <a id='signout' th:href='@{/signout}'>
-        <img th:src='@{/static/images/close.png}' width='16' height='16' title='close' />
-    </a>
+    <a style='display: none;' href='#content'>skip to content</a>
 </div>
 
 <div id='menu' th:fragment="menu">
 
-    <a style='display: none;' href='#content'>skip to content</a>
+    <div id='options'>
+        <a id='signout' th:href='@{/signout}'>
+            <img th:src='@{/static/images/close.png}' width='16' height='16' title='Sign Out' />
+            Sign Out
+        </a>
+
+        <a class='optionLink' th:href='@{/options/}' >Options</a>
+
+        <form id='rendererForm'>
+            <input type='checkbox' name='renderLabels' id="renderLabels"
+                   th:checked='${options.optionRenderer == "label"}'/>
+            <label for='renderLabels'>Labels</label>
+        </form>
+    </div> <!-- options -->
+
     <form id="activeOnt">
         <input type='hidden' name='property' value='optionActiveOnt' />
         <select class="option" name="value">
@@ -67,28 +79,25 @@
         var as = new AutoSuggest("find", options);
     </script>
 
-    <div id='options'>
-        <a class='optionLink' th:href='@{/options/}' >Options</a>
-        <form id='rendererForm'>
-            <label for='renderLabels'>Labels</label>
-            <input type='checkbox' name='renderLabels' id="renderLabels"
-                   th:checked='${options.optionRenderer == "label"}'/>
-        </form>
-    </div> <!-- options -->
+    <div th:replace='base :: tabs'/>
 
-    <div class='clearfix'></div>
+    <div th:replace="base :: hierarchy(${type}, ${hierarchy})">
+        A hierarchy
+    </div>
+
+    <div th:utext='${content}'>Some Content</div>
 
 </div> <!-- menu -->
 
-<div id='tabs' th:fragment='tabs'>
-    <a th:href='@{/ontologies/}'>Ontologies</a>
-    <a th:href='@{/classes/}'>Classes</a>
-    <a th:href='@{/individuals/}'>Individuals</a>
-    <a th:href='@{/objectproperties/}'>Object&nbsp;Properties</a>
-    <a th:href='@{/dataproperties/}'>Data&nbsp;Properties</a>
-    <a th:href='@{/annotationproperties/}'>Annotation&nbsp;Properties</a>
-    <a th:href='@{/datatypes/}'>Datatypes</a>
-</div> <!-- tabs -->
+<ul id='tabs' th:fragment='tabs'>
+    <li><a th:href='@{/ontologies/}'>Ontologies</a></li>
+    <li><a th:href='@{/classes/}'>Classes</a></li>
+    <li><a th:href='@{/individuals/}'>Individuals</a></li>
+    <li><a th:href='@{/objectproperties/}'>Object&nbsp;Properties</a></li>
+    <li><a th:href='@{/dataproperties/}'>Data&nbsp;Properties</a></li>
+    <li><a th:href='@{/annotationproperties/}'>Annotation&nbsp;Properties</a></li>
+    <li><a th:href='@{/datatypes/}'>Datatypes</a></li>
+</ul> <!-- tabs -->
 
 <div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
 
