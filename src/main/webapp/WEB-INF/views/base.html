@@ -142,7 +142,10 @@
 <EMBED th:fragment="sound (url)" th:if="${sound != null}" src="/notfound.mp3" th:src="${url}" autostart="true" hidden="true"/>
 
 <li th:fragment="tree (t)" th:if="${t != null}">
-    <a th:each='synonym : ${t.value}' th:utext="${mos.render(synonym)}"></a>
+    <span th:each="synonym,iteratorStatus : ${t.value}" th:remove="tag">
+        <span th:if="${iteratorStatus.index != 0}" class="keyword">&equiv;</span>
+        <a th:utext="${mos.render(synonym)}">a thing</a>
+    </span>
 
     <ul th:if="${!t.children.isEmpty()}">
         <div class="removeme" th:each="child : ${t.children}" th:remove="tag">
