@@ -68,6 +68,7 @@ public class OntologiesController extends ApplicationController {
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlOntology));
 
         model.addAttribute("title", ontologyName + " (Ontology)");
+        model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous")));
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());

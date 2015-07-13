@@ -63,7 +63,8 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlDataProperty));
 
-        model.addAttribute("title", entityName + " (Object Property)");
+        model.addAttribute("title", entityName + " (Data Property)");
+        model.addAttribute("type", "Data Properties");
         model.addAttribute("iri", owlDataProperty.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", owlServer.getActiveOntology());

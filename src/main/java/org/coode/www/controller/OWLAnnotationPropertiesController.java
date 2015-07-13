@@ -57,6 +57,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlAnnotationProperty));
 
         model.addAttribute("title", entityName + " (Annotation Property)");
+        model.addAttribute("type", "Annotation Properties");
         model.addAttribute("iri", owlAnnotationProperty.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());

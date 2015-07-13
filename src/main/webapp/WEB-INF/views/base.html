@@ -32,11 +32,11 @@
 <body>
 
 <div id='title' th:fragment='title'>
-<img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
-<h1><a th:href='@{/}' th:text='${applicationInfo.name}'>Application Name</a></h1>
-        <a id='signout' th:href='@{/signout}'>
-            <img th:src='@{/static/images/close.png}' width='16' height='16' title='close' />
-        </a>
+    <img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
+    <h1><a th:href='@{/}' th:text='${applicationInfo.name}'>Application Name</a></h1>
+    <a id='signout' th:href='@{/signout}'>
+        <img th:src='@{/static/images/close.png}' width='16' height='16' title='close' />
+    </a>
 </div>
 
 <div id='menu' th:fragment="menu">
@@ -154,20 +154,18 @@
     </ul>
 </li>
 
-<div class="owlselector" th:fragment="hierarchy (hierarchy)" th:if="${hierarchy != null}">
-    <div id="classes">
-        <h4>Classes</h4>
-        <div class="codebox">
-            <ul class="minihierarchy OWLClass">
-                <li th:replace="base::tree(${hierarchy})"></li>
-            </ul>
-        </div>
+<div class="owlselector" th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
+    <h4 th:text="${title}">Title</h4>
+    <div class="codebox">
+        <ul class="minihierarchy">
+            <li th:replace="base::tree(${hierarchy})"></li>
+        </ul>
     </div>
 </div>
 
 <p class='footer' th:fragment='footer'>
-  <a th:href='${applicationInfo.url + "/"}' th:text='${"OWL Browser v" + applicationInfo.version}'>Version info</a>
-  <a th:href='${applicationInfo.url + "/wiki/GettingStarted"}' class='help' target='_blank'>Help</a>
+    <a th:href='${applicationInfo.url + "/"}' th:text='${"OWL Browser v" + applicationInfo.version}'>Version info</a>
+    <a th:href='${applicationInfo.url + "/wiki/GettingStarted"}' class='help' target='_blank'>Help</a>
 </p>
 
 </body>

@@ -64,6 +64,7 @@ public class OWLClassesController extends ApplicationController {
         String entityName = owlServer.getShortFormProvider().getShortForm(owlClass);
 
         model.addAttribute("title", entityName + " (Class)");
+        model.addAttribute("type", "Classes");
         model.addAttribute("iri", owlClass.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", owlServer.getActiveOntology());
