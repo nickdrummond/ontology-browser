@@ -47,8 +47,15 @@ function createSlideToggles() {
         $(this).nextAll("ul").first().slideToggle('fast');
     }).prependTo(".characteristic, .owlselector");
 
-    $('<a class="burger" href="">&equiv;</a>').click(function(e){
-        $('#menu').animate({width:'toggle'}, 350);
+    $('<a class="burger" href="">&equiv;</a>').toggle(
+    function(e){
+        $('#menu').animate({'width' : 0}, 200);
+        $('#content').animate({'left' : 0}, 200);
+        return false;
+    },
+    function(e){
+        $('#menu').animate({'width' : 300}, 200);
+        $('#content').animate({'left' : 320}, 200);
         return false;
     }).prependTo('#title');
 }
