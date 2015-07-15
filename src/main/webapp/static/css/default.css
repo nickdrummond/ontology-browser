@@ -95,28 +95,21 @@ div.imageHolder{
     margin-bottom: 12px;
 }
 
-#look_and_feel {
-    float: left;
-    width: 45%;
+.optiongroup {
+    margin-top: 20px;
+    margin-left: 40px;
 }
 
-#model {
-    float: right;
-    width: 45%;
-}
-
-#look_and_feel table,
-#model table{
+.optiongroup table{
+    margin-top: 20px;
     width: 100%;
 }
 
-#look_and_feel select,
-#model select{
+.optiongroup select {
     width: 80%;
 }
 
-#look_and_feel input[type=text],
-#model input[type=text]{
+.optiongroup input[type=text]{
     width: 80%; margin-right: 10px;
 }
 
@@ -168,11 +161,11 @@ h4 {
     float: left;
 }
 
-#content {
+#main {
     background-color: #f1f5f9;
     color: #111;
     position: absolute;
-    height:100%;
+    min-height:100%;
     left: 320px;
     right: 0;
     vertical-align: top;
@@ -228,9 +221,8 @@ a.burger, a.burger:hover, a.burger:active {
     padding: 2px;
 }
 
-div.summary, #resultsForm {
+#content {
     margin-top: 20px;
-    height: 80%;
     padding-left: 10px;
 }
 
@@ -339,14 +331,10 @@ form.autocomplete {
 }
 
 form#load {
-    float: left;
     margin-bottom: 50px;
-    width: 45%;
 }
 
 form#bookmarks{
-    float: right;
-    width: 45%;
 }
 
 #find {
@@ -461,7 +449,7 @@ img.thumb{
 
     form#bookmarks, form#load,
     #activeOnt select,
-    div.owlselector, div.summary {
+    div.owlselector, #content {
         float: none;
         clear: both;
         width: 100%;

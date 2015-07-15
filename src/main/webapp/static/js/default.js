@@ -50,12 +50,12 @@ function createSlideToggles() {
     $('<a class="burger" href="">&equiv;</a>').toggle(
     function(e){
         $('#menu').animate({'width' : 0}, 200);
-        $('#content').animate({'left' : 0}, 200);
+        $('#main').animate({'left' : 0}, 200);
         return false;
     },
     function(e){
         $('#menu').animate({'width' : 300}, 200);
-        $('#content').animate({'left' : 320}, 200);
+        $('#main').animate({'left' : 320}, 200);
         return false;
     }).prependTo('#title');
 }

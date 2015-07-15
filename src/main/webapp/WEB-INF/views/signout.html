@@ -6,25 +6,27 @@
 
 <body>
 
-<div th:replace='base :: title'/>
 <div th:replace='base :: menu'/>
-<div th:replace='base :: tabs'/>
 
-<h2>Sign Out?</h2>
+<div id='main'>
 
-<div class='error'>
+    <div th:replace='base :: title'/>
 
-    <p>This will clear all ontologies you are browsing.</p>
+    <div id="content">
+        <h2>Sign Out?</h2>
 
-    <p>All permalinks you have bookmarked or sent to friends will continue to work.</p>
+        <p>This will clear all ontologies you are browsing.</p>
 
-    <p>Are you sure you wish to quit?</p>
+        <p>All permalinks you have bookmarked or sent to friends will continue to work.</p>
 
-    <p><a href='signout-confirmed'>Yes</a></p>
+        <p>Are you sure you wish to quit?</p>
 
-</div><!-- error -->
+        <p><a href='signout-confirmed'>Yes</a></p>
 
-<div th:replace='base :: footer'></div>
+        <div th:replace='base :: footer'></div>
+    </div>
+
+</div><!-- main -->
 
 </body>
 </html>

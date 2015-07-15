@@ -8,11 +8,11 @@
 
 <div th:replace='base :: menu'/>
 
-<div id="content">
+<div id="main">
 
     <div th:replace='base :: title'/>
 
-    <div class="summary">
+    <div id="content">
         <h2 th:text="${title}">An OWLClass</h2>
         <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
            href='./' class='permalink'>permalink</a>

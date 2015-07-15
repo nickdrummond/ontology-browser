@@ -6,20 +6,21 @@
 
 <body>
 
-<div th:replace='base :: title'/>
 <div th:replace='base :: menu'/>
-<div th:replace='base :: tabs'/>
 
-<div id='content'>
+<div id="main">
 
-<h2>Options</h2>
+    <div th:replace='base :: title'/>
 
-    <div id='look_and_feel'>
+    <div id='content'>
 
-        <h4>Look and Feel</h4>
+        <h2>Options</h2>
 
-        <div class='codebox'>
-            <table style='margin-bottom: 10px;'>
+        <div id='look_and_feel' class="optiongroup">
+
+            <h4>Look and Feel</h4>
+
+            <table>
 
                 <tr>
                     <td class='key'>Label annotation</td>
@@ -76,14 +77,13 @@
                 </tr>
 
             </table>
-        </div>
-    </div><!-- look and feel -->
+        </div><!-- look and feel -->
 
+        <div id='model' class="optiongroup">
 
-    <div id='model'>
-        <h4>Reasoner</h4>
-        <div class='codebox'>
-            <table style='margin-bottom: 10px;'>
+            <h4>Reasoner</h4>
+
+            <table>
 
                 <tr>
                     <td class='key'>Reasoner</td>
@@ -135,12 +135,12 @@
                 </tr>
 
             </table>
-        </div>
-    </div><!-- model -->
+        </div><!-- model -->
 
-</div><!-- content -->
+    </div><!-- content -->
 
-<div th:replace='base :: footer'></div>
+    <div th:replace='base :: footer'></div>
 
+</div>
 </body>
 </html>

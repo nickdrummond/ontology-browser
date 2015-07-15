@@ -6,27 +6,29 @@
 
 <body>
 
-<div th:replace='base :: title'/>
 <div th:replace='base :: menu'/>
-<div th:replace='base :: tabs'/>
 
+<div id="main">
 
-<div class='owlselector'>
-    <h2>DL Query</h2>
-    <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-       href='./' class='permalink'>permalink</a>
+    <div th:replace='base :: title'/>
 
-    <div class='codebox'>
+    <div id="content">
 
-        <p>Reasoner: <a href="../options/" th:href='@{/options/}'>JFact</a></p>
+        <h2>DL Query</h2>
+        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
+           href='./' class='permalink'>permalink</a>
 
-        <form class='autocomplete' method='get' id='dlQueryForm' action=''>
-            <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
-            <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
-            <input type='submit' value='query' />
-        </form>
+        <div class='codebox'>
 
-        <script type="text/javascript">
+            <p>Reasoner: <a href="../options/" th:href='@{/options/}'>JFact</a></p>
+
+            <form class='autocomplete' method='get' id='dlQueryForm' action=''>
+                <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
+                <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
+                <input type='submit' value='query' />
+            </form>
+
+            <script type="text/javascript">
             var options = {
               parser : baseURL + 'dlquery/parse',
               autocomplete: baseURL + 'dlquery/ac'
@@ -34,15 +36,18 @@
             new ExpressionEditor("dlQuery", options);
         </script>
 
+        </div>
+
+
+        <div id='resultsForm'>
+            <!-- results will go here -->
+        </div>
+
     </div>
 
-</div><!-- owlselector -->
+    <div th:replace='base :: footer'></div>
 
-<div id='resultsForm'>
-  <!-- results will go here -->
 </div>
-
-<div th:replace='base :: footer'></div>
 
 </body>
 </html>
