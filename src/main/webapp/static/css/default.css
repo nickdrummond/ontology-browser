@@ -86,7 +86,7 @@ div.message p{
 
 div.message a{
     font-weight: bolder;
-    color: blue;
+    color: #002;
 }
 
 div.imageHolder{
@@ -242,12 +242,12 @@ a {
 
 a:hover {
     text-decoration: underline;
-    color: blue;
+    color: #002;
 }
 
 /* we want links in literals to look like links*/
 .literal a {
-    color: blue;
+    color: #002;
     text-decoration: underline;
 }
 
@@ -361,14 +361,8 @@ span.expandable{
     cursor: pointer;
 }
 
-/* deprecated */
-.urlOption{
-    color: blue;
-    font-size: smaller;
-}
-
 .iri{
-    color: blue;
+    color: #002;
     font-size: smaller;
     margin: 8px;
 }

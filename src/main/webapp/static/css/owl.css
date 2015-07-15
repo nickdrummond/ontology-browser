@@ -44,7 +44,7 @@
 }
 
 a.Class:hover{
-    color: blue;
+    color: #002;
 }
 
 .Object.Property{
@@ -84,6 +84,6 @@ a.Annotation.Property:hover{
 }
 
 a.Individual:hover{
-    color: blue;
+    color: #002;
     font-style: italic;
 }
