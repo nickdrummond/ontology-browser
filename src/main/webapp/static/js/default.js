@@ -10,6 +10,15 @@ var hierarchyURL = "hierarchy/";
 
 $(document).ready(function(){
 
+
+if(typeof(Storage) !== 'undefined') {
+    if (sessionStorage.showMenu === 'false') {
+        hideMenu();
+    }
+} else {
+    alert('Sorry! No Web Storage support..');
+}
+
     scrollTreeToSelection();
 
     createLabelRendererListener();
@@ -42,22 +51,25 @@ function createLabelRendererListener() {
     });
 }
 
+function hideMenu() {
+    $('#menu').css('left', '-320px');
+    $('#main').css('left', '0');
+}
+
+function toggleMenu(e) {
+    sessionStorage.showMenu = (sessionStorage.showMenu === 'false') ? 'true' : 'false';
+    var width = (sessionStorage.showMenu === 'false') ? {menu:'-320px', main:'0'} : {menu:'0', main:'320px'};
+    $('#menu').animate({'left' : width.menu}, 300);
+    $('#main').animate({'left' : width.main}, 300);
+    return false;
+}
+
 function createSlideToggles() {
     $("<img class=\"min\" src=\"" + baseURL + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
         $(this).nextAll("ul").first().slideToggle('fast');
     }).prependTo(".characteristic, .owlselector");
 
-    $('<a class="burger" href="">&equiv;</a>').toggle(
-    function(e){
-        $('#menu').animate({'width' : 0}, 200);
-        $('#main').animate({'left' : 0}, 200);
-        return false;
-    },
-    function(e){
-        $('#menu').animate({'width' : 300}, 200);
-        $('#main').animate({'left' : 320}, 200);
-        return false;
-    }).prependTo('#title');
+    $('<a class="burger" href="">&equiv;</a>').click(toggleMenu).prependTo('#title');
 }
 
 function createTreeListeners(){

@@ -197,7 +197,6 @@ a.burger, a.burger:hover, a.burger:active {
 
 #options a {
     color: inherit;
-    padding-left: 25px;
     padding-right: 25px;
 }
 
@@ -384,9 +383,8 @@ span.expandable{
 
 img.min {
     display: inline;
-    margin 6px;
+    margin: 6px;
     margin-right: 0;
-    margin-bottom: 3px;
     cursor: pointer;
     vertical-align: middle;
 }
