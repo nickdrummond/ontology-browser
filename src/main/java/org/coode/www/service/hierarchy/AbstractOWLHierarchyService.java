@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractOWLHierarchyService<T extends OWLObject> {
+public abstract class AbstractOWLHierarchyService<T extends OWLObject> implements OWLHierarchyService<T> {
 
     private final Comparator<? super Tree<T>> comparator;
 

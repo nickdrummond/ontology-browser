@@ -4,10 +4,12 @@ import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
+import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -31,22 +33,26 @@ public class Matchers {
         return new OWLClassNode(Sets.newHashSet(clses));
     }
 
-    public static Matcher<? super Tree<OWLClass>> looksLike(final Object[] expected) {
+    public static Node<OWLNamedIndividual> all(OWLNamedIndividual... inds) {
+        return new OWLNamedIndividualNode(Sets.newHashSet(inds));
+    }
 
-        return new CustomTypeSafeMatcher<Tree<OWLClass>>("A matching tree") {
+    public static CustomTypeSafeMatcher<Tree<? extends OWLEntity>> looksLike(final Object[] expected) {
 
-            private Tree<OWLClass> parentNode;
-            private Tree<OWLClass> actualNode;
+        return new CustomTypeSafeMatcher<Tree<? extends OWLEntity>>("A matching tree") {
+
+            private Tree<? extends OWLEntity> parentNode;
+            private Tree<? extends OWLEntity> actualNode;
             private Node expectedNode;
 
             @Override
-            protected boolean matchesSafely(Tree<OWLClass> actual) {
+            protected boolean matchesSafely(Tree<? extends OWLEntity> actual) {
                 parentNode = actual;
                 return matches(actual, expected);
             }
 
             @Override
-            protected void describeMismatchSafely(Tree<OWLClass> item, Description mismatchDescription) {
+            protected void describeMismatchSafely(Tree<? extends OWLEntity> item, Description mismatchDescription) {
                 mismatchDescription
                         .appendText(parentNode != null ? parentNode.value.toString() : "no parent")
                         .appendText(" -> ")
@@ -58,7 +64,7 @@ public class Matchers {
             }
 
             // Walk both actual and expected hierarchies
-            private boolean childrenMatch(final Tree<OWLClass> actual, final Object[] expected) {
+            private boolean childrenMatch(final Tree<? extends OWLEntity> actual, final Object[] expected) {
                 for (int i=1; i<expected.length; i++) {
                     Object[] expectedChild = (Object[]) expected[i];
 
@@ -80,7 +86,7 @@ public class Matchers {
                 return true;
             }
 
-            private boolean matches(final Tree<OWLClass> actual, final Object[] expected) {
+            private boolean matches(final Tree<? extends OWLEntity> actual, final Object[] expected) {
 
                 if (!actual.value.equals(expected[0])) {
                     expectedNode = (Node)expected[0];

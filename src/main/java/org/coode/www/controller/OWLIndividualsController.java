@@ -1,16 +1,18 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.doclet.HierarchyDocletFactory;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.Tree;
 import org.coode.www.renderer.MediaRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.GeoService;
 import org.coode.www.service.MediaService;
 import org.coode.www.service.OWLIndividualsService;
+import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.Set;
 
 @Controller
@@ -54,10 +57,15 @@ public class OWLIndividualsController extends ApplicationController {
 
         OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, kit);
 
-        // TODO yuck replace this adapter
-        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
-        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLNamedIndividual.class);
-        hierarchyDoclet.setUserObject(owlIndividual);
+        OWLServer owlServer = kit.getOWLServer();
+
+        Comparator<Tree<OWLEntity>> comparator = (o1, o2) ->
+                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+
+        OWLIndividualsByTypeHierarchyService hierarchyService =
+                new OWLIndividualsByTypeHierarchyService(owlServer.getOWLReasoner(), comparator);
+
+        Tree<OWLEntity> prunedTree = hierarchyService.getPrunedTree(owlIndividual);
 
         String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlIndividual);
 
@@ -85,9 +93,9 @@ public class OWLIndividualsController extends ApplicationController {
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", ontologies);
+        model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlIndividual, kit));
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
         return "owlentity";
     }
