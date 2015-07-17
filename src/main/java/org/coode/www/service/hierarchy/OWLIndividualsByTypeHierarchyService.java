@@ -41,11 +41,11 @@ public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService
 
     public List<Tree<OWLEntity>> getImplicitRoots(NodeSet<OWLClass> expandedClasses) {
         Set<OWLNamedIndividual> inds = reasoner.getRootOntology().getIndividualsInSignature(Imports.INCLUDED);
-        List<Tree<OWLEntity>> emptyTree = Collections.<Tree<OWLEntity>>emptyList();
+        List<Tree<OWLEntity>> emptyTree = Collections.emptyList();
         Map<Node<OWLClass>, Tree<OWLEntity>> types = Maps.newHashMap();
         for (OWLNamedIndividual ind : inds) {
             for (Node<OWLClass> type : reasoner.getTypes(ind, true)) {
-                if (!types.containsKey(type)) {
+                if (!type.isTopNode() && !types.containsKey(type)) {
                     List<Tree<OWLEntity>> instanceTrees;
                     if (expandedClasses.containsEntity(type.getRepresentativeElement())) {
                         instanceTrees = Lists.newArrayList();
@@ -62,6 +62,11 @@ public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService
             }
         }
         List<Tree<OWLEntity>> sorted = Lists.newArrayList(types.values());
+
+        for (Node<OWLNamedIndividual> instance : reasoner.getInstances(reasoner.getTopClassNode().getRepresentativeElement(), true)) {
+            sorted.add(new Tree<>(toEntity(instance), emptyTree));
+        }
+
         sorted.sort(comparator);
         return sorted;
     }

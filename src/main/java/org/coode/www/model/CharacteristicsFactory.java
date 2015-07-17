@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
@@ -134,11 +135,12 @@ public class CharacteristicsFactory {
         UsageVisibilityVisitor usageVisibilityVisitor = new UsageVisibilityVisitor();
         List<OWLObject> usage = new ArrayList<>();
         for (OWLOntology ont : ontologies){
-            for (OWLAxiom ax : ont.getReferencingAxioms(owlEntity)){
+            for (OWLAxiom ax : ont.getReferencingAxioms(owlEntity, Imports.INCLUDED)){
                 if (usageVisibilityVisitor.getShowUsage(ax, owlEntity)){
                     usage.add(ax);
                 }
             }
+            // TODO get annotations that have this entity IRI as a value (getRefAxioms doesn't pick these up)
         }
         return asCharacteristic("Usage", owlEntity, usage, comparator);
     }

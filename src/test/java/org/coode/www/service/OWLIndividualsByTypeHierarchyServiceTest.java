@@ -98,40 +98,6 @@ public class OWLIndividualsByTypeHierarchyServiceTest {
 
     /**
      * owl:Thing
-     * - a <- requested
-     */
-    @Test
-    public void inferredRoots() {
-        addAxiom(dataFactory.getOWLDeclarationAxiom(a));
-
-        Tree<OWLEntity> hierarchy = service.getPrunedTree(a);
-
-        assertThat(hierarchy, looksLike(
-                t(owlThing,
-                        t(a)
-                )
-        ));
-    }
-
-    /**
-     * owl:Thing <- requested
-     * - a <- gets subclasses
-     */
-    @Test
-    public void subclasses() {
-        addAxiom(dataFactory.getOWLDeclarationAxiom(a));
-
-        Tree<OWLEntity> hierarchy = service.getPrunedTree(owlThing);
-
-        assertThat(hierarchy, looksLike(
-                t(owlThing,
-                        t(a)
-                )
-        ));
-    }
-
-    /**
-     * owl:Thing
      * - a
      *   - i <- requested
      */
@@ -152,17 +118,35 @@ public class OWLIndividualsByTypeHierarchyServiceTest {
         ));
     }
 
+
+    /**
+     * owl:Thing
+     * - i <- requested
+     */
+    @Test
+    public void instanceOfThing() {
+
+        instances(owlThing, i);
+
+        Tree<OWLEntity> hierarchy = service.getPrunedTree(i);
+
+        assertThat(hierarchy, looksLike(
+                t(owlThing,
+                        t(i)
+                )
+        ));
+    }
+
     /**
      * owl:Thing
      * - a
      *   - i <- requested
      *   - i2
-     * - a2
      */
     @Test
     public void keepsSiblings() {
 
-        subs(owlThing, a, a2);
+        subs(owlThing, a);
         instances(a, i, i2);
 
         Tree<OWLEntity> hierarchy = service.getPrunedTree(i);
@@ -172,8 +156,7 @@ public class OWLIndividualsByTypeHierarchyServiceTest {
                         t(a,
                                 t(i),
                                 t(i2)
-                        ),
-                        t(a2)
+                        )
                 )
         ));
     }

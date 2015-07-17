@@ -56,7 +56,8 @@ public class OWLIndividualsService {
         for (Optional<Characteristic> c : asList(
                 fac.getTypes(owlIndividual, activeOntologies, comparator),
                 fac.getSameAs(owlIndividual, activeOntologies, comparator),
-                fac.getDifferentFrom(owlIndividual, activeOntologies, comparator)
+                fac.getDifferentFrom(owlIndividual, activeOntologies, comparator),
+                fac.getUsage(owlIndividual, activeOntologies, comparator)
         )) {
             if (c.isPresent()) {
                 characteristics.add(c.get());
