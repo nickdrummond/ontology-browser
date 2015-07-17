@@ -1,5 +1,6 @@
 package org.coode.www.service;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
 import org.hamcrest.CustomTypeSafeMatcher;
@@ -7,6 +8,7 @@ import org.hamcrest.Description;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
 import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
@@ -25,8 +27,18 @@ public class Matchers {
      */
     public static Object[] t(Object... o) {
         return Arrays.stream(o)
-                .map(i -> i instanceof OWLClass ? new OWLClassNode((OWLClass)i) : i)
+                .map(Matchers::toNode)
                 .collect(Collectors.toList()).toArray();
+    }
+
+    private static Object toNode(Object o) {
+        if (o instanceof OWLClass) {
+            return new OWLClassNode((OWLClass)o);
+        }
+        else if (o instanceof OWLNamedIndividual) {
+            return new OWLNamedIndividualNode((OWLNamedIndividual)o);
+        }
+        return o;
     }
 
     public static Node<OWLClass> all(OWLClass... clses) {
@@ -43,7 +55,7 @@ public class Matchers {
 
             private Tree<? extends OWLEntity> parentNode;
             private Tree<? extends OWLEntity> actualNode;
-            private Node expectedNode;
+            private Iterable expectedNode;
 
             @Override
             protected boolean matchesSafely(Tree<? extends OWLEntity> actual) {
@@ -58,7 +70,7 @@ public class Matchers {
                         .appendText(" -> ")
                         .appendText(expectedNode != null ? expectedNode.toString() : "not expected")
                         .appendText(" was actually ")
-                        .appendText(actualNode != null ? actualNode.value.toString() : "not there")
+                        .appendText(actualNode != null ? actualNode.value.getClass() + " " + actualNode.value.toString() : "not there")
                         .appendText("\n\n")
                         .appendValue(item);
             }
@@ -70,7 +82,7 @@ public class Matchers {
 
                     parentNode = actual;
                     if (actual.children.size() < i) {
-                        expectedNode = (Node)expectedChild[0];
+                        expectedNode = (Iterable)expectedChild[0];
                         actualNode = null;
                         return false;
                     }
@@ -88,8 +100,8 @@ public class Matchers {
 
             private boolean matches(final Tree<? extends OWLEntity> actual, final Object[] expected) {
 
-                if (!actual.value.equals(expected[0])) {
-                    expectedNode = (Node)expected[0];
+                if (!Iterators.elementsEqual(actual.value.iterator(), ((Iterable)expected[0]).iterator())) {
+                    expectedNode = (Iterable)expected[0];
                     actualNode = actual;
                     return false;
                 }

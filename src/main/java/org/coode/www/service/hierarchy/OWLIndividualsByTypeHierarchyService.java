@@ -36,7 +36,6 @@ public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService
         else {
             throw new IllegalArgumentException("Hierarchy Service cannot handle " + entity);
         }
-        System.out.println(expandedClasses);
         return new Tree<>(toEntity(reasoner.getTopClassNode()), getImplicitRoots(expandedClasses));
     }
 
