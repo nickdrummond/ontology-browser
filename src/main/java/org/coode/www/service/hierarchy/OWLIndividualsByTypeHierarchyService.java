@@ -2,7 +2,6 @@ package org.coode.www.service.hierarchy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -36,35 +35,37 @@ public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService
         else {
             throw new IllegalArgumentException("Hierarchy Service cannot handle " + entity);
         }
-        return new Tree<>(toEntity(reasoner.getTopClassNode()), getImplicitRoots(expandedClasses));
+        return new Tree<>(entities(reasoner.getTopClassNode()), buildTree(expandedClasses));
     }
 
-    public List<Tree<OWLEntity>> getImplicitRoots(NodeSet<OWLClass> expandedClasses) {
+    public List<Tree<OWLEntity>> buildTree(NodeSet<OWLClass> expandedClasses) {
         Set<OWLNamedIndividual> inds = reasoner.getRootOntology().getIndividualsInSignature(Imports.INCLUDED);
         List<Tree<OWLEntity>> emptyTree = Collections.emptyList();
         Map<Node<OWLClass>, Tree<OWLEntity>> types = Maps.newHashMap();
         for (OWLNamedIndividual ind : inds) {
-            for (Node<OWLClass> type : reasoner.getTypes(ind, true)) {
-                if (!type.isTopNode() && !types.containsKey(type)) {
+            NodeSet<OWLClass> types1 = reasoner.getTypes(ind, true);
+            for (Node<OWLClass> type : types1) {
+
+                // JFact seems to give back empty NodeSets in results, hence checking if empty
+                if (!type.isTopNode() && !type.getEntities().isEmpty() && !types.containsKey(type)) {
                     List<Tree<OWLEntity>> instanceTrees;
                     if (expandedClasses.containsEntity(type.getRepresentativeElement())) {
                         instanceTrees = Lists.newArrayList();
                         for (Node<OWLNamedIndividual> instance : reasoner.getInstances(type.getRepresentativeElement(), true)) {
-                            instanceTrees.add(new Tree<>(toEntity(instance), emptyTree));
+                            instanceTrees.add(new Tree<>(entities(instance), emptyTree));
                         }
                         instanceTrees.sort(comparator);
-                    }
-                    else {
+                    } else {
                         instanceTrees = emptyTree;
                     }
-                    types.put(type, new Tree<>(toEntity(type), instanceTrees));
+                    types.put(type, new Tree<>(entities(type), instanceTrees));
                 }
             }
         }
         List<Tree<OWLEntity>> sorted = Lists.newArrayList(types.values());
 
         for (Node<OWLNamedIndividual> instance : reasoner.getInstances(reasoner.getTopClassNode().getRepresentativeElement(), true)) {
-            sorted.add(new Tree<>(toEntity(instance), emptyTree));
+            sorted.add(new Tree<>(entities(instance), emptyTree));
         }
 
         sorted.sort(comparator);
@@ -72,7 +73,7 @@ public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService
     }
 
     // Easy create a more generic type iterable
-    private Iterable<OWLEntity> toEntity(Node<? extends OWLEntity> node) {
+    private Iterable<OWLEntity> entities(Node<? extends OWLEntity> node) {
         return Lists.newArrayList(node);
     }
 }
