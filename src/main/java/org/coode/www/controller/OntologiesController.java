@@ -3,8 +3,6 @@ package org.coode.www.controller;
 import com.google.common.base.Optional;
 import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.output.WriterOutputStream;
-import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
@@ -15,17 +13,18 @@ import org.coode.www.model.LoadOntology;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OntologiesService;
-import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.coode.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLDocumentFormat;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Writer;
 import java.net.URL;
@@ -56,7 +55,6 @@ public class OntologiesController extends ApplicationController {
     public String getOntology(@PathVariable final String ontId,
                               @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
-
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
         OWLServer owlServer = kit.getOWLServer();
@@ -68,11 +66,13 @@ public class OntologiesController extends ApplicationController {
 
         Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(owlOntology);
 
-        String ontologyName = sfp.getShortForm(owlOntology);
+        String title = owlOntology.equals(owlServer.getRootOntology()) ?
+                "All ontologies" :
+                sfp.getShortForm(owlOntology) + " (Ontology)";
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlOntology));
 
-        model.addAttribute("title", ontologyName + " (Ontology)");
+        model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous")));
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
@@ -88,8 +88,8 @@ public class OntologiesController extends ApplicationController {
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET, produces="application/rdf+xml")
     public void exportOntology(@PathVariable final String ontId,
                                @ModelAttribute("kit") final OWLHTMLKit kit,
-                              final HttpServletResponse response,
-                              final Writer writer) throws OntServerException, NotFoundException {
+                               final HttpServletResponse response,
+                               final Writer writer) throws OntServerException, NotFoundException {
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
