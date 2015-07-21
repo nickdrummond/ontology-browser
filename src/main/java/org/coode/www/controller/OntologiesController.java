@@ -7,17 +7,18 @@ import org.coode.html.doclet.HTMLDoclet;
 import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.LoadOntology;
+import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OntologiesService;
+import org.coode.www.service.hierarchy.OWLClassHierarchyService;
+import org.coode.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLDocumentFormat;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Writer;
 import java.net.URL;
+import java.util.Comparator;
 
 @Controller
 @RequestMapping(value="/ontologies")
@@ -53,15 +55,18 @@ public class OntologiesController extends ApplicationController {
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET)
     public String getOntology(@PathVariable final String ontId,
                               @ModelAttribute("kit") final OWLHTMLKit kit,
-                              final HttpServletRequest request,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
-        // TODO yuck replace this adapter
-        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
-        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLOntology.class);
-        hierarchyDoclet.setUserObject(owlOntology);
+        OWLServer owlServer = kit.getOWLServer();
+
+        Comparator<Tree<OWLOntology>> comparator = (o1, o2) ->
+                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+
+        OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(owlServer.getRootOntology(), comparator);
+
+        Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(owlOntology);
 
         String ontologyName = sfp.getShortForm(owlOntology);
 
@@ -73,9 +78,9 @@ public class OntologiesController extends ApplicationController {
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("hierarchy", ontologyTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlOntology, kit));
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
         return "owlentity";
     }
