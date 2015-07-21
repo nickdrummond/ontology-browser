@@ -1,23 +1,23 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.html.doclet.HTMLDoclet;
-import org.coode.html.doclet.HierarchyDocletFactory;
 import org.coode.html.doclet.NodeDoclet;
 import org.coode.owl.hierarchy.HierarchyProvider;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLAnnotationPropertiesService;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
+import java.util.List;
 
 @Controller
 @RequestMapping(value="/annotationproperties")
@@ -31,7 +31,14 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     public String getOWLAnnotationProperties(@ModelAttribute("kit") final OWLHTMLKit kit)
             throws OntServerException, NotFoundException {
 
-        OWLAnnotationProperty firstAnnotationProperty = service.getFirstAnnotationProperty(kit);
+        OWLServer owlServer = kit.getOWLServer();
+
+        OWLOntology activeOntology = owlServer.getActiveOntology();
+
+        List<OWLAnnotationProperty> annotationProperties
+                = service.getAnnotationProperties(activeOntology, owlServer.getComparator());
+
+        OWLAnnotationProperty firstAnnotationProperty = annotationProperties.get(0);
 
         String id = service.getIdFor(firstAnnotationProperty);
 
@@ -42,17 +49,18 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLAnnotationProperty(@PathVariable final String propertyId,
                                            @ModelAttribute("kit") final OWLHTMLKit kit,
-                              final HttpServletRequest request,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLAnnotationProperty owlAnnotationProperty = service.getOWLAnnotationPropertyFor(propertyId, kit);
 
-        // TODO yuck replace this adapter
-        HierarchyDocletFactory hierarchyDocletFactory = new HierarchyDocletFactory(kit);
-        HTMLDoclet hierarchyDoclet = hierarchyDocletFactory.getHierarchy(OWLAnnotationProperty.class);
-        hierarchyDoclet.setUserObject(owlAnnotationProperty);
+        OWLServer owlServer = kit.getOWLServer();
 
-        String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlAnnotationProperty);
+        OWLOntology activeOntology = owlServer.getActiveOntology();
+
+        List<OWLAnnotationProperty> annotationProperties =
+                service.getAnnotationProperties(activeOntology, owlServer.getComparator());
+
+        String entityName = owlServer.getShortFormProvider().getShortForm(owlAnnotationProperty);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlAnnotationProperty));
 
@@ -60,11 +68,11 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         model.addAttribute("type", "Annotation Properties");
         model.addAttribute("iri", owlAnnotationProperty.getIRI().toString());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("activeOntology", activeOntology);
+        model.addAttribute("ontologies", owlServer.getOntologies());
+        model.addAttribute("entities", annotationProperties);
         model.addAttribute("characteristics", service.getCharacteristics(owlAnnotationProperty, kit));
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("content", renderDoclets(request, hierarchyDoclet));
 
         return "owlentity";
     }

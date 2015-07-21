@@ -135,7 +135,7 @@ public class CharacteristicsFactory {
         UsageVisibilityVisitor usageVisibilityVisitor = new UsageVisibilityVisitor();
         List<OWLObject> usage = new ArrayList<>();
         for (OWLOntology ont : ontologies){
-            for (OWLAxiom ax : ont.getReferencingAxioms(owlEntity, Imports.INCLUDED)){
+            for (OWLAxiom ax : ont.getReferencingAxioms(owlEntity, Imports.EXCLUDED)){
                 if (usageVisibilityVisitor.getShowUsage(ax, owlEntity)){
                     usage.add(ax);
                 }

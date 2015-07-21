@@ -81,6 +81,10 @@
 
     <div th:replace='base :: tabs'/>
 
+    <div th:replace="base :: list(${type}, ${entities})">
+        A list
+    </div>
+
     <div th:replace="base :: hierarchy(${type}, ${hierarchy})">
         A hierarchy
     </div>
@@ -168,6 +172,15 @@
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy">
         <li th:replace="base::tree(${hierarchy})">Top Thing</li>
+    </ul>
+</div>
+
+<div class="owlselector" th:fragment="list (title, entities)" th:if="${entities != null}">
+    <h4 th:text="${title}">Title</h4>
+    <ul class="minihierarchy">
+        <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
+            a thing
+        </li>
     </ul>
 </div>
 

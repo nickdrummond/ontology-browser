@@ -1,7 +1,9 @@
 package org.coode.www.service;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 import org.coode.owl.hierarchy.HierarchyProvider;
+import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
@@ -12,6 +14,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -32,17 +35,6 @@ public class OWLAnnotationPropertiesService {
 
     public String getIdFor(final OWLAnnotationProperty owlAnnotationProperty) {
         return String.valueOf(owlAnnotationProperty.getIRI().hashCode());
-    }
-
-    public OWLAnnotationProperty getFirstAnnotationProperty(final OWLHTMLKit kit) throws NotFoundException {
-        HierarchyProvider<OWLAnnotationProperty> hp = kit.getOWLServer().getHierarchyProvider(OWLAnnotationProperty.class);
-        Set<OWLAnnotationProperty> annotationProperties = hp.getRoots();
-        if (!annotationProperties.isEmpty()){
-            List<OWLAnnotationProperty> aps = new ArrayList<OWLAnnotationProperty>(annotationProperties);
-            Collections.sort(aps, kit.getOWLServer().getComparator());
-            return aps.get(0);
-        }
-        throw new NotFoundException("OWLAnnotationProperty", "any");
     }
 
     public HierarchyProvider<OWLAnnotationProperty> getHierarchyProvider(final OWLHTMLKit kit) {
@@ -69,5 +61,14 @@ public class OWLAnnotationPropertiesService {
         }
 
         return characteristics;
+    }
+
+    public List<OWLAnnotationProperty> getAnnotationProperties(final OWLOntology activeOntology,
+                                                               final Comparator<OWLObject> comparator) {
+        Set<OWLAnnotationProperty> props = Sets.newHashSet();
+        for (OWLOntology ont : activeOntology.getImportsClosure()) {
+            props.addAll(ont.getAnnotationPropertiesInSignature());
+        }
+        return props.stream().sorted(comparator).collect(Collectors.toList());
     }
 }
