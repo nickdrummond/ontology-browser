@@ -221,4 +221,27 @@ public class OWLClassHierarchyServiceTest {
                 )
         ));
     }
+
+    /**
+     * owl:Thing
+     * - a
+     *   - b
+     *     - c
+     *       - a <- requested
+     */
+    @Test
+    public void cycles() {
+        subs(owlThing, a);
+        subs(a, b);
+        subs(b, c);
+        subs(c, a);
+
+        Tree<OWLClass> hierarchy = service.getPrunedTree(a);
+
+        assertThat(hierarchy, looksLike(
+                t(owlThing,
+                        t(all(a, b, c))
+                )
+        ));
+    }
 }
