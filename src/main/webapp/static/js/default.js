@@ -188,8 +188,7 @@ function getChildren(li){
     var childList = $("<ul><li><img src=\"" + baseURL + "static/images/small_busy.gif\" width=\"10\" height=\"10\"/></li></ul>");
 
     var query = 'children';
-    // TODO this doesn't work for instances currently as the minihierarchy is missing the type
-    if (li.parent().hasClass('OWLNamedIndividual')) {
+    if (li.closest('.minihierarchy').hasClass('Individuals')) {
         query = 'instances';
     }
 
