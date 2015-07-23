@@ -2,6 +2,7 @@ package org.coode.www.service.hierarchy;
 
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLOntology;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +22,11 @@ public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntol
     @Override
     public Tree<OWLOntology> getPrunedTree(OWLOntology focus) {
         return getTree(rootOntology);
+    }
+
+    @Override
+    public Tree<OWLOntology> getChildren(OWLOntology base) {
+        throw new NotImplementedException();
     }
 
     private Tree<OWLOntology> getTree(OWLOntology ont) {

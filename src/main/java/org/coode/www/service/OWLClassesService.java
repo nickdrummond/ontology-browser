@@ -7,8 +7,10 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

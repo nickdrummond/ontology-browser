@@ -18,10 +18,23 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
         this.comparator = comparator;
     }
 
+    @Override
     public Tree<T> getPrunedTree(final T entity) {
         Set<Node<T>> nodes = Sets.newHashSet(ancestors(entity));
         nodes.add(equivs(entity));
         return buildTree(topNode(), nodes);
+    }
+
+    @Override
+    public Tree<T> getChildren(T base) {
+        List<Tree<T>> subs = Lists.newArrayList();
+        for (Node<T> subNode : subs(base)) {
+            if (!subNode.isBottomNode()) {
+                subs.add(new Tree<>(subNode));
+            }
+        }
+        subs.sort(comparator);
+        return new Tree<>(equivs(base), subs);
     }
 
     private Tree<T> buildTree(final Node<T> current, final Set<Node<T>> ancestors) {

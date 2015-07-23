@@ -12,7 +12,9 @@ import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.coode.www.service.OWLClassesService;
 import org.coode.www.service.OWLIndividualsService;
+import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -76,31 +78,52 @@ public class OWLClassesController extends ApplicationController {
         return "owlentity";
     }
 
-    @ResponseBody
     @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String classId,
                               @ModelAttribute("kit") final OWLHTMLKit kit,
-                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
+                              final Model model) throws OntServerException, NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
-        HierarchyProvider<OWLClass> hp = service.getHierarchyProvider(kit);
-        NodeDoclet<OWLClass> nodeDoclet = new NodeDoclet<OWLClass>(kit, owlClass, hp);
-        nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
 
-        return renderDoclets(referer, nodeDoclet);
+        OWLServer owlServer = kit.getOWLServer();
+
+        Comparator<Tree<OWLClass>> comparator = (o1, o2) ->
+                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+
+        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(owlServer.getOWLReasoner(), comparator);
+
+        Tree<OWLClass> prunedTree = hierarchyService.getChildren(owlClass);
+
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
+
+        model.addAttribute("t", prunedTree);
+        model.addAttribute("mos", owlRenderer);
+
+        return "base :: tree";
     }
 
-    @ResponseBody
     @RequestMapping(value="/{classId}/instances", method=RequestMethod.GET)
     public String getInstances(@PathVariable final String classId,
                                @ModelAttribute("kit") final OWLHTMLKit kit,
-                               @RequestHeader final URL referer) throws OntServerException, NotFoundException {
+                               final Model model) throws OntServerException, NotFoundException {
 
-        OWLClass owlClass = service.getOWLClassFor(classId, kit);
-        HierarchyProvider<OWLNamedIndividual> hp = individualsService.getHierarchyProvider(kit);
-        NodeDoclet nodeDoclet = new NodeDoclet(kit, owlClass, hp);
-        nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
+        OWLEntity owlClass = service.getOWLClassFor(classId, kit);
 
-        return renderDoclets(referer, nodeDoclet);
+        OWLServer owlServer = kit.getOWLServer();
+
+        Comparator<Tree<OWLEntity>> comparator = (o1, o2) ->
+                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+
+        OWLIndividualsByTypeHierarchyService hierarchyService =
+                new OWLIndividualsByTypeHierarchyService(owlServer.getOWLReasoner(), comparator);
+
+        Tree<OWLEntity> prunedTree = hierarchyService.getChildren(owlClass);
+
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
+
+        model.addAttribute("t", prunedTree);
+        model.addAttribute("mos", owlRenderer);
+
+        return "base :: tree";
     }
 }

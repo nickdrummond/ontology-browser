@@ -156,9 +156,10 @@
        autostart="true" hidden="true"/>
 
 <li th:fragment="tree (t)" th:if="${t != null}">
+    <span class='expandable'>+</span>
     <span th:each="synonym,iteratorStatus : ${t.value}" th:remove="tag">
         <span th:if="${iteratorStatus.index != 0}" class="keyword">&equiv;</span>
-        <a th:utext="${mos.render(synonym)}">a thing</a>
+        <span th:utext="${mos.render(synonym)}" th:remove="tag">a thing</span>
     </span>
 
     <ul th:if="${!t.children.isEmpty()}">
@@ -177,7 +178,7 @@
 
 <div class="owlselector" th:fragment="list (title, entities)" th:if="${entities != null}">
     <h4 th:text="${title}">Title</h4>
-    <ul class="minihierarchy">
+    <ul>
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
             a thing
         </li>

@@ -48,7 +48,8 @@ div.characteristics {
 
 .characteristic ul, .owlselector ul {
     border: solid 1px #c7cfd5;
-    background: #ffffff;
+    background: #fff;
+    color: #000;
     padding: 5px 5px 5px 25px;
     margin: 0 0 10px 0;
     -moz-border-radius: 6px;
@@ -229,15 +230,13 @@ div.cloud{
     text-align: center;
 }
 
-.minihierarchy {
-    height: 90%;
-    max-height: 800px;
-    overflow: auto;
-}
-
 a {
     text-decoration: none;
     color: #000000;
+}
+
+li {
+    margin-top: 3px;
 }
 
 a:hover {
@@ -266,23 +265,31 @@ a.permalink {
     font-size: smaller;
 }
 
-.minihierarchy ul {
-    list-style-type: disc;
+.owlselector ul {
+    height: 90%;
+    max-height: 800px;
+    overflow: auto;
+}
+
+.minihierarchy, .minihierarchy ul {
+    list-style-type: none;
     border: none;
     margin-bottom: 0;
     padding-top: 0;
-    padding-left: 15px;
     padding-bottom: 0
+}
+
+.minihierarchy ul {
+    padding-left: 15px;
 }
 
 .minihierarchy ul li {
     white-space: nowrap;
 }
 
-li {
-    margin-top: 3px;
+ul.minihierarchy {
+    padding-left: 10px;
 }
-
 ul.minihierarchy li{}
 ul.minihierarchy li.expandable {}
 

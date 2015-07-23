@@ -188,6 +188,7 @@ function getChildren(li){
     var childList = $("<ul><li><img src=\"" + baseURL + "static/images/small_busy.gif\" width=\"10\" height=\"10\"/></li></ul>");
 
     var query = 'children';
+    // TODO this doesn't work for instances currently as the minihierarchy is missing the type
     if (li.parent().hasClass('OWLNamedIndividual')) {
         query = 'instances';
     }
@@ -198,7 +199,7 @@ function getChildren(li){
         url: url,
         context: li,
         success: function(data, textStatus, request){
-            this.html(data); // replace the li with an expanded version
+            li.replaceWith(data); // replace the li with an expanded version
             // and add the expand click listener to the new nodes
             $("span.expandable", this).click(function(e){
                 handleExpand($(this).parent());

@@ -38,6 +38,17 @@ public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService
         return new Tree<>(entities(reasoner.getTopClassNode()), buildTree(expandedClasses));
     }
 
+    @Override
+    public Tree<OWLEntity> getChildren(OWLEntity base) {
+        List<Tree<OWLEntity>> emptyTree = Collections.emptyList();
+        List<Tree<OWLEntity>> instanceTrees = Lists.newArrayList();
+        for (Node<OWLNamedIndividual> instance : reasoner.getInstances(base.asOWLClass(), true)) {
+            instanceTrees.add(new Tree<>(entities(instance), emptyTree));
+        }
+        instanceTrees.sort(comparator);
+        return new Tree<>(entities(reasoner.getEquivalentClasses(base.asOWLClass())), instanceTrees);
+    }
+
     public List<Tree<OWLEntity>> buildTree(NodeSet<OWLClass> expandedClasses) {
         Set<OWLNamedIndividual> inds = reasoner.getRootOntology().getIndividualsInSignature(Imports.INCLUDED);
         List<Tree<OWLEntity>> emptyTree = Collections.emptyList();
