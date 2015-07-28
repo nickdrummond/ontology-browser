@@ -34,7 +34,7 @@
                        src='../../static/images/download.png'
                        th:src="@{/static/images/download.png}"/>
             </form>
-            <h3 th:text="${iri}">http://example.com/entity-url</h3>
+            <h3 th:utext="${mos.render(iri)}">http://example.com/entity-url</h3>
         </div>
 
         <div th:replace="base :: image (${image})">
