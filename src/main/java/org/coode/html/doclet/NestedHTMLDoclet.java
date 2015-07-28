@@ -22,12 +22,6 @@ public interface NestedHTMLDoclet<O> extends HTMLDoclet<O> {
      * @param doclet that contains the same type of user object as the parent
      */
     void addDoclet(HTMLDoclet<O> doclet);
-    
-    void addDoclet(HTMLDoclet<O> doclet, int index);
-
-    void removeDoclet(HTMLDoclet doclet);
-
-    HTMLDoclet getDoclet(String id);
 
     int getSubDocletCount();
 
@@ -35,6 +29,4 @@ public interface NestedHTMLDoclet<O> extends HTMLDoclet<O> {
      * Remove all sub doclets
      */
     void clear();
-
-    int indexOf(HTMLDoclet doclet);
 }

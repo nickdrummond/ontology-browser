@@ -1,18 +1,11 @@
 package org.coode.html.doclet;
 
-import org.coode.www.cloud.CloudModel;
-import org.coode.www.cloud.OWLCloudModel;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;
 
-import java.awt.*;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 
 /**

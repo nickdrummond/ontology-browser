@@ -355,10 +355,7 @@ public class OWLServerImpl implements OWLServer {
     public <N extends OWLObject> HierarchyProvider<N> getHierarchyProvider(Class<N> cls) {
         HierarchyProvider<N> hp = (HierarchyProvider<N>)hps.get(cls);
         if (hp == null){
-            if (OWLClass.class.isAssignableFrom(cls)){
-                hp = (HierarchyProvider<N>)new ClassHierarchyProvider(this);
-            }
-            else if (OWLObjectProperty.class.isAssignableFrom(cls)){
+            if (OWLObjectProperty.class.isAssignableFrom(cls)){
                 hp = (HierarchyProvider<N>)new OWLObjectPropertyHierarchyProvider(this);
             }
             else if (OWLDataProperty.class.isAssignableFrom(cls)){

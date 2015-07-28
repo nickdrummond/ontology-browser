@@ -5,7 +5,6 @@ import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 

@@ -88,11 +88,6 @@ public class LinkDoclet<O extends OWLEntity> implements HTMLDoclet<O>{
         attributes.put("style", css);
     }
 
-    private boolean isSingleFrameNavigation() {
-        return true;
-//        return kit.getHTMLProperties().get(OWLHTMLProperty.optionContentWindow) == null;
-    }
-
     public void addAttribute(String attr, String value) {
         attributes.put(attr, value);
     }

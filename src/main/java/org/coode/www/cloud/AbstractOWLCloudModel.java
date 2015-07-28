@@ -2,14 +2,12 @@ package org.coode.www.cloud;
 
 import com.google.common.collect.ImmutableSet;
 import org.coode.html.url.URLScheme;
-import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.net.URL;
-import java.util.HashSet;
 import java.util.Set;
 
 public abstract class AbstractOWLCloudModel<O extends OWLObject> extends AbstractCloudModel<O> implements OWLCloudModel<O> {
