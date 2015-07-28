@@ -43,7 +43,8 @@ div.characteristics {
     position: absolute;
     top: 250px;
     bottom: 20px;
-    width: 300px;
+    right: 10px;
+    left: 10px;
 }
 
 .characteristic ul, .owlselector ul {
@@ -167,6 +168,7 @@ h4 {
     color: #111;
     position: absolute;
     min-height:100%;
+    min-width: 300px;
     left: 320px;
     right: 0;
     vertical-align: top;
@@ -191,9 +193,6 @@ a.burger, a.burger:hover, a.burger:active {
 #signout img {
     position: relative;
     top: 4px;
-}
-
-#options{
 }
 
 #options a {
@@ -333,9 +332,6 @@ form.autocomplete {
     display: inline;
 }
 
-#findForm{
-}
-
 form#load {
     margin-bottom: 50px;
 }
@@ -405,9 +401,14 @@ img.thumb{
 /* This is where ont selector and search clash */
 @media screen and (max-width: 630px) {
 
-    #findForm {
-        float: none;
+#menu{
+    width: 200px;
+}
+
+#main {
+    left: 220px;
     }
+
 }
 
 @media screen and (max-width: 450px) {
@@ -416,25 +417,12 @@ img.thumb{
         font-size: 11pt;
     }
 
-    h2, div.owlselector h4 {
+    h2 {
         font-size: 18pt;
     }
 
     h4 {
-        font-size: 14pt;
-    }
-
-    #tabs {
-        background-color: #ffffff;
-        position: relative;
-        top: -1px;
-    }
-
-    #tabs a, #tabs span.currentpage {
-        background-color: none;
-        margin: 5px;
-        padding: 0;
-        padding-right: 6px;
+        font-size: 12pt;
     }
 
     /* Doesn't quite match the 100% on the selector */
@@ -446,11 +434,24 @@ img.thumb{
         float: none;
     }
 
-    form#bookmarks, form#load,
-    #activeOnt select,
-    div.owlselector, #content {
+    form#bookmarks,
+    form#load,
+    #activeOnt select {
         float: none;
         clear: both;
         width: 100%;
+    }
+
+    .owlselector {
+        position: absolute;
+        top: 300px;
+        bottom: auto;
+        right: 10px;
+        left: 10px;
+        min-height: 500px;
+    }
+
+    #options a {
+        padding-right: 5px;
     }
 }
