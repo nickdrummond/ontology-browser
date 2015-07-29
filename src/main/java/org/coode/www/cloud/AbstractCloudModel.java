@@ -2,9 +2,10 @@ package org.coode.www.cloud;
 
 import com.google.common.collect.Sets;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractCloudModel<O> implements CloudModel<O> {
 

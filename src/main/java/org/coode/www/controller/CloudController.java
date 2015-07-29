@@ -1,14 +1,13 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.html.url.URLScheme;
 import org.coode.www.cloud.*;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.CloudHelper;
-import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
