@@ -1,7 +1,6 @@
 package org.coode.www.service;
 
 import com.google.common.base.Optional;
-import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
@@ -43,10 +42,6 @@ public class OWLDatatypesService {
 
     public String getIdFor(final OWLDatatype owlDatatype) {
         return String.valueOf(owlDatatype.getIRI().hashCode());
-    }
-
-    public HierarchyProvider<OWLDatatype> getHierarchyProvider(final OWLHTMLKit kit) {
-        return kit.getOWLServer().getHierarchyProvider(OWLDatatype.class);
     }
 
     public List<Characteristic> getCharacteristics(OWLDatatype owlDatatype, OWLHTMLKit kit) {

@@ -1,8 +1,6 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.html.doclet.NodeDoclet;
-import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URL;
 import java.util.List;
 
 @Controller
@@ -75,19 +72,5 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
-    }
-
-    @ResponseBody
-    @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
-    public String getChildren(@PathVariable final String propertyId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
-                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
-
-        OWLAnnotationProperty property = service.getOWLAnnotationPropertyFor(propertyId, kit);
-        HierarchyProvider<OWLAnnotationProperty> hp = service.getHierarchyProvider(kit);
-        NodeDoclet<OWLAnnotationProperty> nodeDoclet = new NodeDoclet<OWLAnnotationProperty>(kit, property, hp);
-        nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
-
-        return renderDoclets(referer, nodeDoclet);
     }
 }

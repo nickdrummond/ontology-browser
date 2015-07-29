@@ -1,8 +1,6 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.html.doclet.NodeDoclet;
-import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URL;
 import java.util.Comparator;
 
 @Controller
@@ -48,7 +45,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
                                        @ModelAttribute("kit") final OWLHTMLKit kit,
                                        final Model model) throws OntServerException, NotFoundException {
 
-        OWLObjectProperty owlObjectProperty = service.getOWLObjectPropertyFor(propertyId, kit);
+        OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);
 
         OWLServer owlServer = kit.getOWLServer();
 
@@ -58,37 +55,47 @@ public class OWLObjectPropertiesController extends ApplicationController {
         OWLObjectPropertyHierarchyService hierarchyService =
                 new OWLObjectPropertyHierarchyService(owlServer.getOWLReasoner(), comparator);
 
-        Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getPrunedTree(owlObjectProperty);
+        Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getPrunedTree(property);
 
-        String entityName = owlServer.getShortFormProvider().getShortForm(owlObjectProperty);
+        String entityName = owlServer.getShortFormProvider().getShortForm(property);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlObjectProperty));
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(property));
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Object Properties");
-        model.addAttribute("iri", owlObjectProperty.getIRI());
+        model.addAttribute("iri", property.getIRI());
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", owlServer.getActiveOntology());
         model.addAttribute("ontologies", owlServer.getOntologies());
         model.addAttribute("hierarchy", prunedTree);
-        model.addAttribute("characteristics", service.getCharacteristics(owlObjectProperty, kit));
+        model.addAttribute("characteristics", service.getCharacteristics(property, kit));
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
     }
 
-
-    @ResponseBody
     @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String propertyId,
                               @ModelAttribute("kit") final OWLHTMLKit kit,
-                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
+                              final Model model) throws OntServerException, NotFoundException {
 
         OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);
-        HierarchyProvider<OWLObjectProperty> hp = service.getHierarchyProvider(kit);
-        NodeDoclet<OWLObjectProperty> nodeDoclet = new NodeDoclet<OWLObjectProperty>(kit, property, hp);
-        nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
 
-        return renderDoclets(referer, nodeDoclet);
+        OWLServer owlServer = kit.getOWLServer();
+
+        Comparator<Tree<OWLObjectPropertyExpression>> comparator = (o1, o2) ->
+                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+
+        OWLObjectPropertyHierarchyService hierarchyService =
+                new OWLObjectPropertyHierarchyService(owlServer.getOWLReasoner(), comparator);
+
+        Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getChildren(property);
+
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
+
+        model.addAttribute("t", prunedTree);
+        model.addAttribute("mos", owlRenderer);
+
+        return "base :: tree";
     }
 }

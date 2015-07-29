@@ -16,7 +16,7 @@ import java.util.*;
  * Content will be surrounded by whatever is created in renderHeader and renderFooter
  */
 @Deprecated
-public abstract class AbstractHTMLDoclet<O> implements NestedHTMLDoclet<O> {
+public abstract class AbstractHTMLDoclet<O> implements HTMLDoclet<O> {
 
     private boolean pinned = false;
 
@@ -45,47 +45,8 @@ public abstract class AbstractHTMLDoclet<O> implements NestedHTMLDoclet<O> {
         }
     }
 
-    public final void addDoclet(HTMLDoclet<O> doclet){
-        if (!doclet.isPinned()){
-            doclet.setUserObject(userObject);
-        }
-        doclets.add(doclet);
-    }
-
-    public final void addDoclet(HTMLDoclet<O> doclet, int index){
-        if (!doclet.isPinned()){
-            doclet.setUserObject(userObject);
-        }
-        doclets.add(index, doclet);
-    }
-
-    public final void removeDoclet(HTMLDoclet doclet) {
-        doclets.remove(doclet);
-    }
-
-    public final HTMLDoclet getDoclet(String id) {
-        for (HTMLDoclet doclet : doclets){
-            if (doclet.getID().equals(id)){
-                return doclet;
-            }
-        }
-        return null;
-    }
-
-    public int getSubDocletCount() {
-        return doclets.size();
-    }
-
-    protected List<HTMLDoclet<O>> getDoclets(){
-        return Collections.unmodifiableList(doclets);
-    }
-
     public void clear() {
         doclets.clear();
-    }
-
-    public final int indexOf(HTMLDoclet doclet) {
-        return doclets.indexOf(doclet);
     }
 
     public void setUserObject(O object){
@@ -101,16 +62,8 @@ public abstract class AbstractHTMLDoclet<O> implements NestedHTMLDoclet<O> {
         return this.userObject;
     }
 
-    public void setPinned(boolean pinned){
-        this.pinned = pinned;
-    }
-
     public boolean isPinned(){
         return pinned;
-    }
-
-    public boolean isFullPage() {
-        return false;
     }
 
     public Set<URL> getRequiredCSS() {

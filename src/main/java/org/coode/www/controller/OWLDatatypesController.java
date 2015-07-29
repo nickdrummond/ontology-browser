@@ -1,8 +1,6 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.html.doclet.NodeDoclet;
-import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URL;
 import java.util.Comparator;
 import java.util.Set;
 
@@ -59,9 +56,9 @@ public class OWLDatatypesController extends ApplicationController {
                 o1.value.iterator().next().compareTo(o2.value.iterator().next());
 
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(
-                        owlServer.getOWLOntologyManager().getOWLDataFactory(),
-                        ontologies,
-                        comparator);
+                owlServer.getOWLOntologyManager().getOWLDataFactory(),
+                ontologies,
+                comparator);
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getPrunedTree(owlDatatype);
 
@@ -82,17 +79,30 @@ public class OWLDatatypesController extends ApplicationController {
         return "owlentity";
     }
 
-    @ResponseBody
-    @RequestMapping(value="/{datatypeId}/children", method=RequestMethod.GET)
-    public String getChildren(@PathVariable final String datatypeId,
+    @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
+    public String getChildren(@PathVariable final String propertyId,
                               @ModelAttribute("kit") final OWLHTMLKit kit,
-                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
+                              final Model model) throws OntServerException, NotFoundException {
 
-        OWLDatatype datatype = service.getOWLDatatypeFor(datatypeId, kit);
-        HierarchyProvider<OWLDatatype> hp = service.getHierarchyProvider(kit);
-        NodeDoclet<OWLDatatype> nodeDoclet = new NodeDoclet<OWLDatatype>(kit, datatype, hp);
-        nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
+        OWLDatatype property = service.getOWLDatatypeFor(propertyId, kit);
 
-        return renderDoclets(referer, nodeDoclet);
+        OWLServer owlServer = kit.getOWLServer();
+
+        Comparator<Tree<OWLDatatype>> comparator = (o1, o2) ->
+                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+
+        OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(
+                owlServer.getOWLOntologyManager().getOWLDataFactory(),
+                owlServer.getActiveOntologies(),
+                comparator);
+
+        Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(property);
+
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
+
+        model.addAttribute("t", prunedTree);
+        model.addAttribute("mos", owlRenderer);
+
+        return "base :: tree";
     }
 }

@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.coode.owl.hierarchy.*;
 import org.coode.owl.mngr.*;
 import org.coode.www.renderer.FixedSimpleShortFormProvider;
 import org.coode.www.renderer.LabelShortFormProvider;
@@ -62,8 +61,6 @@ public class OWLServerImpl implements OWLServer {
     private OWLObjectComparator comparator;
 
     private ServerOptionsAdapter<ServerProperty> properties;
-
-    private Map<Class<? extends OWLObject>, HierarchyProvider> hps = Maps.newHashMap();
 
     private Map<URI, OWLOntologyIRIMapper> baseMapper = Maps.newHashMap();
 
@@ -351,33 +348,6 @@ public class OWLServerImpl implements OWLServer {
         return reasoner;
     }
 
-    @SuppressWarnings("unchecked")
-    public <N extends OWLObject> HierarchyProvider<N> getHierarchyProvider(Class<N> cls) {
-        HierarchyProvider<N> hp = (HierarchyProvider<N>)hps.get(cls);
-        if (hp == null){
-            if (OWLObjectProperty.class.isAssignableFrom(cls)){
-                hp = (HierarchyProvider<N>)new OWLObjectPropertyHierarchyProvider(this);
-            }
-            else if (OWLDataProperty.class.isAssignableFrom(cls)){
-                hp = (HierarchyProvider<N>)new OWLDataPropertyHierarchyProvider(this);
-            }
-            else if (OWLAnnotationProperty.class.isAssignableFrom(cls)){
-                hp = (HierarchyProvider<N>)new OWLAnnotationPropertyHierarchyProvider(this);
-            }
-            else if (OWLNamedIndividual.class.isAssignableFrom(cls)){
-                // TODO the corresponding type is wrong - getParents produces OWLClass, not OWLNamedIndividual
-                hp = (HierarchyProvider<N>)new OWLIndividualByClassHierarchyProvider(this);
-            }
-            else if (OWLDatatype.class.isAssignableFrom(cls)){
-                hp = (HierarchyProvider<N>)new OWLDatatypeHierarchyProvider(this);
-            }
-            else if (OWLOntology.class.isAssignableFrom(cls)){
-                hp = (HierarchyProvider<N>)new OntologyHierarchyProvider(this);
-            }
-        }
-        return hp;
-    }
-
     public Comparator<OWLObject> getComparator() {
         if (isDead()){
             throw new RuntimeException("Cannot getComparator - server is dead");
@@ -457,7 +427,6 @@ public class OWLServerImpl implements OWLServer {
 
     public void clear() {
         resetRendererCache();
-        resetHierarchies();
         resetAllowedActiveOntology();
         resetAllowedLabels();
         comparator = null;
@@ -469,10 +438,6 @@ public class OWLServerImpl implements OWLServer {
             reasonerManager.dispose(reasoner.getDelegate());
             reasoner = null;
         }
-    }
-
-    private void resetHierarchies() {
-        hps.clear();
     }
 
     private void resetRendererCache() {

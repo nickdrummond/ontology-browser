@@ -1,7 +1,6 @@
 package org.coode.www.service;
 
 import com.google.common.base.Optional;
-import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
@@ -91,10 +90,6 @@ public class OntologiesService {
 
     public Set<OWLOntology> getOntologies(final OWLHTMLKit kit) {
         return kit.getOWLServer().getOntologies();
-    }
-
-    public HierarchyProvider<OWLOntology> getHierarchyProvider(final OWLHTMLKit kit) {
-        return kit.getOWLServer().getHierarchyProvider(OWLOntology.class);
     }
 
     public List<Characteristic> getCharacteristics(final OWLOntology owlOntology, final OWLHTMLKit kit) {

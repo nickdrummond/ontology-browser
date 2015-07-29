@@ -3,8 +3,6 @@ package org.coode.www.controller;
 import com.google.common.base.Optional;
 import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.output.WriterOutputStream;
-import org.coode.html.doclet.NodeDoclet;
-import org.coode.owl.hierarchy.HierarchyProvider;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Writer;
-import java.net.URL;
 import java.util.Comparator;
 
 @Controller
@@ -116,19 +113,5 @@ public class OntologiesController extends ApplicationController {
         else {
             return "redirect:/ontologies/" + ontologyId;
         }
-    }
-
-    @ResponseBody
-    @RequestMapping(value="/{ontologyId}/children", method=RequestMethod.GET)
-    public String getChildren(@PathVariable final String ontologyId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
-                              @RequestHeader final URL referer) throws OntServerException, NotFoundException {
-
-        OWLOntology ontology = service.getOntologyFor(ontologyId, kit);
-        HierarchyProvider<OWLOntology> hp = service.getHierarchyProvider(kit);
-        NodeDoclet<OWLOntology> nodeDoclet = new NodeDoclet<>(kit, ontology, hp);
-        nodeDoclet.setUserObject(null); // not sure why wee need this, but otherwise no children
-
-        return renderDoclets(referer, nodeDoclet);
     }
 }

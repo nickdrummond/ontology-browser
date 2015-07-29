@@ -1,6 +1,5 @@
 package org.coode.owl.mngr;
 
-import org.coode.owl.hierarchy.HierarchyProvider;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -40,8 +39,6 @@ public interface OWLServer extends ActiveOntologyProvider {
     OWLOntologyManager getOWLOntologyManager();
 
     OWLReasoner getOWLReasoner();
-
-    <N extends OWLObject> HierarchyProvider<N> getHierarchyProvider(Class<N> cls);
 
     Comparator<OWLObject> getComparator();
 
