@@ -1,17 +1,15 @@
 package org.coode.www.cloud;
 
-import org.coode.html.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class AnnotationPropsByUsageCloud extends AbstractOWLCloudModel<OWLAnnotationProperty>{
 
-    public AnnotationPropsByUsageCloud(Set<OWLOntology> onts, ShortFormProvider renderer, URLScheme urlScheme) {
-        super(onts, renderer, urlScheme);
+    public AnnotationPropsByUsageCloud(Set<OWLOntology> onts) {
+        super(onts);
     }
 
     public Set<OWLAnnotationProperty> getEntities() {
@@ -20,10 +18,6 @@ public class AnnotationPropsByUsageCloud extends AbstractOWLCloudModel<OWLAnnota
             objectProperties.addAll(ont.getAnnotationPropertiesInSignature());
         }
         return objectProperties;
-    }
-
-    public String getTitle() {
-        return CloudType.objpropusage.getRendering();
     }
 
     protected int calculateValue(OWLAnnotationProperty entity) {

@@ -10,31 +10,12 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import java.net.URL;
 import java.util.Set;
 
-public abstract class AbstractOWLCloudModel<O extends OWLObject> extends AbstractCloudModel<O> implements OWLCloudModel<O> {
+public abstract class AbstractOWLCloudModel<O extends OWLEntity> extends AbstractCloudModel<O> {
 
     protected final Set<OWLOntology> ontologies;
-    private final ShortFormProvider renderer;
-    protected final URLScheme urlScheme;
 
-    protected AbstractOWLCloudModel(final Set<OWLOntology> onts,
-                               final ShortFormProvider renderer,
-                               final URLScheme urlScheme) {
+    protected AbstractOWLCloudModel(final Set<OWLOntology> onts) {
         this.ontologies = ImmutableSet.copyOf(onts);
-        this.renderer = renderer;
-        this.urlScheme = urlScheme;
         reload();
-    }
-
-    public URL getURL(O entity) {
-        return urlScheme.getURLForOWLObject(entity);
-    }
-
-    public String getRendering(O entity) {
-        if (entity instanceof OWLEntity){
-            return renderer.getShortForm((OWLEntity)entity);
-        }
-        else{
-            return super.getRendering(entity);
-        }
     }
 }

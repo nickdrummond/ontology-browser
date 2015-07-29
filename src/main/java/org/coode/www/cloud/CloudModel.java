@@ -18,11 +18,5 @@ public interface CloudModel<O> {
 
     Set<O> getEntities(int threshold);
 
-    String getRendering(O entity);
-
     Comparator<O> getComparator();
-
-    URL getURL(O entity);
-
-    String getTitle();
 }

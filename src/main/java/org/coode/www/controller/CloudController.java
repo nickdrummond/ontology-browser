@@ -36,137 +36,63 @@ public class CloudController extends ApplicationController {
     public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                   final Model model) throws OntServerException {
 
-        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
-        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
-        URLScheme urlScheme = kit.getURLScheme();
-
-        OWLCloudModel<OWLClass> cloudModel = new ClassesByUsageCloud(ontologies, sfp, urlScheme);
-        CloudHelper<OWLClass> helper = new CloudHelper<>(cloudModel, threshold, zoom);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
-
-        model.addAttribute("title", "Classes Usage Cloud");
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", ontologies);
-        model.addAttribute("cloud", cloudModel);
-        model.addAttribute("helper", helper);
-        model.addAttribute("mos", owlRenderer);
-
-        return "cloud";
+        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit.getOWLServer().getOntologies());
+        return cloud(kit, model, "Classes Usage Cloud", cloudModel);
     }
 
     @RequestMapping(value = "/individuals")
     public String getIndividualsCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                       final Model model) throws OntServerException {
 
-        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
-        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
-        URLScheme urlScheme = kit.getURLScheme();
-
-        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(ontologies, sfp, urlScheme);
-        CloudHelper<OWLNamedIndividual> helper = new CloudHelper<>(cloudModel, threshold, zoom);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
-
-        model.addAttribute("title", "Individuals Usage Cloud");
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", ontologies);
-        model.addAttribute("cloud", cloudModel);
-        model.addAttribute("helper", helper);
-        model.addAttribute("mos", owlRenderer);
-
-        return "cloud";
+        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOWLServer().getOntologies());
+        return cloud(kit, model, "Individuals Usage Cloud", cloudModel);
     }
-
 
     @RequestMapping(value = "/objectproperties")
     public String getObjectPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                            final Model model) throws OntServerException {
 
-        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
-        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
-        URLScheme urlScheme = kit.getURLScheme();
-
-        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(ontologies, sfp, urlScheme);
-        CloudHelper<OWLObjectProperty> helper = new CloudHelper<>(cloudModel, threshold, zoom);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
-
-        model.addAttribute("title", "Object Properties Usage Cloud");
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", ontologies);
-        model.addAttribute("cloud", cloudModel);
-        model.addAttribute("helper", helper);
-        model.addAttribute("mos", owlRenderer);
-
-        return "cloud";
+        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit.getOWLServer().getOntologies());
+        return cloud(kit, model, "Object Properties Usage Cloud", cloudModel);
     }
 
     @RequestMapping(value = "/dataproperties")
     public String getDataPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                          final Model model) throws OntServerException {
 
-        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
-        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
-        URLScheme urlScheme = kit.getURLScheme();
-
-        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(ontologies, sfp, urlScheme);
-        CloudHelper<OWLDataProperty> helper = new CloudHelper<>(cloudModel, threshold, zoom);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
-
-        model.addAttribute("title", "Data Properties Usage Cloud");
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", ontologies);
-        model.addAttribute("cloud", cloudModel);
-        model.addAttribute("helper", helper);
-        model.addAttribute("mos", owlRenderer);
-
-        return "cloud";
+        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit.getOWLServer().getOntologies());
+        return cloud(kit, model, "Data Properties Usage Cloud", cloudModel);
     }
 
     @RequestMapping(value = "/annotationproperties")
     public String getAnnotationPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                                final Model model) throws OntServerException {
 
-        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
-        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
-        URLScheme urlScheme = kit.getURLScheme();
-
-        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(ontologies, sfp, urlScheme);
-        CloudHelper<OWLAnnotationProperty> helper = new CloudHelper<>(cloudModel, threshold, zoom);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
-
-        model.addAttribute("title", "Annotation Properties Usage Cloud");
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", ontologies);
-        model.addAttribute("cloud", cloudModel);
-        model.addAttribute("helper", helper);
-        model.addAttribute("mos", owlRenderer);
-
-        return "cloud";
+        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit.getOWLServer().getOntologies());
+        return cloud(kit, model, "Annotation Properties Usage Cloud", cloudModel);
     }
 
     @RequestMapping(value = "/datatypes")
     public String getDatatypesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                     final Model model) throws OntServerException {
 
-        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
-        ShortFormProvider sfp = kit.getOWLServer().getShortFormProvider();
-        URLScheme urlScheme = kit.getURLScheme();
+        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit.getOWLServer().getOntologies());
+        return cloud(kit, model, "Datatypes Usage Cloud", cloudModel);
+    }
 
-        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(ontologies, sfp, urlScheme);
-        CloudHelper<OWLDatatype> helper = new CloudHelper<>(cloudModel, threshold, zoom);
+
+    private <T extends OWLEntity>String cloud(final OWLHTMLKit kit,
+                                              final Model model,
+                                              final String title,
+                                              final CloudModel<T> cloudModel) {
+
+        CloudHelper<T> helper = new CloudHelper<T>(cloudModel, threshold, zoom);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
 
-        model.addAttribute("title", "Datatypes Usage Cloud");
+        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+
+        model.addAttribute("title", title);
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", ontologies);

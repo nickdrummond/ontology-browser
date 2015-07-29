@@ -13,8 +13,6 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
     private int min;
     private int max;
 
-    private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
-
     protected void reload() {
         min = Integer.MAX_VALUE;
         max = 0;
@@ -26,11 +24,6 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
             min = Math.min(min, value);
             max = Math.max(max, value);
             entityValueMap.put(entity, value);
-        }
-
-        ChangeEvent e = new ChangeEvent(this);
-        for (ChangeListener l : listeners) {
-            l.stateChanged(e);
         }
     }
 
@@ -48,10 +41,6 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
             }
         }
         return result;
-    }
-
-    public String getRendering(O entity) {
-        return entity.toString();
     }
 
     protected abstract int calculateValue(O entity);
@@ -76,18 +65,6 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
         int range = max - min;
         threshold = min + (range * threshold) / 100;
         return threshold;
-    }
-
-    public void dispose() {
-        listeners.clear();
-    }
-
-    public final void addChangeListener(ChangeListener l) {
-        listeners.add(l);
-    }
-
-    public final void removeChangeListener(ChangeListener l) {
-        listeners.remove(l);
     }
 
     public Comparator<O> getComparator() {

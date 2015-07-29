@@ -1,17 +1,15 @@
 package org.coode.www.cloud;
 
-import org.coode.html.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class DatatypesByUsageCloud extends AbstractOWLCloudModel<OWLDatatype>{
 
-    public DatatypesByUsageCloud(Set<OWLOntology> onts, ShortFormProvider renderer, URLScheme urlScheme) {
-        super(onts, renderer, urlScheme);
+    public DatatypesByUsageCloud(Set<OWLOntology> onts) {
+        super(onts);
     }
 
     public Set<OWLDatatype> getEntities() {
@@ -20,10 +18,6 @@ public class DatatypesByUsageCloud extends AbstractOWLCloudModel<OWLDatatype>{
             entities.addAll(ont.getDatatypesInSignature());
         }
         return entities;
-    }
-
-    public String getTitle() {
-        return CloudType.datatypeusage.getRendering();
     }
 
     protected int calculateValue(OWLDatatype entity) {
