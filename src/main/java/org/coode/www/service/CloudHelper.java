@@ -35,7 +35,7 @@ public class CloudHelper<O extends OWLEntity> {
         return model;
     }
 
-    public Color getColor(int value) {
+    public String getColor(int value) {
         int score;
         if (normalise) {
             int relativeScore = value - model.getMin();
@@ -48,7 +48,9 @@ public class CloudHelper<O extends OWLEntity> {
         if (!inverted) {
             score = 255 - score;
         }
-        return new Color(score, score, score);
+        Color color = new Color(score, score, score);
+        String rgb = Integer.toHexString(color.getRGB());
+        return "#" + rgb.substring(2, rgb.length());
     }
 
     public int getFontSize(int value) {

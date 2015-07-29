@@ -1,6 +1,5 @@
 package org.coode.html.url;
 
-import org.coode.owl.mngr.NamedObjectType;
 import org.coode.www.kit.OWLHTMLKit;
 
 import java.net.URL;
@@ -14,8 +13,4 @@ public interface URLScheme extends OWLObjectURLRenderer {
     OWLHTMLKit getOWLHTMLKit();
 
     URL getBaseURL();
-
-    URL getURLForIndex(NamedObjectType type);
-
-    URL getURLForRelativePage(String pageRelativeToBase);
 }

@@ -226,6 +226,16 @@ td.key{
     text-align: center;
 }
 
+/* Let the cloud spans determine the color */
+.cloud a.Class,
+.cloud a.Object.Property,
+.cloud a.Data.Property,
+.cloud a.Annotation.Property,
+.cloud a.Individual,
+.cloud a.Datatype{
+    color: inherit;
+}
+
 /* we want links in literals to look like links*/
 .literal a {
     color: #002;
