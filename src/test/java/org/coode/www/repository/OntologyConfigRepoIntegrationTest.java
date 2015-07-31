@@ -2,14 +2,14 @@ package org.coode.www.repository;
 
 import com.github.fakemongo.Fongo;
 import com.google.common.collect.Lists;
-import com.mongodb.*;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import org.bson.BSON;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.coode.www.configuration.MongoConfiguration;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.model.OntologyMapping;
 import org.junit.Before;
@@ -19,12 +19,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
-import org.springframework.data.mongodb.core.query.Order;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,11 +34,10 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader=AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
-public class OntologyConfigRepoTest {
+public class OntologyConfigRepoIntegrationTest {
 
     @Configuration
-    @EnableMongoRepositories
-    static class ContextConfiguration extends AbstractMongoConfiguration {
+    static class TestConfiguration extends MongoConfiguration {
 
         @Override
         protected String getDatabaseName() {
@@ -52,22 +45,8 @@ public class OntologyConfigRepoTest {
         }
 
         @Override
-        @Bean
         public MongoClient mongo() throws UnknownHostException {
             return new Fongo("Fake Mongo").getMongo();
-//          return new MongoClient("localhost", 27017); // use real Mongo for integration tests
-        }
-
-        @Override
-        public MongoTemplate mongoTemplate() throws Exception {
-            MongoTemplate template = super.mongoTemplate();
-            template.indexOps(OntologyConfig.class).ensureIndex(new Index().on("hash", Sort.Direction.ASC));
-            return template;
-        }
-
-        @Override
-        protected String getMappingBasePackage() {
-            return "org.coode.www.repository";
         }
     }
 

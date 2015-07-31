@@ -6,30 +6,30 @@ import javax.annotation.Nonnull;
 
 public class OntologyMapping {
 
-    private String ontologyIRI;
-    private String locationIRI;
+    private IRI ontologyIRI;
+    private IRI locationIRI;
 
     public OntologyMapping() {
     }
 
     public OntologyMapping(@Nonnull IRI ontologyIRI, @Nonnull IRI locationIRI) {
-        this.ontologyIRI = ontologyIRI.toQuotedString();
-        this.locationIRI = locationIRI.toQuotedString();
+        this.ontologyIRI = ontologyIRI;
+        this.locationIRI = locationIRI;
     }
 
-    public String getOntologyIRI() {
+    public IRI getOntologyIRI() {
         return ontologyIRI;
     }
 
-    public void setOntologyIRI(String ontologyIRI) {
+    public void setOntologyIRI(IRI ontologyIRI) {
         this.ontologyIRI = ontologyIRI;
     }
 
-    public String getLocationIRI() {
+    public IRI getLocationIRI() {
         return locationIRI;
     }
 
-    public void setLocationIRI(String locationIRI) {
+    public void setLocationIRI(IRI locationIRI) {
         this.locationIRI = locationIRI;
     }
 
@@ -42,7 +42,6 @@ public class OntologyMapping {
 
         if (!ontologyIRI.equals(that.ontologyIRI)) return false;
         return locationIRI.equals(that.locationIRI);
-
     }
 
     @Override

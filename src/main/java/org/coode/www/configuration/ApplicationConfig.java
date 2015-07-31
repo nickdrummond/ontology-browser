@@ -1,12 +1,9 @@
 package org.coode.www.configuration;
 
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
 import org.coode.www.mngr.KitRepository;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.ApplicationInfo;
 import org.coode.www.model.Bookmarks;
-import org.coode.www.model.OntologyConfig;
 import org.coode.www.service.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,10 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -30,7 +23,7 @@ import java.util.List;
 @ComponentScan("org.coode.www.controller")
 @EnableWebMvc
 @EnableMongoRepositories
-public class ApplicationConfig extends AbstractMongoConfiguration {
+public class ApplicationConfig {
 
     @Bean
     public InternalResourceViewResolver setupViewResolver() {
@@ -152,33 +145,5 @@ public class ApplicationConfig extends AbstractMongoConfiguration {
     @Bean
     public SessionManager sessionManager() {
         return new SessionManager();
-    }
-
-    @Override
-    protected String getDatabaseName() {
-        return "ontology-browser";
-    }
-
-    @Value("${mongo.host}")
-    private String mongoHost;
-
-    @Value("${mongo.port}")
-    private int mongoPort;
-
-    @Override
-    public Mongo mongo() throws Exception {
-        return new MongoClient(mongoHost, mongoPort);
-    }
-
-    @Override
-    public MongoTemplate mongoTemplate() throws Exception {
-        MongoTemplate template = super.mongoTemplate();
-        template.indexOps(OntologyConfig.class).ensureIndex(new Index().on("hash", Sort.Direction.ASC));
-        return template;
-    }
-
-    @Override
-    protected String getMappingBasePackage() {
-        return "org.coode.www.repository";
     }
 }
