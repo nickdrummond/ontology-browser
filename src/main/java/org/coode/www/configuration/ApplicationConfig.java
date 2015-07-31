@@ -6,6 +6,7 @@ import org.coode.www.mngr.KitRepository;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.ApplicationInfo;
 import org.coode.www.model.Bookmarks;
+import org.coode.www.model.OntologyConfig;
 import org.coode.www.service.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -164,6 +168,13 @@ public class ApplicationConfig extends AbstractMongoConfiguration {
     @Override
     public Mongo mongo() throws Exception {
         return new MongoClient(mongoHost, mongoPort);
+    }
+
+    @Override
+    public MongoTemplate mongoTemplate() throws Exception {
+        MongoTemplate template = super.mongoTemplate();
+        template.indexOps(OntologyConfig.class).ensureIndex(new Index().on("hash", Sort.Direction.ASC));
+        return template;
     }
 
     @Override
