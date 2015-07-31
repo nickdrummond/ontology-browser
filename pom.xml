@@ -208,7 +208,7 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>org.eclipse.jetty</groupId>
-                  <artifactId>jetty-maven-plugin</artifactId>
+                  <artifactId>jetty-runner</artifactId>
                   <version>${jetty.version}</version>
                   <destFileName>jetty-runner.jar</destFileName>
                 </artifactItem>
