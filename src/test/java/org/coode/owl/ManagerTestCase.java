@@ -1,21 +1,23 @@
 package org.coode.owl;
 
 import junit.framework.TestCase;
-import org.slf4j.LoggerFactory; import org.slf4j.Logger;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.impl.OWLServerImpl;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 //import org.semanticweb.owlapi.owllink.OWLlinkHTTPXMLReasonerFactory;
 //import org.semanticweb.owlapi.owllink.OWLlinkReasoner;
 //import org.semanticweb.owlapi.owllink.OWLlinkReasonerConfiguration;
 //import org.semanticweb.owlapi.reasoner.Node;
 //import org.semanticweb.owlapi.reasoner.OWLReasonerConfiguration;
-
 //import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 /*
 * Copyright (C) 2007, University of Manchester
 *

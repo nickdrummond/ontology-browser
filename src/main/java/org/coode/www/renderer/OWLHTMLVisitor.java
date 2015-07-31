@@ -779,6 +779,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         cssClasses.add(cssClass);
 
         if (!activeObject.isPresent()){
+            // TODO reverse lookup URL
             final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);

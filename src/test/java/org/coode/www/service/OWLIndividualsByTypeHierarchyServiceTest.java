@@ -1,7 +1,6 @@
 package org.coode.www.service;
 
 import org.coode.www.model.Tree;
-import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
 import org.junit.Before;
 import org.junit.Ignore;

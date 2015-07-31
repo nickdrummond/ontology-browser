@@ -1,5 +1,7 @@
 package org.coode.www.service;
 
+import org.junit.Test;
+import org.mockito.Mockito;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -8,9 +10,6 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.co.nickdrummond.parsejs.ParseException;
 import uk.co.nickdrummond.parsejs.ParseResult;
-
-import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;

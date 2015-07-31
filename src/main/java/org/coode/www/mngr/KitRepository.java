@@ -7,6 +7,7 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLKitImpl;
 import org.coode.www.kit.impl.OWLHTMLProperty;
+import org.coode.www.util.Hashing;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
@@ -17,8 +18,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,7 +144,7 @@ public class KitRepository {
         writer.close();
 
         byte[] bytes = out.toByteArray();
-        String ontsLabel = md5(bytes);
+        String ontsLabel = Hashing.md5(bytes);
         save(bytes, ONTOLOGIES_PREFIX + ontsLabel + ONTOLOGIES_EXT);
         return ontsLabel;
     }
@@ -169,7 +168,7 @@ public class KitRepository {
         out.flush();
         out.close();
         byte[] bytes = out.toByteArray();
-        String propLabel = md5(bytes);
+        String propLabel = Hashing.md5(bytes);
         save(bytes, getCacheFile(propLabel));
         return propLabel;
     }
@@ -190,27 +189,6 @@ public class KitRepository {
         else {
             logger.info("kit state already saved at: " + file.getAbsolutePath());
         }
-    }
-
-    private String md5(byte[] bytes) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            byte[] hashedBytes = digest.digest(bytes);
-            return convertByteArrayToHexString(hashedBytes);
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    private String convertByteArrayToHexString(byte[] arrayBytes) {
-        StringBuffer stringBuffer = new StringBuffer();
-        for (int i = 0; i < arrayBytes.length; i++) {
-            stringBuffer.append(Integer.toString((arrayBytes[i] & 0xff) + 0x100, 16)
-                    .substring(1));
-        }
-        return stringBuffer.toString();
     }
 
     private void loadProperties(final String label, OWLHTMLKit kit) throws IOException {

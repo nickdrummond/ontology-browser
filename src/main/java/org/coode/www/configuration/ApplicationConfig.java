@@ -1,5 +1,7 @@
 package org.coode.www.configuration;
 
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import org.coode.www.mngr.KitRepository;
 import org.coode.www.mngr.SessionManager;
 import org.coode.www.model.ApplicationInfo;
@@ -11,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -21,7 +25,8 @@ import java.util.List;
 @Configuration
 @ComponentScan("org.coode.www.controller")
 @EnableWebMvc
-public class ApplicationConfig {
+@EnableMongoRepositories
+public class ApplicationConfig extends AbstractMongoConfiguration {
 
     @Bean
     public InternalResourceViewResolver setupViewResolver() {
@@ -143,5 +148,26 @@ public class ApplicationConfig {
     @Bean
     public SessionManager sessionManager() {
         return new SessionManager();
+    }
+
+    @Override
+    protected String getDatabaseName() {
+        return "ontology-browser";
+    }
+
+    @Value("${mongo.host}")
+    private String mongoHost;
+
+    @Value("${mongo.port}")
+    private int mongoPort;
+
+    @Override
+    public Mongo mongo() throws Exception {
+        return new MongoClient(mongoHost, mongoPort);
+    }
+
+    @Override
+    protected String getMappingBasePackage() {
+        return "org.coode.www.repository";
     }
 }
