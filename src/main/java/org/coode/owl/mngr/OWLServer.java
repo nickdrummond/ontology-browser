@@ -1,5 +1,6 @@
 package org.coode.owl.mngr;
 
+import org.coode.www.model.OntologyConfig;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -26,7 +27,7 @@ public interface OWLServer extends ActiveOntologyProvider {
 
     OWLOntology loadOntology(URI ontPhysicalURI) throws OWLOntologyCreationException;
 
-    void loadOntologies(Map<IRI, IRI> ontMap);
+    void loadOntologies(OntologyConfig ontConfig);
 
     /**
      * First get an ontology with a matching version IRI if one exists.

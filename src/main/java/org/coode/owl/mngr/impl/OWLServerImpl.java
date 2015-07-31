@@ -5,6 +5,8 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.coode.owl.mngr.*;
+import org.coode.www.model.OntologyConfig;
+import org.coode.www.model.OntologyMapping;
 import org.coode.www.renderer.FixedSimpleShortFormProvider;
 import org.coode.www.renderer.LabelShortFormProvider;
 import org.coode.www.renderer.OntologyShortFormProvider;
@@ -21,6 +23,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -132,24 +135,20 @@ public class OWLServerImpl implements OWLServer {
         return mngr.loadOntologyFromOntologyDocument(iri);
     }
 
-    public void loadOntologies(final Map<IRI, IRI> ontMap) {
-        OWLOntologyIRIMapper mapper = new OWLOntologyIRIMapper(){
-            public IRI getDocumentIRI(IRI ontologyIRI) {
-                return ontMap.get(ontologyIRI);
-            }
-        };
+    public void loadOntologies(final OntologyConfig ontConfig) {
+        OWLOntologyIRIMapper mapper = ontologyIRI -> ontConfig.documentFor(ontologyIRI).orNull();
         mngr.addIRIMapper(mapper);
 
-        for (Map.Entry<IRI, IRI> entry : ontMap.entrySet()){
-            if (!entry.getKey().equals(ROOT_ONTOLOGY)){
+        for (OntologyMapping mapping : ontConfig.getMappings()){
+            if (!mapping.getOntologyIRI().equals(ROOT_ONTOLOGY)){
                 try {
-                    mngr.loadOntology(entry.getValue());
+                    mngr.loadOntology(mapping.getLocationIRI());
                 }
                 catch (OWLOntologyDocumentAlreadyExistsException | OWLOntologyAlreadyExistsException e){
                     // do nothing - as we're not trying to load in order just keep going
                 }
                 catch (OWLOntologyCreationException e) {
-                    e.printStackTrace();
+                    logger.warn("Problem loading " + mapping, e);
                 }
             }
         }
@@ -190,12 +189,12 @@ public class OWLServerImpl implements OWLServer {
 
     public OWLOntology getOntologyForIRI(IRI iri) {
         for (OWLOntology ontology : getOntologies()){
-            if (iri.equals(ontology.getOntologyID().getVersionIRI())){
+            if (iri.equals(ontology.getOntologyID().getVersionIRI().orNull())){
                 return ontology;
             }
         }
         for (OWLOntology ontology : getOntologies()){
-            if (iri.equals(ontology.getOntologyID().getOntologyIRI())){
+            if (iri.equals(ontology.getOntologyID().getOntologyIRI().orNull())){
                 return ontology;
             }
         }
@@ -244,10 +243,7 @@ public class OWLServerImpl implements OWLServer {
         if (activeOntology == null){
             String ont = getProperties().get(ServerProperty.optionActiveOnt);
             if (ont != null){
-                IRI activeOntIRI = IRI.create(ont);
-                if (activeOntIRI != null){
-                    activeOntology = getOntologyForIRI(activeOntIRI);
-                }
+                activeOntology = getOntologyForIRI(IRI.create(ont));
             }
         }
         if (activeOntology == null){

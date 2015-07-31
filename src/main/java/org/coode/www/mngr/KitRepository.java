@@ -1,17 +1,24 @@
 package org.coode.www.mngr;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLKitImpl;
 import org.coode.www.kit.impl.OWLHTMLProperty;
+import org.coode.www.model.OntologyConfig;
+import org.coode.www.model.OntologyMapping;
+import org.coode.www.repository.OntologyConfigRepo;
 import org.coode.www.util.Hashing;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +26,9 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Repository
 public class KitRepository {
@@ -32,10 +41,11 @@ public class KitRepository {
     @Value("${cache.location}")
     private String cacheLocation;
 
+    @Autowired
+    private OntologyConfigRepo ontologyConfigRepo;
+
     private static final String PROPERTIES_PREFIX = "properties.";
-    private static final String ONTOLOGIES_PREFIX = "ontologies.";
     private static final String PROPERTIES_EXT = ".xml";
-    private static final String ONTOLOGIES_EXT = ".properties";
     private static final String LABEL_SPLITTER = "_";
 
     /**
@@ -47,9 +57,9 @@ public class KitRepository {
         try {
             String propLabel = saveProperties(kit);
 
-            String ontsLabel = saveOntologies(kit);
+            OntologyConfig ontConfig = saveOntologies(kit.getOWLServer().getActiveOntology());
 
-            kit.setCurrentLabel(ontsLabel + LABEL_SPLITTER + propLabel);
+            kit.setCurrentLabel(ontConfig.getHash() + LABEL_SPLITTER + propLabel);
         }
         catch (IOException e) {
             throw new OntServerException(e);
@@ -59,19 +69,17 @@ public class KitRepository {
 
     /**
      * Clears the given server and replaces its state with that specified by the label given
-     * @param kit
-     * @param label
-     * @throws OntServerException
      */
     public synchronized void loadKit(OWLHTMLKit kit, String label) throws OntServerException {
 
         logger.info("Loading kit for label: " + label);
 
         String[] parts = label.split(LABEL_SPLITTER);
+        String ontHash = parts[0];
 
         try{
-            Map<IRI, IRI> ontMap = loadOntologies(parts[0]);
-            kit.getOWLServer().loadOntologies(ontMap);
+            OntologyConfig ontConfig = loadOntologies(ontHash);
+            kit.getOWLServer().loadOntologies(ontConfig);
 
             loadProperties(parts[1], kit);
 
@@ -123,41 +131,22 @@ public class KitRepository {
         return kit;
     }
 
-    private String saveOntologies(OWLHTMLKit kit) throws IOException {
+    private OntologyConfig saveOntologies(OWLOntology activeOnt) throws IOException {
         logger.info("Saving ontologies");
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream(3 * 1024); // < 3k
-        PrintWriter writer = new PrintWriter(out);
+        List<OntologyMapping> mappings = Lists.newArrayList();
+        mappings.add(mappingFor(activeOnt));
+        Stream<OWLOntology> allOnts = activeOnt.getImportsClosure().stream();
+        allOnts.filter(ont -> !ont.equals(activeOnt)).forEach(ont -> mappings.add(mappingFor(ont)));
+        OntologyConfig config = new OntologyConfig(mappings);
 
-        // always print the active ontology first
-        OWLOntology activeOnt = kit.getOWLServer().getActiveOntology();
-        writer.println(getOntologyIdString(activeOnt) + "=" +
-                kit.getOWLServer().getOWLOntologyManager().getOntologyDocumentIRI(activeOnt));
-
-        for (OWLOntology ont : kit.getOWLServer().getOntologies()){
-            if (!ont.equals(activeOnt)){
-                writer.println(getOntologyIdString(ont) + "=" +
-                        kit.getOWLServer().getOWLOntologyManager().getOntologyDocumentIRI(ont));
-            }
-        }
-        writer.flush();
-        writer.close();
-
-        byte[] bytes = out.toByteArray();
-        String ontsLabel = Hashing.md5(bytes);
-        save(bytes, ONTOLOGIES_PREFIX + ontsLabel + ONTOLOGIES_EXT);
-        return ontsLabel;
+        return ontologyConfigRepo.save(config);
     }
 
-    private String getOntologyIdString(final OWLOntology ont){
-        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
-
-            @Nullable
-            @Override
-            public String apply(IRI iri) {
-                return iri.toString();
-            }
-        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
+    private OntologyMapping mappingFor(OWLOntology ont) {
+        IRI docIRI = ont.getOWLOntologyManager().getOntologyDocumentIRI(ont);
+        IRI ontIRI = ont.getOntologyID().getDefaultDocumentIRI().or(docIRI);
+        return new OntologyMapping(ontIRI, docIRI);
     }
 
     private String saveProperties(OWLHTMLKit kit) throws IOException {
@@ -203,30 +192,8 @@ public class KitRepository {
         in.close();
     }
 
-    private Map<IRI, IRI> loadOntologies(final String label) throws IOException {
-
-        File ontsFile = getFile(ONTOLOGIES_PREFIX + label + ONTOLOGIES_EXT);
-
-        if (!ontsFile.exists()){
-            throw new FileNotFoundException("Cannot find stored ontologies: " + ontsFile.getAbsolutePath());
-        }
-
-        BufferedReader reader = new BufferedReader(new FileReader(ontsFile));
-        String line;
-        Map<IRI, IRI> ontMap = new HashMap<IRI, IRI>();
-        while ((line = reader.readLine()) != null){
-            String[] param = line.split("=");
-            IRI ontURI = IRI.create(param[0].trim());
-            final String str = param[1].trim();
-            IRI physicalURI = null;
-            // protect ourselves against http://a.com=null as null will be a valid relative IRI
-            if (!str.equals("null")){
-                physicalURI = IRI.create(str);
-            }
-            ontMap.put(ontURI, physicalURI);
-        }
-        reader.close();
-        return ontMap;
+    private OntologyConfig loadOntologies(final String label) throws IOException {
+        return ontologyConfigRepo.findByHash(label);
     }
 
     private File getFile(String name) {

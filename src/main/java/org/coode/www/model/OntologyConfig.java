@@ -1,6 +1,8 @@
 package org.coode.www.model;
 
+import com.google.common.base.Optional;
 import org.coode.www.util.Hashing;
+import org.semanticweb.owlapi.model.IRI;
 import org.springframework.data.annotation.Id;
 
 import javax.annotation.Nonnull;
@@ -55,8 +57,7 @@ public class OntologyConfig {
 
         OntologyConfig that = (OntologyConfig) o;
 
-        if (!hash.equals(that.hash)) return false;
-        return mappings.equals(that.mappings);
+        return hash.equals(that.hash) && mappings.equals(that.mappings);
     }
 
     @Override
@@ -71,5 +72,14 @@ public class OntologyConfig {
                 ", hash='" + hash + '\'' +
                 ", mappings=" + mappings +
                 '}';
+    }
+
+    public Optional<IRI> documentFor(IRI ontologyIRI) {
+        for (OntologyMapping mapping : mappings) {
+            if (mapping.getOntologyIRI().equals(ontologyIRI)) {
+                return Optional.of(mapping.getLocationIRI());
+            }
+        }
+        return Optional.absent();
     }
 }

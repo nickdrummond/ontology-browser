@@ -7,6 +7,7 @@ import org.coode.www.repository.IRIReadConverter;
 import org.coode.www.repository.IRIWriteConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Sort;
@@ -22,7 +23,7 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 @Configuration
-@EnableMongoRepositories
+@EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
     @Value("#{systemProperties['mongo.host'] ?: 'localhost'}")
