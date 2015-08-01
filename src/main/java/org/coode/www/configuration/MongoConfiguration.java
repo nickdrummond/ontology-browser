@@ -28,12 +28,13 @@ import java.util.List;
 @EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
-    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/'}")
+    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
     protected String mongoUri;
 
     @Override
     protected String getDatabaseName() {
-        return "ontology-browser";
+        System.out.println("Getting DB name");
+        return "heroku_bjs2jzz7";
     }
 
     @Override
