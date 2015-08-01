@@ -26,19 +26,20 @@ import java.util.List;
 @EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
-    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
-    protected String mongoUri;
+//    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
+//    protected String mongoUri;
 
     @Override
     protected String getDatabaseName() {
-        System.out.println("Getting DB name");
         return "heroku_bjs2jzz7";
     }
 
     @Override
     @Bean
     public MongoClient mongo() throws UnknownHostException {
-        MongoClientURI uri = new MongoClientURI(mongoUri);
+        String mongolab_uri = System.getenv("MONGOLAB_URI");
+        System.out.println("Mongo: " + mongolab_uri);
+        MongoClientURI uri = new MongoClientURI(mongolab_uri);
         return new MongoClient(uri);
     }
 
@@ -64,7 +65,7 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     public MongoTemplate mongoTemplate() throws Exception {
         MongoTemplate template = super.mongoTemplate();
         template.indexOps(OntologyConfig.class).ensureIndex(new Index().on("hash", Sort.Direction.ASC));
-        template.setWriteResultChecking(WriteResultChecking.EXCEPTION);
+//        template.setWriteResultChecking(WriteResultChecking.EXCEPTION);
         return template;
     }
 
