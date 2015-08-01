@@ -6,10 +6,8 @@ import com.mongodb.MongoClientURI;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.repository.IRIReadConverter;
 import org.coode.www.repository.IRIWriteConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Sort;
@@ -23,14 +21,13 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Optional;
 
 @Configuration
 @EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
-//
-//    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
-//    protected String mongoUri;
+
+    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
+    protected String mongoUri;
 
     @Override
     protected String getDatabaseName() {
@@ -41,7 +38,7 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     @Override
     @Bean
     public MongoClient mongo() throws UnknownHostException {
-        MongoClientURI uri = new MongoClientURI(Optional.ofNullable(System.getenv("MONGOLAB_URI")).orElse("mongodb://localhost:27017/ontology-browser"));
+        MongoClientURI uri = new MongoClientURI(mongoUri);
         return new MongoClient(uri);
     }
 

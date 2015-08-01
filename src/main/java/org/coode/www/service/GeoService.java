@@ -2,6 +2,7 @@ package org.coode.www.service;
 
 import com.google.common.base.Optional;
 import org.semanticweb.owlapi.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -13,7 +14,12 @@ public class GeoService {
     private IRI longitude;
     private IRI pointr;
 
-    public GeoService(String latitude, String longitude, String pointr) {
+    public GeoService() {
+    }
+
+    public GeoService(@Value("${geo.latitude}") String latitude,
+                      @Value("${geo.longitude}") String longitude,
+                      @Value("${geo.point}") String pointr) {
         this.latitude = IRI.create(latitude);
         this.longitude = IRI.create(longitude);
         this.pointr = IRI.create(pointr);

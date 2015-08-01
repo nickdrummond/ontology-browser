@@ -3,14 +3,12 @@ package org.coode.www.service;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
 public class ReasonerFactoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(ReasonerFactoryService.class);

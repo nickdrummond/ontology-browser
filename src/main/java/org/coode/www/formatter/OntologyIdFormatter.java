@@ -5,12 +5,14 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.format.Formatter;
+import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.util.Locale;
 
+@Component
 public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
 
     private final OntologyIRIShortFormProvider sfp = new OntologyIRIShortFormProvider();

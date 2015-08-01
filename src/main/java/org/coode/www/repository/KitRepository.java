@@ -1,8 +1,6 @@
-package org.coode.www.mngr;
+package org.coode.www.repository;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerOptionsAdapter;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.www.exception.OntServerException;
@@ -11,23 +9,18 @@ import org.coode.www.kit.impl.OWLHTMLKitImpl;
 import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.model.OntologyMapping;
-import org.coode.www.repository.OntologyConfigRepo;
 import org.coode.www.util.Hashing;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 @Repository

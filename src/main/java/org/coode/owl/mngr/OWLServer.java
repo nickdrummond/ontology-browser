@@ -9,7 +9,6 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.net.URI;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.Set;
 
 public interface OWLServer extends ActiveOntologyProvider {
