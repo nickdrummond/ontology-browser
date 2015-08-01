@@ -23,23 +23,25 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Optional;
 
+@Configuration
 @EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
-
-    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
-    protected String mongoUri;
+//
+//    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
+//    protected String mongoUri;
 
     @Override
     protected String getDatabaseName() {
         System.out.println("Getting DB name");
-        return "ontology-browser";
+        return "heroku_bjs2jzz7";
     }
 
     @Override
     @Bean
     public MongoClient mongo() throws UnknownHostException {
-        MongoClientURI uri = new MongoClientURI(mongoUri);
+        MongoClientURI uri = new MongoClientURI(Optional.ofNullable(System.getenv("MONGOLAB_URI")).orElse("mongodb://localhost:27017/ontology-browser"));
         return new MongoClient(uri);
     }
 

@@ -41,7 +41,8 @@ public class KitRepository {
     @Value("${cache.location}")
     private String cacheLocation;
 
-    private OntologyConfigRepo ontologyConfigRepo = null; // TODO Autowire
+    @Autowired
+    private OntologyConfigRepo ontologyConfigRepo;
 
     private static final String PROPERTIES_PREFIX = "properties.";
     private static final String PROPERTIES_EXT = ".xml";
