@@ -24,7 +24,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import java.net.UnknownHostException;
 import java.util.List;
 
-@Configuration
 @EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
@@ -34,7 +33,7 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     @Override
     protected String getDatabaseName() {
         System.out.println("Getting DB name");
-        return "heroku_bjs2jzz7";
+        return "ontology-browser";
     }
 
     @Override
