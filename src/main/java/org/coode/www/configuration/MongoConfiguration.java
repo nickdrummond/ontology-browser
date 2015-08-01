@@ -2,9 +2,11 @@ package org.coode.www.configuration;
 
 import com.google.common.collect.Lists;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.repository.IRIReadConverter;
 import org.coode.www.repository.IRIWriteConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,11 +28,8 @@ import java.util.List;
 @EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
-    @Value("#{systemProperties['mongo.host'] ?: 'localhost'}")
-    protected String mongoHost;
-
-    @Value("#{systemProperties['mongo.port'] ?: 27017}")
-    protected int mongoPort;
+    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/'}")
+    protected String mongoUri;
 
     @Override
     protected String getDatabaseName() {
@@ -40,7 +39,8 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     @Override
     @Bean
     public MongoClient mongo() throws UnknownHostException {
-        return new MongoClient(mongoHost, mongoPort);
+        MongoClientURI uri = new MongoClientURI(mongoUri);
+        return new MongoClient(uri);
     }
 
     @Override
