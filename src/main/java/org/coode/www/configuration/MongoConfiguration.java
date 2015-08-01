@@ -1,5 +1,6 @@
 package org.coode.www.configuration;
 
+import com.github.fakemongo.Fongo;
 import com.google.common.collect.Lists;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -37,10 +38,13 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     @Override
     @Bean
     public MongoClient mongo() throws UnknownHostException {
-        String mongolab_uri = System.getenv("MONGOLAB_URI");
-        System.out.println("Mongo: " + mongolab_uri);
-        MongoClientURI uri = new MongoClientURI(mongolab_uri);
-        return new MongoClient(uri);
+//        String mongolab_uri = System.getenv("MONGOLAB_URI");
+//        System.out.println("Mongo: " + mongolab_uri);
+//        MongoClientURI uri = new MongoClientURI(mongolab_uri);
+//        return new MongoClient(uri);
+        System.out.println("Using Fongo");
+        return new Fongo("THis is Fongo").getMongo();
+
     }
 
     @Override
