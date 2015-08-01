@@ -23,8 +23,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import java.net.UnknownHostException;
 import java.util.List;
 
-@Configuration
-@EnableMongoRepositories({"org.coode.www.repository"})
+//@Configuration
+//@EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
 //    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
