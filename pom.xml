@@ -203,6 +203,7 @@
         </configuration>
       </plugin>
 
+      <!-- Good to run locally for dev -->
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
@@ -214,29 +215,10 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${cargo-plugin.version}</version>
-        <configuration>
-          <!-- Container configuration -->
-          <container>
-            <containerId>jetty9x</containerId>
-            <type>embedded</type>
-          </container>
-          <!-- Configuration to use with the container or the deployer -->
-          <configuration>
-            <properties>
-              <cargo.servlet.port>8080</cargo.servlet.port>
-              <cargo.jetty.createContextXml>true</cargo.jetty.createContextXml>
-            </properties>
-
-          </configuration>
-        </configuration>
-      </plugin>
-
       <!-- Required for heroku deployment.
-           See https://devcenter.heroku.com/articles/deploy-a-java-web-application-that-launches-with-jetty-runner -->
+           Jetty appears to cause memory issues.
+           See https://devcenter.heroku.com/articles/java-webapp-runner
+        -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -247,12 +229,12 @@
             <goals><goal>copy</goal></goals>
             <configuration>
               <artifactItems>
-                <artifactItem>
-                  <groupId>org.eclipse.jetty</groupId>
-                  <artifactId>jetty-runner</artifactId>
-                  <version>${jetty.version}</version>
-                  <destFileName>jetty-runner.jar</destFileName>
-                </artifactItem>
+                  <artifactItem>
+                    <groupId>com.github.jsimone</groupId>
+                    <artifactId>webapp-runner</artifactId>
+                    <version>8.0.24.0</version>
+                    <destFileName>webapp-runner.jar</destFileName>
+                  </artifactItem>
               </artifactItems>
             </configuration>
           </execution>
