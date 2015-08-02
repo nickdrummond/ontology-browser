@@ -23,12 +23,12 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import java.net.UnknownHostException;
 import java.util.List;
 
-//@Configuration
-//@EnableMongoRepositories({"org.coode.www.repository"})
+@Configuration
+@EnableMongoRepositories({"org.coode.www.repository"})
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
-//    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
-//    protected String mongoUri;
+    @Value("#{environment.MONGOLAB_URI ?: 'mongodb://localhost:27017/ontology-browser'}")
+    protected String mongoUri;
 
     @Override
     protected String getDatabaseName() {
@@ -38,13 +38,12 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     @Override
     @Bean
     public MongoClient mongo() throws UnknownHostException {
-//        String mongolab_uri = System.getenv("MONGOLAB_URI");
-//        System.out.println("Mongo: " + mongolab_uri);
-//        MongoClientURI uri = new MongoClientURI(mongolab_uri);
-//        return new MongoClient(uri);
-        System.out.println("Using Fongo");
-        return new Fongo("THis is Fongo").getMongo();
-
+        MongoClientURI uri = new MongoClientURI(mongoUri);
+        System.out.println("mongoUri = " + mongoUri);
+        return new MongoClient(uri);
+//        System.out.println("Using Fongo");
+//        return new Fongo("THis is Fongo").getMongo();
+//
     }
 
     @Override
@@ -69,7 +68,7 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     public MongoTemplate mongoTemplate() throws Exception {
         MongoTemplate template = super.mongoTemplate();
         template.indexOps(OntologyConfig.class).ensureIndex(new Index().on("hash", Sort.Direction.ASC));
-//        template.setWriteResultChecking(WriteResultChecking.EXCEPTION);
+        template.setWriteResultChecking(WriteResultChecking.EXCEPTION);
         return template;
     }
 

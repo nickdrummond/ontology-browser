@@ -35,7 +35,7 @@ public class KitRepository {
     private String cacheLocation;
 
     @Autowired
-    private InMemoryOntologyConfigRepo ontologyConfigRepo;
+    private OntologyConfigRepo ontologyConfigRepo;
 
     private static final String PROPERTIES_PREFIX = "properties.";
     private static final String PROPERTIES_EXT = ".xml";
