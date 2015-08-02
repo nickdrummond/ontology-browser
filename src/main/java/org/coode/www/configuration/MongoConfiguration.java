@@ -32,18 +32,15 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
 
     @Override
     protected String getDatabaseName() {
-        return "heroku_bjs2jzz7";
+        int dbNameIndex = mongoUri.lastIndexOf("/");
+        return mongoUri.substring(dbNameIndex+1);
     }
 
     @Override
     @Bean
     public MongoClient mongo() throws UnknownHostException {
         MongoClientURI uri = new MongoClientURI(mongoUri);
-        System.out.println("mongoUri = " + mongoUri);
         return new MongoClient(uri);
-//        System.out.println("Using Fongo");
-//        return new Fongo("THis is Fongo").getMongo();
-//
     }
 
     @Override

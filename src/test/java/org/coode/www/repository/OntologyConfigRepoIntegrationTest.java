@@ -56,19 +56,21 @@ public class OntologyConfigRepoIntegrationTest {
     @Autowired
     OntologyConfigRepo repository;
 
+    private OntologyConfig saved;
+
     @Before
     public void setup() {
+        List<OntologyMapping> mappings = Lists.newArrayList(
+                new OntologyMapping(IRI.create("http://example.com"), IRI.create("http://example.com/location")),
+                new OntologyMapping(IRI.create("http://example2.com"), IRI.create("http://example2.com/location"))
+        );
+        saved = new OntologyConfig(mappings);
+
         mongo.dropDatabase("test");
     }
 
     @Test
     public void roundtrip() {
-
-        List<OntologyMapping> mappings = Lists.newArrayList(
-                new OntologyMapping(IRI.create("http://example.com"), IRI.create("http://example.com/location")),
-                new OntologyMapping(IRI.create("http://example2.com"), IRI.create("http://example2.com/location"))
-        );
-        OntologyConfig saved = new OntologyConfig(mappings);
 
         repository.save(saved);
 
@@ -78,11 +80,6 @@ public class OntologyConfigRepoIntegrationTest {
 
     @Test
     public void saveOnlyIfNotExists() {
-        List<OntologyMapping> mappings = Lists.newArrayList(
-                new OntologyMapping(IRI.create("http://example.com"), IRI.create("http://example.com/location")),
-                new OntologyMapping(IRI.create("http://example2.com"), IRI.create("http://example2.com/location"))
-        );
-        OntologyConfig saved = new OntologyConfig(mappings);
 
         repository.save(saved);
         repository.save(saved);
