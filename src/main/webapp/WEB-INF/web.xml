@@ -9,7 +9,9 @@
 
     <!-- This and metadata-complete reduce Tomcat startup times
      See http://wiki.apache.org/tomcat/HowTo/FasterStartUp -->
-    <absolute-ordering/>
+    <absolute-ordering>
+        <name>spring_web</name>
+    </absolute-ordering>
 
     <!-- Spring MVC -->
     <servlet>
