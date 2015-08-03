@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -125,15 +126,20 @@ public class KitRepository {
     }
 
     private OntologyConfig saveOntologies(OWLOntology activeOnt) throws IOException {
-        logger.info("Saving ontologies");
-
         List<OntologyMapping> mappings = Lists.newArrayList();
         mappings.add(mappingFor(activeOnt));
         Stream<OWLOntology> allOnts = activeOnt.getImportsClosure().stream();
         allOnts.filter(ont -> !ont.equals(activeOnt)).forEach(ont -> mappings.add(mappingFor(ont)));
         OntologyConfig config = new OntologyConfig(mappings);
-
-        return ontologyConfigRepo.save(config);
+        try {
+            config = ontologyConfigRepo.save(config);
+            logger.info("Saved ontologies config");
+            return config;
+        }
+        catch(DuplicateKeyException e) {
+            logger.info("Already saved ontologies config");
+            return config;
+        }
     }
 
     private OntologyMapping mappingFor(OWLOntology ont) {

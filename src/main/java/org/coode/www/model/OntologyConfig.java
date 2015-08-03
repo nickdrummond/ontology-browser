@@ -4,15 +4,19 @@ import com.google.common.base.Optional;
 import org.coode.www.util.Hashing;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
+@Document
 public class OntologyConfig {
 
     @Id
     private String id;
 
+    @Indexed(unique = true)
     private String hash;
 
     private List<OntologyMapping> mappings;

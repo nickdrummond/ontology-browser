@@ -64,7 +64,6 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     @Bean
     public MongoTemplate mongoTemplate() throws Exception {
         MongoTemplate template = super.mongoTemplate();
-        template.indexOps(OntologyConfig.class).ensureIndex(new Index().on("hash", Sort.Direction.ASC));
         template.setWriteResultChecking(WriteResultChecking.EXCEPTION);
         return template;
     }
