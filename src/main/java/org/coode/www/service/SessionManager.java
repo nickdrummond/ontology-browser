@@ -36,39 +36,30 @@ public class SessionManager {
     private KitRepository kitRepository;
 
     /**
-     * Get a server (creates a new one if you have a new session)
-     * @param request
-     * @return
-     * @throws OntServerException
-     */
-    public OWLHTMLKit getHTMLKit(final HttpServletRequest request, final Model model) throws OntServerException {
-        HttpSession session = request.getSession(true);
-
-        if (session.getAttribute(KIT_KEY) == null || !((OWLHTMLKit)session.getAttribute(KIT_KEY)).isActive()){
-            create(session, request, model);
-        }
-
-        return (OWLHTMLKit)session.getAttribute(KIT_KEY);
-    }
-
-
-    /**
      * Copy a server that has been created/saved by another user - dumps all current state
-     * @param request
-     * @param label
-     * @param model
-     * @return
-     * @throws OntServerException
      */
-    public OWLHTMLKit getHTMLKit(final HttpServletRequest request, final String label, final Model model) throws OntServerException {
-        OWLHTMLKit kit = getHTMLKit(request, model);
+    public OWLHTMLKit getHTMLKit(final HttpServletRequest request, final String label) throws OntServerException {
+        OWLHTMLKit kit = getHTMLKit(request);
         if (label != null && !label.equals(kit.getCurrentLabel())){
             kitRepository.loadKit(kit, label);
         }
         return kit;
     }
 
-    private void create(final HttpSession mySession, final HttpServletRequest request, final Model model) {
+    /**
+     * Get a server (creates a new one if you have a new session)
+     */
+    public OWLHTMLKit getHTMLKit(final HttpServletRequest request) throws OntServerException {
+        HttpSession session = request.getSession(true);
+
+        if (session.getAttribute(KIT_KEY) == null || !((OWLHTMLKit)session.getAttribute(KIT_KEY)).isActive()){
+            create(session, request);
+        }
+
+        return (OWLHTMLKit)session.getAttribute(KIT_KEY);
+    }
+
+    private void create(final HttpSession mySession, final HttpServletRequest request) {
         try{
             logger.debug("Creating a new Session: " + mySession.getId());
 

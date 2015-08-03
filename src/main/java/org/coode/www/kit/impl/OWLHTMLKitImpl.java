@@ -1,19 +1,26 @@
 package org.coode.www.kit.impl;
 
+import com.google.common.collect.Lists;
 import org.coode.html.url.RestURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
 import org.coode.owl.mngr.ServerOptionsAdapter;
+import org.coode.owl.mngr.ServerProperties;
+import org.coode.owl.mngr.ServerProperty;
 import org.coode.owl.mngr.impl.OWLServerImpl;
 import org.coode.owl.mngr.impl.ServerOptionsAdapterImpl;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.OntologyConfig;
+import org.coode.www.model.OntologyMapping;
+import org.coode.www.model.ServerConfig;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 
@@ -21,34 +28,23 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     protected URLScheme urlScheme;
 
-    private String label;
-
     private OWLServer owlServer;
 
     private ServerOptionsAdapter<OWLHTMLProperty> properties;
 
-    private String id;
-
-    private List<String> errorMessages = new ArrayList<String>();
-
-    private Date timestamp;
-
+    private ServerConfig config;
 
     public OWLHTMLKitImpl(URL baseURL) {
         this(new OWLServerImpl(OWLManager.createOWLOntologyManager()), baseURL);
     }
 
     public OWLHTMLKitImpl(OWLServer server, URL baseURL) {
-        this.timestamp = new Date(System.currentTimeMillis());
-        this.id = createID();
         this.owlServer = server;
         this.baseURL = baseURL;
+        this.config = new ServerConfig();
     }
 
-    private String createID() {
-        return Long.toHexString(System.currentTimeMillis());
-    }
-
+    @Override
     public ServerOptionsAdapter<OWLHTMLProperty> getHTMLProperties() {
         if (properties == null){
             // share the same base properties
@@ -67,90 +63,81 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return properties;
     }
 
-    public String getID() {
-        return id;
-    }
-
-
+    @Override
     public OWLServer getOWLServer() {
         return owlServer;
     }
 
+    @Override
+    public ServerConfig getConfig() {
+        return config;
+    }
 
+    @Override
+    public void setConfig(@Nonnull ServerConfig serverConfig) {
+        this.config = serverConfig;
+        // TODO remove me when properties tidied up
+        this.owlServer.getProperties().set(ServerProperty.optionReasoner, serverConfig.getReasoner());
+        this.owlServer.getProperties().set(ServerProperty.optionRenderer, serverConfig.getRenderer());
+        this.owlServer.getProperties().set(ServerProperty.optionLabelUri, serverConfig.getLabelAnnotationIri().toString());
+        this.owlServer.getProperties().set(ServerProperty.optionLabelPropertyUri, serverConfig.getLabelPropertyUri().toString());
+        this.owlServer.getProperties().set(ServerProperty.optionLabelLang, serverConfig.getLabelLang());
+    }
+
+    @Override
     public URL getBaseURL(){
         return baseURL;
     }
 
+    @Override
     public URLScheme getURLScheme() {
-        if (urlScheme == null && !owlServer.isDead()){
+        if (urlScheme == null){
             urlScheme = new RestURLScheme(this);
         }
         return urlScheme;
     }
 
-    public void setURLScheme(URLScheme urlScheme) {
-        this.urlScheme = urlScheme;
-    }
-
+    @Override
     public Set<OWLOntology> getVisibleOntologies() {
         return owlServer.getActiveOntologies();
     }
 
-    public void setCurrentLabel(String label) {
-        this.label = label;
-    }
-
+    @Override
     public String getCurrentLabel() {
-        return label;
+        String ontHash = getOntConfig().getHash();
+        String servHash = config.getHash();
+        return ontHash + "_" + servHash;
     }
 
-
+    @Override
     public void dispose() {
         owlServer.dispose();
         properties = null;
         urlScheme = null;
         baseURL = null;
-        label = null;
     }
 
+    @Override
     public boolean isActive() {
         return !owlServer.isDead();
     }
 
-    public void addUserError(String errorMessage) {
-        errorMessages.add(errorMessage);
-    }
-
-    public void addUserError(String errorMessage, Throwable error) {
-        Throwable cause = error;
-        while (cause.getCause() != null){
-            cause = cause.getCause();
-        }
-        String msg = cause.getMessage();
-        if (msg == null){
-            StringWriter stringWriter = new StringWriter();
-            final PrintWriter printWriter = new PrintWriter(stringWriter);
-            cause.printStackTrace(printWriter);
-            printWriter.flush();
-            msg = stringWriter.toString();
-        }
-        errorMessages.add("<p>" + errorMessage + "</p>" + msg);
-
-    }
-
-    public List<String> getUserErrors() {
-        return new ArrayList<String>(errorMessages);
-    }
-
-    public void clearUserErrors() {
-        errorMessages.clear();
-    }
-
     @Override
-    public String toString() {
-        return "OWLHTMLKitImpl{" +
-               "id='" + id + '\'' +
-               ", timestamp=" + timestamp +
-               '}';
+    public OntologyConfig getOntConfig() {
+        return ontConfigFor(owlServer.getActiveOntology());
+    }
+
+    private OntologyConfig ontConfigFor(OWLOntology activeOnt) {
+        List<OntologyMapping> mappings = Lists.newArrayList();
+        mappings.add(mappingFor(activeOnt));
+        Stream<OWLOntology> allOnts = activeOnt.getImportsClosure().stream();
+        allOnts.filter(ont -> !ont.equals(activeOnt)).forEach(ont -> mappings.add(mappingFor(ont)));
+        return new OntologyConfig(mappings);
+    }
+
+    private OntologyMapping mappingFor(OWLOntology ont) {
+        IRI docIRI = ont.getOWLOntologyManager().getOntologyDocumentIRI(ont);
+        IRI ontIRI = ont.getOntologyID().getDefaultDocumentIRI().or(docIRI);
+        return new OntologyMapping(ontIRI, docIRI);
     }
 }

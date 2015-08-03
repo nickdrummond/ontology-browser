@@ -11,6 +11,8 @@ import org.coode.www.repository.KitRepository;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import static java.util.Arrays.asList;
 
 @Service
 public class OntologiesService {
+
+    private static Logger logger = LoggerFactory.getLogger(OntologiesService.class);
 
     @Autowired
     private KitRepository kitRepository;
@@ -79,7 +83,7 @@ public class OntologiesService {
             } else {
                 message = fail.get(f).getMessage();
             }
-            kit.addUserError("<p>Failed to load: " + uri + "</p><p>" + message + "</p>");
+            logger.warn(message);
         }
         return String.valueOf(kit.getOWLServer().getActiveOntology().hashCode());
     }

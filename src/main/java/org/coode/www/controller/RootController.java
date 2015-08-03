@@ -27,7 +27,7 @@ public class RootController extends ApplicationController {
                         @RequestParam(required=false) final String redirect,
                         final HttpServletRequest request) throws OntServerException {
 
-        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label, model);
+        final OWLHTMLKit kit = sessionManager.getHTMLKit(request, label);
 
         model.addAttribute("kit", kit);
 
@@ -46,7 +46,7 @@ public class RootController extends ApplicationController {
     public String signout(final Model model,
                           final HttpServletRequest request) throws OntServerException {
 
-        OWLHTMLKit kit = sessionManager.getHTMLKit(request, model);
+        OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
         model.addAttribute("options", optionsService.getOptionsAsMap(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
