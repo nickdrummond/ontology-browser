@@ -1,11 +1,9 @@
 package org.coode.www.service;
 
-import org.coode.owl.mngr.ServerOptionsAdapter;
-import org.coode.owl.mngr.ServerProperty;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.www.model.OptionSet;
+import org.coode.www.model.ServerConfig;
 import org.coode.www.repository.KitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,25 +17,12 @@ public class OptionsService {
     private KitRepository kitRepository;
 
     public boolean setOption(final OptionSet optionSet, final OWLHTMLKit kit) throws OntServerException {
-        // TODO get rid of this split of properties
-        boolean success;
-        try{
-            OWLHTMLProperty property = OWLHTMLProperty.valueOf(optionSet.getProperty());
-            ServerOptionsAdapter<OWLHTMLProperty> serverProperties = kit.getHTMLProperties();
-            success = serverProperties.set(property, optionSet.getValue());
-        }
-        catch(IllegalArgumentException e){
-            // then this must be an OWL server preference
-            try{
-                ServerProperty property = ServerProperty.valueOf(optionSet.getProperty());
-                success = kit.getOWLServer().getProperties().set(property, optionSet.getValue());
-            }
-            catch(IllegalArgumentException e2){
-                throw new OntServerException("Cannot set unknown property: " + optionSet.getProperty());
-            }
-        }
+        ServerConfig config = kit.getConfig();
 
-        if (success){
+        boolean success = config.setOption(optionSet);
+
+        if (success) {
+            kit.setConfig(config);
             kitRepository.saveKit(kit);
         }
 

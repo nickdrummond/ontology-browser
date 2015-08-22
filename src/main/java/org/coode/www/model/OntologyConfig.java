@@ -1,14 +1,17 @@
 package org.coode.www.model;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import org.coode.www.util.Hashing;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Document
 public class OntologyConfig {
@@ -85,5 +88,24 @@ public class OntologyConfig {
             }
         }
         return Optional.absent();
+    }
+
+    /**
+     * Factory method for generating an OntologyConfig from an ontology and its imports closure.
+     * @param activeOnt The root ontology.
+     * @return an OntologyConfig representing the loaded ontologies.
+     */
+    public static OntologyConfig ontConfigFor(final OWLOntology activeOnt) {
+        List<OntologyMapping> mappings = Lists.newArrayList();
+        mappings.add(mappingFor(activeOnt));
+        Stream<OWLOntology> allOnts = activeOnt.getImportsClosure().stream();
+        allOnts.filter(ont -> !ont.equals(activeOnt)).forEach(ont -> mappings.add(mappingFor(ont)));
+        return new OntologyConfig(mappings);
+    }
+
+    private static OntologyMapping mappingFor(final OWLOntology ont) {
+        IRI docIRI = ont.getOWLOntologyManager().getOntologyDocumentIRI(ont);
+        IRI ontIRI = ont.getOntologyID().getDefaultDocumentIRI().or(docIRI);
+        return new OntologyMapping(ontIRI, docIRI);
     }
 }

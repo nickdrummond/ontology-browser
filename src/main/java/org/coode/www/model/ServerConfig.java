@@ -1,5 +1,6 @@
 package org.coode.www.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.coode.www.util.Hashing;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.data.annotation.Id;
@@ -38,16 +39,6 @@ public class ServerConfig {
         this.labelLang = labelLang;
         this.reasoner = reasoner;
         refreshHash();
-    }
-
-    private void refreshHash() {
-        hash = Hashing.md5(
-                renderer + "|" +
-                labelAnnotationIri + "|" +
-                labelPropertyUri + "|" +
-                labelLang + "|" +
-                reasoner
-        );
     }
 
     public String getHash() {
@@ -121,5 +112,30 @@ public class ServerConfig {
         result = 31 * result + labelLang.hashCode();
         result = 31 * result + reasoner.hashCode();
         return result;
+    }
+
+    private void refreshHash() {
+        hash = Hashing.md5(
+                        renderer + "|" +
+                        labelAnnotationIri + "|" +
+                        labelPropertyUri + "|" +
+                        labelLang + "|" +
+                        reasoner
+        );
+    }
+
+    @JsonIgnore
+    public boolean setOption(OptionSet optionSet) {
+        switch(optionSet.getProperty()) {
+            case "optionRenderer": setRenderer(optionSet.getValue()); break;
+            case "optionLabelAnnotationUri": setLabelAnnotationIri(IRI.create(optionSet.getValue())); break;
+            case "optionLabelPropertyUri": setLabelPropertyUri(IRI.create(optionSet.getValue())); break;
+            case "optionLabelLang": setLabelLang(optionSet.getValue()); break;
+            case "optionReasoner": setReasoner(optionSet.getValue()); break;
+            default: return false;
+        }
+        refreshHash();
+        id = null;
+        return true;
     }
 }

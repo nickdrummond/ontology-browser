@@ -34,16 +34,14 @@ public class KitRepository {
     private static final String LABEL_SPLITTER = "_";
 
     /**
-     * Persist the current loaded ontologies with their mappings
+     * Persist the current loaded ontologies with their mappings.
      * @param kit note: will set the current label on the server
      * @throws org.coode.www.exception.OntServerException
      */
     public synchronized void saveKit(final OWLHTMLKit kit) throws OntServerException {
         try {
             saveServerConfig(kit.getConfig());
-
-            OntologyConfig ontConfig = kit.getOntConfig();
-            saveOntologies(ontConfig);
+            saveOntologies(kit.getOntConfig());
         }
         catch (IOException e) {
             throw new OntServerException(e);

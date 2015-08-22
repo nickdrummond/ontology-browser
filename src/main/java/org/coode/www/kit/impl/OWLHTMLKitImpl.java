@@ -124,20 +124,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     @Override
     public OntologyConfig getOntConfig() {
-        return ontConfigFor(owlServer.getActiveOntology());
-    }
-
-    private OntologyConfig ontConfigFor(OWLOntology activeOnt) {
-        List<OntologyMapping> mappings = Lists.newArrayList();
-        mappings.add(mappingFor(activeOnt));
-        Stream<OWLOntology> allOnts = activeOnt.getImportsClosure().stream();
-        allOnts.filter(ont -> !ont.equals(activeOnt)).forEach(ont -> mappings.add(mappingFor(ont)));
-        return new OntologyConfig(mappings);
-    }
-
-    private OntologyMapping mappingFor(OWLOntology ont) {
-        IRI docIRI = ont.getOWLOntologyManager().getOntologyDocumentIRI(ont);
-        IRI ontIRI = ont.getOntologyID().getDefaultDocumentIRI().or(docIRI);
-        return new OntologyMapping(ontIRI, docIRI);
+        return OntologyConfig.ontConfigFor(owlServer.getActiveOntology());
     }
 }
