@@ -7,14 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Author: drummond<br>
- * http://www.cs.man.ac.uk/~drummond/<br><br>
- * <p/>
- * The University Of Manchester<br>
- * Bio Health Informatics Group<br>
- * Date: Dec 6, 2010<br><br>
- */
 public class ToggleCookie extends HttpServlet{
 
     private static final String LABEL_COOKIE_NAME = "label";
