@@ -12,7 +12,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
 import java.net.URL;
-import java.util.*;
+import java.util.Set;
 
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 

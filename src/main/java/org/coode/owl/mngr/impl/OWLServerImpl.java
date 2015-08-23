@@ -4,7 +4,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.coode.owl.mngr.*;
+import org.coode.owl.mngr.OWLEntityFinder;
+import org.coode.owl.mngr.OWLReasonerManager;
+import org.coode.owl.mngr.OWLServer;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.model.OntologyMapping;
 import org.coode.www.model.ServerConfig;
@@ -20,16 +22,11 @@ import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.NonMappingOntologyIRIMapper;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 public class OWLServerImpl implements OWLServer {

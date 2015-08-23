@@ -1,23 +1,19 @@
 package org.coode.www.configuration;
 
-import com.github.fakemongo.Fongo;
 import com.google.common.collect.Lists;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import org.coode.www.model.OntologyConfig;
 import org.coode.www.repository.IRIReadConverter;
 import org.coode.www.repository.IRIWriteConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.WriteResultChecking;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
-import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import java.net.UnknownHostException;

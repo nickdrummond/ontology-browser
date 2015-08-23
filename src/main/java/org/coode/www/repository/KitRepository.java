@@ -1,14 +1,10 @@
 package org.coode.www.repository;
 
-import com.google.common.collect.Lists;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLKitImpl;
 import org.coode.www.model.OntologyConfig;
-import org.coode.www.model.OntologyMapping;
 import org.coode.www.model.ServerConfig;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.stream.Stream;
 
 @Repository
 public class KitRepository {
