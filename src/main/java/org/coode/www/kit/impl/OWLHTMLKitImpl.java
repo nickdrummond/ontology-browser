@@ -1,26 +1,19 @@
 package org.coode.www.kit.impl;
 
-import com.google.common.collect.Lists;
 import org.coode.html.url.RestURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.mngr.ServerOptionsAdapter;
-import org.coode.owl.mngr.ServerProperties;
 import org.coode.owl.mngr.ServerProperty;
 import org.coode.owl.mngr.impl.OWLServerImpl;
-import org.coode.owl.mngr.impl.ServerOptionsAdapterImpl;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.OntologyConfig;
-import org.coode.www.model.OntologyMapping;
 import org.coode.www.model.ServerConfig;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 
@@ -29,8 +22,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     protected URLScheme urlScheme;
 
     private OWLServer owlServer;
-
-    private ServerOptionsAdapter<OWLHTMLProperty> properties;
 
     private ServerConfig config;
 
@@ -42,25 +33,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         this.owlServer = server;
         this.baseURL = baseURL;
         this.config = new ServerConfig();
-    }
-
-    @Override
-    public ServerOptionsAdapter<OWLHTMLProperty> getHTMLProperties() {
-        if (properties == null){
-            // share the same base properties
-            properties = new ServerOptionsAdapterImpl<OWLHTMLProperty>((ServerOptionsAdapterImpl)getOWLServer().getProperties());
-            properties.addDeprecatedNames(OWLHTMLProperty.generateDeprecatedNamesMap());
-
-            properties.setBoolean(OWLHTMLProperty.optionShowInferences, true);
-
-            // Allowed values
-            List<String> booleanValues = Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString());
-            properties.setAllowedValues(OWLHTMLProperty.optionRenderPermalink, booleanValues);
-            properties.setAllowedValues(OWLHTMLProperty.optionShowMiniHierarchies, booleanValues);
-            properties.setAllowedValues(OWLHTMLProperty.optionShowInferredHierarchies, booleanValues);
-            properties.setAllowedValues(OWLHTMLProperty.optionShowInferences, booleanValues);
-        }
-        return properties;
     }
 
     @Override
@@ -112,7 +84,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     @Override
     public void dispose() {
         owlServer.dispose();
-        properties = null;
         urlScheme = null;
         baseURL = null;
     }

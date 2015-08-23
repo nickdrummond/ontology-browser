@@ -2,8 +2,6 @@ package org.coode.www.kit;
 
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.mngr.ServerOptionsAdapter;
-import org.coode.www.kit.impl.OWLHTMLProperty;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.model.ServerConfig;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -19,9 +17,6 @@ public interface OWLHTMLKit {
     ServerConfig getConfig();
 
     void setConfig(@Nonnull ServerConfig serverConfig);
-
-    @Deprecated
-    ServerOptionsAdapter<OWLHTMLProperty> getHTMLProperties();
 
     @Deprecated
     URL getBaseURL();
