@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -29,7 +28,7 @@ public class OWLDataPropertiesController extends ApplicationController {
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLDataProperties(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
 
-        final OWLDataFactory df = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory();
+        final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
         OWLDataProperty owlTopDataProperty = df.getOWLTopDataProperty();
 
@@ -46,17 +45,15 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
 
-        OWLServer owlServer = kit.getOWLServer();
-
         Comparator<Tree<OWLDataProperty>> comparator = (o1, o2) ->
                 o1.value.iterator().next().compareTo(o2.value.iterator().next());
 
         OWLDataPropertyHierarchyService hierarchyService =
-                new OWLDataPropertyHierarchyService(owlServer.getOWLReasoner(), comparator);
+                new OWLDataPropertyHierarchyService(kit.getOWLReasoner(), comparator);
 
         Tree<OWLDataProperty> prunedTree = hierarchyService.getPrunedTree(owlDataProperty);
 
-        String entityName = owlServer.getShortFormProvider().getShortForm(owlDataProperty);
+        String entityName = kit.getShortFormProvider().getShortForm(owlDataProperty);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlDataProperty));
 
@@ -64,8 +61,8 @@ public class OWLDataPropertiesController extends ApplicationController {
         model.addAttribute("type", "Data Properties");
         model.addAttribute("iri", owlDataProperty.getIRI());
         model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", owlServer.getActiveOntology());
-        model.addAttribute("ontologies", owlServer.getOntologies());
+        model.addAttribute("activeOntology", kit.getActiveOntology());
+        model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlDataProperty, kit));
         model.addAttribute("mos", owlRenderer);
@@ -80,13 +77,11 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         OWLDataProperty property = service.getOWLDataPropertyFor(propertyId, kit);
 
-        OWLServer owlServer = kit.getOWLServer();
-
         Comparator<Tree<OWLDataProperty>> comparator = (o1, o2) ->
                 o1.value.iterator().next().compareTo(o2.value.iterator().next());
 
         OWLDataPropertyHierarchyService hierarchyService =
-                new OWLDataPropertyHierarchyService(owlServer.getOWLReasoner(), comparator);
+                new OWLDataPropertyHierarchyService(kit.getOWLReasoner(), comparator);
 
         Tree<OWLDataProperty> prunedTree = hierarchyService.getChildren(property);
 

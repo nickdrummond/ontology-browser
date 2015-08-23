@@ -17,7 +17,7 @@ public abstract class AbstractURLScheme implements URLScheme {
     }
 
     public URL getBaseURL(){
-        return kit.getBaseURL();
+        return kit.getBaseUrl();
     }
 
     public OWLHTMLKit getOWLHTMLKit(){

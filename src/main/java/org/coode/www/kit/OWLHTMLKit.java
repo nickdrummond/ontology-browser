@@ -1,33 +1,34 @@
 package org.coode.www.kit;
 
 import org.coode.html.url.URLScheme;
-import org.coode.owl.mngr.OWLServer;
+import org.coode.owl.mngr.ActiveOntologyProvider;
+import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.model.ServerConfig;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import javax.annotation.Nonnull;
+import java.net.URI;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.Set;
 
-public interface OWLHTMLKit {
-
-    OWLServer getOWLServer();
+public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     ServerConfig getConfig();
 
     void setConfig(@Nonnull ServerConfig serverConfig);
 
     @Deprecated
-    URL getBaseURL();
+    URL getBaseUrl();
+
+    void setBaseUrl(URL baseUrl);
     
     URLScheme getURLScheme();
-
-    /**
-     * The ontologies that are visible in the browser (reasoner should always use getActiveOntologies)
-     * @return ontologies that are to be rendered in the interface (not including the 'system' meta ontology)
-     */
-    Set<OWLOntology> getVisibleOntologies();
 
     String getCurrentLabel();
 
@@ -40,4 +41,50 @@ public interface OWLHTMLKit {
     boolean isActive();
 
     OntologyConfig getOntConfig();
+
+    /**
+     * Get the ontologies used for reasoning
+     * @return imports closure of the current active ontology (plus meta ontology if it exists)
+     */
+    Set<OWLOntology> getActiveOntologies();
+
+    Set<OWLOntology> getOntologies();
+
+    void setActiveOntology(OWLOntology ont);
+
+    OWLOntology loadOntology(URI ontPhysicalURI) throws OWLOntologyCreationException;
+
+    void loadOntologies(OntologyConfig ontConfig);
+
+    /**
+     * First get an ontology with a matching version IRI if one exists.
+     * If not, get an ontology with a matching ontology IRI.
+     * @param iri the IRI
+     * @return an Ontology if one matches or null if none is found
+     */
+    OWLOntology getOntologyForIRI(IRI iri);
+
+    OWLOntologyManager getOWLOntologyManager();
+
+    OWLReasoner getOWLReasoner();
+
+    Comparator<OWLObject> getComparator();
+
+    OWLEntityFinder getFinder();
+
+    OWLEntityChecker getOWLEntityChecker();
+
+    ShortFormProvider getShortFormProvider();
+
+    OntologyIRIShortFormProvider getOntologyShortFormProvider();
+
+    /**
+     * Get rid of all caches (such as renderings) and clear the reasoner.
+     * Do not clear the loaded ontologies - this is done with clearOntologies
+     */
+    void clear();
+
+    void clearOntologies();
+
+    OWLOntology getRootOntology();
 }

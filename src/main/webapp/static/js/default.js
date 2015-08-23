@@ -2,7 +2,7 @@
 
 var xmlHttpOption;                         // XML HTTP object for option
 var onSuccess;                             // page to go to once the option has been set (in the onload)
-var baseURL;                               // this is set by the java side
+var baseUrl;                               // this is set by the java side
 var optionsURL = "options/";
 var hierarchyURL = "hierarchy/";
 
@@ -65,7 +65,7 @@ function toggleMenu(e) {
 }
 
 function createSlideToggles() {
-    $("<img class=\"min\" src=\"" + baseURL + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
+    $("<img class=\"min\" src=\"" + baseUrl + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
         $(this).nextAll("ul").first().slideToggle('fast');
     }).prependTo(".characteristic, .owlselector");
 
@@ -109,7 +109,7 @@ function option(opt, value, successpage){
         alert ("Browser does not support HTTP Request");
     }
     else{
-        xmlHttpOption.open("POST", baseURL + optionsURL, true);
+        xmlHttpOption.open("POST", baseUrl + optionsURL, true);
 
         xmlHttpOption.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
@@ -185,7 +185,7 @@ function handleExpand(li){
 }
 
 function getChildren(li){
-    var childList = $("<ul><li><img src=\"" + baseURL + "static/images/small_busy.gif\" width=\"10\" height=\"10\"/></li></ul>");
+    var childList = $("<ul><li><img src=\"" + baseUrl + "static/images/small_busy.gif\" width=\"10\" height=\"10\"/></li></ul>");
 
     var query = 'children';
     if (li.closest('.minihierarchy').hasClass('Individuals')) {

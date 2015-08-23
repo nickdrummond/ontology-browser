@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -28,12 +27,10 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     public String getOWLAnnotationProperties(@ModelAttribute("kit") final OWLHTMLKit kit)
             throws OntServerException, NotFoundException {
 
-        OWLServer owlServer = kit.getOWLServer();
-
-        OWLOntology activeOntology = owlServer.getActiveOntology();
+        OWLOntology activeOntology = kit.getActiveOntology();
 
         List<OWLAnnotationProperty> annotationProperties
-                = service.getAnnotationProperties(activeOntology, owlServer.getComparator());
+                = service.getAnnotationProperties(activeOntology, kit.getComparator());
 
         OWLAnnotationProperty firstAnnotationProperty = annotationProperties.get(0);
 
@@ -50,14 +47,12 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         OWLAnnotationProperty owlAnnotationProperty = service.getOWLAnnotationPropertyFor(propertyId, kit);
 
-        OWLServer owlServer = kit.getOWLServer();
-
-        OWLOntology activeOntology = owlServer.getActiveOntology();
+        OWLOntology activeOntology = kit.getActiveOntology();
 
         List<OWLAnnotationProperty> annotationProperties =
-                service.getAnnotationProperties(activeOntology, owlServer.getComparator());
+                service.getAnnotationProperties(activeOntology, kit.getComparator());
 
-        String entityName = owlServer.getShortFormProvider().getShortForm(owlAnnotationProperty);
+        String entityName = kit.getShortFormProvider().getShortForm(owlAnnotationProperty);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlAnnotationProperty));
 
@@ -66,7 +61,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         model.addAttribute("iri", owlAnnotationProperty.getIRI());
         model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("activeOntology", activeOntology);
-        model.addAttribute("ontologies", owlServer.getOntologies());
+        model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("entities", annotationProperties);
         model.addAttribute("characteristics", service.getCharacteristics(owlAnnotationProperty, kit));
         model.addAttribute("mos", owlRenderer);

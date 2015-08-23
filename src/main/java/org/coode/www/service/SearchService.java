@@ -20,7 +20,7 @@ public class SearchService {
 
     public List<OWLEntity> findByName(String input, final OWLHTMLKit kit) {
 
-        OWLEntityFinder finder = kit.getOWLServer().getFinder();
+        OWLEntityFinder finder = kit.getFinder();
 
         if (input == null){
             input = wildcard;

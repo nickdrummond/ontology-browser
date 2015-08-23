@@ -28,7 +28,7 @@ public class MediaRenderer extends OWLHTMLRenderer {
 
     public MediaRenderer(OWLHTMLKit kit, Optional<? extends OWLObject> activeObject) {
         super(kit, activeObject);
-        this.entityFinder = kit.getOWLServer().getFinder();
+        this.entityFinder = kit.getFinder();
         this.mediaService = new MediaService();
     }
 

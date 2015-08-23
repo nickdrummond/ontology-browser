@@ -35,7 +35,7 @@ public class CloudController extends ApplicationController {
     public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                   final Model model) throws OntServerException {
 
-        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit.getOWLServer().getOntologies());
+        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit.getOntologies());
         return cloud(kit, model, "Classes Usage Cloud", cloudModel);
     }
 
@@ -43,7 +43,7 @@ public class CloudController extends ApplicationController {
     public String getIndividualsCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                       final Model model) throws OntServerException {
 
-        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOWLServer().getOntologies());
+        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOntologies());
         return cloud(kit, model, "Individuals Usage Cloud", cloudModel);
     }
 
@@ -51,7 +51,7 @@ public class CloudController extends ApplicationController {
     public String getObjectPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                            final Model model) throws OntServerException {
 
-        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit.getOWLServer().getOntologies());
+        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit.getOntologies());
         return cloud(kit, model, "Object Properties Usage Cloud", cloudModel);
     }
 
@@ -59,7 +59,7 @@ public class CloudController extends ApplicationController {
     public String getDataPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                          final Model model) throws OntServerException {
 
-        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit.getOWLServer().getOntologies());
+        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit.getOntologies());
         return cloud(kit, model, "Data Properties Usage Cloud", cloudModel);
     }
 
@@ -67,7 +67,7 @@ public class CloudController extends ApplicationController {
     public String getAnnotationPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                                final Model model) throws OntServerException {
 
-        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit.getOWLServer().getOntologies());
+        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit.getOntologies());
         return cloud(kit, model, "Annotation Properties Usage Cloud", cloudModel);
     }
 
@@ -75,7 +75,7 @@ public class CloudController extends ApplicationController {
     public String getDatatypesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                     final Model model) throws OntServerException {
 
-        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit.getOWLServer().getOntologies());
+        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit.getOntologies());
         return cloud(kit, model, "Datatypes Usage Cloud", cloudModel);
     }
 
@@ -89,11 +89,11 @@ public class CloudController extends ApplicationController {
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
 
-        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+        Set<OWLOntology> ontologies = kit.getOntologies();
 
         model.addAttribute("title", title);
         model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
+        model.addAttribute("activeOntology", kit.getActiveOntology());
         model.addAttribute("ontologies", ontologies);
         model.addAttribute("cloud", cloudModel);
         model.addAttribute("helper", helper);

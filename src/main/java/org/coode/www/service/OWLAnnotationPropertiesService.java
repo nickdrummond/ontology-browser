@@ -24,7 +24,7 @@ public class OWLAnnotationPropertiesService {
 
     // TODO need to index the entities by ID
     public OWLAnnotationProperty getOWLAnnotationPropertyFor(final String propertyId, final OWLHTMLKit kit) throws NotFoundException {
-        for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
+        for (OWLOntology ont : kit.getActiveOntologies()){
             for (OWLAnnotationProperty owlAnnotationProperty: ont.getAnnotationPropertiesInSignature()) {
                 if (getIdFor(owlAnnotationProperty).equals(propertyId)){
                     return owlAnnotationProperty;
@@ -39,8 +39,8 @@ public class OWLAnnotationPropertiesService {
     }
 
     public List<Characteristic> getCharacteristics(final OWLAnnotationProperty owlAnnotationProperty, final OWLHTMLKit kit) {
-        Set<OWLOntology> activeOntologies = kit.getOWLServer().getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
+        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
+        Comparator<OWLObject> comparator = kit.getComparator();
 
         CharacteristicsFactory fac = new CharacteristicsFactory();
 

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 public class NameService {
 
     public String getName(final OWLEntity owlEntity, final OWLHTMLKit kit) {
-        return kit.getOWLServer().getShortFormProvider().getShortForm(owlEntity);
+        return kit.getShortFormProvider().getShortForm(owlEntity);
     }
 }

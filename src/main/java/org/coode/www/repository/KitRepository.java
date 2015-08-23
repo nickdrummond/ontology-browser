@@ -8,6 +8,7 @@ import org.coode.www.model.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +17,9 @@ import java.net.URL;
 
 @Repository
 public class KitRepository {
+
+    @Autowired
+    private ApplicationContext appCtx;
 
     private static Logger logger = LoggerFactory.getLogger(KitRepository.class);
 
@@ -53,12 +57,14 @@ public class KitRepository {
         String ontHash = parts[0];
         String servHash = parts[1];
 
-        kit.getOWLServer().loadOntologies(ontologyConfigRepo.findByHash(ontHash));
+        kit.loadOntologies(ontologyConfigRepo.findByHash(ontHash));
         kit.setConfig(serverConfigRepo.findByHash(servHash));
     }
 
     public OWLHTMLKit createHTMLKit(URL basePath) {
-        return new OWLHTMLKitImpl(basePath);
+        final OWLHTMLKit kit = appCtx.getBean(OWLHTMLKit.class);
+        kit.setBaseUrl(basePath);
+        return kit;
     }
 
     private ServerConfig saveServerConfig(ServerConfig config) throws IOException {

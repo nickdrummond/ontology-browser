@@ -23,7 +23,7 @@ public class OWLObjectPropertiesService {
 
     // TODO need to index the entities by ID
     public OWLObjectProperty getOWLObjectPropertyFor(String propertyId, OWLHTMLKit kit) throws NotFoundException {
-        OWLDataFactory df = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory();
+        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
         OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
         if (getIdFor(owlTopObjectProperty).equals(propertyId)) {
@@ -35,7 +35,7 @@ public class OWLObjectPropertiesService {
             return owlBottomObjectProperty;
         }
 
-        for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
+        for (OWLOntology ont : kit.getActiveOntologies()){
             for (OWLObjectProperty owlObjectProperty: ont.getObjectPropertiesInSignature()) {
                 if (getIdFor(owlObjectProperty).equals(propertyId)){
                     return owlObjectProperty;
@@ -51,8 +51,8 @@ public class OWLObjectPropertiesService {
 
     public List<Characteristic> getCharacteristics(final OWLObjectProperty owlObjectProperty, final OWLHTMLKit kit) {
 
-        Set<OWLOntology> activeOntologies = kit.getOWLServer().getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
+        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
+        Comparator<OWLObject> comparator = kit.getComparator();
 
         CharacteristicsFactory fac = new CharacteristicsFactory();
 

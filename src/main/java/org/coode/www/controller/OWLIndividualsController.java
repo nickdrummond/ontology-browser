@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import com.google.common.base.Optional;
-import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -57,21 +56,19 @@ public class OWLIndividualsController extends ApplicationController {
 
         OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, kit);
 
-        OWLServer owlServer = kit.getOWLServer();
-
         Comparator<Tree<OWLEntity>> comparator = (o1, o2) ->
                 o1.value.iterator().next().compareTo(o2.value.iterator().next());
 
         OWLIndividualsByTypeHierarchyService hierarchyService =
-                new OWLIndividualsByTypeHierarchyService(owlServer.getOWLReasoner(), comparator);
+                new OWLIndividualsByTypeHierarchyService(kit.getOWLReasoner(), comparator);
 
         Tree<OWLEntity> prunedTree = hierarchyService.getPrunedTree(owlIndividual);
 
-        String entityName = kit.getOWLServer().getShortFormProvider().getShortForm(owlIndividual);
+        String entityName = kit.getShortFormProvider().getShortForm(owlIndividual);
 
         OWLHTMLRenderer owlRenderer = new MediaRenderer(kit, Optional.of(owlIndividual));
 
-        Set<OWLOntology> ontologies = kit.getOWLServer().getOntologies();
+        Set<OWLOntology> ontologies = kit.getOntologies();
 
         Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ontologies);
         if (maybeLoc.isPresent()) {
@@ -91,7 +88,7 @@ public class OWLIndividualsController extends ApplicationController {
         model.addAttribute("type", "Individuals");
         model.addAttribute("iri", owlIndividual.getIRI());
         model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
+        model.addAttribute("activeOntology", kit.getActiveOntology());
         model.addAttribute("ontologies", ontologies);
         model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlIndividual, kit));

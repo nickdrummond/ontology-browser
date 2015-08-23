@@ -1,6 +1,6 @@
 package org.coode.www.renderer;
 
-import org.coode.owl.mngr.OWLServer;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ServerConfig;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.AnnotationValueShortFormProvider;
@@ -20,15 +20,15 @@ public class LabelShortFormProvider implements ShortFormProvider {
 
     private AnnotationValueShortFormProvider delegate;
 
-    public LabelShortFormProvider(final OWLServer server, ShortFormProvider defaultSFP) {
+    public LabelShortFormProvider(final OWLHTMLKit kit, final ShortFormProvider defaultSFP) {
 
-        ServerConfig config = server.getConfig();
+        ServerConfig config = kit.getConfig();
 
         final String lang = config.getLabelLang();
 
-        final OWLDataFactory df = server.getOWLOntologyManager().getOWLDataFactory();
+        final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
-        final OWLOntologySetProvider activeOntologiesSetProvider = server::getActiveOntologies;
+        final OWLOntologySetProvider activeOntologiesSetProvider = kit::getActiveOntologies;
 
         // the property assertion sfp
         OWLDataProperty dataProp = df.getOWLDataProperty(config.getLabelPropertyIri());

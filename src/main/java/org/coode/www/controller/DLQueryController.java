@@ -2,7 +2,6 @@ package org.coode.www.controller;
 
 import com.google.common.base.Optional;
 import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
@@ -49,8 +48,8 @@ public class DLQueryController extends ApplicationController {
             final Model model) throws OntServerException, ParseException {
 
         model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("activeOntology", kit.getActiveOntology());
+        model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("expression", expression);
 
         return "dlquery";
@@ -64,10 +63,9 @@ public class DLQueryController extends ApplicationController {
             HttpServletResponse response,
             final Model model) throws OntServerException {
 
-        OWLServer owlServer = kit.getOWLServer();
-        OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = owlServer.getOWLEntityChecker();
-        OWLReasoner reasoner = owlServer.getOWLReasoner();
+        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+        OWLEntityChecker checker = kit.getOWLEntityChecker();
+        OWLReasoner reasoner = kit.getOWLReasoner();
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.<OWLObject>absent());
 
         try {
@@ -76,7 +74,7 @@ public class DLQueryController extends ApplicationController {
 
             logger.debug("Results count: " + results.size());
 
-            Collections.sort(results, owlServer.getComparator());
+            Collections.sort(results, kit.getComparator());
             Characteristic resultsCharacteristic = new Characteristic(null, query.name(), results);
 
             model.addAttribute("results", resultsCharacteristic);
@@ -94,11 +92,10 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = true) String expression,
             @ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
 
-        OWLServer owlServer = kit.getOWLServer();
-        OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = owlServer.getOWLEntityChecker();
-        OWLEntityFinder finder = owlServer.getFinder();
-        ShortFormProvider sfp = owlServer.getShortFormProvider();
+        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+        OWLEntityChecker checker = kit.getOWLEntityChecker();
+        OWLEntityFinder finder = kit.getFinder();
+        ShortFormProvider sfp = kit.getShortFormProvider();
 
         return service.autocomplete(expression, df, checker, finder, sfp).toString();
     }
@@ -109,9 +106,8 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = true) String expression,
             @ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
 
-        OWLServer owlServer = kit.getOWLServer();
-        OWLDataFactory df = owlServer.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = owlServer.getOWLEntityChecker();
+        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+        OWLEntityChecker checker = kit.getOWLEntityChecker();
 
         try {
             return service.parse(expression, df, checker).toString();

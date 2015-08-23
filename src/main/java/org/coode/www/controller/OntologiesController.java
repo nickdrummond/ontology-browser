@@ -3,7 +3,6 @@ package org.coode.www.controller;
 import com.google.common.base.Optional;
 import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.output.WriterOutputStream;
-import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -41,7 +40,7 @@ public class OntologiesController extends ApplicationController {
     @RequestMapping(method=RequestMethod.GET)
     public String getOntologies(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
 
-        OWLOntology rootOntology = kit.getOWLServer().getRootOntology();
+        OWLOntology rootOntology = kit.getRootOntology();
 
         String id = service.getIdFor(rootOntology);
 
@@ -54,16 +53,14 @@ public class OntologiesController extends ApplicationController {
                               final Model model) throws OntServerException, NotFoundException {
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
-        OWLServer owlServer = kit.getOWLServer();
-
         Comparator<Tree<OWLOntology>> comparator = (o1, o2) ->
                 o1.value.iterator().next().compareTo(o2.value.iterator().next());
 
-        OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(owlServer.getRootOntology(), comparator);
+        OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), comparator);
 
         Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(owlOntology);
 
-        String title = owlOntology.equals(owlServer.getRootOntology()) ?
+        String title = owlOntology.equals(kit.getRootOntology()) ?
                 "All ontologies" :
                 sfp.getShortForm(owlOntology) + " (Ontology)";
 
@@ -73,8 +70,8 @@ public class OntologiesController extends ApplicationController {
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous")));
         model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("activeOntology", kit.getActiveOntology());
+        model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("hierarchy", ontologyTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlOntology, kit));
         model.addAttribute("mos", owlRenderer);
@@ -94,7 +91,7 @@ public class OntologiesController extends ApplicationController {
             OWLDocumentFormat format = new RDFXMLDocumentFormat();
             WriterOutputStream out = new WriterOutputStream(writer);
             response.addHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
-            kit.getOWLServer().getOWLOntologyManager().saveOntology(owlOntology, format, out);
+            kit.getOWLOntologyManager().saveOntology(owlOntology, format, out);
         }
         catch (OWLOntologyStorageException e) {
             throw new RuntimeException(e);

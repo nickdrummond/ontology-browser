@@ -22,7 +22,7 @@ public class OWLIndividualsService {
 
     // TODO need to index the entities by ID
     public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final OWLHTMLKit kit) throws NotFoundException {
-        for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
+        for (OWLOntology ont : kit.getActiveOntologies()){
             for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature()) {
                 if (getIdFor(owlIndividual).equals(propertyId)) {
                     return owlIndividual;
@@ -42,8 +42,8 @@ public class OWLIndividualsService {
     }
 
     public List<Characteristic> getCharacteristics(OWLNamedIndividual owlIndividual, OWLHTMLKit kit) {
-        Set<OWLOntology> activeOntologies = kit.getOWLServer().getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
+        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
+        Comparator<OWLObject> comparator = kit.getComparator();
 
         CharacteristicsFactory fac = new CharacteristicsFactory();
 
@@ -59,7 +59,7 @@ public class OWLIndividualsService {
             }
         }
 
-        ShortFormProvider shortFormProvider = kit.getOWLServer().getShortFormProvider();
+        ShortFormProvider shortFormProvider = kit.getShortFormProvider();
 
         characteristics.addAll(fac.getAnnotationCharacterists (owlIndividual, activeOntologies, comparator, shortFormProvider));
         characteristics.addAll(fac.getDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
@@ -72,12 +72,12 @@ public class OWLIndividualsService {
 
     public OWLNamedIndividual getFirstIndividual(final OWLHTMLKit kit) throws NotFoundException {
 
-        List<OWLNamedIndividual> inds = new ArrayList<>(kit.getOWLServer().getActiveOntology().getIndividualsInSignature(Imports.INCLUDED));
+        List<OWLNamedIndividual> inds = new ArrayList<>(kit.getActiveOntology().getIndividualsInSignature(Imports.INCLUDED));
         if (inds.isEmpty()) {
             throw new NotFoundException("OWLIndividual", "any");
         }
         else {
-            Collections.sort(inds, kit.getOWLServer().getComparator());
+            Collections.sort(inds, kit.getComparator());
             return inds.get(0);
         }
     }

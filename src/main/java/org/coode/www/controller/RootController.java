@@ -49,8 +49,8 @@ public class RootController extends ApplicationController {
         OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
         model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
-        model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
+        model.addAttribute("activeOntology", kit.getActiveOntology());
+        model.addAttribute("ontologies", kit.getOntologies());
         return "signout";
     }
 

@@ -22,16 +22,16 @@ public class OWLClassesService {
 
     // TODO need to index the entities by ID
     public OWLClass getOWLClassFor(final String classId, final OWLHTMLKit kit) throws NotFoundException {
-        OWLClass owlThing = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory().getOWLThing();
+        OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
         if (getIdFor(owlThing).equals(classId)) {
             return owlThing;
         }
-        OWLClass owlNothing = kit.getOWLServer().getOWLOntologyManager().getOWLDataFactory().getOWLNothing();
+        OWLClass owlNothing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLNothing();
         if (getIdFor(owlNothing).equals(classId)) {
             return owlNothing;
         }
 
-        for (OWLOntology ont : kit.getOWLServer().getActiveOntologies()){
+        for (OWLOntology ont : kit.getActiveOntologies()){
             for (OWLClass owlClass: ont.getClassesInSignature()) {
                 if (getIdFor(owlClass).equals(classId)){
                     return owlClass;
@@ -47,8 +47,8 @@ public class OWLClassesService {
 
     public List<Characteristic> getCharacteristics(final OWLClass owlClass, final OWLHTMLKit kit) {
 
-        Set<OWLOntology> activeOntologies = kit.getOWLServer().getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
+        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
+        Comparator<OWLObject> comparator = kit.getComparator();
 
         CharacteristicsFactory fac = new CharacteristicsFactory();
 

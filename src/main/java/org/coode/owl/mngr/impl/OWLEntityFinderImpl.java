@@ -1,9 +1,9 @@
 package org.coode.owl.mngr.impl;
 
 import com.google.common.collect.Sets;
+import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.owl.mngr.OWLServer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
 
@@ -22,13 +22,18 @@ import java.util.regex.PatternSyntaxException;
  */
 public class OWLEntityFinderImpl implements OWLEntityFinder {
 
-    private BidirectionalShortFormProvider cache;
-    private OWLServer server;
+    private final BidirectionalShortFormProvider cache;
 
+    private final OWLDataFactory owlDataFactory;
 
-    public OWLEntityFinderImpl(BidirectionalShortFormProvider cache, OWLServer server) {
+    private final ActiveOntologyProvider activeOntologyProvider;
+
+    public OWLEntityFinderImpl(BidirectionalShortFormProvider cache,
+                               OWLDataFactory owlDataFactory,
+                               ActiveOntologyProvider activeOntologyProvider) {
         this.cache = cache;
-        this.server = server;
+        this.owlDataFactory = owlDataFactory;
+        this.activeOntologyProvider = activeOntologyProvider;
     }
 
     public Set<OWLClass> getOWLClasses (String str){
@@ -113,8 +118,8 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
             case entities:
                 Set<OWLEntity> results = Sets.newHashSet();
                 for (NamedObjectType subType : NamedObjectType.entitySubtypes()){
-                    OWLEntity entity = subType.getOWLEntity(iri, server.getOWLOntologyManager().getOWLDataFactory());
-                    for (OWLOntology ont : server.getActiveOntologies()){
+                    OWLEntity entity = subType.getOWLEntity(iri, owlDataFactory);
+                    for (OWLOntology ont : getActiveOntologies()){
                         if (ont.containsEntityInSignature(entity)){
                             results.add(entity);
                         }
@@ -124,8 +129,8 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
             case ontologies:
                 throw new RuntimeException("Cannot get entities of type ontology");
             default:
-                OWLEntity entity = type.getOWLEntity(iri, server.getOWLOntologyManager().getOWLDataFactory());
-                for (OWLOntology ont : server.getActiveOntologies()){
+                OWLEntity entity = type.getOWLEntity(iri, owlDataFactory);
+                for (OWLOntology ont : getActiveOntologies()){
                     if (ont.containsEntityInSignature(entity)){
                         return Collections.singleton(entity);
                     }
@@ -149,8 +154,6 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
 
     public void dispose() {
         cache.dispose();
-        cache = null;
-        server = null;
     }
 
     private <T extends OWLEntity> void getMatches(String str, Set<T> results, NamedObjectType type){
@@ -170,5 +173,9 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         catch(PatternSyntaxException e){
             e.printStackTrace();
         }
+    }
+
+    private Iterable<? extends OWLOntology> getActiveOntologies() {
+        return activeOntologyProvider.getActiveOntology().getImportsClosure();
     }
 }

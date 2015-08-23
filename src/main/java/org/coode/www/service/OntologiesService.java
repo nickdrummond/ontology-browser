@@ -1,7 +1,6 @@
 package org.coode.www.service;
 
 import com.google.common.base.Optional;
-import org.coode.owl.mngr.OWLServer;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -30,7 +29,7 @@ public class OntologiesService {
     private KitRepository kitRepository;
 
     public OWLOntology getOntologyFor(final String id, final OWLHTMLKit kit) throws NotFoundException {
-        for (OWLOntology ont : kit.getOWLServer().getOntologies()){
+        for (OWLOntology ont : kit.getOntologies()){
             if (getIdFor(ont).equals(id)){
                 return ont;
             }
@@ -49,15 +48,13 @@ public class OntologiesService {
 
         Map<URI, Throwable> fail = new HashMap<>();
 
-        OWLServer server = kit.getOWLServer();
-
         if (clear) {
-            server.clearOntologies();
+            kit.clearOntologies();
         }
 
         try {
             if (uri.isAbsolute()) {
-                OWLOntology ont = server.loadOntology(uri);
+                OWLOntology ont = kit.loadOntology(uri);
                 kitRepository.saveKit(kit);
                 return String.valueOf(ont.hashCode());
             }
@@ -72,7 +69,7 @@ public class OntologiesService {
         catch (OutOfMemoryError e) {
             fail.put(uri, e);
             // clear all ontologies as we are in an unpredictable state
-            server.clearOntologies();
+            kit.clearOntologies();
             throw new OntServerException("Out of memory trying to load ontologies");
         }
 
@@ -85,19 +82,19 @@ public class OntologiesService {
             }
             logger.warn(message);
         }
-        return String.valueOf(kit.getOWLServer().getActiveOntology().hashCode());
+        return String.valueOf(kit.getActiveOntology().hashCode());
     }
 
     public OWLOntology getActiveOntology(final OWLHTMLKit kit) {
-        return kit.getOWLServer().getActiveOntology();
+        return kit.getActiveOntology();
     }
 
     public Set<OWLOntology> getOntologies(final OWLHTMLKit kit) {
-        return kit.getOWLServer().getOntologies();
+        return kit.getOntologies();
     }
 
     public List<Characteristic> getCharacteristics(final OWLOntology owlOntology, final OWLHTMLKit kit) {
-        Comparator<OWLObject> comparator = kit.getOWLServer().getComparator();
+        Comparator<OWLObject> comparator = kit.getComparator();
 
         CharacteristicsFactory fac = new CharacteristicsFactory();
 
