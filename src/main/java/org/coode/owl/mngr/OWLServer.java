@@ -51,8 +51,6 @@ public interface OWLServer extends ActiveOntologyProvider {
 
     OntologyIRIShortFormProvider getOntologyShortFormProvider();
 
-    ServerOptionsAdapter<ServerProperty> getProperties();
-
     /**
      * Get rid of all caches (such as renderings) and clear the reasoner.
      * Do not clear the loaded ontologies - this is done with clearOntologies
@@ -66,6 +64,8 @@ public interface OWLServer extends ActiveOntologyProvider {
     boolean isDead();
 
     OWLOntology getRootOntology();
+
+    ServerConfig getConfig();
 
     void setConfig(ServerConfig serverConfig);
 }

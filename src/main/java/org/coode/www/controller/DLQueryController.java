@@ -48,7 +48,7 @@ public class DLQueryController extends ApplicationController {
             @ModelAttribute("kit") final OWLHTMLKit kit,
             final Model model) throws OntServerException, ParseException {
 
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
+        model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("expression", expression);

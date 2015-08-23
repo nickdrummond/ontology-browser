@@ -38,10 +38,7 @@ public class OWLServerImpl implements OWLServer {
 
     // TODO move to config
     private static final IRI ROOT_ONTOLOGY = IRI.create("http://www.manchester.ac.uk/root.owl");
-    private static final String FOAF_NAME = "http://xmlns.com/foaf/0.1/name";
-    private static final String RENDERER_FRAG = "frag";
     private static final String RENDERER_LABEL = "label";
-
 
     private OWLOntologyManager mngr;
 
@@ -63,7 +60,7 @@ public class OWLServerImpl implements OWLServer {
 
     private OWLObjectComparator comparator;
 
-    private ServerOptionsAdapter<ServerProperty> properties;
+    private ServerConfig config;
 
     private Map<URI, OWLOntologyIRIMapper> baseMapper = Maps.newHashMap();
 
@@ -72,19 +69,6 @@ public class OWLServerImpl implements OWLServer {
     private boolean serverIsDead = false;
 
     private OWLOntology rootOntology;
-
-    private PropertyChangeListener propertyChangeListener = new PropertyChangeListener(){
-
-        public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-            try{
-                handlePropertyChange(ServerProperty.valueOf(propertyChangeEvent.getPropertyName()),
-                        propertyChangeEvent.getNewValue());
-            }
-            catch(IllegalArgumentException e){
-                // do nothing - a user property
-            }
-        }
-    };
 
     private OWLOntologyLoaderListener ontLoadListener = new OWLOntologyLoaderListener() {
         public void startedLoadingOntology(LoadingStartedEvent loadingStartedEvent) {
@@ -117,9 +101,6 @@ public class OWLServerImpl implements OWLServer {
         setActiveOntology(rootOntology);
 
         reasonerManager = new OWLReasonerManagerImpl(this);
-
-        getProperties().set(ServerProperty.optionReasoner, OWLReasonerManagerImpl.STRUCTURAL);
-        getProperties().setAllowedValues(ServerProperty.optionReasoner, reasonerManager.getAvailableReasonerNames());
     }
 
     public OWLOntology loadOntology(URI physicalURI) throws OWLOntologyCreationException {
@@ -208,48 +189,18 @@ public class OWLServerImpl implements OWLServer {
         return getAnonymousOntology(iri.toString());
     }
 
-    public ServerOptionsAdapter<ServerProperty> getProperties() {
-        if (properties == null){
-
-            properties = new ServerOptionsAdapterImpl<ServerProperty>(new ServerPropertiesImpl());
-
-            properties.setBoolean(ServerProperty.optionReasonerEnabled, false);
-            properties.setAllowedValues(ServerProperty.optionReasonerEnabled,
-                    Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString()));
-
-            // make sure the deprecated names are updated on a load
-            properties.addDeprecatedNames(ServerProperty.generateDeprecatedNamesMap());
-
-            properties.set(ServerProperty.optionRenderer, RENDERER_LABEL);
-            properties.setAllowedValues(ServerProperty.optionRenderer,
-                    Arrays.asList(RENDERER_FRAG, RENDERER_LABEL)
-            );
-
-            properties.set(ServerProperty.optionLabelUri, OWLRDFVocabulary.RDFS_LABEL.getIRI().toString());
-            properties.set(ServerProperty.optionLabelLang, "");
-
-            properties.set(ServerProperty.optionLabelPropertyUri, FOAF_NAME);
-
-            properties.set(ServerProperty.optionActiveOnt, ROOT_ONTOLOGY.toString());
-            properties.setAllowedValues(ServerProperty.optionActiveOnt,
-                    Collections.singletonList(ROOT_ONTOLOGY.toString()));
-
-            properties.addPropertyChangeListener(propertyChangeListener);
-        }
-        return properties;
-    }
-
     public OWLOntology getActiveOntology() {
-        if (activeOntology == null){
-            String ont = getProperties().get(ServerProperty.optionActiveOnt);
-            if (ont != null){
-                activeOntology = getOntologyForIRI(IRI.create(ont));
-            }
-        }
         if (activeOntology == null){
             activeOntology = rootOntology;
         }
         return activeOntology;
+    }
+
+    public void setActiveOntology(OWLOntology ont) {
+        if (ont == null){
+            ont = activeOntology;
+        }
+        activeOntology = ont;
     }
 
     public void addActiveOntologyListener(Listener l) {
@@ -267,17 +218,6 @@ public class OWLServerImpl implements OWLServer {
             }
         }
         return null;
-    }
-
-    public void setActiveOntology(OWLOntology ont) {
-        if (ont == null){
-            ont = activeOntology;
-        }
-
-        final OWLOntology activeOnt = getActiveOntology();
-        if (!activeOnt.equals(ont)){
-            getProperties().set(ServerProperty.optionActiveOnt, getOntologyIdString(ont));
-        }
     }
 
     private String getOntologyIdString(final OWLOntology ont){
@@ -310,14 +250,7 @@ public class OWLServerImpl implements OWLServer {
 
         if (reasoner == null){
 
-            try {
-                reasonerManager.setRemote(getProperties().getURL(ServerProperty.optionRemote));
-            }
-            catch (MalformedURLException e) {
-                reasonerManager.setRemote(null);
-            }
-
-            String selectedReasoner = getProperties().get(ServerProperty.optionReasoner);
+            String selectedReasoner = config.getReasoner();
 
             try {
                 logger.debug("Creating reasoner: " + selectedReasoner);
@@ -326,13 +259,11 @@ public class OWLServerImpl implements OWLServer {
 
                 if (r == null || !r.isConsistent()){
                     // set the reasoner back to Structural
-                    selectedReasoner = OWLReasonerManagerImpl.STRUCTURAL;
-                    getProperties().set(ServerProperty.optionReasoner, selectedReasoner);
-                    r = reasonerManager.getReasoner(selectedReasoner);
+                    r = reasonerManager.getReasoner(OWLReasonerManagerImpl.STRUCTURAL);
                     if (r == null){
                         throw new RuntimeException("Cannot create " + OWLReasonerManagerImpl.STRUCTURAL);
                     }
-//                    throw new RuntimeException("Could not create reasoner: " + selectedReasoner + ". Setting the reasoner back to " + OWLReasonerManagerImpl.STRUCTURAL);
+                    logger.warn("Could not create reasoner: " + selectedReasoner + ". Setting the reasoner back to " + OWLReasonerManagerImpl.STRUCTURAL);
                 }
 
                 reasoner = new SynchronizedOWLReasoner(r);
@@ -382,7 +313,7 @@ public class OWLServerImpl implements OWLServer {
         }
 
         if (shortFormProvider == null){
-            String ren = getProperties().get(ServerProperty.optionRenderer);
+            String ren = config.getRenderer();
             shortFormProvider = new FixedSimpleShortFormProvider();
             if (ren.equals(RENDERER_LABEL)){
                 shortFormProvider = new LabelShortFormProvider(this, shortFormProvider);
@@ -405,11 +336,6 @@ public class OWLServerImpl implements OWLServer {
 
         mngr = null;
 
-        if (properties != null){
-            properties.removePropertyChangeListener(propertyChangeListener);
-            properties = null;
-        }
-
         serverIsDead = true;
     }
 
@@ -422,31 +348,40 @@ public class OWLServerImpl implements OWLServer {
     }
 
     @Override
+    public ServerConfig getConfig() {
+        return config;
+    }
+
+    @Override
     public void setConfig(ServerConfig serverConfig) {
-        // TODO remove me when properties tidied up
-        getProperties().set(ServerProperty.optionReasoner, serverConfig.getReasoner());
-        getProperties().set(ServerProperty.optionRenderer, serverConfig.getRenderer());
-        getProperties().set(ServerProperty.optionLabelUri, serverConfig.getLabelAnnotationIri().toString());
-        getProperties().set(ServerProperty.optionLabelPropertyUri, serverConfig.getLabelPropertyUri().toString());
-        getProperties().set(ServerProperty.optionLabelLang, serverConfig.getLabelLang());
+        if (this.config != null) {
+            if (!serverConfig.getReasoner().equals(this.config.getReasoner())) {
+                cleanReasoner();
+            }
+            if (!serverConfig.getRenderer().equals(this.config.getRenderer()) ||
+                    !serverConfig.getLabelAnnotationIri().equals(this.config.getLabelAnnotationIri()) ||
+                    !serverConfig.getLabelPropertyIri().equals(this.config.getLabelPropertyIri()) ||
+                    !serverConfig.getLabelLang().equals(this.config.getLabelLang())) {
+                clearRendererCache();
+            }
+        }
+        this.config = serverConfig;
     }
 
     public void clear() {
-        resetRendererCache();
-        resetAllowedActiveOntology();
-        resetAllowedLabels();
+        clearRendererCache();
         comparator = null;
     }
 
 
-    private void resetReasoner() {
+    private void cleanReasoner() {
         if (reasoner != null){
             reasonerManager.dispose(reasoner.getDelegate());
             reasoner = null;
         }
     }
 
-    private void resetRendererCache() {
+    private void clearRendererCache() {
         if (shortFormProvider != null){
             shortFormProvider.dispose();
             shortFormProvider = null;
@@ -529,32 +464,6 @@ public class OWLServerImpl implements OWLServer {
         return root.getOntologyID().getDefaultDocumentIRI();
     }
 
-    private void resetAllowedLabels() {
-        Set<String> uriStrings = Sets.newHashSet();
-        for (OWLOntology ont : getActiveOntologies()){
-            for (OWLAnnotationProperty p : ont.getAnnotationPropertiesInSignature()){
-                uriStrings.add(p.getIRI().toString());
-            }
-        }
-        getProperties().setAllowedValues(ServerProperty.optionLabelUri, new ArrayList<String>(uriStrings));
-
-        Set<String> dataPropStrings = Sets.newHashSet();
-        for (OWLOntology ont : getActiveOntologies()){
-            for (OWLDataProperty p : ont.getDataPropertiesInSignature()){
-                dataPropStrings.add(p.getIRI().toString());
-            }
-        }
-        getProperties().setAllowedValues(ServerProperty.optionLabelPropertyUri, new ArrayList<String>(dataPropStrings));
-    }
-
-    private void resetAllowedActiveOntology() {
-        List<String> ontologies = new ArrayList<String>();
-        for (OWLOntology ontology : getOntologies()){
-            ontologies.add(getOntologyIdString(ontology));
-        }
-        getProperties().setAllowedValues(ServerProperty.optionActiveOnt, ontologies);
-    }
-
     private CachingBidirectionalShortFormProvider getNameCache(){
         if (isDead()){
             throw new RuntimeException("Cannot getNameCache - server is dead");
@@ -580,42 +489,6 @@ public class OWLServerImpl implements OWLServer {
             final BaseURIMapper mapper = new BaseURIMapper(baseURI);
             baseMapper.put(baseURI, mapper);
             mngr.addIRIMapper(mapper);
-        }
-    }
-
-
-    private void handlePropertyChange(ServerProperty p, Object newValue) {
-
-        switch(p){
-            case optionReasoner:
-                resetReasoner();
-                break;
-            case optionRenderer:     // DROPTHROUGH
-            case optionLabelLang:
-                resetRendererCache();
-                break;
-            case optionLabelUri:     // DROPTHROUGH
-            case optionLabelPropertyUri:
-                try {
-                    new URI((String)newValue);
-                    resetRendererCache();
-                }
-                catch (URISyntaxException e) {
-                    // invalid URI - do not change the renderer
-                }
-                break;
-            case optionActiveOnt:    // DROPTHROUGH
-            case optionShowOntologies:
-                activeOntology = null; // this will force it to be taken from the properties
-
-                clear();
-
-                OWLOntology ont = getActiveOntology();
-
-                for (Listener l : listeners){
-                    l.activeOntologyChanged(ont);
-                }
-                break;
         }
     }
 }

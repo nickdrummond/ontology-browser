@@ -47,7 +47,7 @@ function createLabelRendererListener() {
         if (this.checked){
             rendererName = "label";
         }
-        option("optionRenderer", rendererName, null);
+        option("renderer", rendererName, null);
     });
 }
 

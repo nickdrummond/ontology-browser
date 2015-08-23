@@ -72,7 +72,7 @@ public class OntologiesController extends ApplicationController {
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous")));
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
+        model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         model.addAttribute("hierarchy", ontologyTree);

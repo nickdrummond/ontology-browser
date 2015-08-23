@@ -90,7 +90,7 @@ public class OWLIndividualsController extends ApplicationController {
         model.addAttribute("title", entityName + " (Individual)");
         model.addAttribute("type", "Individuals");
         model.addAttribute("iri", owlIndividual.getIRI());
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
+        model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", ontologies);
         model.addAttribute("hierarchy", prunedTree);

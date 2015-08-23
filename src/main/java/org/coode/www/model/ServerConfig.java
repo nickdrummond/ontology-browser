@@ -8,8 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.annotation.Nonnull;
-
 @Document
 public class ServerConfig {
 
@@ -24,7 +22,7 @@ public class ServerConfig {
     @JsonProperty
     private IRI labelAnnotationIri = IRI.create("http://www.w3.org/2000/01/rdf-schema#label");
     @JsonProperty
-    private IRI labelPropertyUri = IRI.create("http://xmlns.com/foaf/0.1/name");
+    private IRI labelPropertyIri = IRI.create("http://xmlns.com/foaf/0.1/name");
     @JsonProperty
     private String labelLang = "";
     @JsonProperty
@@ -46,8 +44,8 @@ public class ServerConfig {
         return labelAnnotationIri;
     }
 
-    public IRI getLabelPropertyUri() {
-        return labelPropertyUri;
+    public IRI getLabelPropertyIri() {
+        return labelPropertyIri;
     }
 
     public String getLabelLang() {
@@ -67,7 +65,7 @@ public class ServerConfig {
 
         if (!renderer.equals(that.renderer)) return false;
         if (!labelAnnotationIri.equals(that.labelAnnotationIri)) return false;
-        if (!labelPropertyUri.equals(that.labelPropertyUri)) return false;
+        if (!labelPropertyIri.equals(that.labelPropertyIri)) return false;
         if (!labelLang.equals(that.labelLang)) return false;
         return reasoner.equals(that.reasoner);
 
@@ -77,7 +75,7 @@ public class ServerConfig {
     public int hashCode() {
         int result = renderer.hashCode();
         result = 31 * result + labelAnnotationIri.hashCode();
-        result = 31 * result + labelPropertyUri.hashCode();
+        result = 31 * result + labelPropertyIri.hashCode();
         result = 31 * result + labelLang.hashCode();
         result = 31 * result + reasoner.hashCode();
         return result;
@@ -87,7 +85,7 @@ public class ServerConfig {
         hash = Hashing.md5(
                         renderer + "|" +
                         labelAnnotationIri + "|" +
-                        labelPropertyUri + "|" +
+                                labelPropertyIri + "|" +
                         labelLang + "|" +
                         reasoner
         );
@@ -97,11 +95,11 @@ public class ServerConfig {
     public ServerConfig setOption(OptionSet optionSet) {
         ServerConfig copy = this.copy();
         switch(optionSet.getProperty()) {
-            case "optionRenderer": copy.renderer = optionSet.getValue(); break;
-            case "optionLabelAnnotationUri": copy.labelAnnotationIri = IRI.create(optionSet.getValue()); break;
-            case "optionLabelPropertyUri": copy.labelPropertyUri = IRI.create(optionSet.getValue()); break;
-            case "optionLabelLang": copy.labelLang = optionSet.getValue(); break;
-            case "optionReasoner": copy.reasoner = optionSet.getValue(); break;
+            case "renderer": copy.renderer = optionSet.getValue(); break;
+            case "labelAnnotationIri": copy.labelAnnotationIri = IRI.create(optionSet.getValue()); break;
+            case "labelPropertyIri": copy.labelPropertyIri = IRI.create(optionSet.getValue()); break;
+            case "labelLang": copy.labelLang = optionSet.getValue(); break;
+            case "reasoner": copy.reasoner = optionSet.getValue(); break;
             default: return this;
         }
         copy.refreshHash();
@@ -112,7 +110,7 @@ public class ServerConfig {
         ServerConfig copy = new ServerConfig();
         copy.renderer = this.renderer;
         copy.labelAnnotationIri = this.labelAnnotationIri;
-        copy.labelPropertyUri = this.labelPropertyUri;
+        copy.labelPropertyIri = this.labelPropertyIri;
         copy.labelLang = this.labelLang;
         copy.reasoner = this.reasoner;
         copy.refreshHash();

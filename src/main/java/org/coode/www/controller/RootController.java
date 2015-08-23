@@ -35,7 +35,7 @@ public class RootController extends ApplicationController {
             return "redirect:" + redirect;
         }
         else {
-            model.addAttribute("options", optionsService.getOptionsAsMap(kit));
+            model.addAttribute("options", optionsService.getConfig(kit));
             model.addAttribute("bookmarks", bookmarks.getBookmarks());
 
             return "load";
@@ -48,7 +48,7 @@ public class RootController extends ApplicationController {
 
         OWLHTMLKit kit = sessionManager.getHTMLKit(request);
 
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
+        model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("activeOntology", kit.getOWLServer().getActiveOntology());
         model.addAttribute("ontologies", kit.getOWLServer().getOntologies());
         return "signout";

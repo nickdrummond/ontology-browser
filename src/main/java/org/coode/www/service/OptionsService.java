@@ -29,11 +29,7 @@ public class OptionsService {
         return false;
     }
 
-    public Map<String, String> getOptionsAsMap(final OWLHTMLKit kit) {
-        return kit.getOWLServer().getProperties().getAll();
-    }
-
-    public OptionSet getOption(final String property, final OWLHTMLKit kit) {
-        return new OptionSet(property, getOptionsAsMap(kit).get(property));
+    public ServerConfig getConfig(final OWLHTMLKit kit) {
+        return kit.getConfig();
     }
 }

@@ -3,7 +3,6 @@ package org.coode.www.kit.impl;
 import org.coode.html.url.RestURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.OWLServer;
-import org.coode.owl.mngr.ServerProperty;
 import org.coode.owl.mngr.impl.OWLServerImpl;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.OntologyConfig;

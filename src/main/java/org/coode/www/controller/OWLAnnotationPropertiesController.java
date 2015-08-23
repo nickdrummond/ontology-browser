@@ -64,7 +64,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         model.addAttribute("title", entityName + " (Annotation Property)");
         model.addAttribute("type", "Annotation Properties");
         model.addAttribute("iri", owlAnnotationProperty.getIRI());
-        model.addAttribute("options", optionsService.getOptionsAsMap(kit));
+        model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("activeOntology", activeOntology);
         model.addAttribute("ontologies", owlServer.getOntologies());
         model.addAttribute("entities", annotationProperties);

@@ -26,8 +26,18 @@
                     <td class='key'>Label annotation</td>
                     <td>
                         <form method='POST' action='.'>
-                            <input type='hidden' name='property' value='optionLabelAnnotationUri' />
-                            <input type='text' name='value' th:value='${options.optionLabelUri}' />
+                            <input type='hidden' name='property' value='labelAnnotationIri' />
+                            <input type='text' name='value' th:value='${options.labelAnnotationIri}' />
+                            <input type='submit' value='ok' /></form>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class='key'>Label property</td>
+                    <td>
+                        <form method='POST' action='.'>
+                            <input type='hidden' name='property' value='labelPropertyIri' />
+                            <input type='text' name='value' th:value='${options.labelPropertyIri}' />
                             <input type='submit' value='ok' /></form>
                     </td>
                 </tr>
@@ -36,20 +46,10 @@
                     <td class='key'>Label language</td>
                     <td>
                         <form method='POST' action='.'>
-                            <input type='hidden' name='property' value='optionLabelLang' />
-                            <input type='text' name='value' th:value='${options.optionLabelLang}' />
+                            <input type='hidden' name='property' value='labelLang' />
+                            <input type='text' name='value' th:value='${options.labelLang}' />
                             <input type='submit' value='ok' />
                         </form>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class='key'>Label property</td>
-                    <td>
-                        <form method='POST' action='.'>
-                            <input type='hidden' name='property' value='optionLabelPropertyUri' />
-                            <input type='text' name='value' th:value='${options.optionLabelPropertyUri}' />
-                            <input type='submit' value='ok' /></form>
                     </td>
                 </tr>
 
@@ -66,11 +66,11 @@
                     <td class='key'>Reasoner</td>
                     <td>
                         <form>
-                            <input type='hidden' name='property' value='optionReasoner' />
+                            <input type='hidden' name='property' value='reasoner' />
                             <select class="option" name="value">
                                 <option th:each='reasoner : ${reasoners}'
                                         th:value='${reasoner}'
-                                        th:selected='${reasoner == options.optionReasoner}'
+                                        th:selected='${reasoner == options.reasoner}'
                                         th:text='${reasoner}'>A reasoner</option>
                             </select>
                         </form>
