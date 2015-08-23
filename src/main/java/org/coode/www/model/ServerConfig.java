@@ -1,6 +1,7 @@
 package org.coode.www.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.coode.www.util.Hashing;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.data.annotation.Id;
@@ -18,26 +19,18 @@ public class ServerConfig {
     @Indexed(unique = true)
     private String hash;
 
+    @JsonProperty
     private String renderer = "label";
+    @JsonProperty
     private IRI labelAnnotationIri = IRI.create("http://www.w3.org/2000/01/rdf-schema#label");
+    @JsonProperty
     private IRI labelPropertyUri = IRI.create("http://xmlns.com/foaf/0.1/name");
+    @JsonProperty
     private String labelLang = "";
+    @JsonProperty
     private String reasoner = "Structural Reasoner";
 
     public ServerConfig() {
-        refreshHash();
-    }
-
-    public ServerConfig(@Nonnull final String renderer,
-                        @Nonnull final IRI labelAnnotationIri,
-                        @Nonnull final IRI labelPropertyUri,
-                        @Nonnull final String labelLang,
-                        @Nonnull final String reasoner) {
-        this.renderer = renderer;
-        this.labelAnnotationIri = labelAnnotationIri;
-        this.labelPropertyUri = labelPropertyUri;
-        this.labelLang = labelLang;
-        this.reasoner = reasoner;
         refreshHash();
     }
 
@@ -45,48 +38,24 @@ public class ServerConfig {
         return hash;
     }
 
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
     public String getRenderer() {
         return renderer;
-    }
-
-    public void setRenderer(String renderer) {
-        this.renderer = renderer;
     }
 
     public IRI getLabelAnnotationIri() {
         return labelAnnotationIri;
     }
 
-    public void setLabelAnnotationIri(IRI labelAnnotationIri) {
-        this.labelAnnotationIri = labelAnnotationIri;
-    }
-
     public IRI getLabelPropertyUri() {
         return labelPropertyUri;
-    }
-
-    public void setLabelPropertyUri(IRI labelPropertyUri) {
-        this.labelPropertyUri = labelPropertyUri;
     }
 
     public String getLabelLang() {
         return labelLang;
     }
 
-    public void setLabelLang(String labelLang) {
-        this.labelLang = labelLang;
-    }
-
     public String getReasoner() {
         return reasoner;
-    }
-
-    public void setReasoner(String reasoner) {
-        this.reasoner = reasoner;
     }
 
     @Override
@@ -125,17 +94,28 @@ public class ServerConfig {
     }
 
     @JsonIgnore
-    public boolean setOption(OptionSet optionSet) {
+    public ServerConfig setOption(OptionSet optionSet) {
+        ServerConfig copy = this.copy();
         switch(optionSet.getProperty()) {
-            case "optionRenderer": setRenderer(optionSet.getValue()); break;
-            case "optionLabelAnnotationUri": setLabelAnnotationIri(IRI.create(optionSet.getValue())); break;
-            case "optionLabelPropertyUri": setLabelPropertyUri(IRI.create(optionSet.getValue())); break;
-            case "optionLabelLang": setLabelLang(optionSet.getValue()); break;
-            case "optionReasoner": setReasoner(optionSet.getValue()); break;
-            default: return false;
+            case "optionRenderer": copy.renderer = optionSet.getValue(); break;
+            case "optionLabelAnnotationUri": copy.labelAnnotationIri = IRI.create(optionSet.getValue()); break;
+            case "optionLabelPropertyUri": copy.labelPropertyUri = IRI.create(optionSet.getValue()); break;
+            case "optionLabelLang": copy.labelLang = optionSet.getValue(); break;
+            case "optionReasoner": copy.reasoner = optionSet.getValue(); break;
+            default: return this;
         }
-        refreshHash();
-        id = null;
-        return true;
+        copy.refreshHash();
+        return copy;
+    }
+
+    private ServerConfig copy() {
+        ServerConfig copy = new ServerConfig();
+        copy.renderer = this.renderer;
+        copy.labelAnnotationIri = this.labelAnnotationIri;
+        copy.labelPropertyUri = this.labelPropertyUri;
+        copy.labelLang = this.labelLang;
+        copy.reasoner = this.reasoner;
+        copy.refreshHash();
+        return copy;
     }
 }

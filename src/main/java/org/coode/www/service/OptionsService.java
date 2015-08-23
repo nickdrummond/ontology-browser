@@ -19,14 +19,14 @@ public class OptionsService {
     public boolean setOption(final OptionSet optionSet, final OWLHTMLKit kit) throws OntServerException {
         ServerConfig config = kit.getConfig();
 
-        boolean success = config.setOption(optionSet);
+        ServerConfig newConfig = config.setOption(optionSet);
 
-        if (success) {
-            kit.setConfig(config);
+        if (newConfig != config) {
+            kit.setConfig(newConfig);
             kitRepository.saveKit(kit);
+            return true;
         }
-
-        return success;
+        return false;
     }
 
     public Map<String, String> getOptionsAsMap(final OWLHTMLKit kit) {
