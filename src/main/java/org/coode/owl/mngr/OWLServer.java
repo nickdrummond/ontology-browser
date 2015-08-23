@@ -1,6 +1,7 @@
 package org.coode.owl.mngr;
 
 import org.coode.www.model.OntologyConfig;
+import org.coode.www.model.ServerConfig;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -65,4 +66,6 @@ public interface OWLServer extends ActiveOntologyProvider {
     boolean isDead();
 
     OWLOntology getRootOntology();
+
+    void setConfig(ServerConfig serverConfig);
 }

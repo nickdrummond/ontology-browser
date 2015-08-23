@@ -7,6 +7,7 @@ import com.google.common.collect.Sets;
 import org.coode.owl.mngr.*;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.model.OntologyMapping;
+import org.coode.www.model.ServerConfig;
 import org.coode.www.renderer.FixedSimpleShortFormProvider;
 import org.coode.www.renderer.LabelShortFormProvider;
 import org.coode.www.renderer.OntologyShortFormProvider;
@@ -418,6 +419,16 @@ public class OWLServerImpl implements OWLServer {
 
     public OWLOntology getRootOntology() {
         return rootOntology;
+    }
+
+    @Override
+    public void setConfig(ServerConfig serverConfig) {
+        // TODO remove me when properties tidied up
+        getProperties().set(ServerProperty.optionReasoner, serverConfig.getReasoner());
+        getProperties().set(ServerProperty.optionRenderer, serverConfig.getRenderer());
+        getProperties().set(ServerProperty.optionLabelUri, serverConfig.getLabelAnnotationIri().toString());
+        getProperties().set(ServerProperty.optionLabelPropertyUri, serverConfig.getLabelPropertyUri().toString());
+        getProperties().set(ServerProperty.optionLabelLang, serverConfig.getLabelLang());
     }
 
     public void clear() {

@@ -33,6 +33,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         this.owlServer = server;
         this.baseURL = baseURL;
         this.config = new ServerConfig();
+        this.owlServer.setConfig(config);
     }
 
     @Override
@@ -48,12 +49,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     @Override
     public void setConfig(@Nonnull ServerConfig serverConfig) {
         this.config = serverConfig;
-        // TODO remove me when properties tidied up
-        this.owlServer.getProperties().set(ServerProperty.optionReasoner, serverConfig.getReasoner());
-        this.owlServer.getProperties().set(ServerProperty.optionRenderer, serverConfig.getRenderer());
-        this.owlServer.getProperties().set(ServerProperty.optionLabelUri, serverConfig.getLabelAnnotationIri().toString());
-        this.owlServer.getProperties().set(ServerProperty.optionLabelPropertyUri, serverConfig.getLabelPropertyUri().toString());
-        this.owlServer.getProperties().set(ServerProperty.optionLabelLang, serverConfig.getLabelLang());
+        this.owlServer.setConfig(serverConfig);
     }
 
     @Override
