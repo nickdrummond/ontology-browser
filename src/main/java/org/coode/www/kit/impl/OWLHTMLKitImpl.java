@@ -28,10 +28,12 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import java.util.Optional;
 
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 
@@ -136,11 +138,11 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         public void finishedLoadingOntology(LoadingFinishedEvent loadingFinishedEvent) {
             if (loadingFinishedEvent.isSuccessful() && !loadingFinishedEvent.isImported()){
                 OWLOntologyID id = loadingFinishedEvent.getOntologyID();
-                OWLOntology ont = mngr.getOntology(id);
-                if (ont == null){
+                Optional<OWLOntology> ont = Optional.ofNullable(mngr.getOntology(id));
+                if (ont.isPresent()){
                     ont = getOntologyForIRI(loadingFinishedEvent.getDocumentIRI());
                 }
-                loadedOntology(ont);
+                ont.ifPresent(OWLHTMLKitImpl.this::loadedOntology);
             }
         }
     };
@@ -210,25 +212,30 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         }
     }
 
-    public OWLOntology getOntologyForIRI(IRI iri) {
+    public Optional<OWLOntology> getOntologyForIRI(IRI iri) {
         for (OWLOntology ontology : getOntologies()){
             if (iri.equals(ontology.getOntologyID().getVersionIRI().orNull())){
-                return ontology;
+                return Optional.of(ontology);
             }
         }
         for (OWLOntology ontology : getOntologies()){
             if (iri.equals(ontology.getOntologyID().getOntologyIRI().orNull())){
-                return ontology;
+                return Optional.of(ontology);
             }
         }
 
         // look for an ontology with this location
         for (OWLOntology ontology : getOntologies()){
             if (iri.equals(getOWLOntologyManager().getOntologyDocumentIRI(ontology))){
-                return ontology;
+                return Optional.of(ontology);
             }
         }
-        return getAnonymousOntology(iri.toString());
+        for (OWLOntology ontology : getOntologies()){
+            if (iri.toString().equals(ontology.getOntologyID().toString())){
+                return Optional.of(ontology);
+            }
+        }
+        return Optional.empty();
     }
 
     public OWLOntology getActiveOntology() {
@@ -238,10 +245,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return activeOntology;
     }
 
-    public void setActiveOntology(OWLOntology ont) {
-        if (ont == null){
-            ont = activeOntology;
-        }
+    public void setActiveOntology(@Nonnull OWLOntology ont) {
         activeOntology = ont;
     }
 
@@ -251,15 +255,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public void removeActiveOntologyListener(ActiveOntologyProvider.Listener l) {
         listeners.add(l);
-    }
-
-    private OWLOntology getAnonymousOntology(String id) {
-        for (OWLOntology ontology : getOntologies()){
-            if (id.equals(ontology.getOntologyID().toString())){
-                return ontology;
-            }
-        }
-        return null;
     }
 
     private String getOntologyIdString(final OWLOntology ont){

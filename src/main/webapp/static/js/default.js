@@ -27,6 +27,7 @@ if(typeof(Storage) !== 'undefined') {
 
     createTreeListeners();
 
+    createActiveOntListeners();
     createOptionListeners();
 });
 
@@ -76,6 +77,28 @@ function createTreeListeners(){
     // add a listener to unexpanded tree nodes
     $("li > span.expandable").click(function(e){
         handleExpand($(this).parent());
+    });
+}
+
+function createActiveOntListeners(){
+    $("#activeOnt select").change(function(e){
+        xmlHttpOption=GetXmlHttpObject(function(e){
+            if (xmlHttpOption.readyState==4 || xmlHttpOption.readyState=="complete") {
+                //reloadAllFrames();
+                console.log(e.srcElement.response);
+            }
+        });
+
+        if (xmlHttpOption==null) {
+            alert ("Browser does not support HTTP Request");
+        }
+        else{
+            var url = baseUrl + "ontologies/active";
+            console.log(url);
+            xmlHttpOption.open("POST", url, true);
+            xmlHttpOption.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            xmlHttpOption.send("iri=" + $(this).val());
+        }
     });
 }
 

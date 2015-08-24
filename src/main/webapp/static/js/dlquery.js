@@ -2,7 +2,7 @@
  * Control of AJAX calls to build the query form dynamically and request results from the ontology kit
  *
  */
-var BUSY_IMAGE = baseURL + "static/images/busy.gif";
+var BUSY_IMAGE = baseUrl + "static/images/busy.gif";
 
 var EQUIVALENTS = 0;
 var SUBCLASSES = 1;
@@ -20,7 +20,7 @@ var NAME = 0;
 var XML_OBJ = 1;
 var CALLBACK = 2;
 
-var queryURL = baseURL + "dlquery/results";
+var queryURL = baseUrl + "dlquery/results";
 
 var queryArray = [
     ["equivalents", null, inferredEquivalentsReceived],

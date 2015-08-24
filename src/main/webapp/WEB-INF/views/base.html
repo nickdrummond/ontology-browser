@@ -55,8 +55,7 @@
     </div> <!-- options -->
 
     <form id="activeOnt">
-        <input type='hidden' name='property' value='optionActiveOnt' />
-        <select class="option" name="value">
+        <select name="id">
             <option th:each='ontology : ${ontologies}'
                     th:selected='${ontology eq activeOntology}'
                     th:text='${{ontology.ontologyID}}'

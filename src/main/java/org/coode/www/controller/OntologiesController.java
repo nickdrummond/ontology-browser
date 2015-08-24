@@ -12,12 +12,12 @@ import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OntologiesService;
 import org.coode.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLDocumentFormat;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -66,9 +66,11 @@ public class OntologiesController extends ApplicationController {
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlOntology));
 
+        final IRI iri = owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous"));
+
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
-        model.addAttribute("iri", owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous")));
+        model.addAttribute("iri", iri);
         model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("activeOntology", kit.getActiveOntology());
         model.addAttribute("ontologies", kit.getOntologies());
@@ -109,6 +111,24 @@ public class OntologiesController extends ApplicationController {
         }
         else {
             return "redirect:/ontologies/" + ontologyId;
+        }
+    }
+
+    // TODO FIXME
+    @RequestMapping(value="/active",
+            method=RequestMethod.POST,
+            consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> setActiveOntology(
+            @ModelAttribute("id") final OWLOntologyID id,
+            @ModelAttribute("kit") final OWLHTMLKit kit) {
+        final Optional<OWLOntology> ontology = Optional.fromNullable(kit.getOWLOntologyManager().getOntology(id));
+
+        if (ontology.isPresent()) {
+            kit.setActiveOntology(ontology.get());
+            return new ResponseEntity<>("Active ontology changed", HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("Unknown ontology: " + id, HttpStatus.BAD_REQUEST);
         }
     }
 }

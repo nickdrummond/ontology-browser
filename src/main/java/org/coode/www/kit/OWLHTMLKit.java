@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import java.net.URI;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 
 public interface OWLHTMLKit extends ActiveOntologyProvider {
@@ -50,7 +51,7 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     Set<OWLOntology> getOntologies();
 
-    void setActiveOntology(OWLOntology ont);
+    void setActiveOntology(@Nonnull OWLOntology ont);
 
     OWLOntology loadOntology(URI ontPhysicalURI) throws OWLOntologyCreationException;
 
@@ -62,7 +63,7 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
      * @param iri the IRI
      * @return an Ontology if one matches or null if none is found
      */
-    OWLOntology getOntologyForIRI(IRI iri);
+    Optional<OWLOntology> getOntologyForIRI(IRI iri);
 
     OWLOntologyManager getOWLOntologyManager();
 
