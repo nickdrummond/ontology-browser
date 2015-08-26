@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated // Use ReasonerFactoryService
 public class OWLReasonerManagerImpl implements OWLReasonerManager {
 
     public static final Logger logger = LoggerFactory.getLogger(OWLReasonerManagerImpl.class);

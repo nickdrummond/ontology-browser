@@ -1,5 +1,6 @@
 package org.coode.www.service;
 
+import org.coode.www.model.ReasonerMomento;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +24,10 @@ public class ReasonerFactoryService {
 
     private Map<String, OWLReasonerFactory> facsByName = new HashMap<String, OWLReasonerFactory>();
 
-    public ReasonerFactoryService(List<String> reasonerFactoryNames) {
-        for (String reasonerFactoryName : reasonerFactoryNames){
+    public ReasonerFactoryService(List<ReasonerMomento> reasoners) {
+        for (ReasonerMomento reasoner : reasoners){
             try {
-                final OWLReasonerFactory fac = (OWLReasonerFactory) Class.forName(reasonerFactoryName).newInstance();
+                final OWLReasonerFactory fac = (OWLReasonerFactory) Class.forName(reasoner.getCls()).newInstance();
                 facsByName.put(fac.getReasonerName(), fac);
 
                 // assuming the structural reasoner is first
@@ -35,7 +36,7 @@ public class ReasonerFactoryService {
                 }
             }
             catch (Throwable e){
-                logger.info("Reasoner cannot be found: " + reasonerFactoryName);
+                logger.info("Reasoner cannot be found: " + reasoner);
             }
         }
 

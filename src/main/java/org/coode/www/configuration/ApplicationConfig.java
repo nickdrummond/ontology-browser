@@ -2,8 +2,10 @@ package org.coode.www.configuration;
 
 import org.coode.www.model.ApplicationInfo;
 import org.coode.www.model.Bookmarks;
+import org.coode.www.model.ReasonerMomento;
 import org.coode.www.service.ReasonerFactoryService;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,7 +14,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -46,16 +47,44 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ReasonerFactoryService reasonerFactoryService() {
-        // TODO Springify the factory class names?
-        List<String> reasonerFactoryNames = Arrays.asList(
-                "org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory",
-                "uk.ac.manchester.cs.jfact.JFactFactory",
-                "org.semanticweb.HermiT.Reasoner$ReasonerFactory",
-                "org.semanticweb.owlapi.owllink.OWLlinkHTTPXMLReasonerFactory",
-                "uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory",
-                "com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory"
-        );
-        return new ReasonerFactoryService(reasonerFactoryNames);
+    public ReasonerMomento structural(@Value("${reasoner.structural.cls}") String cls,
+                                      @Value("${reasoner.structural.label}") String label) {
+        return new ReasonerMomento(label, cls);
+    }
+
+    @Bean
+    public ReasonerMomento jfact(@Value("${reasoner.jfact.cls}") String cls,
+                                 @Value("${reasoner.jfact.label}") String label) {
+        return new ReasonerMomento(label, cls);
+    }
+
+    @Bean
+    public ReasonerMomento hermit(@Value("${reasoner.hermit.cls}") String cls,
+                                  @Value("${reasoner.hermit.label}") String label) {
+        return new ReasonerMomento(label, cls);
+    }
+
+    @Bean
+    public ReasonerMomento owlLink(@Value("${reasoner.owllink.cls}") String cls,
+                                   @Value("${reasoner.owllink.label}") String label) {
+        return new ReasonerMomento(label, cls);
+    }
+
+    @Bean
+    public ReasonerMomento factpp(@Value("${reasoner.factpp.cls}") String cls,
+                                  @Value("${reasoner.factpp.label}") String label) {
+        return new ReasonerMomento(label, cls);
+    }
+
+    @Bean
+    public ReasonerMomento pellet(@Value("${reasoner.pellet.cls}") String cls,
+                                  @Value("${reasoner.pellet.label}") String label) {
+        return new ReasonerMomento(label, cls);
+    }
+
+    @Bean
+    @Autowired
+    public ReasonerFactoryService reasonerFactoryService(List<ReasonerMomento> reasoners) {
+        return new ReasonerFactoryService(reasoners);
     }
 }
