@@ -4,30 +4,12 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.OptionSet;
 import org.coode.www.model.ServerConfig;
-import org.coode.www.repository.KitRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
-public class OptionsService {
+/**
+ * Created by nickdrummond on 26/08/2015.
+ */
+public interface OptionsService {
+    boolean setOption(OptionSet optionSet, OWLHTMLKit kit) throws OntServerException;
 
-    @Autowired
-    private KitRepository kitRepository;
-
-    public boolean setOption(final OptionSet optionSet, final OWLHTMLKit kit) throws OntServerException {
-        ServerConfig config = kit.getConfig();
-
-        ServerConfig newConfig = config.setOption(optionSet);
-
-        if (newConfig != config) {
-            kit.setConfig(newConfig);
-            kitRepository.saveKit(kit);
-            return true;
-        }
-        return false;
-    }
-
-    public ServerConfig getConfig(final OWLHTMLKit kit) {
-        return kit.getConfig();
-    }
+    ServerConfig getConfig(OWLHTMLKit kit);
 }
