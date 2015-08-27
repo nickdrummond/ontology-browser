@@ -40,10 +40,11 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     private static final Logger logger = LoggerFactory.getLogger(OWLHTMLKitImpl.class);
 
     // TODO move to config
-    private static final IRI ROOT_ONTOLOGY = IRI.create("http://www.manchester.ac.uk/root.owl");
     private static final String RENDERER_LABEL = "label";
 
-    private OWLOntologyManager mngr;
+    private final OWLOntologyManager mngr;
+
+    private final IRI root;
 
     private OWLOntology activeOntology;
 
@@ -77,9 +78,10 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     protected URLScheme urlScheme;
 
-    public OWLHTMLKitImpl(OWLOntologyManager mngr) {
+    public OWLHTMLKitImpl(OWLOntologyManager mngr, IRI root) {
 
         this.mngr = mngr;
+        this.root = root;
 
         this.config = new ServerConfig();
 
@@ -165,7 +167,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         mngr.addIRIMapper(mapper);
 
         for (OntologyMapping mapping : ontConfig.getMappings()){
-            if (!mapping.getOntologyIRI().equals(ROOT_ONTOLOGY)){
+            if (!mapping.getOntologyIRI().equals(root)){
                 try {
                     mngr.loadOntology(mapping.getLocationIRI());
                 }
@@ -375,8 +377,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
         clearOntologies();
 
-        mngr = null;
-
         serverIsDead = true;
     }
 
@@ -440,7 +440,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private void createRootOntology() {
         try {
-            rootOntology = mngr.createOntology(ROOT_ONTOLOGY);
+            rootOntology = mngr.createOntology(root);
             // TODO: add an explanation annotation for the users
             // TODO: and a label "all ontologies"
 //            mngr.applyChange(root, new AddOntologyAnnotation(root, mngr.getOWLDataFactory().getOWLA))

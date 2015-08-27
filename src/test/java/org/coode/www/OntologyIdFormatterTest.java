@@ -5,6 +5,7 @@ import org.coode.www.formatter.OntologyIdFormatter;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyID;
+import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 
 import java.util.Locale;
 
