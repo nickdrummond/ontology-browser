@@ -6,11 +6,11 @@
 
 <body>
 
-<div th:replace='base :: menu'/>
+<div th:replace='base :: menu'></div>
 
 <div id="main">
 
-    <div th:replace='base :: title'/>
+    <div th:replace='base :: title'></div>
 
     <div id='content'>
 
@@ -27,7 +27,7 @@
                     <td>
                         <form method='POST' action='.'>
                             <input type='hidden' name='property' value='labelAnnotationIri' />
-                            <input type='text' name='value' th:value='${options.labelAnnotationIri}' />
+                            <input type='text' name='value' th:value='${kit.config.labelAnnotationIri}' />
                             <input type='submit' value='ok' /></form>
                     </td>
                 </tr>
@@ -37,7 +37,7 @@
                     <td>
                         <form method='POST' action='.'>
                             <input type='hidden' name='property' value='labelPropertyIri' />
-                            <input type='text' name='value' th:value='${options.labelPropertyIri}' />
+                            <input type='text' name='value' th:value='${kit.config.labelPropertyIri}' />
                             <input type='submit' value='ok' /></form>
                     </td>
                 </tr>
@@ -47,7 +47,7 @@
                     <td>
                         <form method='POST' action='.'>
                             <input type='hidden' name='property' value='labelLang' />
-                            <input type='text' name='value' th:value='${options.labelLang}' />
+                            <input type='text' name='value' th:value='${kit.config.labelLang}' />
                             <input type='submit' value='ok' />
                         </form>
                     </td>
@@ -70,7 +70,7 @@
                             <select class="option" name="value">
                                 <option th:each='reasoner : ${reasoners}'
                                         th:value='${reasoner}'
-                                        th:selected='${reasoner == options.reasoner}'
+                                        th:selected='${reasoner == kit.config.reasoner}'
                                         th:text='${reasoner}'>A reasoner</option>
                             </select>
                         </form>

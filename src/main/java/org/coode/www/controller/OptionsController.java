@@ -31,10 +31,7 @@ public class OptionsController extends ApplicationController {
     public String getOptions(@ModelAttribute("kit") final OWLHTMLKit kit,
                              final Model model) throws OntServerException {
 
-        model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("reasoners", reasonerService.getAvailableReasoners());
-        model.addAttribute("activeOntology", OWLOntologiesService.getActiveOntology(kit));
-        model.addAttribute("ontologies", OWLOntologiesService.getOntologies(kit));
 
         return "options";
     }

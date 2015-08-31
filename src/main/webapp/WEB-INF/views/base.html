@@ -49,15 +49,15 @@
 
         <form id='rendererForm'>
             <input type='checkbox' name='renderLabels' id="renderLabels"
-                   th:checked='${options.renderer == "label"}'/>
+                   th:checked='${kit.config.renderer == "label"}'/>
             <label for='renderLabels'>Labels</label>
         </form>
     </div> <!-- options -->
 
     <form id="activeOnt">
         <select name="id">
-            <option th:each='ontology : ${ontologies}'
-                    th:selected='${ontology eq activeOntology}'
+            <option th:each='ontology : ${kit.ontologies}'
+                    th:selected='${ontology eq kit.activeOntology}'
                     th:text='${{ontology.ontologyID}}'
                     th:value='${{ontology.ontologyID.hashCode()}}'>An ontology</option>
         </select>

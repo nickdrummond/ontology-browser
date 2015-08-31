@@ -71,9 +71,6 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", iri);
-        model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", kit.getActiveOntology());
-        model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("hierarchy", ontologyTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlOntology, kit));
         model.addAttribute("mos", owlRenderer);
@@ -114,7 +111,6 @@ public class OWLOntologiesController extends ApplicationController {
         }
     }
 
-    // TODO FIXME
     @RequestMapping(value="/active",
             method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE)

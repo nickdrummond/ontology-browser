@@ -61,9 +61,6 @@ public class OWLObjectPropertiesController extends ApplicationController {
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Object Properties");
         model.addAttribute("iri", property.getIRI());
-        model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", kit.getActiveOntology());
-        model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", service.getCharacteristics(property, kit));
         model.addAttribute("mos", owlRenderer);

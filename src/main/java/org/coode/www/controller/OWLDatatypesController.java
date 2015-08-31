@@ -66,9 +66,6 @@ public class OWLDatatypesController extends ApplicationController {
         model.addAttribute("title", entityName + " (Datatype)");
         model.addAttribute("type", "Datatypes");
         model.addAttribute("iri", owlDatatype.getIRI());
-        model.addAttribute("options", optionsService.getConfig(kit));
-        model.addAttribute("activeOntology", kit.getActiveOntology());
-        model.addAttribute("ontologies", ontologies);
         model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlDatatype, kit));
         model.addAttribute("mos", owlRenderer);
