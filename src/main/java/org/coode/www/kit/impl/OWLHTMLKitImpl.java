@@ -129,7 +129,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     @Override
     public OntologyConfig getOntConfig() {
-        return OntologyConfig.ontConfigFor(getActiveOntology());
+        return OntologyConfig.ontConfigFor(getActiveOntology(), getOntologies());
     }
 
     private OWLOntologyLoaderListener ontLoadListener = new OWLOntologyLoaderListener() {
@@ -162,14 +162,18 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return mngr.loadOntologyFromOntologyDocument(iri);
     }
 
-    public void loadOntologies(final OntologyConfig ontConfig) {
+    public void loadOntologies(@Nonnull final OntologyConfig ontConfig) {
         OWLOntologyIRIMapper mapper = ontologyIRI -> ontConfig.documentFor(ontologyIRI).orNull();
         mngr.addIRIMapper(mapper);
 
+        OWLOntology active = null;
         for (OntologyMapping mapping : ontConfig.getMappings()){
             if (!mapping.getOntologyIRI().equals(root)){
                 try {
-                    mngr.loadOntology(mapping.getLocationIRI());
+                    OWLOntology ont = mngr.loadOntology(mapping.getLocationIRI());
+                    if (active == null) {
+                        active = ont;
+                    }
                 }
                 catch (OWLOntologyDocumentAlreadyExistsException | OWLOntologyAlreadyExistsException e){
                     // do nothing - as we're not trying to load in order just keep going
@@ -183,6 +187,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         mngr.removeIRIMapper(mapper);
 
         resetRootImports();
+        setActiveOntology(active);
     }
 
     public void clearOntologies() {

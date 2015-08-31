@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Document
@@ -92,13 +93,14 @@ public class OntologyConfig {
 
     /**
      * Factory method for generating an OntologyConfig from an ontology and its imports closure.
-     * @param activeOnt The root ontology.
+     * @param activeOnt The active ontology.
+     * @param ontologies The
      * @return an OntologyConfig representing the loaded ontologies.
      */
-    public static OntologyConfig ontConfigFor(final OWLOntology activeOnt) {
+    public static OntologyConfig ontConfigFor(final OWLOntology activeOnt, Set<OWLOntology> ontologies) {
         List<OntologyMapping> mappings = Lists.newArrayList();
         mappings.add(mappingFor(activeOnt));
-        Stream<OWLOntology> allOnts = activeOnt.getImportsClosure().stream();
+        Stream<OWLOntology> allOnts = ontologies.stream();
         allOnts.filter(ont -> !ont.equals(activeOnt)).forEach(ont -> mappings.add(mappingFor(ont)));
         return new OntologyConfig(mappings);
     }

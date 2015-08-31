@@ -23,4 +23,6 @@ public interface OWLOntologiesService {
     Set<OWLOntology> getOntologies(OWLHTMLKit kit);
 
     List<Characteristic> getCharacteristics(OWLOntology owlOntology, OWLHTMLKit kit);
+
+    void setActiveOntology(OWLOntology ontology, OWLHTMLKit kit) throws OntServerException;
 }

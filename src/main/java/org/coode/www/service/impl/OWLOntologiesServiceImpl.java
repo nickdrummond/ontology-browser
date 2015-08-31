@@ -111,4 +111,13 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
         }
         return characteristics;
     }
+
+    @Override
+    public void setActiveOntology(OWLOntology ontology, OWLHTMLKit kit) throws OntServerException {
+        OWLOntology activeOntology = kit.getActiveOntology();
+        if (!ontology.equals(activeOntology)) {
+            kit.setActiveOntology(ontology);
+            kitRepository.saveKit(kit);
+        }
+    }
 }

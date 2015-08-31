@@ -120,11 +120,11 @@ public class OWLOntologiesController extends ApplicationController {
             consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> setActiveOntology(
             @ModelAttribute("id") final String ontId,
-            @ModelAttribute("kit") final OWLHTMLKit kit) throws NotFoundException {
+            @ModelAttribute("kit") final OWLHTMLKit kit) throws NotFoundException, OntServerException {
 
         OWLOntology ontology = service.getOntologyFor(ontId, kit);
 
-        kit.setActiveOntology(ontology);
+        service.setActiveOntology(ontology, kit);
         return new ResponseEntity<>("Active ontology changed", HttpStatus.OK);
     }
 }

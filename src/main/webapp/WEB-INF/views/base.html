@@ -78,7 +78,7 @@
         var as = new AutoSuggest("find", options);
     </script>
 
-    <div th:replace='base :: tabs'/>
+    <div th:replace='base :: tabs'>Tabs</div>
 
     <div th:replace="base :: list(${type}, ${entities})">
         A list
@@ -152,7 +152,7 @@
 <EMBED th:fragment="sound (url)"
        th:if="${sound != null}"
        th:src="${url}"  src="/notfound.mp3"
-       autostart="true" hidden="true"/>
+       autostart="true" hidden="true"></EMBED>
 
 <li th:fragment="tree (t)" th:if="${t != null}">
     <span class='expandable'>+</span>
