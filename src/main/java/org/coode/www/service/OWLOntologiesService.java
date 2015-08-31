@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
-public interface OntologiesService {
+public interface OWLOntologiesService {
 
     OWLOntology getOntologyFor(String id, OWLHTMLKit kit) throws NotFoundException;
 

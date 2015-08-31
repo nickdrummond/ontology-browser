@@ -3,7 +3,7 @@ package org.coode.www.controller;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.OptionSet;
-import org.coode.www.service.OntologiesService;
+import org.coode.www.service.OWLOntologiesService;
 import org.coode.www.service.ReasonerFactoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class OptionsController extends ApplicationController {
     private ReasonerFactoryService reasonerService;
 
     @Autowired
-    private OntologiesService ontologiesService;
+    private OWLOntologiesService OWLOntologiesService;
 
     @RequestMapping
     public String getOptions(@ModelAttribute("kit") final OWLHTMLKit kit,
@@ -33,8 +33,8 @@ public class OptionsController extends ApplicationController {
 
         model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("reasoners", reasonerService.getAvailableReasoners());
-        model.addAttribute("activeOntology", ontologiesService.getActiveOntology(kit));
-        model.addAttribute("ontologies", ontologiesService.getOntologies(kit));
+        model.addAttribute("activeOntology", OWLOntologiesService.getActiveOntology(kit));
+        model.addAttribute("ontologies", OWLOntologiesService.getOntologies(kit));
 
         return "options";
     }

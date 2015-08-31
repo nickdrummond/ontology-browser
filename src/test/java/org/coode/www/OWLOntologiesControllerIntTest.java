@@ -1,8 +1,8 @@
 package org.coode.www;
 
-import org.coode.www.controller.OntologiesController;
+import org.coode.www.controller.OWLOntologiesController;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.service.OntologiesService;
+import org.coode.www.service.OWLOntologiesService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,10 +32,10 @@ import static org.mockito.Mockito.mock;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextHierarchy({
-        @ContextConfiguration(classes = OntologiesControllerIntTest.OntologyControllerConfig.class),
-        @ContextConfiguration(classes = OntologiesControllerIntTest.WebConfig.class)
+        @ContextConfiguration(classes = OWLOntologiesControllerIntTest.OntologyControllerConfig.class),
+        @ContextConfiguration(classes = OWLOntologiesControllerIntTest.WebConfig.class)
 })
-public class OntologiesControllerIntTest {
+public class OWLOntologiesControllerIntTest {
 
     @Configuration
     @EnableWebMvc
@@ -51,8 +51,8 @@ public class OntologiesControllerIntTest {
     static class OntologyControllerConfig extends AppControllerConfig {
 
         @Bean
-        public OntologiesService ontologiesService() {
-            return mock(OntologiesService.class);
+        public OWLOntologiesService ontologiesService() {
+            return mock(OWLOntologiesService.class);
         }
 
         @Bean
@@ -61,8 +61,8 @@ public class OntologiesControllerIntTest {
         }
 
         @Bean
-        public OntologiesController ontologiesController() {
-            return new OntologiesController();
+        public OWLOntologiesController ontologiesController() {
+            return new OWLOntologiesController();
         }
     }
 
@@ -70,7 +70,7 @@ public class OntologiesControllerIntTest {
     private WebApplicationContext wac;
 
     @Autowired
-    private OntologiesService mockOntologiesService;
+    private OWLOntologiesService mockOWLOntologiesService;
 
     private MockMvc mockMvc;
 
@@ -82,7 +82,7 @@ public class OntologiesControllerIntTest {
     @Test
     public void getOntology() throws Exception {
         OWLOntology testOntology = mock(OWLOntology.class);
-        when(mockOntologiesService.getOntologyFor(eq("blah"), any(OWLHTMLKit.class))).thenReturn(testOntology);
+        when(mockOWLOntologiesService.getOntologyFor(eq("blah"), any(OWLHTMLKit.class))).thenReturn(testOntology);
 
         this.mockMvc.perform(get("/ontologies/blah"))
                 .andExpect(status().isOk());

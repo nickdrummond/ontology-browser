@@ -59,7 +59,7 @@
             <option th:each='ontology : ${ontologies}'
                     th:selected='${ontology eq activeOntology}'
                     th:text='${{ontology.ontologyID}}'
-                    th:value='${{ontology.ontologyID}}'>An ontology</option>
+                    th:value='${{ontology.ontologyID.hashCode()}}'>An ontology</option>
         </select>
     </form>
 

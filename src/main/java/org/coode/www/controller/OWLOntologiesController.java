@@ -9,7 +9,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.LoadOntology;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.www.service.OntologiesService;
+import org.coode.www.service.OWLOntologiesService;
 import org.coode.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.model.*;
@@ -29,10 +29,10 @@ import java.util.Comparator;
 @Controller
 @RequestMapping(value="/ontologies")
 @SessionAttributes("kit")
-public class OntologiesController extends ApplicationController {
+public class OWLOntologiesController extends ApplicationController {
 
     @Autowired
-    private OntologiesService service;
+    private OWLOntologiesService service;
 
     @Autowired
     private OntologyIRIShortFormProvider sfp;
@@ -119,16 +119,12 @@ public class OntologiesController extends ApplicationController {
             method=RequestMethod.POST,
             consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> setActiveOntology(
-            @ModelAttribute("id") final OWLOntologyID id,
-            @ModelAttribute("kit") final OWLHTMLKit kit) {
-        final Optional<OWLOntology> ontology = Optional.fromNullable(kit.getOWLOntologyManager().getOntology(id));
+            @ModelAttribute("id") final String ontId,
+            @ModelAttribute("kit") final OWLHTMLKit kit) throws NotFoundException {
 
-        if (ontology.isPresent()) {
-            kit.setActiveOntology(ontology.get());
-            return new ResponseEntity<>("Active ontology changed", HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>("Unknown ontology: " + id, HttpStatus.BAD_REQUEST);
-        }
+        OWLOntology ontology = service.getOntologyFor(ontId, kit);
+
+        kit.setActiveOntology(ontology);
+        return new ResponseEntity<>("Active ontology changed", HttpStatus.OK);
     }
 }

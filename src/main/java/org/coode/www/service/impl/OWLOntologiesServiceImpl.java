@@ -7,7 +7,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
 import org.coode.www.repository.KitRepository;
-import org.coode.www.service.OntologiesService;
+import org.coode.www.service.OWLOntologiesService;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -22,9 +22,9 @@ import java.util.*;
 import static java.util.Arrays.asList;
 
 @Service
-public class OntologiesServiceImpl implements OntologiesService {
+public class OWLOntologiesServiceImpl implements OWLOntologiesService {
 
-    private static Logger logger = LoggerFactory.getLogger(OntologiesService.class);
+    private static Logger logger = LoggerFactory.getLogger(OWLOntologiesService.class);
 
     @Autowired
     private KitRepository kitRepository;

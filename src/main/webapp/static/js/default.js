@@ -94,10 +94,9 @@ function createActiveOntListeners(){
         }
         else{
             var url = baseUrl + "ontologies/active";
-            console.log(url);
             xmlHttpOption.open("POST", url, true);
             xmlHttpOption.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            xmlHttpOption.send("iri=" + $(this).val());
+            xmlHttpOption.send("id=" + $(this).val());
         }
     });
 }
