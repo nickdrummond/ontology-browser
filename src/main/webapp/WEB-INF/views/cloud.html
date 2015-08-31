@@ -1,0 +1,35 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace='base :: header (title=${title})'></head>
+
+<body>
+
+<div th:replace='base :: menu'></div>
+
+<div id="main">
+
+    <div th:replace='base :: title'></div>
+
+    <div id="content">
+
+        <h2 th:text="${title}"></h2>
+        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
+           href='./' class='permalink'>permalink</a>
+
+        <div class="cloud">
+            <span th:each="entity : ${cloud.entities}"
+               th:utext="${mos.render(entity)}"
+               th:with="value=${cloud.getValue(entity)}"
+               th:styleappend="'font-size:' + ${helper.getFontSize(value)} + 'pt; color:' + ${helper.getColor(value)}">Entity</span>
+        </div>
+
+    </div>
+
+    <div th:replace='base :: footer'></div>
+
+</div>
+
+</body>
+</html>

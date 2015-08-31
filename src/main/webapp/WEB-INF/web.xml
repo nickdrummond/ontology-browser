@@ -1,196 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+            xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+            http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0"
+        metadata-complete="true">
 
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-        http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-        version="2.5">
-    <display-name>Ontology Browser</display-name>
-    <description>Server for navigating through OWL ontologies</description>
+    <!-- This and metadata-complete reduce Tomcat startup times
+     See http://wiki.apache.org/tomcat/HowTo/FasterStartUp -->
+    <absolute-ordering>
+        <name>spring_web</name>
+    </absolute-ordering>
 
+    <!-- Spring MVC -->
     <servlet>
-        <servlet-name>Stats</servlet-name>
-        <display-name>Stats</display-name>
-        <servlet-class>org.coode.www.Stats</servlet-class>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-        <servlet-name>Ontologies</servlet-name>
-        <display-name>Load Ontology</display-name>
-        <servlet-class>org.coode.www.servlet.Ontologies</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>SignOut</servlet-name>
-        <display-name>Sign Out</display-name>
-        <description>Kills the current session and reallocates resources</description>
-        <servlet-class>org.coode.www.servlet.SignOut</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>StartPage</servlet-name>
-        <display-name>Start page</display-name>
-        <servlet-class>org.coode.www.servlet.StartPage</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Contents</servlet-name>
-        <display-name>Render Contents</display-name>
-        <servlet-class>org.coode.www.servlet.Contents</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Summary</servlet-name>
-        <display-name>RenderOWLClass</display-name>
-        <servlet-class>org.coode.www.servlet.Summary</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Find</servlet-name>
-        <display-name>Name Service</display-name>
-        <servlet-class>org.coode.www.servlet.Find</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>QueryReasoner</servlet-name>
-        <display-name>Query Reasoner</display-name>
-        <description>Query the reasoner</description>
-        <servlet-class>org.coode.www.servlet.QueryReasoner</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Cloud</servlet-name>
-        <display-name>Cloud</display-name>
-        <description>Generates a tag cloud for the active ontologies</description>
-        <servlet-class>org.coode.www.servlet.Cloud</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ServerOptions</servlet-name>
-        <display-name>Set Option</display-name>
-        <description>allows configuration of the server</description>
-        <servlet-class>org.coode.www.servlet.ServerOptions</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DLQuery</servlet-name>
-        <display-name>DL Query Page</display-name>
-        <description>generates a page with a form on which DL Queries can take place</description>
-        <servlet-class>org.coode.www.servlet.DLQuery</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ParseMOS</servlet-name>
-        <display-name>Parse Manchester OWL Syntax</display-name>
-        <description>for use with parse.js</description>
-        <servlet-class>org.coode.www.servlet.ParseMOS</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>AutocompleteMOS</servlet-name>
-        <display-name>Autocomplete Manchester OWL Syntax</display-name>
-        <description>for use with parse.js</description>
-        <servlet-class>org.coode.www.servlet.AutocompleteMOS</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Hierarchy</servlet-name>
-        <display-name>Hierarchy Expansion</display-name>
-        <description>for hierarchy expansion</description>
-        <servlet-class>org.coode.www.servlet.Hierarchy</servlet-class>
-    </servlet>
-    <!--<servlet>-->
-        <!--<servlet-name>TestServlet</servlet-name>-->
-        <!--<display-name>Test Servlet</display-name>-->
-        <!--<description>Tests for the TOmcat framework</description>-->
-        <!--<servlet-class>org.coode.www.TestServlet</servlet-class>-->
-    <!--</servlet>-->
-    <!--<servlet>-->
-        <!--<servlet-name>ToggleCookie</servlet-name>-->
-        <!--<display-name>ToggleCookie</display-name>-->
-        <!--<description>ToggleCookie test</description>-->
-        <!--<servlet-class>org.coode.www.ToggleCookie</servlet-class>-->
-    <!--</servlet>-->
 
     <servlet-mapping>
-        <servlet-name>Stats</servlet-name>
-        <url-pattern>/stats/</url-pattern>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>StartPage</servlet-name>
-        <url-pattern>/index.html</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SignOut</servlet-name>
-        <url-pattern>/signout.html</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Ontologies</servlet-name>
-        <url-pattern>/api/ontologies</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping><!-- for backward compatibility -->
-        <servlet-name>Ontologies</servlet-name>
-        <url-pattern>/manage/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Find</servlet-name>
-        <url-pattern>/find/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Contents</servlet-name>
-        <url-pattern>/contents.html</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/entities/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/classes/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/objectproperties/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/dataproperties/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/individuals/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/ontologies/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>QueryReasoner</servlet-name>
-        <url-pattern>/query/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Cloud</servlet-name>
-        <url-pattern>/cloud/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ServerOptions</servlet-name>
-        <url-pattern>/options/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DLQuery</servlet-name>
-        <url-pattern>/dlquery/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/annotationproperties/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Summary</servlet-name>
-        <url-pattern>/datatypes/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ParseMOS</servlet-name>
-        <url-pattern>/parse/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AutocompleteMOS</servlet-name>
-        <url-pattern>/autocomplete/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Hierarchy</servlet-name>
-        <url-pattern>/hierarchy/</url-pattern>
-    </servlet-mapping>
-    <!--<servlet-mapping>-->
-        <!--<servlet-name>ToggleCookie</servlet-name>-->
-        <!--<url-pattern>/cookie/</url-pattern>-->
-    <!--</servlet-mapping>-->
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
+    </context-param>
 
     <session-config>
         <session-timeout>10</session-timeout>

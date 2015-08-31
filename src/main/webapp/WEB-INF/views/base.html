@@ -1,0 +1,193 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment='header (title)'>
+
+    <title th:text='${applicationInfo.name + " : " + title}'>Application Name : Page Name</title>
+
+    <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>
+
+    <link rel='icon'       type='image/x-icon' href='../../static/images/favicon.ico' th:href='@{/static/images/favicon.ico}'/>
+    <link rel='apple-touch-icon-precomposed'   href='../../static/images/splat-152-211412.png' th:href='@{/static/images/splat-152-211412.png}'/>
+
+    <link rel='stylesheet' type='text/css'     href='../../static/css/autosuggest_inquisitor.css' th:href='@{/static/css/autosuggest_inquisitor.css}'/>
+    <link rel='stylesheet' type='text/css'     href='../../static/css/gaphu-0.0.9.css' th:href='@{/static/css/gaphu-0.0.9.css}'/>
+    <link rel='stylesheet' type='text/css'     href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
+
+    <script type='text/javascript' th:inline='javascript'>
+        // TODO Thymeleaf inlining http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html#script-inlining-javascript-and-dart
+        baseUrl=/*[[@{/}]]*/ '/';
+        // document.getElementById("uri-spec").focus();
+    </script>
+    <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js' th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
+    <script type='text/javascript' src='../../static/js/default.js' th:src='@{/static/js/default.js}'></script>
+    <script type='text/javascript' src='../../static/js/bsn.AutoSuggest_2.1_multiword.js' th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
+    <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js' th:src='@{/static/js/gaphu-0.0.9.js}'></script>
+    <script type='text/javascript' src='../../static/js/dlquery.js' th:src='@{/static/js/dlquery.js}'></script>
+
+</head>
+
+<body>
+
+<div id='title' th:fragment='title'>
+    <img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
+    <h1><a th:href='@{/}' th:text='${applicationInfo.name}'>Application Name</a></h1>
+    <a style='display: none;' href='#content'>skip to content</a>
+</div>
+
+<div id='menu' th:fragment="menu">
+
+    <div id='options'>
+        <a id='signout' th:href='@{/signout}'>
+            <img th:src='@{/static/images/close.png}' width='16' height='16' title='Clear' />
+            Clear
+        </a>
+
+        <a class='optionLink' th:href='@{/options/}' >Options</a>
+
+        <form id='rendererForm'>
+            <input type='checkbox' name='renderLabels' id="renderLabels"
+                   th:checked='${kit.config.renderer == "label"}'/>
+            <label for='renderLabels'>Labels</label>
+        </form>
+    </div> <!-- options -->
+
+    <form id="activeOnt">
+        <select name="id">
+            <option th:each='ontology : ${kit.ontologies}'
+                    th:selected='${ontology eq kit.activeOntology}'
+                    th:text='${{ontology.ontologyID}}'
+                    th:value='${{ontology.ontologyID.hashCode()}}'>An ontology</option>
+        </select>
+    </form>
+
+    <form class='autocomplete' method='get' id='findForm'>
+        <input type='text' name='input' placeholder='Search for an Entity' id='find'/>
+    </form>
+    <script type='text/javascript'>
+        var options = {
+            script: baseUrl + 'entities/?',
+            varname: 'name',
+            cache: false,
+            callback: function (obj){
+                window.location = obj.id;
+            }
+        };
+        var as = new AutoSuggest("find", options);
+    </script>
+
+    <div th:replace='base :: tabs'>Tabs</div>
+
+    <div th:replace="base :: list(${type}, ${entities})">
+        A list
+    </div>
+
+    <div th:replace="base :: hierarchy(${type}, ${hierarchy})">
+        A hierarchy
+    </div>
+
+</div> <!-- menu -->
+
+<ul id='tabs' th:fragment='tabs'>
+    <li><a th:href='@{/ontologies/}'>Ontologies</a></li>
+    <li><a th:href='@{/classes/}'>Classes</a></li>
+    <li><a th:href='@{/individuals/}'>Individuals</a></li>
+    <li><a th:href='@{/objectproperties/}'>Object&nbsp;Properties</a></li>
+    <li><a th:href='@{/dataproperties/}'>Data&nbsp;Properties</a></li>
+    <li><a th:href='@{/annotationproperties/}'>Annotation&nbsp;Properties</a></li>
+    <li><a th:href='@{/datatypes/}'>Datatypes</a></li>
+</ul> <!-- tabs -->
+
+<div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
+
+<div class="results" th:fragment="results" th:replace="::characteristic (${results})">
+</div>
+
+<div class="characteristic" th:fragment="characteristic (ch)">
+
+    <h4 th:text='${ch.name + " (" + ch.objects.size() + ")"}'>Some Characteristic (2)</h4>
+
+    <ul th:remove="all-but-first">
+        <li class="asserted" th:each="object : ${ch.objects}" th:utext="${mos.render(object)}">
+
+            <a href="../../classes/1934778517/" class='Class'
+               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
+            <span class='keyword'>&equiv;</span>
+            <a href="../../classes/140023861/" class='Class'
+               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza">Pizza</a>
+            <span class='keyword'>and</span>
+            <span class='active-entity Object Property'>hasBase</span>
+            <span class='only'>only</span>
+            <a href="../../classes/677040734/" class='Class'
+               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
+        </li>
+        <li class="asserted">
+            <span class="keyword">Functional</span>
+            (
+            <span class="active-entity Object Property">hasBase</span>
+            )
+        </li>
+        <li class="asserted">
+            <span class="keyword">InverseFunctional</span>
+            (
+            <span class="active-entity Object Property">hasBase</span>
+            )
+        </li>
+    </ul>
+</div>
+
+<div class="googlemaps" th:fragment="map (geo)" th:if="${geo != null}">
+    <iframe width="425" height="350" frameborder="0" scrolling="no"
+            src="http://maps.google.com/maps"
+            th:src="'http://maps.google.com/maps?q=' + ${geo.latitude} + ',' + ${geo.longitude} + '&amp;ie=UTF8&amp;z=14&amp;output=embed'">
+    </iframe>
+</div>
+
+<div class="imageHolder" th:fragment="image (url)" th:if="${image != null}">
+    <img src="/notfound.jpg" th:src="${url}"/>
+</div>
+
+<EMBED th:fragment="sound (url)"
+       th:if="${sound != null}"
+       th:src="${url}"  src="/notfound.mp3"
+       autostart="true" hidden="true"></EMBED>
+
+<li th:fragment="tree (t)" th:if="${t != null}">
+    <span class='expandable'>+</span>
+    <span th:each="synonym,iteratorStatus : ${t.value}" th:remove="tag">
+        <span th:if="${iteratorStatus.index != 0}" class="keyword">&equiv;</span>
+        <span th:utext="${mos.render(synonym)}" th:remove="tag">a thing</span>
+    </span>
+
+    <ul th:if="${!t.children.isEmpty()}">
+        <div class="removeme" th:each="child : ${t.children}" th:remove="tag">
+            <li th:replace="base::tree(${child})"></li>
+        </div>
+    </ul>
+</li>
+
+<div class="owlselector" th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
+    <h4 th:text="${title}">Title</h4>
+    <ul class="minihierarchy" th:classappend="${type}">
+        <li th:replace="base::tree(${hierarchy})">Top Thing</li>
+    </ul>
+</div>
+
+<div class="owlselector" th:fragment="list (title, entities)" th:if="${entities != null}">
+    <h4 th:text="${title}">Title</h4>
+    <ul>
+        <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
+            a thing
+        </li>
+    </ul>
+</div>
+
+<p class='footer' th:fragment='footer'>
+    <a th:href='${applicationInfo.url + "/"}' th:text='${"OWL Browser v" + applicationInfo.version}'>Version info</a>
+    <a th:href='${applicationInfo.url + "/wiki/GettingStarted"}' class='help' target='_blank'>Help</a>
+</p>
+
+</body>
+</html>

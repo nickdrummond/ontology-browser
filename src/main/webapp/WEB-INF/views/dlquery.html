@@ -1,0 +1,53 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace='base :: header (title=${"DL Query"})'></head>
+
+<body>
+
+<div th:replace='base :: menu'></div>
+
+<div id="main">
+
+    <div th:replace='base :: title'></div>
+
+    <div id="content">
+
+        <h2>DL Query</h2>
+        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
+           href='./' class='permalink'>permalink</a>
+
+        <div class='codebox'>
+
+            <p>Reasoner: <a href="../options/" th:href='@{/options/}'>JFact</a></p>
+
+            <form class='autocomplete' method='get' id='dlQueryForm' action=''>
+                <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
+                <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
+                <input type='submit' value='query' />
+            </form>
+
+            <script type="text/javascript">
+            var options = {
+              parser : baseUrl + 'dlquery/parse',
+              autocomplete: baseUrl + 'dlquery/ac'
+            };
+            new ExpressionEditor("dlQuery", options);
+        </script>
+
+        </div>
+
+
+        <div id='resultsForm'>
+            <!-- results will go here -->
+        </div>
+
+    </div>
+
+    <div th:replace='base :: footer'></div>
+
+</div>
+
+</body>
+</html>

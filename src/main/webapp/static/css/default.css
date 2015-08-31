@@ -1,0 +1,440 @@
+@import url("owl.css");
+
+html {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    overflow-y: scroll;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-size: 9pt;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 20pt;
+    font-weight: bold;
+    display: inline;
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+h2, h3, h4 {
+    font-weight: normal;
+}
+
+h2 {
+    font-size: 16pt;
+    display: inline;
+    margin: 0 6px 12px 6px;
+}
+
+h3 {
+    font-size: 10pt;
+    color: #444444;
+    margin: 6px 12px 12px 12px;
+}
+
+h4 {
+    font-size: 10pt;
+    line-height: 9pt;
+    display: inline;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #002;
+}
+
+img {
+    border: none;
+}
+
+div {
+    margin-top: 0;
+}
+
+li {
+    margin-top: 3px;
+}
+
+.clearfix {
+    clear: both;
+}
+
+
+
+/* Components */
+
+#menu{
+    padding: 10px;
+    position: absolute;
+    width: 300px;
+    height:100%;
+    overflow: auto;
+    display: inline-block;
+    float: left;
+}
+
+#main {
+    background-color: #f1f5f9;
+    color: #111;
+    position: absolute;
+    min-height:100%;
+    min-width: 300px;
+    left: 320px;
+    right: 0;
+    vertical-align: top;
+    padding-right: 10px;
+}
+
+#content {
+    margin-top: 20px;
+    padding-left: 10px;
+}
+
+a.burger, a.burger:hover, a.burger:active {
+    background-color: #000;
+    color: #fff;
+    padding: 5px;
+    font-size: 14pt;
+    text-decoration: none;
+    -moz-border-top-right-radius: 6px;
+    -moz-border-bottom-right-radius: 6px;
+    -webkit-border-top-right-radius: 6px;
+    -webkit-border-bottom-right-radius: 6px;
+}
+
+.owlselector {
+    position: absolute;
+    top: 250px;
+    bottom: 20px;
+    right: 10px;
+    left: 10px;
+}
+
+.owlselector ul {
+    border: solid 1px #c7cfd5;
+    background: #fff;
+    color: #000;
+    padding: 5px 5px 5px 25px;
+    margin: 0 0 10px 0;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+
+.characteristics {
+    height: 100%;
+    overflow: auto;
+}
+
+.characteristic h3 {
+    font-size: 10pt;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+}
+
+.characteristic ul {
+    border: solid 1px #c7cfd5;
+    background: #fff;
+    color: #000;
+    padding: 5px 5px 5px 25px;
+    margin: 0 0 10px 0;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+
+.characteristic li {
+    margin: 5px;
+}
+
+.imageHolder{
+    overflow: auto;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.optiongroup {
+    margin-top: 20px;
+    margin-left: 40px;
+}
+
+.optiongroup table{
+    margin-top: 20px;
+    width: 100%;
+}
+
+.optiongroup select {
+    width: 80%;
+}
+
+.optiongroup input[type=text]{
+    width: 80%; margin-right: 10px;
+}
+
+td.key{
+    width: 150px; text-align: right;
+}
+
+#queryform {
+    background: #ddddff;
+    padding: 5px;
+}
+
+#title {
+    padding: 0;
+}
+
+#signout img {
+    position: relative;
+    top: 4px;
+}
+
+#options a {
+    color: inherit;
+    padding-right: 25px;
+}
+
+#activeOnt {
+    display: inline;
+}
+
+#activeOnt select {
+    height: 24px;
+    width: 100%;
+    margin: 10px 0;
+}
+
+#tabs {
+    color: #aaaacc;
+    margin-bottom: 16px;
+}
+
+#tabs a, #tabs span.currentpage {
+    color: #fff;
+    padding: 2px;
+}
+
+.cloud{
+    text-align: center;
+}
+
+/* Let the cloud spans determine the color */
+.cloud a.Class,
+.cloud a.Object.Property,
+.cloud a.Data.Property,
+.cloud a.Annotation.Property,
+.cloud a.Individual,
+.cloud a.Datatype{
+    color: inherit;
+}
+
+/* we want links in literals to look like links*/
+.literal a {
+    color: #002;
+    text-decoration: underline;
+}
+
+a.subsexpand {
+    color: #555555;
+    font-size: 7pt;
+    text-decoration: underline;
+    line-height: 180%;
+}
+
+a.help {
+    float: right;
+}
+
+a.permalink {
+    font-size: smaller;
+}
+
+.owlselector ul {
+    height: 90%;
+    max-height: 800px;
+    overflow: auto;
+}
+
+.minihierarchy, .minihierarchy ul {
+    list-style-type: none;
+    border: none;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+ul.minihierarchy {
+    padding-left: 10px;
+}
+
+.minihierarchy ul {
+    padding-left: 15px;
+}
+
+.minihierarchy ul li {
+    white-space: nowrap;
+}
+
+.minihierarchy .expandable{
+    cursor: pointer;
+}
+
+.inferred{
+    border: dotted gray 1px;
+    opacity: 0.6;
+    -moz-opacity: 0.6;
+    filter:alpha(opacity=60);
+}
+
+p.footer {
+    font-size: 7pt;
+    margin: 30px;
+    clear: both;
+}
+
+form.autocomplete {
+    display: inline;
+}
+
+form#load {
+    margin-bottom: 50px;
+}
+
+#find {
+    width: 97.8%;
+    height: 18px;
+    margin-bottom: 10px;
+}
+
+#rendererForm {
+    display: inline;
+}
+
+#dlQuery{
+    width: 90%;
+    height: 200px;
+    display: block;
+    margin-bottom: 10px;
+    margin-left: 5px; margin-right: 5px;
+}
+
+.iri{
+    color: #002;
+    font-size: smaller;
+    margin: 8px;
+}
+
+.iri a, .iri form, .iri h3{
+    display: inline;
+}
+
+.iri h3 {
+    margin-left: 0;
+}
+
+.googlemaps{
+    margin-left: auto;
+    margin-right: auto;
+    width: 425px; height: 350px;
+    margin-bottom: 12px;
+}
+
+img.icon {
+    position: relative;
+    top: 4px;
+    width: 24px;
+    height: 24px;
+}
+
+img.button {
+    position: relative;
+    top: 8px;
+}
+
+img.min {
+    display: inline;
+    margin: 6px;
+    margin-right: 0;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+img.thumb{
+    vertical-align: top;
+    margin-left: 6px;
+}
+
+.disabled {
+    background-color: #bbbbdd;
+}
+
+.warn {
+    color: #ff0000;
+}
+
+
+/* This is where ont selector and search clash */
+@media screen and (max-width: 630px) {
+
+#menu{
+    width: 200px;
+}
+
+#main {
+    left: 220px;
+    }
+
+}
+
+@media screen and (max-width: 450px) {
+
+    body, input, select {
+        font-size: 11pt;
+    }
+
+    h2 {
+        font-size: 18pt;
+    }
+
+    h4 {
+        font-size: 12pt;
+    }
+
+    /* Doesn't quite match the 100% on the selector */
+    #find {
+        width: 98.3%;
+    }
+
+    #findForm {
+        float: none;
+    }
+
+    form#bookmarks,
+    form#load,
+    #activeOnt select {
+        float: none;
+        clear: both;
+        width: 100%;
+    }
+
+    .owlselector {
+        position: absolute;
+        top: 300px;
+        bottom: auto;
+        right: 10px;
+        left: 10px;
+        min-height: 500px;
+    }
+
+    #options a {
+        padding-right: 5px;
+    }
+}
