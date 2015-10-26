@@ -73,7 +73,7 @@ li {
 
 /* Components */
 
-#menu{
+#menu, #welcome{
     padding: 10px;
     position: absolute;
     width: 300px;
@@ -110,6 +110,10 @@ a.burger, a.burger:hover, a.burger:active {
     -moz-border-bottom-right-radius: 6px;
     -webkit-border-top-right-radius: 6px;
     -webkit-border-bottom-right-radius: 6px;
+}
+
+#welcome li {
+    margin-top: 10px;
 }
 
 .owlselector {
