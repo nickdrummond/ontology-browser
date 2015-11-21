@@ -5,6 +5,8 @@ A "fork" of the ontology browser from the [CO-ODE project](https://code.google.c
 Example running on Heroku:
 https://ontology-browser.herokuapp.com/
 
+![Image of Ontology browser](docs/aardvark.png)
+
 ## Aims
 * Make it easily buildable - maven
 * Make it easily runnable - jetty (local) heroku (remote)
