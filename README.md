@@ -1,6 +1,6 @@
 # Ontology Browser
 
-A "fork" of the ontology browser from the [CO-ODE project](https://code.google.com/p/ontology-browser/).
+A "fork" of the ontology browser from the [CO-ODE project](https://code.google.com/p/ontology-browser/) now hosted at https://github.com/co-ode-owl-plugins/ontology-browser.
 
 Example running on Heroku:
 https://ontology-browser.herokuapp.com/
