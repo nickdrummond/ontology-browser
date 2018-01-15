@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class OWLHTMLVisitor implements OWLObjectVisitor {
 
@@ -808,6 +809,21 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         final Collection<OWLClassExpression> types = EntitySearcher.getTypes(individual, ontologies);
         if (!types.isEmpty()){
             writeOpList(types, ", ", false);
+        }
+
+        Set<OWLAnnotation> annotations = new HashSet<OWLAnnotation>();
+
+        for (OWLOntology o : ontologies) {
+            annotations.addAll(EntitySearcher.getAnnotations(individual, o));
+        }
+        if (!annotations.isEmpty()){
+            write("<ul>");
+            for (OWLAnnotation a : annotations){
+                write("<li>");
+                a.accept(this);
+                write("</li>");
+            }
+            write("</ul>");
         }
 
         Multimap<OWLDataPropertyExpression, OWLLiteral> dataValues =
