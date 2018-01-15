@@ -712,13 +712,13 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     private void writeIRIWithBoldFragment(IRI iri, String shortForm) {
         // Encourage wrapping on / instead of other characters
-        final String fullURI = iri.toString().replaceAll("/", "/<wbr>");
+        final String fullURI = iri.toString().replaceAll("/(?=[^/])", "/<wbr>");
 
-        int index = 0;
+        int index = -1;
         if (shortForm != null) {
             index = fullURI.lastIndexOf(shortForm);
         }
-        if (index == 0){
+        if (index == -1){
             write(fullURI);
         }
         else{
