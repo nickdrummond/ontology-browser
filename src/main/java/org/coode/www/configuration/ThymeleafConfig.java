@@ -37,6 +37,7 @@ public class ThymeleafConfig extends WebMvcConfigurerAdapter {
     public ViewResolver viewResolver(SpringTemplateEngine templateEngine){
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver() ;
         viewResolver.setTemplateEngine(templateEngine);
+        viewResolver.setCharacterEncoding("UTF-8");
         viewResolver.setOrder(1);
 
         return viewResolver;
