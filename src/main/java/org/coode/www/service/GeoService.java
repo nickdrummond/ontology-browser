@@ -10,20 +10,15 @@ import java.util.Set;
 @Service
 public class GeoService {
 
-    private IRI latitude;
-    private IRI longitude;
-    private IRI pointr;
+    // TODO IRIs should be created once
+    @Value("${geo.latitude}")
+    private String latitude;
 
-    public GeoService() {
-    }
+    @Value("${geo.longitude}")
+    private String longitude;
 
-    public GeoService(@Value("${geo.latitude}") String latitude,
-                      @Value("${geo.longitude}") String longitude,
-                      @Value("${geo.point}") String pointr) {
-        this.latitude = IRI.create(latitude);
-        this.longitude = IRI.create(longitude);
-        this.pointr = IRI.create(pointr);
-    }
+    @Value("${geo.point}")
+    private String pointr;
 
     public Optional<Loc> getLocation(final OWLEntity owlEntity, final Set<OWLOntology> onts) {
         if (onts == null || onts.isEmpty()){
@@ -36,7 +31,9 @@ public class GeoService {
             Loc loc = new Loc();
             for (OWLOntology ont : onts) {
                 for (OWLAnnotationAssertionAxiom axiom : ont.getAnnotationAssertionAxioms(owlNamedIndividual.getIRI())) {
-                    if (axiom.getProperty().getIRI().equals(pointr)) {
+                    final IRI iri = axiom.getProperty().getIRI();
+
+                    if (iri.equals(IRI.create(pointr))) {
                         Optional<OWLLiteral> maybeLiteral = axiom.getValue().asLiteral();
                         if (maybeLiteral.isPresent()) {
                             String[] latLong = maybeLiteral.get().getLiteral().trim().split("\\s+");
@@ -45,12 +42,12 @@ public class GeoService {
                                 loc.longitude = latLong[1];
                             }
                         }
-                    } else if (axiom.getProperty().getIRI().equals(latitude)) {
+                    } else if (iri.equals(IRI.create(latitude))) {
                         Optional<OWLLiteral> maybeLiteral = axiom.getValue().asLiteral();
                         if (maybeLiteral.isPresent()) {
                             loc.latitude = maybeLiteral.get().getLiteral().trim();
                         }
-                    } else if (axiom.getProperty().getIRI().equals(longitude)) {
+                    } else if (iri.equals(IRI.create(longitude))) {
                         Optional<OWLLiteral> maybeLiteral = axiom.getValue().asLiteral();
                         if (maybeLiteral.isPresent()) {
                             loc.longitude = maybeLiteral.get().getLiteral().trim();
