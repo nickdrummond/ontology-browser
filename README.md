@@ -2,8 +2,8 @@
 
 A "fork" of the ontology browser from the [CO-ODE project](https://code.google.com/p/ontology-browser/) now hosted at https://github.com/co-ode-owl-plugins/ontology-browser.
 
-Example running on Heroku:
-https://ontology-browser.herokuapp.com/
+Unfortunately, the mongo db implementation used for the
+demo on heroku is no longer available (someone want to migrate to an alternative?)
 
 ![Image of Ontology browser](docs/aardvark.png)
 
@@ -27,17 +27,5 @@ Some dependencies are local (in /repo) as they do not exist on any mvn repo.
 
 ## Deployment to Heroku
 
-`git push heroku master`
-
-Or from a dev branch
-
-`git push heroku branchname:master`
-
-See [Heroku instructions for Jetty](https://devcenter.heroku.com/articles/deploy-a-java-web-application-that-launches-with-jetty-runner).
-
-### MongoDB
-
-This can be added to Heroku by following these instructions:
-https://devcenter.heroku.com/articles/mongolab
-
-Ontology browser will automatically pick up the connection details from MONGOLAB_URI.
+Unfortunately, the mongo implementation used on heroku is no longer available and
+I have no dev time to migrate to another store.
