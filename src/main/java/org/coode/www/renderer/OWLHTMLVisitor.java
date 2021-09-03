@@ -1,7 +1,7 @@
 package org.coode.www.renderer;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -119,13 +119,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private String getOntologyIdString(final OWLOntology ont){
-        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
-            @Nullable
-            @Override
-            public String apply(IRI iri) {
-                return iri.toString();
-            }
-        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
+        return ont.getOntologyID().getDefaultDocumentIRI().map(IRI::toString)
+                .orElse(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
     }
 
     ////////// Entities
@@ -806,7 +801,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {
-        final Collection<OWLClassExpression> types = EntitySearcher.getTypes(individual, ontologies);
+        final Collection<OWLClassExpression> types = EntitySearcher.getTypes(individual, ontologies.stream()).collect(Collectors.toList());
         if (!types.isEmpty()){
             writeOpList(types, ", ", false);
         }
@@ -814,7 +809,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         Set<OWLAnnotation> annotations = new HashSet<OWLAnnotation>();
 
         for (OWLOntology o : ontologies) {
-            annotations.addAll(EntitySearcher.getAnnotations(individual, o));
+            annotations.addAll(EntitySearcher.getAnnotations(individual, o).collect(Collectors.toList()));
         }
         if (!annotations.isEmpty()){
             write("<ul>");
@@ -827,7 +822,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLDataPropertyExpression, OWLLiteral> dataValues =
-                EntitySearcher.getDataPropertyValues(individual, ontologies);
+                EntitySearcher.getDataPropertyValues(individual, ontologies.stream());
         if (!dataValues.isEmpty()){
             write("<ul>");
             for (OWLDataPropertyExpression p : dataValues.keySet()){
@@ -841,7 +836,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLDataPropertyExpression, OWLLiteral> negDataValues =
-                EntitySearcher.getNegativeDataPropertyValues(individual, ontologies);
+                EntitySearcher.getNegativeDataPropertyValues(individual, ontologies.stream());
         if (!negDataValues.isEmpty()){
             write("<ul>");
 
@@ -856,7 +851,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLObjectPropertyExpression, OWLIndividual> objValues =
-                EntitySearcher.getObjectPropertyValues(individual, ontologies);
+                EntitySearcher.getObjectPropertyValues(individual, ontologies.stream());
         if (!objValues.isEmpty()){
             write("<ul>");
 
@@ -872,7 +867,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLObjectPropertyExpression, OWLIndividual> negbjValues =
-                EntitySearcher.getNegativeObjectPropertyValues(individual, ontologies);
+                EntitySearcher.getNegativeObjectPropertyValues(individual, ontologies.stream());
         if (!negbjValues.isEmpty()){
             write("<ul>");
 

@@ -261,12 +261,6 @@ a.permalink {
     font-size: smaller;
 }
 
-.owlselector ul {
-    height: 90%;
-    max-height: 800px;
-    overflow: auto;
-}
-
 .minihierarchy, .minihierarchy ul {
     list-style-type: none;
     border: none;

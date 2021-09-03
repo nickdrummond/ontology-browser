@@ -107,7 +107,7 @@ public class OntologyConfig {
 
     private static OntologyMapping mappingFor(final OWLOntology ont) {
         IRI docIRI = ont.getOWLOntologyManager().getOntologyDocumentIRI(ont);
-        IRI ontIRI = ont.getOntologyID().getDefaultDocumentIRI().or(docIRI);
+        IRI ontIRI = ont.getOntologyID().getDefaultDocumentIRI().orElse(docIRI);
         return new OntologyMapping(ontIRI, docIRI);
     }
 }

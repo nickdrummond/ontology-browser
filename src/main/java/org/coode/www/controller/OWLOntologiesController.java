@@ -1,6 +1,6 @@
 package org.coode.www.controller;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.coode.www.exception.NotFoundException;
@@ -66,7 +66,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlOntology));
 
-        final IRI iri = owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous"));
+        final IRI iri = owlOntology.getOntologyID().getOntologyIRI().orElse(IRI.create("Anonymous"));
 
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");

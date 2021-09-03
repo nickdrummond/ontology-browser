@@ -1,6 +1,6 @@
 package org.coode.www.controller;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -90,7 +90,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(property);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

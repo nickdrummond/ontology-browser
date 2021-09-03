@@ -1,9 +1,8 @@
 package org.coode.www.renderer;
 
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.OWLAxiomVisitorAdapter;
 
-public class UsageVisibilityVisitor extends OWLAxiomVisitorAdapter {
+public class UsageVisibilityVisitor implements OWLAxiomVisitor {
 
     private boolean showUsage;
     private OWLEntity currentEntity;

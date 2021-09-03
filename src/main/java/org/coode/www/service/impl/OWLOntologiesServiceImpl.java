@@ -1,6 +1,6 @@
 package org.coode.www.service.impl;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -105,9 +105,7 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
                 fac.getImports(owlOntology, comparator),
                 fac.getGeneralClassAxioms(owlOntology, comparator)
         )) {
-            if (c.isPresent()) {
-                characteristics.add(c.get());
-            }
+            c.ifPresent(characteristics::add);
         }
         return characteristics;
     }

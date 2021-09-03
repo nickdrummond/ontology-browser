@@ -1,6 +1,6 @@
 package org.coode.www.controller;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -31,6 +31,10 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         List<OWLAnnotationProperty> annotationProperties
                 = service.getAnnotationProperties(activeOntology, kit.getComparator());
+
+        if (annotationProperties.isEmpty()) {
+            throw new NotFoundException("Annotation properties", "");
+        }
 
         OWLAnnotationProperty firstAnnotationProperty = annotationProperties.get(0);
 

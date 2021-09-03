@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * A shortformProvider that uses the server properties to render
@@ -28,7 +29,7 @@ public class LabelShortFormProvider implements ShortFormProvider {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
-        final OWLOntologySetProvider activeOntologiesSetProvider = kit::getActiveOntologies;
+        final OWLOntologySetProvider activeOntologiesSetProvider = () -> kit.getActiveOntologies().stream();
 
         // the property assertion sfp
         OWLDataProperty dataProp = df.getOWLDataProperty(config.getLabelPropertyIri());

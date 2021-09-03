@@ -22,13 +22,13 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
 
     @Override
     public String print(OWLOntologyID owlOntologyID, Locale locale) {
-        return owlOntologyID.getDefaultDocumentIRI().transform(iri -> {
+        return owlOntologyID.getDefaultDocumentIRI().map(iri -> {
             if (iri.toString().equals(rootIri)) {
                 return "All ontologies";
             } else {
                 return sfp.getShortForm(iri) + " (" + iri.toString() + ")";
             }
-        }).or("Anonymous");
+        }).orElse("Anonymous");
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.coode.www.controller;
 
-import com.google.common.base.Optional;
 import org.coode.www.cloud.*;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -87,7 +87,7 @@ public class CloudController extends ApplicationController {
 
         CloudHelper<T> helper = new CloudHelper<T>(cloudModel, threshold, zoom);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         Set<OWLOntology> ontologies = kit.getOntologies();
 

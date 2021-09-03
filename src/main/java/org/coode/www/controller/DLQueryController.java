@@ -1,6 +1,6 @@
 package org.coode.www.controller;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -66,7 +66,7 @@ public class DLQueryController extends ApplicationController {
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
         OWLReasoner reasoner = kit.getOWLReasoner();
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.<OWLObject>absent());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         try {
             OWLClassExpression owlClassExpression = service.getOWLClassExpression(expression, df, checker);

@@ -29,3 +29,7 @@ Some dependencies are local (in /repo) as they do not exist on any mvn repo.
 
 Unfortunately, the mongo implementation used on heroku is no longer available and
 I have no dev time to migrate to another store.
+
+## TODO
+
+* fixes (star wars ontology)

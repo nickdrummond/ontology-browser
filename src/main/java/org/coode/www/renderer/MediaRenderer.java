@@ -1,7 +1,7 @@
 package org.coode.www.renderer;
 
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.kit.OWLHTMLKit;

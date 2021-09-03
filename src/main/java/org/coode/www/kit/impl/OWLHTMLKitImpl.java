@@ -1,6 +1,5 @@
 package org.coode.www.kit.impl;
 
-import com.google.common.base.*;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.coode.html.url.RestURLScheme;
@@ -9,6 +8,7 @@ import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.OWLReasonerManager;
 import org.coode.owl.mngr.impl.*;
+import org.coode.owl.mngr.impl.OWLObjectComparator;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.OntologyConfig;
 import org.coode.www.model.OntologyMapping;
@@ -21,19 +21,16 @@ import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
-import org.semanticweb.owlapi.util.NonMappingOntologyIRIMapper;
-import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
-import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.semanticweb.owlapi.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 
@@ -89,8 +86,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
         mngr.addOntologyLoaderListener(ontLoadListener);
 
-        // always default to trying the URI of the ontology
-        mngr.addIRIMapper(new NonMappingOntologyIRIMapper());
+        // TODO always default to trying the URI of the ontology
 
         setActiveOntology(rootOntology);
 
@@ -220,14 +216,20 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public Optional<OWLOntology> getOntologyForIRI(IRI iri) {
-        for (OWLOntology ontology : getOntologies()){
-            if (iri.equals(ontology.getOntologyID().getVersionIRI().orNull())){
-                return Optional.of(ontology);
+        for (OWLOntology ontology : getOntologies()){ // TODO make this better
+            Optional<IRI> versionIRI = ontology.getOntologyID().getVersionIRI();
+            if (versionIRI.isPresent()) {
+                if (iri.equals(versionIRI.get())) {
+                    return Optional.of(ontology);
+                }
             }
         }
-        for (OWLOntology ontology : getOntologies()){
-            if (iri.equals(ontology.getOntologyID().getOntologyIRI().orNull())){
-                return Optional.of(ontology);
+        for (OWLOntology ontology : getOntologies()) {
+            Optional<IRI> ontologyIRI = ontology.getOntologyID().getOntologyIRI();
+            if (ontologyIRI.isPresent()) {
+                if (iri.equals(ontologyIRI.get())) {
+                    return Optional.of(ontology);
+                }
             }
         }
 
@@ -265,14 +267,8 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     private String getOntologyIdString(final OWLOntology ont){
-        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
-
-            @Nullable
-            @Override
-            public String apply(IRI iri) {
-                return iri.toString();
-            }
-        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
+        return ont.getOntologyID().getDefaultDocumentIRI().map(IRI::toString)
+                .orElse(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
     }
 
     public Set<OWLOntology> getOntologies() {
@@ -472,17 +468,11 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         final List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
 
         for (OWLOntology root : newRoots){
-            com.google.common.base.Optional<IRI> maybeIRI = getImportIRIForOntology(root);
-            if (maybeIRI.isPresent()) {
-                changes.add(new AddImport(rootOntology, df.getOWLImportsDeclaration(maybeIRI.get())));
-            }
+            getImportIRIForOntology(root).ifPresent(iri -> changes.add(new AddImport(rootOntology, df.getOWLImportsDeclaration(iri))));
         }
 
         for (OWLOntology root : oldRoots){
-            com.google.common.base.Optional<IRI> maybeIRI = getImportIRIForOntology(root);
-            if (maybeIRI.isPresent()) {
-                changes.add(new RemoveImport(rootOntology, df.getOWLImportsDeclaration(maybeIRI.get())));
-            }
+            getImportIRIForOntology(root).ifPresent(iri -> changes.add(new RemoveImport(rootOntology, df.getOWLImportsDeclaration(iri))));
         }
 
         mngr.applyChanges(changes);
@@ -497,11 +487,11 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return roots;
     }
 
-    private com.google.common.base.Optional<IRI> getImportIRIForOntology(OWLOntology root) {
+    private Optional<IRI> getImportIRIForOntology(OWLOntology root) {
         if (root.isAnonymous()){
             // TODO need a workaround as this will not work
             // see OWL API bug - https://sourceforge.net/tracker/?func=detail&aid=3110834&group_id=90989&atid=595534
-            return com.google.common.base.Optional.fromNullable(mngr.getOntologyDocumentIRI(root));
+            return Optional.ofNullable(mngr.getOntologyDocumentIRI(root));
         }
         return root.getOntologyID().getDefaultDocumentIRI();
     }

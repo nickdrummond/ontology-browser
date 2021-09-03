@@ -1,6 +1,6 @@
 package org.coode.www.renderer;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLObject;
 

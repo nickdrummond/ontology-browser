@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public interface OWLHTMLKit extends ActiveOntologyProvider {
 
