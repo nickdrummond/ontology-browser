@@ -32,4 +32,16 @@ I have no dev time to migrate to another store.
 
 ## TODO
 
-* fixes (star wars ontology)
+* link to dl-query tab
+  * dl query not identifying properties - 
+    
+    java.util.regex.PatternSyntaxException: Unclosed group near index 12
+    (killingof.*
+    at java.util.regex.Pattern.error(Pattern.java:1969)
+    
+* links to clouds
+* fix permalink on dl-query tab
+* Scrollbars in left navigation
+  (removed but how about mobile?)
+* No inference when JFact selected (Rebel Scum)
+  http://127.0.0.1:8080/?label=c0154cd07d7b26a39ea1e11b7ce220f7_588a8713faa332a36257fe98fb6efe04&redirect=/classes/-738385071/
