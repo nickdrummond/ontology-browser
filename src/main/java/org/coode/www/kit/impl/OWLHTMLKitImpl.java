@@ -256,6 +256,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public void setActiveOntology(@Nonnull OWLOntology ont) {
         activeOntology = ont;
+        reasoner = null;
     }
 
     public void addActiveOntologyListener(ActiveOntologyProvider.Listener l) {
