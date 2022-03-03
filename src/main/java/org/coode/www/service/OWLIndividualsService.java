@@ -52,12 +52,10 @@ public class OWLIndividualsService {
         List<Characteristic> characteristics = fac.getAnnotationCharacterists (owlIndividual, activeOntologies, comparator, shortFormProvider);
 
         fac.getTypes(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-
-        characteristics.addAll(fac.getDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
-        characteristics.addAll(fac.getNegativeDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
-        characteristics.addAll(fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator, shortFormProvider));
-        characteristics.addAll(fac.getNegativeObjectPropertyAssertions(owlIndividual, activeOntologies, comparator, shortFormProvider));
-
+        fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getNegativeObjectPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getDataPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getNegativeDataPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
         fac.getUsage(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
         fac.getSameAs(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
         fac.getDifferentFrom(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
