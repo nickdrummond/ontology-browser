@@ -8,7 +8,6 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CharacteristicsFactory {
 
@@ -202,8 +201,28 @@ public class CharacteristicsFactory {
             Comparator<OWLObject> comparator,
             ShortFormProvider shortFormProvider) {
 
-        final Map<OWLObjectPropertyExpression, Collection<OWLIndividual>> propMap =
+        Map<OWLObjectPropertyExpression, Collection<OWLIndividual>> values =
                 EntitySearcher.getObjectPropertyValues(owlIndividual, ontologies.stream()).asMap();
+        return getObjectPropertyAssertionsHelper(owlIndividual, comparator, shortFormProvider, values, false);
+    }
+
+    public Collection<? extends Characteristic> getNegativeObjectPropertyAssertions(
+            OWLNamedIndividual owlIndividual,
+            Set<OWLOntology> ontologies,
+            Comparator<OWLObject> comparator,
+            ShortFormProvider shortFormProvider) {
+
+        Map<OWLObjectPropertyExpression, Collection<OWLIndividual>> values =
+                EntitySearcher.getNegativeObjectPropertyValues(owlIndividual, ontologies.stream()).asMap();
+        return getObjectPropertyAssertionsHelper(owlIndividual, comparator, shortFormProvider, values, true);
+    }
+
+    private Collection<? extends Characteristic> getObjectPropertyAssertionsHelper(
+            OWLNamedIndividual owlIndividual,
+            Comparator<OWLObject> comparator,
+            ShortFormProvider shortFormProvider,
+            Map<OWLObjectPropertyExpression, Collection<OWLIndividual>> propMap,
+            boolean negative) {
 
         final List<OWLObjectPropertyExpression> orderedProps = new ArrayList<>(propMap.keySet());
 
@@ -214,10 +233,13 @@ public class CharacteristicsFactory {
         for (OWLObjectPropertyExpression p : orderedProps) {
             // TODO improved expression rendering
             String label = p.isAnonymous() ? p.toString() : shortFormProvider.getShortForm(p.asOWLObjectProperty());
+            if (negative) {
+                label = "NOT " + label;
+            }
             characteristics.add(new Characteristic(
-                            owlIndividual,
-                            label,
-                            new ArrayList<>(propMap.get(p)))
+                    owlIndividual,
+                    label,
+                    new ArrayList<>(propMap.get(p)))
             );
         }
 
@@ -233,24 +255,51 @@ public class CharacteristicsFactory {
         final Map<OWLDataPropertyExpression, Collection<OWLLiteral>> propMap =
                 EntitySearcher.getDataPropertyValues(owlIndividual, ontologies.stream()).asMap();
 
+        return getDataPropertyAssertionsHelper(owlIndividual, comparator, shortFormProvider, propMap, false);
+    }
+
+
+    public Collection<? extends Characteristic> getNegativeDataPropertyAssertions(
+            OWLNamedIndividual owlIndividual,
+            Set<OWLOntology> ontologies,
+            Comparator<OWLObject> comparator,
+            ShortFormProvider shortFormProvider) {
+
+        final Map<OWLDataPropertyExpression, Collection<OWLLiteral>> propMap =
+                EntitySearcher.getNegativeDataPropertyValues(owlIndividual, ontologies.stream()).asMap();
+
+        return getDataPropertyAssertionsHelper(owlIndividual, comparator, shortFormProvider, propMap, true);
+    }
+
+    private Collection<? extends Characteristic> getDataPropertyAssertionsHelper(
+            OWLNamedIndividual owlIndividual,
+            Comparator<OWLObject> comparator,
+            ShortFormProvider shortFormProvider,
+            Map<OWLDataPropertyExpression, Collection<OWLLiteral>> propMap,
+            boolean negative) {
+
         final List<OWLDataPropertyExpression> orderedProps = new ArrayList<>(propMap.keySet());
 
-        Collections.sort(orderedProps, comparator);
+        orderedProps.sort(comparator);
 
         List<Characteristic> characteristics = new ArrayList<>();
 
         for (OWLDataPropertyExpression p : orderedProps) {
             // TODO improved expression rendering
             String label = p.isAnonymous() ? p.toString() : shortFormProvider.getShortForm(p.asOWLDataProperty());
+            if (negative) {
+                label = "NOT " + label;
+            }
             characteristics.add(new Characteristic(
-                            owlIndividual,
-                            label,
-                            new ArrayList<>(propMap.get(p)))
+                    owlIndividual,
+                    label,
+                    new ArrayList<>(propMap.get(p)))
             );
         }
 
         return characteristics;
     }
+
 
     public List<Characteristic> getAnnotationCharacterists(
             OWLNamedIndividual owlIndividual,
@@ -269,9 +318,9 @@ public class CharacteristicsFactory {
 
         for (OWLAnnotationProperty p : orderedProps) {
             characteristics.add(new Characteristic(
-                            owlIndividual,
-                            shortFormProvider.getShortForm(p),
-                            new ArrayList<>(assertedProps.get(p)))
+                    owlIndividual,
+                    shortFormProvider.getShortForm(p),
+                    new ArrayList<>(assertedProps.get(p)))
             );
         }
 

@@ -47,25 +47,20 @@ public class OWLIndividualsService {
 
         CharacteristicsFactory fac = new CharacteristicsFactory();
 
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Optional<Characteristic> c : asList(
-                fac.getTypes(owlIndividual, activeOntologies, comparator),
-                fac.getSameAs(owlIndividual, activeOntologies, comparator),
-                fac.getDifferentFrom(owlIndividual, activeOntologies, comparator),
-                fac.getUsage(owlIndividual, activeOntologies, comparator)
-        )) {
-            if (c.isPresent()) {
-                characteristics.add(c.get());
-            }
-        }
-
         ShortFormProvider shortFormProvider = kit.getShortFormProvider();
 
-        characteristics.addAll(fac.getAnnotationCharacterists (owlIndividual, activeOntologies, comparator, shortFormProvider));
-        characteristics.addAll(fac.getDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
-        characteristics.addAll(fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator, shortFormProvider));
+        List<Characteristic> characteristics = fac.getAnnotationCharacterists (owlIndividual, activeOntologies, comparator, shortFormProvider);
 
-        // TODO negative property assertions
+        fac.getTypes(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+
+        characteristics.addAll(fac.getDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
+        characteristics.addAll(fac.getNegativeDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
+        characteristics.addAll(fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator, shortFormProvider));
+        characteristics.addAll(fac.getNegativeObjectPropertyAssertions(owlIndividual, activeOntologies, comparator, shortFormProvider));
+
+        fac.getUsage(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getSameAs(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getDifferentFrom(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
 
         return characteristics;
     }
