@@ -74,9 +74,10 @@ function createSlideToggles() {
 }
 
 function createTreeListeners(){
-    // add a listener to unexpanded tree nodes
-    $("li > span.expandable").click(function(e){
-        handleExpand($(this).parent());
+    // add a single listener for unexpandable tree nodes
+    $(".minihierarchy").click(function(e){
+        var t = $(e.target).closest('span.expandable');
+        handleExpand(t.parent());
     });
 }
 
@@ -221,10 +222,6 @@ function getChildren(li){
         context: li,
         success: function(data, textStatus, request){
             li.replaceWith(data); // replace the li with an expanded version
-            // and add the expand click listener to the new nodes
-            $("span.expandable", this).click(function(e){
-                handleExpand($(this).parent());
-            })
         },
         error: function(request, textStatus, errorThrown){
             // get rid of the spinner and replace with an error message
