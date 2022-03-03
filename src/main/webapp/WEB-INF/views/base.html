@@ -109,8 +109,8 @@
 
 <div class="characteristic" th:fragment="characteristic (ch)">
 
-    <h4 th:text='${ch.name + " (" + ch.objects.size() + ")"}'>Some Characteristic (2)</h4>
-
+    <h4 th:text='${ch.name}'>Some Characteristic</h4>
+    <span th:text='${"(" + ch.objects.size() + ")"}'>(2)</span>
     <ul th:remove="all-but-first">
         <li class="asserted" th:each="object : ${ch.objects}" th:utext="${mos.render(object)}">
 

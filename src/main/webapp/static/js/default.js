@@ -5,6 +5,7 @@ var onSuccess;                             // page to go to once the option has 
 var baseUrl;                               // this is set by the java side
 var optionsURL = "options/";
 var hierarchyURL = "hierarchy/";
+var HIDDEN = "hidden.";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,8 @@ if(typeof(Storage) !== 'undefined') {
 } else {
     alert('Sorry! No Web Storage support..');
 }
+
+    hideCharacteristics();
 
     scrollTreeToSelection();
 
@@ -67,10 +70,34 @@ function toggleMenu(e) {
 
 function createSlideToggles() {
     $("<img class=\"min\" src=\"" + baseUrl + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
-        $(this).nextAll("ul").first().slideToggle('fast');
+        var values = $(this).nextAll("ul").first(); // for some reason just next does not work
+        var hidden = values.is(":visible");
+        var characteristic = $(this).next("h4").text();
+        rememberCharacteristicHidden(characteristic, hidden);
+
+        values.slideToggle('fast');
     }).prependTo(".characteristic, .owlselector");
 
     $('<a class="burger" href="">&equiv;</a>').click(toggleMenu).prependTo('#title');
+}
+
+function rememberCharacteristicHidden(characteristic, hidden) {
+    if (hidden) {
+        sessionStorage.setItem(HIDDEN + characteristic, true);
+    }
+    else {
+        sessionStorage.removeItem(HIDDEN + characteristic);
+    }
+}
+
+function hideCharacteristics() {
+    let keys = Object.keys(sessionStorage);
+    for(let key of keys) {
+      if (key.startsWith(HIDDEN)) {
+        var characteristic = key.substr(HIDDEN.length);
+        $("h4:contains('" + characteristic + "')").nextAll("ul").first().hide();
+      }
+    }
 }
 
 function createTreeListeners(){
@@ -225,7 +252,8 @@ function getChildren(li){
         },
         error: function(request, textStatus, errorThrown){
             // get rid of the spinner and replace with an error message
-            $("ul", this).html("Sorry, cannot get children");
+            console.error(errorThrown);
+            $("ul", this).html("Sorry, cannot get children - " + textStatus);
         }
     });
 
