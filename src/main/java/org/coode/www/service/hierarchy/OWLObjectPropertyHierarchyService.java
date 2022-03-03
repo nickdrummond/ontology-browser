@@ -1,12 +1,14 @@
 package org.coode.www.service.hierarchy;
 
 import org.coode.www.model.Tree;
+import org.semanticweb.owlapi.model.IsAnonymous;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import java.util.Comparator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class OWLObjectPropertyHierarchyService extends AbstractOWLHierarchyService<OWLObjectPropertyExpression> {
 
@@ -25,7 +27,10 @@ public class OWLObjectPropertyHierarchyService extends AbstractOWLHierarchyServi
 
     @Override
     protected Set<Node<OWLObjectPropertyExpression>> subs(OWLObjectPropertyExpression prop) {
-        return reasoner.getSubObjectProperties(prop, true).getNodes();
+        return reasoner.getSubObjectProperties(prop, true).nodes().filter(node ->
+                // check if nodes contains at least one named property
+                node.entities().anyMatch(IsAnonymous::isNamed)
+        ).collect(Collectors.toSet());
     }
 
     @Override
