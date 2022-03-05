@@ -160,6 +160,14 @@ a.burger, a.burger:hover, a.burger:active {
     margin: 5px;
 }
 
+.characteristic li:hover {
+    background: #eeeeee;
+}
+
+.characteristic .source-ont {
+    float: right;
+}
+
 .imageHolder{
     overflow: auto;
     text-align: center;

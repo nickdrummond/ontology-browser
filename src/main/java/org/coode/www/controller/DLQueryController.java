@@ -5,6 +5,7 @@ import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
+import org.coode.www.model.OWLObjectWithOntology;
 import org.coode.www.model.QueryType;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.ParserService;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value="/dlquery")
@@ -70,11 +72,13 @@ public class DLQueryController extends ApplicationController {
 
         try {
             OWLClassExpression owlClassExpression = service.getOWLClassExpression(expression, df, checker);
-            List<OWLEntity> results = new ArrayList<>(reasonerService.getResults(owlClassExpression, query, reasoner));
+            List<OWLObjectWithOntology> results = reasonerService.getResults(owlClassExpression, query, reasoner).stream()
+                    .map ( e -> new OWLObjectWithOntology(e, kit.getActiveOntology()))
+                    .sorted((o1, o2) -> kit.getComparator().compare(o1.getOWLObject(), o2.getOWLObject()))
+                    .collect(Collectors.toList());
 
             logger.debug("Results count: " + results.size());
 
-            Collections.sort(results, kit.getComparator());
             Characteristic resultsCharacteristic = new Characteristic(null, query.name(), results);
 
             model.addAttribute("results", resultsCharacteristic);

@@ -1,6 +1,5 @@
 package org.coode.www.service;
 
-import java.util.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
@@ -14,8 +13,6 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static java.util.Arrays.asList;
 
 @Service
 public class OWLIndividualsService {
@@ -49,7 +46,7 @@ public class OWLIndividualsService {
 
         ShortFormProvider shortFormProvider = kit.getShortFormProvider();
 
-        List<Characteristic> characteristics = fac.getAnnotationCharacterists (owlIndividual, activeOntologies, comparator, shortFormProvider);
+        List<Characteristic> characteristics = fac.getAnnotationCharacteristics(owlIndividual, activeOntologies, comparator, shortFormProvider);
 
         fac.getTypes(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
         fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
