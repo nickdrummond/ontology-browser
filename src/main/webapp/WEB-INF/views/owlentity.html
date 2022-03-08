@@ -4,19 +4,24 @@
 
 <head th:replace='base :: header (title=${title})'></head>
 
-<body>
+<body class="wrapper">
+
+<div th:replace='base :: title'></div>
 
 <div th:replace='base :: menu'></div>
 
+<div th:replace='base :: entityfinder'></div>
+
 <div id="main">
 
-    <div th:replace='base :: title'></div>
+    <div id='hierarchy'  th:replace="base :: hierarchy(${type}, ${hierarchy})">
+        A hierarchy
+    </div>
 
-    <div id="content">
-        <h2 th:text="${title}">An OWLClass</h2>
+    <div id='content'>
+        <span><h2 th:text="${title}">An OWLClass</h2>
         <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-           href='./' class='permalink'>permalink</a>
-
+           href='./' class='permalink'>permalink</a></span>
         <div class="iri">
             <a th:href="${iri}" href='http://example.com/entity-url' >
                 <img th:src="@{/static/images/external.png}"
@@ -34,7 +39,7 @@
                        src='../../static/images/download.png'
                        th:src="@{/static/images/download.png}"/>
             </form>
-            <h3 th:utext="${mos.render(iri)}">http://example.com/entity-url</h3>
+            <h3 th:utext="${iri}">http://example.com/entity-url</h3>
         </div>
 
         <div th:replace="base :: image (${image})">
@@ -58,10 +63,9 @@
         </div>
 
     </div>
-
-    <div th:replace='base :: footer'></div>
-
 </div>
+
+<div th:replace='base :: footer'></div>
 
 </body>
 </html>

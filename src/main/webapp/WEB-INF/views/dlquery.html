@@ -6,11 +6,13 @@
 
 <body>
 
+<div th:replace='base :: title'></div>
+
 <div th:replace='base :: menu'></div>
 
-<div id="main">
+<div th:replace='base :: entityfinder'></div>
 
-    <div th:replace='base :: title'></div>
+<div id="main">
 
     <div id="content">
 
@@ -38,16 +40,13 @@
 
         </div>
 
-
         <div id='resultsForm'>
             <!-- results will go here -->
         </div>
-
     </div>
-
-    <div th:replace='base :: footer'></div>
-
 </div>
+
+<div th:replace='base :: footer'></div>
 
 </body>
 </html>

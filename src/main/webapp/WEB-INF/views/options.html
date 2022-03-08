@@ -6,11 +6,11 @@
 
 <body>
 
+<div th:replace='base :: title'></div>
+
 <div th:replace='base :: menu'></div>
 
 <div id="main">
-
-    <div th:replace='base :: title'></div>
 
     <div id='content'>
 
@@ -79,11 +79,10 @@
 
             </table>
         </div><!-- model -->
-
     </div><!-- content -->
-
-    <div th:replace='base :: footer'></div>
-
 </div>
+
+<div th:replace='base :: footer'></div>
+
 </body>
 </html>

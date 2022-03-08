@@ -1,13 +1,12 @@
 @import url("owl.css");
 
+/* Mobile first design */
+
 html {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    overflow-y: hidden;
 }
 
 body {
-    background-color: #000;
-    color: #fff;
     font-size: 9pt;
     margin: 0;
     padding: 0;
@@ -41,6 +40,7 @@ h4 {
     font-size: 10pt;
     line-height: 9pt;
     display: inline;
+    margin: 0;
 }
 
 a {
@@ -69,75 +69,52 @@ li {
     clear: both;
 }
 
-
-
 /* Components */
 
-#menu, #welcome{
-    padding: 10px 10px 0;
-    position: absolute;
-    width: 300px;
-    height: 98%;
-    overflow: auto;
-    display: inline-block;
-    float: left;
+#options {
+    display: block;
 }
 
-#main {
-    background-color: #f1f5f9;
-    color: #111;
-    position: absolute;
-    height: 100%;
-    min-width: 300px;
-    left: 320px;
-    right: 0;
-    vertical-align: top;
-    padding-right: 10px;
-    overflow: auto;
+#menu, #welcome, #title {
+    margin: 5px;
+    width: 100%;
+}
+
+#entityfinder {
+    width: 99%;
+    margin: 0 5px;
 }
 
 #content {
-    margin-top: 20px;
-    padding-left: 10px;
+    margin-top: 15px;
+}
+
+#owlselector {
+    margin: 5px;
+}
+
+#main {
+    width: 100%;
 }
 
 a.burger, a.burger:hover, a.burger:active {
-    background-color: #000;
-    color: #fff;
     padding: 5px;
     font-size: 14pt;
     text-decoration: none;
-    -moz-border-top-right-radius: 6px;
-    -moz-border-bottom-right-radius: 6px;
-    -webkit-border-top-right-radius: 6px;
-    -webkit-border-bottom-right-radius: 6px;
+    float: right;
 }
 
 #welcome li {
     margin-top: 10px;
 }
 
-.owlselector {
-    position: absolute;
-    top: 250px;
-    bottom: 20px;
-    right: 10px;
-    left: 10px;
-}
-
-.owlselector ul {
-    border: solid 1px #c7cfd5;
-    background: #fff;
-    color: #000;
-    padding: 5px 5px 5px 25px;
-    margin: 0 0 10px 0;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-}
-
 .characteristics {
-    height: 100%;
-    overflow: auto;
+    vertical-align: top;
+    padding-right: 5px; /* enough space for the scroller */
+}
+
+.characteristic {
+    margin: 5px;
 }
 
 .characteristic h3 {
@@ -201,10 +178,6 @@ td.key{
     padding: 5px;
 }
 
-#title {
-    padding: 0;
-}
-
 #signout img {
     position: relative;
     top: 4px;
@@ -215,14 +188,19 @@ td.key{
     padding-right: 25px;
 }
 
-#activeOnt {
-    display: inline;
+#findForm, #activeOnt {
+    display: block;
+    margin: 5px 0;
 }
 
 #activeOnt select {
-    height: 24px;
     width: 100%;
-    margin: 10px 0;
+    height: 24px;
+}
+
+#find {
+    width: 98%;
+    height: 18px;
 }
 
 #tabs {
@@ -230,8 +208,11 @@ td.key{
     margin-bottom: 16px;
 }
 
+#tabs li {
+    display: inline; /* maybe change to flow? */
+}
+
 #tabs a, #tabs span.currentpage {
-    color: #fff;
     padding: 2px;
 }
 
@@ -279,6 +260,13 @@ a.permalink {
 }
 
 ul.minihierarchy {
+    border: solid 1px #c7cfd5;
+    background: #fff;
+    color: #000;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    overflow: auto;
+    height: 200px;
     padding-left: 10px;
 }
 
@@ -303,8 +291,8 @@ ul.minihierarchy {
 
 p.footer {
     font-size: 7pt;
-    margin: 30px;
-    clear: both;
+    margin: 5px;
+    width: 100%;
 }
 
 form.autocomplete {
@@ -313,12 +301,6 @@ form.autocomplete {
 
 form#load {
     margin-bottom: 50px;
-}
-
-#find {
-    width: 97.8%;
-    height: 18px;
-    margin-bottom: 10px;
 }
 
 #rendererForm {
@@ -387,18 +369,74 @@ img.thumb{
     color: #ff0000;
 }
 
-
-/* This is where ont selector and search clash */
-@media screen and (max-width: 630px) {
-
-#menu{
-    width: 200px;
-}
-
-#main {
-    left: 220px;
+    /* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+    .wrapper {
+      display: flex;
+      flex-flow: row wrap;
     }
 
+/* This is where ont selector and search clash */
+@media screen and (min-width: 800px) {
+
+    html, body {
+        height: 100vh;
+    }
+
+    .wrapper {
+      flex-flow: column;
+      height: 100vh;
+    }
+
+    #title {
+        flex: 0 1 auto;
+        width: auto;
+    }
+
+    #main {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        overflow: hidden;
+        width: auto;
+    }
+
+    #menu {
+        width: auto;
+    }
+
+    p.footer {
+        flex: 0 1 auto;
+        width: auto;
+    }
+
+    #owlselector {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #owlselector .min {
+        display: none;
+    }
+
+    ul.minihierarchy {
+        flex: 1 1 auto;
+        overflow: auto;
+        height: auto;
+    }
+
+    #content {
+        flex: 2 1 auto;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .characteristics {
+        flex: 0 1 auto;
+        overflow: auto;
+    }
 }
 
 @media screen and (max-width: 450px) {
@@ -413,35 +451,5 @@ img.thumb{
 
     h4 {
         font-size: 12pt;
-    }
-
-    /* Doesn't quite match the 100% on the selector */
-    #find {
-        width: 98.3%;
-    }
-
-    #findForm {
-        float: none;
-    }
-
-    form#bookmarks,
-    form#load,
-    #activeOnt select {
-        float: none;
-        clear: both;
-        width: 100%;
-    }
-
-    .owlselector {
-        position: absolute;
-        top: 300px;
-        bottom: auto;
-        right: 10px;
-        left: 10px;
-        min-height: 500px;
-    }
-
-    #options a {
-        padding-right: 5px;
     }
 }

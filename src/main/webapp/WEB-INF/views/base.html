@@ -38,7 +38,34 @@
     <a style='display: none;' href='#content'>skip to content</a>
 </div>
 
+<div id="entityfinder" th:fragment="entityfinder">
+    <form id='findForm' method='get'>
+        <input id='find' class='autocomplete' type='text' name='input' placeholder='Search for an Entity'/>
+    </form>
+
+    <script type='text/javascript'>
+                var options = {
+                    script: baseUrl + 'entities/?',
+                    varname: 'name',
+                    cache: false,
+                    callback: function (obj){
+                        window.location = obj.id;
+                    }
+                };
+                var as = new AutoSuggest("find", options);
+    </script>
+</div>
+
 <div id='menu' th:fragment="menu">
+
+    <form id="activeOnt">
+        <select name="id">
+            <option th:each='ontology : ${kit.ontologies}'
+                    th:selected='${ontology eq kit.activeOntology}'
+                    th:text='${{ontology.ontologyID}}'
+                    th:value='${{ontology.ontologyID.hashCode()}}'>An ontology</option>
+        </select>
+    </form>
 
     <div id='options'>
         <a id='signout' th:href='@{/signout}'>
@@ -55,39 +82,7 @@
         </form>
     </div> <!-- options -->
 
-    <form id="activeOnt">
-        <select name="id">
-            <option th:each='ontology : ${kit.ontologies}'
-                    th:selected='${ontology eq kit.activeOntology}'
-                    th:text='${{ontology.ontologyID}}'
-                    th:value='${{ontology.ontologyID.hashCode()}}'>An ontology</option>
-        </select>
-    </form>
-
-    <form class='autocomplete' method='get' id='findForm'>
-        <input type='text' name='input' placeholder='Search for an Entity' id='find'/>
-    </form>
-    <script type='text/javascript'>
-        var options = {
-            script: baseUrl + 'entities/?',
-            varname: 'name',
-            cache: false,
-            callback: function (obj){
-                window.location = obj.id;
-            }
-        };
-        var as = new AutoSuggest("find", options);
-    </script>
-
     <div th:replace='base :: tabs'>Tabs</div>
-
-    <div th:replace="base :: list(${type}, ${entities})">
-        A list
-    </div>
-
-    <div th:replace="base :: hierarchy(${type}, ${hierarchy})">
-        A hierarchy
-    </div>
 
 </div> <!-- menu -->
 
@@ -172,14 +167,14 @@
     </ul>
 </li>
 
-<div class="owlselector" th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
+<div id='owlselector' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${type}">
         <li th:replace="base::tree(${hierarchy})">Top Thing</li>
     </ul>
 </div>
 
-<div class="owlselector" th:fragment="list (title, entities)" th:if="${entities != null}">
+<div id='owlselector' th:fragment="list (title, entities)" th:if="${entities != null}">
     <h4 th:text="${title}">Title</h4>
     <ul>
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">

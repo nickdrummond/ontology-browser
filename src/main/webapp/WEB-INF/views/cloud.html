@@ -6,17 +6,19 @@
 
 <body>
 
+<div th:replace='base :: title'></div>
+
 <div th:replace='base :: menu'></div>
+
+<div th:replace='base :: entityfinder'></div>
 
 <div id="main">
 
-    <div th:replace='base :: title'></div>
-
     <div id="content">
 
-        <h2 th:text="${title}"></h2>
+        <span><h2 th:text="${title}"></h2>
         <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-           href='./' class='permalink'>permalink</a>
+           href='./' class='permalink'>permalink</a></span>
 
         <div class="cloud">
             <span th:each="entity : ${cloud.entities}"
@@ -26,10 +28,9 @@
         </div>
 
     </div>
-
-    <div th:replace='base :: footer'></div>
-
 </div>
+
+<div th:replace='base :: footer'></div>
 
 </body>
 </html>

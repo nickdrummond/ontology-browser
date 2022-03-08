@@ -6,11 +6,11 @@
 
 <body>
 
+<div th:replace='base :: title'></div>
+
 <div th:replace='base :: menu'></div>
 
 <div id='main'>
-
-    <div th:replace='base :: title'></div>
 
     <div id="content">
         <h2>Clear?</h2>
@@ -22,11 +22,11 @@
         <p>Are you sure you wish to quit?</p>
 
         <p><a href='signout-confirmed'>Yes</a></p>
-
-        <div th:replace='base :: footer'></div>
     </div>
 
 </div><!-- main -->
+
+<div th:replace='base :: footer'></div>
 
 </body>
 </html>
