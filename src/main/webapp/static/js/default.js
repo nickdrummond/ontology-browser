@@ -11,27 +11,14 @@ var HIDDEN = "hidden.";
 
 $(document).ready(function(){
 
-
-if(typeof(Storage) !== 'undefined') {
-    if (sessionStorage.showMenu === 'false') {
-        hideMenu();
-    }
-} else {
-    alert('Sorry! No Web Storage support..');
-}
-
     hideCharacteristics();
 
     scrollTreeToSelection();
-
-    createLabelRendererListener();
 
     createSlideToggles();
 
     createTreeListeners();
 
-    createActiveOntListeners();
-    createOptionListeners();
 });
 
 function scrollTreeToSelection() {
@@ -44,27 +31,6 @@ function scrollTreeToSelection() {
     }
 }
 
-function createLabelRendererListener() {
-    // add a listener to the render labels checkbox
-    $("#renderLabels").click(function(e){
-        var rendererName = "frag";
-        if (this.checked){
-            rendererName = "label";
-        }
-        option("renderer", rendererName, null);
-    });
-}
-
-function hideMenu() {
-    $('#menu').hide();
-}
-
-function toggleMenu(e) {
-    sessionStorage.showMenu = (sessionStorage.showMenu === 'false') ? 'true' : 'false';
-    $('#menu').slideToggle('fast');
-    return false;
-}
-
 function createSlideToggles() {
     $("<img class=\"min\" src=\"" + baseUrl + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
         var values = $(this).nextAll("ul").first(); // for some reason just next does not work
@@ -75,7 +41,6 @@ function createSlideToggles() {
         values.slideToggle('fast');
     }).prependTo(".characteristic, #owlselector");
 
-    $('<a class="burger" href="">&equiv;</a>').click(toggleMenu).prependTo('#title');
 }
 
 function rememberCharacteristicHidden(characteristic, hidden) {
@@ -103,101 +68,6 @@ function createTreeListeners(){
         var t = $(e.target).closest('span.expandable');
         handleExpand(t.parent());
     });
-}
-
-function createActiveOntListeners(){
-    $("#activeOnt select").change(function(e){
-        xmlHttpOption=GetXmlHttpObject(function(e){
-            if (xmlHttpOption.readyState==4 || xmlHttpOption.readyState=="complete") {
-                //reloadAllFrames();
-                console.log(e.srcElement.response);
-            }
-        });
-
-        if (xmlHttpOption==null) {
-            alert ("Browser does not support HTTP Request");
-        }
-        else{
-            var url = baseUrl + "ontologies/active";
-            xmlHttpOption.open("POST", url, true);
-            xmlHttpOption.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            xmlHttpOption.send("id=" + $(this).val());
-        }
-    });
-}
-
-function createOptionListeners(){
-    $("select.option").change(function(e){
-        var value = $(this).val();
-        var optionId = $("input[name=property]", $(this).parent()).attr("value");
-
-        option(optionId, value, null);
-    });
-
-    $("input.option[type='checkbox']").click(function(e){
-        var optionId = $("input[name=property]", $(this).parent()).attr("value");
-        var state = "false";
-        if (this.checked){
-            state = "true";
-        }
-        option(optionId, state, null);
-    });
-}
-
-
-// successPage is optional
-// - if specified, this page will be loaded when the option is set successfully
-// - if omitted, the current page will be refreshed when the option is set successfully
-function option(opt, value, successpage){
-
-    xmlHttpOption=GetXmlHttpObject(optionSet);
-
-    if (xmlHttpOption==null) {
-        alert ("Browser does not support HTTP Request");
-    }
-    else{
-        xmlHttpOption.open("POST", baseUrl + optionsURL, true);
-
-        xmlHttpOption.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-        var attrs =  "property=" + opt + "&value=" + value;
-
-        onSuccess = successpage;
-
-        xmlHttpOption.send(attrs);
-    }
-}
-
-function optionSet(){
-    if (xmlHttpOption.readyState==4 || xmlHttpOption.readyState=="complete") {
-        if (onSuccess != null){
-            if (parent != null){
-                parent.window.location = onSuccess;
-            }
-            else{
-                window.location = onSuccess;
-            }
-        }
-        else{
-            reloadAllFrames();
-        }
-    }
-}
-
-function reloadAllFrames(){
-    if (parent.frames.length > 0){
-        for(var i=0; i<parent.frames.length; i++){
-            var sURL = parent.frames[i].location;
-            parent.frames[i].location.replace(sURL);
-        }
-    }
-    else{
-        // we have to strip out the session if it is in the url
-        // otherwise the previous state will just be reloaded
-        var url = location.toString();
-        url = url.replace(/[&|?]label=[^&]+/, "");
-        location.replace(url);
-    }
 }
 
 function getContentURL(){

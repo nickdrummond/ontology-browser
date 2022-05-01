@@ -18,10 +18,8 @@ public class CloudHelper<O extends OWLEntity> {
 
     private CloudModel<O> model;
 
-    public CloudHelper(CloudModel<O> cloudModel, int threshold, int zoom) {
+    public CloudHelper(CloudModel<O> cloudModel) {
         this.model = cloudModel;
-        this.threshold = threshold;
-        this.zoom = zoom;
     }
 
     public void setNormalise(boolean normalise) {
@@ -30,6 +28,14 @@ public class CloudHelper<O extends OWLEntity> {
 
     public void setInverted(boolean inverted) {
         this.inverted = inverted;
+    }
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+    }
+
+    public void setZoom(int zoom) {
+        this.zoom = zoom;
     }
 
     public Set<O> getEntities() {

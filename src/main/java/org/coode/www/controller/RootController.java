@@ -34,8 +34,9 @@ public class RootController extends ApplicationController {
         else {
             IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOntologies());
 
-            CloudHelper<OWLNamedIndividual> helper =
-                    new CloudHelper<>(cloudModel, 14, 4);
+            CloudHelper<OWLNamedIndividual> helper = new CloudHelper<>(cloudModel);
+            helper.setThreshold(14);
+            helper.setZoom(4);
             helper.setNormalise(true);
 
             OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());

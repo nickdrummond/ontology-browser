@@ -5,8 +5,8 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.CloudHelper;
+import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
@@ -33,82 +34,91 @@ public class CloudController extends ApplicationController {
 
     @Value("${cloud.zoom.default}")
     private static int zoomDefault;
-//
-//    @RequestMapping(value = "/classes")
-//    public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-//                                  @RequestParam(required=false) Integer zoom,
-//                                  @RequestParam(required=false) Integer threshold,
-//                                  final Model model) throws OntServerException {
-//        if (zoom == null) { zoom = zoomDefault; }
-//        if (threshold == null) { threshold = thresholdDefault; }
-//        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit.getOntologies());
-//        return cloud(kit, model, "Classes Usage Cloud", cloudModel, zoom, threshold);
-//    }
+
+    @RequestMapping(value = "/classes")
+    public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                  @RequestParam Optional<Integer> zoom,
+                                  @RequestParam Optional<Integer> threshold,
+                                  @RequestParam(defaultValue="false") boolean normalise,
+                                  final Model model) throws OntServerException {
+
+        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit.getOntologies());
+
+        return cloud(kit, model, "Classes Usage Cloud", cloudModel, zoom, threshold, normalise);
+    }
 
     @RequestMapping(value = "/individuals")
     public String getIndividualsCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                      @RequestParam(required=false) Integer zoom,
-                                      @RequestParam(required=false) Integer threshold,
-                                      @RequestParam(required=false, defaultValue="false") boolean normalise,
+                                      @RequestParam Optional<Integer> zoom,
+                                      @RequestParam Optional<Integer> threshold,
+                                      @RequestParam(defaultValue="false") boolean normalise,
                                       final Model model) throws OntServerException {
 
         IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOntologies());
 
-        if (zoom == null) { zoom = zoomDefault; }
-        if (threshold == null) { threshold = thresholdDefault; }
-        CloudHelper<OWLNamedIndividual> helper = new CloudHelper<>(cloudModel, threshold, zoom);
-        if (normalise) {helper.setNormalise(normalise);}
-        return cloud(kit, model, "Individuals Usage Cloud", helper);
+        return cloud(kit, model, "Individuals Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
-//
-//    @RequestMapping(value = "/objectproperties")
-//    public String getObjectPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-//                                           @RequestParam(required=false) Integer zoom,
-//                                           @RequestParam(required=false) Integer threshold,
-//                                           final Model model) throws OntServerException {
-//        if (zoom == null) { zoom = zoomDefault; }
-//        if (threshold == null) { threshold = thresholdDefault; }
-//        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit.getOntologies());
-//        return cloud(kit, model, "Object Properties Usage Cloud", cloudModel, zo);
-//    }
-//
-//    @RequestMapping(value = "/dataproperties")
-//    public String getDataPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-//                                         @RequestParam(required=false) Integer zoom,
-//                                         @RequestParam(required=false) Integer threshold,
-//                                         final Model model) throws OntServerException {
-//        if (zoom == null) { zoom = zoomDefault; }
-//        if (threshold == null) { threshold = thresholdDefault; }
-//        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit.getOntologies());
-//        return cloud(kit, model, "Data Properties Usage Cloud", cloudModel, zoom, threshold);
-//    }
-//
-//    @RequestMapping(value = "/annotationproperties")
-//    public String getAnnotationPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-//                                               @RequestParam(required=false) Integer zoom,
-//                                               @RequestParam(required=false) Integer threshold,
-//                                               final Model model) throws OntServerException {
-//        if (zoom == null) { zoom = zoomDefault; }
-//        if (threshold == null) { threshold = thresholdDefault; }
-//        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit.getOntologies());
-//        return cloud(kit, model, "Annotation Properties Usage Cloud", cloudModel, zoom, threshold);
-//    }
-//
-//    @RequestMapping(value = "/datatypes")
-//    public String getDatatypesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-//                                    @RequestParam(required=false) Integer zoom,
-//                                    @RequestParam(required=false) Integer threshold,
-//                                    final Model model) throws OntServerException {
-//        if (zoom == null) { zoom = zoomDefault; }
-//        if (threshold == null) { threshold = thresholdDefault; }
-//        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit.getOntologies());
-//        return cloud(kit, model, "Datatypes Usage Cloud", cloudModel, zoom, threshold);
-//    }
+
+    @RequestMapping(value = "/objectproperties")
+    public String getObjectPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                           @RequestParam Optional<Integer> zoom,
+                                           @RequestParam Optional<Integer> threshold,
+                                           @RequestParam(defaultValue="false") boolean normalise,
+                                           final Model model) throws OntServerException {
+
+        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit.getOntologies());
+
+        return cloud(kit, model, "Object Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+    }
+
+    @RequestMapping(value = "/dataproperties")
+    public String getDataPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                         @RequestParam Optional<Integer> zoom,
+                                         @RequestParam Optional<Integer> threshold,
+                                         @RequestParam(defaultValue="false") boolean normalise,
+                                         final Model model) throws OntServerException {
+
+        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit.getOntologies());
+
+        return cloud(kit, model, "Data Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+    }
+
+    @RequestMapping(value = "/annotationproperties")
+    public String getAnnotationPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                               @RequestParam Optional<Integer> zoom,
+                                               @RequestParam Optional<Integer> threshold,
+                                               @RequestParam(defaultValue="false") boolean normalise,
+                                               final Model model) throws OntServerException {
+
+        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit.getOntologies());
+
+        return cloud(kit, model, "Annotation Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+    }
+
+    @RequestMapping(value = "/datatypes")
+    public String getDatatypesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
+                                    @RequestParam Optional<Integer> zoom,
+                                    @RequestParam Optional<Integer> threshold,
+                                    @RequestParam(defaultValue="false") boolean normalise,
+                                    final Model model) throws OntServerException {
+
+        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit.getOntologies());
+
+        return cloud(kit, model, "Datatypes Usage Cloud", cloudModel, zoom, threshold, normalise);
+    }
 
     public <T extends OWLEntity>String cloud(final OWLHTMLKit kit,
-                                                    final Model model,
-                                                    final String title,
-                                                    final CloudHelper helper) {
+                                             final Model model,
+                                             final String title,
+                                             final CloudModel<T> cloudModel,
+                                             final Optional<Integer> zoom,
+                                             final Optional<Integer> threshold,
+                                             boolean normalise) {
+
+        CloudHelper<T> helper = new CloudHelper<>(cloudModel);
+        helper.setZoom(zoom.orElse(zoomDefault));
+        helper.setThreshold(threshold.orElse(thresholdDefault));
+        helper.setNormalise(normalise);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 

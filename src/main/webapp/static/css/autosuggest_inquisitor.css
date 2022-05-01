@@ -53,9 +53,7 @@ div.autosuggest ul
 div.autosuggest ul li
 {
 	color: #222222;
-    font-size: 8pt;
     padding: 0;
-    line-height: 9px;
     margin: 0 4px 4px;
 	text-align: left;
 }

@@ -15,9 +15,7 @@ body {
 h1 {
     font-size: 20pt;
     font-weight: bold;
-    display: inline;
-    margin-top: 0;
-    margin-bottom: 12px;
+    margin: 4px;
 }
 
 h2, h3, h4 {
@@ -75,13 +73,17 @@ li {
     display: block;
 }
 
+#title {
+    display: flex;
+}
+
 #menu, #welcome, #title {
     margin: 5px;
     width: 100%;
 }
 
 #entityfinder {
-    width: 99%;
+    flex: 1 1 auto;
     margin: 0 5px;
 }
 
@@ -198,26 +200,15 @@ td.key{
     height: 24px;
 }
 
-#find {
-    width: 98%;
-    height: 18px;
-}
-
 #findForm {
     display: flex;
     justify-content: center;
 }
 
-#superfinder #find {
-    height: 40px;
-    font-size: 40px;
-    text-align: center;
-    width: 80%;
-}
-
-#superfinder .autosuggest li {
-    font-size: 30px;
-    line-height: 30px;
+#find, .autosuggest li {
+    width: 98%;
+    line-height: 24px;
+    font-size: 18pt;
     text-align: center;
 }
 
@@ -308,6 +299,8 @@ ul.minihierarchy {
 }
 
 p.footer {
+    display: flex;
+    justify-content: space-around;
     font-size: 7pt;
     margin: 5px;
     width: 100%;
@@ -356,7 +349,7 @@ form#load {
 
 img.icon {
     position: relative;
-    top: 4px;
+    top: 6px;
     width: 24px;
     height: 24px;
 }

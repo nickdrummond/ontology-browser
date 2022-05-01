@@ -4,26 +4,17 @@
 
 <head th:include='base :: header (title=${"Welcome"})'></head>
 
-<body id="superfinder">
+<body>
 
 <div th:replace='base :: title'></div>
 
 <div id='welcome'>
-    <p>The Star Wars Ontology can be browsed by <a href="classes/">Class</a>, <a href="individuals/">Individual</a>.</p>
 
-    <p>Or search below to get started.</p>
-
-    <p>The ontology is in <a href="https://github.com/nickdrummond/starwarsontology">active development</a></p>
 </div>
-
-<div>
-    <div th:replace='base :: entityfinder'></div>
-</div>
-
 
 <div id='main'>
 
-<!--    <div th:replace='cloud :: cloud'></div>-->
+    <div th:replace='cloud :: cloud'></div>
 
 </div>
 

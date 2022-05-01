@@ -36,14 +36,12 @@
     <img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
     <h1><a th:href='@{/}' >Star Wars Ontology</a></h1>
     <a style='display: none;' href='#content'>skip to content</a>
-</div>
+    <div id="entityfinder" th:fragment="entityfinder">
+        <form id='findForm' method='get'>
+            <input id='find' class='autocomplete' type='text' name='input' placeholder='search...'/>
+        </form>
 
-<div id="entityfinder" th:fragment="entityfinder">
-    <form id='findForm' method='get'>
-        <input id='find' class='autocomplete' type='text' name='input' placeholder='Search...'/>
-    </form>
-
-    <script type='text/javascript'>
+        <script type='text/javascript'>
                 var options = {
                     script: baseUrl + 'entities/?',
                     varname: 'name',
@@ -54,18 +52,10 @@
                 };
                 var as = new AutoSuggest("find", options);
     </script>
+    </div>
 </div>
 
 <div id='menu' th:fragment="menu">
-
-    <form id="activeOnt">
-        <select name="id">
-            <option th:each='ontology : ${kit.ontologies}'
-                    th:selected='${ontology eq kit.activeOntology}'
-                    th:text='${{ontology.ontologyID}}'
-                    th:value='${{ontology.ontologyID.hashCode()}}'>An ontology</option>
-        </select>
-    </form>
 
     <div th:replace='base :: tabs'>Tabs</div>
 
@@ -170,7 +160,8 @@
 
 <p class='footer' th:fragment='footer'>
     <a th:href='${applicationInfo.url + "/"}' th:text='${applicationInfo.name + " v" + applicationInfo.version}'>Version info</a>
-    <a th:href='${applicationInfo.url + "/wiki/GettingStarted"}' class='help' target='_blank'>Help</a>
+    <a href="https://github.com/nickdrummond/starwarsontology">Github</a>
+    <a href="mailto:nickdrummond@yahoo.com">Contact</a>
 </p>
 
 </body>
