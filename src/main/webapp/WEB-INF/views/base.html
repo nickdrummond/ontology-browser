@@ -176,7 +176,7 @@
 
 <div id='owlselector' th:fragment="list (title, entities)" th:if="${entities != null}">
     <h4 th:text="${title}">Title</h4>
-    <ul>
+    <ul class="minihierarchy" th:classappend="${type}">
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
             a thing
         </li>
