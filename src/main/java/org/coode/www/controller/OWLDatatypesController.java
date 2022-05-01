@@ -21,14 +21,13 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(value="/datatypes")
-@SessionAttributes("kit")
 public class OWLDatatypesController extends ApplicationController {
 
     @Autowired
     private OWLDatatypesService service;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLDatatypes(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
+    public String getOWLDatatypes() throws OntServerException {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
@@ -42,7 +41,6 @@ public class OWLDatatypesController extends ApplicationController {
 
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLDatatype(@PathVariable final String propertyId,
-                                 @ModelAttribute("kit") final OWLHTMLKit kit,
                                  final Model model) throws OntServerException, NotFoundException {
 
         OWLDatatype owlDatatype = service.getOWLDatatypeFor(propertyId, kit);
@@ -75,7 +73,6 @@ public class OWLDatatypesController extends ApplicationController {
 
     @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String propertyId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLDatatype property = service.getOWLDatatypeFor(propertyId, kit);

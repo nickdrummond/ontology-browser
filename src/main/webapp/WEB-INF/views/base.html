@@ -4,7 +4,7 @@
 
 <head th:fragment='header (title)'>
 
-    <title th:text='${applicationInfo.name + " : " + title}'>Application Name : Page Name</title>
+    <title th:text='${"Star Wars Ontology : " + title}'>Application Name : Page Name</title>
 
     <meta charset='UTF-8'/>
     <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
@@ -34,13 +34,13 @@
 
 <div id='title' th:fragment='title'>
     <img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
-    <h1><a th:href='@{/}' th:text='${applicationInfo.name}'>Application Name</a></h1>
+    <h1><a th:href='@{/}' >Star Wars Ontology</a></h1>
     <a style='display: none;' href='#content'>skip to content</a>
 </div>
 
 <div id="entityfinder" th:fragment="entityfinder">
     <form id='findForm' method='get'>
-        <input id='find' class='autocomplete' type='text' name='input' placeholder='Search for an Entity'/>
+        <input id='find' class='autocomplete' type='text' name='input' placeholder='Search...'/>
     </form>
 
     <script type='text/javascript'>
@@ -66,21 +66,6 @@
                     th:value='${{ontology.ontologyID.hashCode()}}'>An ontology</option>
         </select>
     </form>
-
-    <div id='options'>
-        <a id='signout' th:href='@{/signout}'>
-            <img th:src='@{/static/images/close.png}' width='16' height='16' title='Clear' />
-            Clear
-        </a>
-
-        <a class='optionLink' th:href='@{/options/}' >Options</a>
-
-        <form id='rendererForm'>
-            <input type='checkbox' name='renderLabels' id="renderLabels"
-                   th:checked='${kit.config.renderer == "label"}'/>
-            <label for='renderLabels'>Labels</label>
-        </form>
-    </div> <!-- options -->
 
     <div th:replace='base :: tabs'>Tabs</div>
 
@@ -184,7 +169,7 @@
 </div>
 
 <p class='footer' th:fragment='footer'>
-    <a th:href='${applicationInfo.url + "/"}' th:text='${"OWL Browser v" + applicationInfo.version}'>Version info</a>
+    <a th:href='${applicationInfo.url + "/"}' th:text='${applicationInfo.name + " v" + applicationInfo.version}'>Version info</a>
     <a th:href='${applicationInfo.url + "/wiki/GettingStarted"}' class='help' target='_blank'>Help</a>
 </p>
 

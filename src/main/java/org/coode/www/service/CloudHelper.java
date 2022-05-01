@@ -4,11 +4,12 @@ import org.coode.www.cloud.CloudModel;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.awt.*;
+import java.util.Set;
 
 public class CloudHelper<O extends OWLEntity> {
 
     // capped maximum size of the font used to display entities
-    private static final int MAX_SIZE = 40;
+    private static final int MAX_SIZE = 60;
 
     private int threshold = 0;
     private int zoom = 0;
@@ -31,11 +32,12 @@ public class CloudHelper<O extends OWLEntity> {
         this.inverted = inverted;
     }
 
-    public CloudModel<O> getModel() {
-        return model;
+    public Set<O> getEntities() {
+        return model.getEntities(threshold);
     }
 
-    public String getColor(int value) {
+    public String getColor(O entity) {
+        int value = model.getValue(entity);
         int score;
         if (normalise) {
             int relativeScore = value - model.getMin();
@@ -53,7 +55,8 @@ public class CloudHelper<O extends OWLEntity> {
         return "#" + rgb.substring(2, rgb.length());
     }
 
-    public int getFontSize(int value) {
+    public int getFontSize(O entity) {
+        int value = model.getValue(entity);
         int size;
         if (normalise) {
             int displayMin = zoom;

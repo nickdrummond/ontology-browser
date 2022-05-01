@@ -1,0 +1,33 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:include='base :: header (title=${"Welcome"})'></head>
+
+<body id="superfinder">
+
+<div th:replace='base :: title'></div>
+
+<div id='welcome'>
+    <p>The Star Wars Ontology can be browsed by <a href="classes/">Class</a>, <a href="individuals/">Individual</a>.</p>
+
+    <p>Or search below to get started.</p>
+
+    <p>The ontology is in <a href="https://github.com/nickdrummond/starwarsontology">active development</a></p>
+</div>
+
+<div>
+    <div th:replace='base :: entityfinder'></div>
+</div>
+
+
+<div id='main'>
+
+<!--    <div th:replace='cloud :: cloud'></div>-->
+
+</div>
+
+<div th:replace='base :: footer'></div>
+
+</body>
+</html>

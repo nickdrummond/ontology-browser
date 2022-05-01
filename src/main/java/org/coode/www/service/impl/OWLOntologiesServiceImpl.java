@@ -6,14 +6,12 @@ import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
-import org.coode.www.repository.KitRepository;
 import org.coode.www.service.OWLOntologiesService;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -25,9 +23,6 @@ import static java.util.Arrays.asList;
 public class OWLOntologiesServiceImpl implements OWLOntologiesService {
 
     private static Logger logger = LoggerFactory.getLogger(OWLOntologiesService.class);
-
-    @Autowired
-    private KitRepository kitRepository;
 
     @Override public OWLOntology getOntologyFor(final String id, final OWLHTMLKit kit) throws NotFoundException {
         for (OWLOntology ont : kit.getOntologies()){
@@ -56,7 +51,6 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
         try {
             if (uri.isAbsolute()) {
                 OWLOntology ont = kit.loadOntology(uri);
-                kitRepository.saveKit(kit);
                 return String.valueOf(ont.hashCode());
             }
             else {
@@ -115,7 +109,6 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
         OWLOntology activeOntology = kit.getActiveOntology();
         if (!ontology.equals(activeOntology)) {
             kit.setActiveOntology(ontology);
-            kitRepository.saveKit(kit);
         }
     }
 }

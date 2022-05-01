@@ -8,16 +8,10 @@ import java.net.URL;
 
 public abstract class AbstractURLScheme implements URLScheme {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractURLScheme.class);
-
     protected final OWLHTMLKit kit;
 
     public AbstractURLScheme(OWLHTMLKit kit) {
         this.kit = kit;
-    }
-
-    public URL getBaseURL(){
-        return kit.getBaseUrl();
     }
 
     public OWLHTMLKit getOWLHTMLKit(){

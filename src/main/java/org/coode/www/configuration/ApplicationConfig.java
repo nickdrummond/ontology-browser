@@ -1,7 +1,6 @@
 package org.coode.www.configuration;
 
 import org.coode.www.model.ApplicationInfo;
-import org.coode.www.model.Bookmarks;
 import org.coode.www.model.ReasonerMomento;
 import org.coode.www.service.ReasonerFactoryService;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
@@ -28,11 +27,6 @@ public class ApplicationConfig {
     @Bean
     public OntologyIRIShortFormProvider ontologyIRIShortFormProvider() {
         return new OntologyIRIShortFormProvider();
-    }
-
-    @Bean
-    public Bookmarks bookmarks(@Value("${bookmarks.source}") String bookmarksSource) {
-        return new Bookmarks(new ClassPathResource(bookmarksSource));
     }
 
     @Bean

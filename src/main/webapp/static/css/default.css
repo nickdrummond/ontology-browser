@@ -203,6 +203,24 @@ td.key{
     height: 18px;
 }
 
+#findForm {
+    display: flex;
+    justify-content: center;
+}
+
+#superfinder #find {
+    height: 40px;
+    font-size: 40px;
+    text-align: center;
+    width: 80%;
+}
+
+#superfinder .autosuggest li {
+    font-size: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
 #tabs {
     color: #aaaacc;
     margin-bottom: 16px;

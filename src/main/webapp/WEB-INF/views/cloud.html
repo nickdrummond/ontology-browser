@@ -16,15 +16,12 @@
 
     <div id="content">
 
-        <span><h2 th:text="${title}"></h2>
-        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-           href='./' class='permalink'>permalink</a></span>
+        <h2 th:text="${title}">Title</h2>
 
-        <div class="cloud">
-            <span th:each="entity : ${cloud.entities}"
+        <div th:fragment="cloud" class="cloud">
+            <span th:each="entity : ${helper.getEntities()}"
                th:utext="${mos.render(entity)}"
-               th:with="value=${cloud.getValue(entity)}"
-               th:styleappend="'font-size:' + ${helper.getFontSize(value)} + 'pt; color:' + ${helper.getColor(value)}">Entity</span>
+               th:styleappend="'font-size:' + ${helper.getFontSize(entity)} + 'pt; color:' + ${helper.getColor(entity)}">Entity</span>
         </div>
 
     </div>

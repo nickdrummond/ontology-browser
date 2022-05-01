@@ -3,8 +3,6 @@ package org.coode.www.kit;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.www.model.OntologyConfig;
-import org.coode.www.model.ServerConfig;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -17,32 +15,12 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 public interface OWLHTMLKit extends ActiveOntologyProvider {
 
-    ServerConfig getConfig();
-
-    void setConfig(@Nonnull ServerConfig serverConfig);
-
-    @Deprecated
-    URL getBaseUrl();
-
-    void setBaseUrl(URL baseUrl);
-    
     URLScheme getURLScheme();
 
-    String getCurrentLabel();
-
     void dispose();
-
-    /**
-     * Is the kit currently in use?
-     * @return true if there are ontologies to browse
-     */
-    boolean isActive();
-
-    OntologyConfig getOntConfig();
 
     /**
      * Get the ontologies used for reasoning
@@ -55,8 +33,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
     void setActiveOntology(@Nonnull OWLOntology ont);
 
     OWLOntology loadOntology(URI ontPhysicalURI) throws OWLOntologyCreationException;
-
-    void loadOntologies(OntologyConfig ontConfig);
 
     /**
      * First get an ontology with a matching version IRI if one exists.

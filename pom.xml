@@ -15,8 +15,6 @@
     <owlapi.version>5.1.19</owlapi.version>
     <jfact.version>5.0.3</jfact.version>
     <spring.version>4.1.6.RELEASE</spring.version>
-    <spring-mongo.version>1.7.2.RELEASE</spring-mongo.version>
-    <mongodriver.version>3.0.3</mongodriver.version>
     <gaphu.version>0.0.9</gaphu.version>
     <suggestor.version>1.0.0</suggestor.version>
     <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
@@ -132,18 +130,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-mongodb</artifactId>
-      <version>${spring-mongo.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongo-java-driver</artifactId>
-      <version>${mongodriver.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>thymeleaf-spring4</artifactId>
       <version>${thymeleaf.version}</version>
@@ -167,13 +153,6 @@
       <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.fakemongo</groupId>
-      <artifactId>fongo</artifactId>
-      <version>2.0.1</version>
-      <!--<scope>test</scope>-->
     </dependency>
 
   </dependencies>

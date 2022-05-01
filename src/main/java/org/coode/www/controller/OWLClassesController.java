@@ -21,7 +21,6 @@ import java.util.Comparator;
 
 @Controller
 @RequestMapping(value="/classes")
-@SessionAttributes("kit")
 public class OWLClassesController extends ApplicationController {
 
     @Autowired
@@ -31,7 +30,7 @@ public class OWLClassesController extends ApplicationController {
     private OWLIndividualsService individualsService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLClasses(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
+    public String getOWLClasses() throws OntServerException {
 
         OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
 
@@ -42,7 +41,6 @@ public class OWLClassesController extends ApplicationController {
 
     @RequestMapping(value="/{classId}", method=RequestMethod.GET)
     public String getOWLClass(@PathVariable final String classId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
@@ -70,7 +68,6 @@ public class OWLClassesController extends ApplicationController {
 
     @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String classId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
@@ -92,7 +89,6 @@ public class OWLClassesController extends ApplicationController {
 
     @RequestMapping(value="/{classId}/instances", method=RequestMethod.GET)
     public String getInstances(@PathVariable final String classId,
-                               @ModelAttribute("kit") final OWLHTMLKit kit,
                                final Model model) throws OntServerException, NotFoundException {
 
         OWLEntity owlClass = service.getOWLClassFor(classId, kit);

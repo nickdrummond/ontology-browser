@@ -25,7 +25,6 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(value="/individuals")
-@SessionAttributes("kit")
 public class OWLIndividualsController extends ApplicationController {
 
     @Autowired
@@ -38,7 +37,7 @@ public class OWLIndividualsController extends ApplicationController {
     private MediaService mediaService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLIndividuals(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException, NotFoundException {
+    public String getOWLIndividuals() throws OntServerException, NotFoundException {
 
         OWLNamedIndividual firstIndividual = service.getFirstIndividual(kit);
 
@@ -50,7 +49,6 @@ public class OWLIndividualsController extends ApplicationController {
 
     @RequestMapping(value= "/{individualId}", method=RequestMethod.GET)
     public String getOWLIndividual(@PathVariable final String individualId,
-                                   @ModelAttribute("kit") final OWLHTMLKit kit,
                                    final HttpServletRequest request,
                                    final Model model) throws OntServerException, NotFoundException {
 

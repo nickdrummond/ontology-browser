@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.text.ParseException;
 import java.util.Locale;
@@ -33,6 +32,6 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
 
     @Override
     public OWLOntologyID parse(String s, Locale locale) throws ParseException {
-        throw new NotImplementedException();
+        throw new RuntimeException("Ouch!");
     }
 }

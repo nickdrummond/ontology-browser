@@ -17,14 +17,13 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value="/annotationproperties")
-@SessionAttributes("kit")
 public class OWLAnnotationPropertiesController extends ApplicationController {
 
     @Autowired
     private OWLAnnotationPropertiesService service;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLAnnotationProperties(@ModelAttribute("kit") final OWLHTMLKit kit)
+    public String getOWLAnnotationProperties()
             throws OntServerException, NotFoundException {
 
         OWLOntology activeOntology = kit.getActiveOntology();
@@ -46,7 +45,6 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLAnnotationProperty(@PathVariable final String propertyId,
-                                           @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLAnnotationProperty owlAnnotationProperty = service.getOWLAnnotationPropertyFor(propertyId, kit);

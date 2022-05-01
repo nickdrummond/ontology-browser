@@ -16,7 +16,6 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value="/entities")
-@SessionAttributes("kit")
 public class OWLEntitiesController extends ApplicationController {
 
     @Autowired
@@ -27,7 +26,6 @@ public class OWLEntitiesController extends ApplicationController {
 
     @RequestMapping(value="/", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody SearchResults find(
-            @ModelAttribute("kit") final OWLHTMLKit kit,
             @RequestParam(required=true) final String name) throws OntServerException {
 
         List<OWLEntity> entities = service.findByName(name, kit);

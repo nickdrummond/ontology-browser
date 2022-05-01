@@ -85,8 +85,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     ////////// Ontology
 
     public void visit(@Nonnull OWLOntology ontology) {
-        final URL urlForOntology = urlScheme.getURLForOWLObject(ontology);
-        String link = urlForOntology.toString();
+        String link = urlScheme.getURLForOWLObject(ontology);
         String cssClass = CSS_ONTOLOGY_URI;
         if (activeOntology != null && ontology.equals(activeOntology)){
             cssClass = CSS_ACTIVE_ONTOLOGY_URI;
@@ -776,7 +775,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         if (!activeObject.isPresent()){
             // TODO reverse lookup URL
-            final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
+            final String urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);
             write(" title=\"" + uri + "\">" + name + "</a>");
@@ -789,7 +788,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
                 write(">" + name + "</span>");
             }
             else{
-                final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
+                final String urlForTarget = urlScheme.getURLForOWLObject(entity);
                 write("<a href=\"" + urlForTarget + "\"");
 
                 writeCSSClasses(cssClasses);

@@ -10,11 +10,7 @@ import org.coode.owl.mngr.OWLReasonerManager;
 import org.coode.owl.mngr.impl.*;
 import org.coode.owl.mngr.impl.OWLObjectComparator;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.OntologyConfig;
-import org.coode.www.model.OntologyMapping;
-import org.coode.www.model.ServerConfig;
 import org.coode.www.renderer.FixedSimpleShortFormProvider;
-import org.coode.www.renderer.LabelShortFormProvider;
 import org.coode.www.renderer.OntologyShortFormProvider;
 import org.coode.www.renderer.QuotingBiDirectionalShortFormProvider;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -30,7 +26,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 
@@ -40,8 +35,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     private static final String RENDERER_LABEL = "label";
 
     private final OWLOntologyManager mngr;
-
-    private final IRI root;
 
     private OWLOntology activeOntology;
 
@@ -61,46 +54,23 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private OWLObjectComparator comparator;
 
-    private ServerConfig config;
-
     private Map<URI, OWLOntologyIRIMapper> baseMapper = Maps.newHashMap();
 
     private final Set<ActiveOntologyProvider.Listener> listeners = Sets.newHashSet();
 
-    private boolean serverIsDead = false;
-
     private OWLOntology rootOntology;
-
-    private URL baseUrl;
 
     protected URLScheme urlScheme;
 
-    public OWLHTMLKitImpl(OWLOntologyManager mngr, IRI root) {
+    public OWLHTMLKitImpl(OWLOntologyManager mngr, URI root) throws OWLOntologyCreationException {
 
         this.mngr = mngr;
-        this.root = root;
-
-        this.config = new ServerConfig();
-
-        createRootOntology();
 
         mngr.addOntologyLoaderListener(ontLoadListener);
 
-        // TODO always default to trying the URI of the ontology
-
-        setActiveOntology(rootOntology);
+        loadOntology(root);
 
         reasonerManager = new OWLReasonerManagerImpl(this);
-    }
-
-    @Override
-    public URL getBaseUrl(){
-        return baseUrl;
-    }
-
-    @Override
-    public void setBaseUrl(URL baseUrl) {
-        this.baseUrl = baseUrl;
     }
 
     @Override
@@ -109,23 +79,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
             urlScheme = new RestURLScheme(this);
         }
         return urlScheme;
-    }
-
-    @Override
-    public String getCurrentLabel() {
-        String ontHash = getOntConfig().getHash();
-        String servHash = getConfig().getHash();
-        return ontHash + "_" + servHash;
-    }
-
-    @Override
-    public boolean isActive() {
-        return !serverIsDead;
-    }
-
-    @Override
-    public OntologyConfig getOntConfig() {
-        return OntologyConfig.ontConfigFor(getActiveOntology(), getOntologies());
     }
 
     private OWLOntologyLoaderListener ontLoadListener = new OWLOntologyLoaderListener() {
@@ -158,34 +111,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return mngr.loadOntologyFromOntologyDocument(iri);
     }
 
-    public void loadOntologies(@Nonnull final OntologyConfig ontConfig) {
-        OWLOntologyIRIMapper mapper = ontologyIRI -> ontConfig.documentFor(ontologyIRI).orNull();
-        mngr.addIRIMapper(mapper);
-
-        OWLOntology active = null;
-        for (OntologyMapping mapping : ontConfig.getMappings()){
-            if (!mapping.getOntologyIRI().equals(root)){
-                try {
-                    OWLOntology ont = mngr.loadOntology(mapping.getLocationIRI());
-                    if (active == null) {
-                        active = ont;
-                    }
-                }
-                catch (OWLOntologyDocumentAlreadyExistsException | OWLOntologyAlreadyExistsException e){
-                    // do nothing - as we're not trying to load in order just keep going
-                }
-                catch (OWLOntologyCreationException e) {
-                    logger.warn("Problem loading " + mapping, e);
-                }
-            }
-        }
-
-        mngr.removeIRIMapper(mapper);
-
-        resetRootImports();
-        setActiveOntology(active);
-    }
-
     public void clearOntologies() {
 
         final Set<OWLOntology> onts = mngr.getOntologies();
@@ -195,23 +120,17 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
             mngr.removeOntology(ont);
         }
 
-        resetRootImports();
-
         setActiveOntology(rootOntology);
     }
 
     private void loadedOntology(OWLOntology ont) {
         if (ont != null){
             logger.info("loaded " + getOntologyIdString(ont));
-        }
-
-        resetRootImports();
-
-        if (!getActiveOntology().equals(rootOntology)){
+            rootOntology = ont;
             setActiveOntology(ont);
         }
-        else{
-            clear();
+        else {
+            throw (new RuntimeException("Could not load ontology"));
         }
     }
 
@@ -285,13 +204,9 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public synchronized OWLReasoner getOWLReasoner() {
-        if (!isActive()){
-            throw new RuntimeException("Cannot getOWLReasoner - server is dead");
-        }
-
         if (reasoner == null){
 
-            String selectedReasoner = config.getReasoner();
+            String selectedReasoner = null;//config.getReasoner();
 
             try {
                 logger.debug("Creating reasoner: " + selectedReasoner);
@@ -317,9 +232,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public Comparator<OWLObject> getComparator() {
-        if (!isActive()){
-            throw new RuntimeException("Cannot getComparator - server is dead");
-        }
         if (comparator == null){
             comparator = new OWLObjectComparator(getShortFormProvider());
         }
@@ -327,10 +239,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public OWLEntityFinder getFinder() {
-        if (!isActive()){
-            throw new RuntimeException("Cannot getFinder - server is dead");
-        }
-
         if (finder == null){
             finder = new OWLEntityFinderImpl(getNameCache(), getOWLOntologyManager().getOWLDataFactory(), this);
         }
@@ -340,9 +248,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
 
     public OWLEntityChecker getOWLEntityChecker() {
-        if (!isActive()){
-            throw new RuntimeException("Cannot getOWLEntityChecker - server is dead");
-        }
         if (owlEntityChecker == null){
             owlEntityChecker = new ShortFormEntityChecker(getNameCache());
         }
@@ -350,16 +255,8 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public ShortFormProvider getShortFormProvider() {
-        if (!isActive()){
-            throw new RuntimeException("Cannot getShortFormProvider - server is dead");
-        }
-
         if (shortFormProvider == null){
-            String ren = config.getRenderer();
             shortFormProvider = new FixedSimpleShortFormProvider();
-            if (ren.equals(RENDERER_LABEL)){
-                shortFormProvider = new LabelShortFormProvider(this, shortFormProvider);
-            }
         }
         return shortFormProvider;
     }
@@ -373,45 +270,19 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public void dispose() {
-
+        System.err.println("DISPOSING KIT!!!");
         urlScheme = null;
-        baseUrl = null;
-
         clearOntologies();
-
-        serverIsDead = true;
     }
 
     public OWLOntology getRootOntology() {
         return rootOntology;
     }
 
-    @Override
-    public ServerConfig getConfig() {
-        return config;
-    }
-
-    @Override
-    public void setConfig(ServerConfig serverConfig) {
-        if (this.config != null) {
-            if (!serverConfig.getReasoner().equals(this.config.getReasoner())) {
-                cleanReasoner();
-            }
-            if (!serverConfig.getRenderer().equals(this.config.getRenderer()) ||
-                    !serverConfig.getLabelAnnotationIri().equals(this.config.getLabelAnnotationIri()) ||
-                    !serverConfig.getLabelPropertyIri().equals(this.config.getLabelPropertyIri()) ||
-                    !serverConfig.getLabelLang().equals(this.config.getLabelLang())) {
-                clearRendererCache();
-            }
-        }
-        this.config = serverConfig;
-    }
-
     public void clear() {
         clearRendererCache();
         comparator = null;
     }
-
 
     private void cleanReasoner() {
         if (reasoner != null){
@@ -439,55 +310,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         }
     }
 
-
-    private void createRootOntology() {
-        try {
-            rootOntology = mngr.createOntology(root);
-            // TODO: add an explanation annotation for the users
-            // TODO: and a label "all ontologies"
-//            mngr.applyChange(root, new AddOntologyAnnotation(root, mngr.getOWLDataFactory().getOWLA))
-            if (mngr.getOntologies().size() > 1){
-                resetRootImports();
-            }
-        }
-        catch (OWLOntologyCreationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void resetRootImports() {
-        Set<OWLOntology> onts = getOntologies();
-        onts.remove(rootOntology);
-
-        final Set<OWLOntology> newRoots = getImportRoots(onts);
-        final Set<OWLOntology> oldRoots = rootOntology.getImports();
-        oldRoots.removeAll(newRoots);
-        newRoots.removeAll(rootOntology.getImports());
-
-        final OWLDataFactory df = mngr.getOWLDataFactory();
-
-        final List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
-
-        for (OWLOntology root : newRoots){
-            getImportIRIForOntology(root).ifPresent(iri -> changes.add(new AddImport(rootOntology, df.getOWLImportsDeclaration(iri))));
-        }
-
-        for (OWLOntology root : oldRoots){
-            getImportIRIForOntology(root).ifPresent(iri -> changes.add(new RemoveImport(rootOntology, df.getOWLImportsDeclaration(iri))));
-        }
-
-        mngr.applyChanges(changes);
-    }
-
-    private Set<OWLOntology> getImportRoots(Set<OWLOntology> onts){
-        // TODO: handle cyclic imports
-        Set<OWLOntology> roots = Sets.newHashSet(onts);
-        for (OWLOntology ont : onts){
-            roots.removeAll(ont.getImports());
-        }
-        return roots;
-    }
-
     private Optional<IRI> getImportIRIForOntology(OWLOntology root) {
         if (root.isAnonymous()){
             // TODO need a workaround as this will not work
@@ -498,9 +320,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     private CachingBidirectionalShortFormProvider getNameCache(){
-        if (!isActive()){
-            throw new RuntimeException("Cannot getNameCache - server is dead");
-        }
         if (nameCache == null){
             // TODO throw away if the onts or the provider change
             nameCache = new QuotingBiDirectionalShortFormProvider(getShortFormProvider(), getActiveOntologies());

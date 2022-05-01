@@ -20,14 +20,13 @@ import java.util.Comparator;
 
 @Controller
 @RequestMapping(value="/objectproperties")
-@SessionAttributes("kit")
 public class OWLObjectPropertiesController extends ApplicationController {
 
     @Autowired
     private OWLObjectPropertiesService service;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLObjectProperties(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
+    public String getOWLObjectProperties() throws OntServerException {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
@@ -41,7 +40,6 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLObjectProperty(@PathVariable final String propertyId,
-                                       @ModelAttribute("kit") final OWLHTMLKit kit,
                                        final Model model) throws OntServerException, NotFoundException {
 
         OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);
@@ -70,7 +68,6 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String propertyId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);

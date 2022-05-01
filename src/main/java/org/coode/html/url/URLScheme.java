@@ -11,6 +11,4 @@ import java.net.URL;
 public interface URLScheme extends OWLObjectURLRenderer {
 
     OWLHTMLKit getOWLHTMLKit();
-
-    URL getBaseURL();
 }

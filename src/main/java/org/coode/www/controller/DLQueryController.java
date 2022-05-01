@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value="/dlquery")
-@SessionAttributes("kit")
 public class DLQueryController extends ApplicationController {
 
     @Autowired
@@ -46,10 +45,8 @@ public class DLQueryController extends ApplicationController {
     @RequestMapping(method=RequestMethod.GET)
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
-            @ModelAttribute("kit") final OWLHTMLKit kit,
             final Model model) throws OntServerException, ParseException {
 
-        model.addAttribute("options", optionsService.getConfig(kit));
         model.addAttribute("activeOntology", kit.getActiveOntology());
         model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("expression", expression);
@@ -61,7 +58,6 @@ public class DLQueryController extends ApplicationController {
     public String getResults(
             @RequestParam(required = true) final String expression,
             @RequestParam(required = true) final QueryType query,
-            @ModelAttribute("kit") final OWLHTMLKit kit,
             HttpServletResponse response,
             final Model model) throws OntServerException {
 
@@ -93,8 +89,7 @@ public class DLQueryController extends ApplicationController {
 
     @RequestMapping(value = "/ac", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String autocompleteOWLClassExpression(
-            @RequestParam(required = true) String expression,
-            @ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
+            @RequestParam(required = true) String expression) throws OntServerException {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
@@ -107,8 +102,7 @@ public class DLQueryController extends ApplicationController {
     // TODO return the actual ParseResult or an XML rendering of the parse exception
     @RequestMapping(value = "/parse", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String parseOWLClassExpression(
-            @RequestParam(required = true) String expression,
-            @ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
+            @RequestParam(required = true) String expression) throws OntServerException {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();

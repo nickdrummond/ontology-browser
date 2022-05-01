@@ -19,8 +19,4 @@ public class AppControllerConfig {
         return mock(SessionManager.class);
     }
 
-    @Bean
-    protected OptionsService optionsService() {
-        return mock(OptionsService.class);
-    }
 }

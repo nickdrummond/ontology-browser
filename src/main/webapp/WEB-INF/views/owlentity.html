@@ -23,26 +23,8 @@
     </div>
 
     <div id='content'>
-        <span><h2 th:text="${title}">An OWLClass</h2>
-        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-           href='./' class='permalink'>permalink</a></span>
+        <span><h2 th:text="${title}">An OWLClass</h2></span>
         <div class="iri">
-            <a th:href="${iri}" href='http://example.com/entity-url' >
-                <img th:src="@{/static/images/external.png}"
-                     src="../../static/images/external.png"
-                     title="Attempt to open link in another window" />
-            </a>
-            <form method='POST' action='./' th:action="@{/ontologies}">
-                <input name='uri' type='hidden'
-                       value='http://example.com/entity-url'
-                       th:value="${iri}"/>
-                <input name='redirect' type='hidden'
-                       value='.'
-                       th:value="@{__${#httpServletRequest.requestURI}__}"/>
-                <input type='image' alt='Attempt to load owl/rdf'
-                       src='../../static/images/download.png'
-                       th:src="@{/static/images/download.png}"/>
-            </form>
             <h3 th:utext="${iri}">http://example.com/entity-url</h3>
         </div>
 

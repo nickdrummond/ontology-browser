@@ -27,13 +27,14 @@ public class RestURLScheme extends AbstractURLScheme {
         super(kit);
     }
 
-    public URL getURLForOWLObject(OWLObject owlObject) {
+    public String getURLForOWLObject(OWLObject owlObject) {
         if (owlObject == null){
             throw new NullPointerException("OWLObject may not be null");
         }
 
         String type;
         int code;
+        StringBuilder sb = new StringBuilder("/"); // relative URLs
 
         if (owlObject instanceof OWLEntity){
             type = NamedObjectType.getType(owlObject).toString();
@@ -48,16 +49,11 @@ public class RestURLScheme extends AbstractURLScheme {
             code = owlObject.hashCode();
         }
 
-        StringBuilder sb = new StringBuilder(type);
+        sb.append(type);
         sb.append("/");
         sb.append(code);
         sb.append("/");
 
-        try {
-            return new URL(getBaseURL(), sb.toString());
-        }
-        catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        return sb.toString();
     }
 }
