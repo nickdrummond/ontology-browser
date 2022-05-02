@@ -57,4 +57,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
     OWLOntology getRootOntology();
 
     void refresh() throws OWLOntologyCreationException;
+
+    void clearOntologies();
 }
