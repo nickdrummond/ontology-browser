@@ -20,8 +20,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     URLScheme getURLScheme();
 
-    void dispose();
-
     /**
      * Get the ontologies used for reasoning
      * @return imports closure of the current active ontology (plus meta ontology if it exists)
@@ -56,13 +54,7 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     OntologyIRIShortFormProvider getOntologyShortFormProvider();
 
-    /**
-     * Get rid of all caches (such as renderings) and clear the reasoner.
-     * Do not clear the loaded ontologies - this is done with clearOntologies
-     */
-    void clear();
-
-    void clearOntologies();
-
     OWLOntology getRootOntology();
+
+    void refresh() throws OWLOntologyCreationException;
 }

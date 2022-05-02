@@ -8,6 +8,7 @@ import org.coode.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,8 +55,8 @@ public class RootController extends ApplicationController {
     }
 
     @RequestMapping("/refresh")
-    public String refresh(final HttpSession session) {
-        // TODO
+    public String refresh(final HttpSession session) throws OWLOntologyCreationException {
+        kit.refresh();
         return "redirect:/";
     }
 }

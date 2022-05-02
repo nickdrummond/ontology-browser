@@ -36,6 +36,8 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private final OWLOntologyManager mngr;
 
+    private final URI root;
+
     private OWLOntology activeOntology;
 
     private SynchronizedOWLReasoner reasoner;
@@ -66,11 +68,46 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
         this.mngr = mngr;
 
+        this.root = root;
+
         mngr.addOntologyLoaderListener(ontLoadListener);
 
         loadOntology(root);
+    }
 
-        reasonerManager = new OWLReasonerManagerImpl(this);
+    @Override
+    public void refresh() throws OWLOntologyCreationException {
+        clear();
+        loadOntology(root);
+    }
+
+    private void clear() {
+        if (shortFormProvider != null){
+            shortFormProvider.dispose();
+            shortFormProvider = null;
+        }
+        if (finder != null){
+            finder.dispose();
+            finder = null;
+        }
+        if (nameCache != null){
+            nameCache.dispose();
+            nameCache = null;
+        }
+        if (reasoner != null){
+            reasonerManager.dispose();
+            reasonerManager = null;
+            reasoner = null;
+        }
+        uriShortFormProvider = null;
+        owlEntityChecker = null;
+        comparator = null;
+        urlScheme = null;
+        activeOntology = null;
+        rootOntology = null;
+        baseMapper.clear();
+        mngr.getIRIMappers().clear();
+        clearOntologies(); // as mngr.clearOntologies does not work??
     }
 
     @Override
@@ -112,15 +149,9 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public void clearOntologies() {
-
-        final Set<OWLOntology> onts = mngr.getOntologies();
-        onts.remove(rootOntology);
-
-        for (OWLOntology ont : onts){
+        for (OWLOntology ont : mngr.getOntologies()){
             mngr.removeOntology(ont);
         }
-
-        setActiveOntology(rootOntology);
     }
 
     private void loadedOntology(OWLOntology ont) {
@@ -211,6 +242,10 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
             try {
                 logger.debug("Creating reasoner: " + selectedReasoner);
 
+                if (reasonerManager == null) {
+                    reasonerManager = new OWLReasonerManagerImpl(this);
+                }
+
                 OWLReasoner r = reasonerManager.getReasoner(selectedReasoner);
 
                 if (r == null || !r.isConsistent()){
@@ -269,45 +304,8 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return uriShortFormProvider;
     }
 
-    public void dispose() {
-        System.err.println("DISPOSING KIT!!!");
-        urlScheme = null;
-        clearOntologies();
-    }
-
     public OWLOntology getRootOntology() {
         return rootOntology;
-    }
-
-    public void clear() {
-        clearRendererCache();
-        comparator = null;
-    }
-
-    private void cleanReasoner() {
-        if (reasoner != null){
-            reasonerManager.dispose(reasoner.getDelegate());
-            reasoner = null;
-        }
-    }
-
-    private void clearRendererCache() {
-        if (shortFormProvider != null){
-            shortFormProvider.dispose();
-            shortFormProvider = null;
-            comparator = null;
-        }
-        if (finder != null){
-            finder.dispose();
-            finder = null;
-        }
-        if (nameCache != null){
-            nameCache.dispose();
-            nameCache = null;
-        }
-        if (owlEntityChecker != null){
-            owlEntityChecker = null;
-        }
     }
 
     private Optional<IRI> getImportIRIForOntology(OWLOntology root) {
