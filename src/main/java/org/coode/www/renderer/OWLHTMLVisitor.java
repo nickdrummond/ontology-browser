@@ -156,27 +156,33 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     ///////// Anonymous classes
 
     public void visit(@Nonnull OWLObjectSomeValuesFrom desc) {
+        write("(");
         desc.getProperty().accept(this);
         write(" ");
         writeKeyword(ManchesterOWLSyntax.SOME.toString(), CSS_SOME);
         write(" ");
         writeOp(desc.getFiller(), true);
+        write(")");
     }
 
     public void visit(@Nonnull OWLObjectAllValuesFrom desc) {
+        write("(");
         desc.getProperty().accept(this);
         write(" ");
         writeKeyword(ManchesterOWLSyntax.ONLY.toString(), CSS_ONLY);
         write(" ");
         writeOp(desc.getFiller(), true);
+        write(")");
     }
 
     public void visit(@Nonnull OWLObjectHasValue desc) {
+        write("(");
         desc.getProperty().accept(this);
         write(" ");
         writeKeyword(ManchesterOWLSyntax.VALUE.toString(), CSS_VALUE);
         write(" ");
         writeOp(desc.getFiller(), true);
+        write(")");
     }
 
     public void visit(@Nonnull OWLObjectMinCardinality desc) {
@@ -193,8 +199,9 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     public void visit(@Nonnull OWLObjectComplementOf desc) {
         writeKeyword(ManchesterOWLSyntax.NOT.toString());
-        write(" ");
+        write(" (");
         writeOp(desc.getOperand(), false);
+        write(")");
     }
 
     public void visit(@Nonnull OWLObjectHasSelf desc) {
@@ -222,27 +229,33 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     public void visit(@Nonnull OWLDataSomeValuesFrom desc) {
+        write("(");
         desc.getProperty().accept(this);
         write(" ");
         writeKeyword(ManchesterOWLSyntax.SOME.toString(), CSS_SOME);
         write(" ");
         writeOp(desc.getFiller(), true);
+        write(")");
     }
 
     public void visit(@Nonnull OWLDataAllValuesFrom desc) {
+        write("(");
         desc.getProperty().accept(this);
         write(" ");
         writeKeyword(ManchesterOWLSyntax.ONLY.toString(), CSS_ONLY);
         write(" ");
         writeOp(desc.getFiller(), true);
+        write(")");
     }
 
     public void visit(@Nonnull OWLDataHasValue desc) {
+        write("(");
         desc.getProperty().accept(this);
         write(" ");
         writeKeyword(ManchesterOWLSyntax.VALUE.toString(), CSS_VALUE);
         write(" ");
         writeOp(desc.getFiller(), true);
+        write(")");
     }
 
     public void visit(@Nonnull OWLDataMinCardinality desc) {
@@ -271,8 +284,9 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     public void visit(@Nonnull OWLDataComplementOf node) {
         writeKeyword(ManchesterOWLSyntax.NOT.toString());
-        write(" ");
+        write(" (");
         writeOp(node.getDataRange(), true);
+        write(")");
     }
 
     public void visit(@Nonnull OWLDataIntersectionOf owlDataIntersectionOf) {
@@ -748,8 +762,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             op.accept(this);
         }
         else{ // provide brackets for clarity
-            write("(");
             if (wrap && op instanceof OWLObjectIntersectionOf){
+                write("(");
                 indent++;
                 write("<br>");
                 writeIndent();
@@ -757,8 +771,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             op.accept(this);
             if (wrap && op instanceof OWLObjectIntersectionOf){
                 indent--;
+                write(")");
             }
-            write(")");
         }
     }
 
@@ -885,6 +899,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private void writeCardinality(OWLCardinalityRestriction desc, String cardinalityType) {
+        write("(");
         desc.getProperty().accept(this);
         write(" ");
         writeKeyword(cardinalityType, cardinalityType);
@@ -892,6 +907,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         write(Integer.toString(desc.getCardinality()));
         write(" ");
         writeOp(desc.getFiller(), true);
+        write(")");
     }
 
     private void writeUnaryPropertyAxiom(OWLUnaryPropertyAxiom axiom, String keyword) {
