@@ -1,6 +1,5 @@
 package org.coode.www.renderer;
 
-import com.google.common.base.Function;
 import java.util.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -15,11 +14,9 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -685,10 +682,6 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         writeAnnotations(axiom);
     }
 
-    private String getName(OWLEntity entity){
-        return sfProvider.getShortForm(entity).replaceAll(" ", "&nbsp;");
-    }
-
     // just make sure a named class is first if there is one
     private List<OWLClassExpression> orderOps(Set<OWLClassExpression> ops) {
         List<OWLClassExpression> orderedOps = new ArrayList<OWLClassExpression>(ops);
@@ -705,9 +698,19 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         return orderedOps;
     }
 
+    // Make names line breakable on underscore
+    private String renderBreakableName(OWLEntity entity){
+        return sfProvider.getShortForm(entity).replaceAll("_(?=[^_])", "_<wbr>");
+    }
+
+    // Make string line breakable on /
+    private String makeBreakable(String s) {
+        return s.replaceAll("/(?=[^/])", "/<wbr>");
+    }
+
     private void writeIRIWithBoldFragment(IRI iri, String shortForm) {
         // Encourage wrapping on / instead of other characters
-        final String fullURI = iri.toString().replaceAll("/(?=[^/])", "/<wbr>");
+        final String fullURI = makeBreakable(iri.toString());
 
         int index = -1;
         if (shortForm != null) {
@@ -768,7 +771,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private void writeOWLEntity(OWLEntity entity, String cssClass) {
         final URI uri = entity.getIRI().toURI();
 
-        String name = getName(entity);
+        String renderedName = renderBreakableName(entity);
 
         Set<String> cssClasses = new HashSet<>();
         cssClasses.add(cssClass);
@@ -778,14 +781,14 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             final String urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);
-            write(" title=\"" + uri + "\">" + name + "</a>");
+            write(" title=\"" + uri + "\">" + renderedName + "</a>");
         }
         else{
             if (activeObject.get().equals(entity)){
                 cssClasses.add(CSS_ACTIVE_ENTITY);
                 write("<span");
                 writeCSSClasses(cssClasses);
-                write(">" + name + "</span>");
+                write(">" + renderedName + "</span>");
             }
             else{
                 final String urlForTarget = urlScheme.getURLForOWLObject(entity);
@@ -793,7 +796,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
                 writeCSSClasses(cssClasses);
                 write(" title=\"" + uri + "\">");
-                write(name);
+                write(renderedName);
                 write("</a>");
             }
         }
@@ -913,7 +916,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         try {
             URI uri = new URI(literal);
             if (uri.isAbsolute()){
-                write("<a href='" + uri + "' target='ext_ref'>" + uri + "</a>");
+                write("<a href='" + uri + "' target='ext_ref'>" + makeBreakable(uri.toString()) + "</a>");
                 writtenExternalRef = true;
             }
         }

@@ -23,7 +23,7 @@
     <div id='content'>
         <span><h2 th:text="${title}">An OWLClass</h2></span>
         <div class="iri">
-            <h3 th:utext="${iri}">http://example.com/entity-url</h3>
+            <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
         </div>
 
         <div th:replace="base :: image (${image})">

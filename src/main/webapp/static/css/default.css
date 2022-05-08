@@ -137,6 +137,7 @@ a.burger, a.burger:hover, a.burger:active {
 
 .characteristic li {
     margin: 5px;
+    clear: both;
 }
 
 .characteristic li:hover {
