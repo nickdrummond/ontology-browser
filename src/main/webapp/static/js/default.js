@@ -145,7 +145,7 @@ function scrollToElement(element, scrollParent){
             var scrollerHeight = scrollParent.height();
             var elementHeight = element.height();
             if (offset + elementHeight > scrollerHeight){
-                scrollParent.scrollTop(offset + elementHeight - (scrollerHeight/2));
+                scrollParent.scrollTop(offset + elementHeight - scrollerHeight);
             }
         }
     }
