@@ -719,7 +719,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     // Make string line breakable on /
     private String makeBreakable(String s) {
-        return s.replaceAll("/(?=[^/])", "/<wbr>");
+        return s.replaceAll("/(?=[^/])", "/<wbr>").replace("#", "#<wbr>");
     }
 
     private void writeIRIWithBoldFragment(IRI iri, String shortForm) {
