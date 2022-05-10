@@ -12,14 +12,14 @@
 
 <div id="main">
 
-    <div class='codebox'>
+    <div id="queryPane" class='codebox'>
 
         <form class='autocomplete' method='get' id='dlQueryForm' action=''>
             <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
             <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
             <input id="dlQuerySubmit" type='submit' value='query' />
 
-            <h4 th:text='${reasonerName}'>Reasoner name</h4>
+            <h4 th:text='${"using " + reasonerName}'>Reasoner name</h4>
         </form>
 
         <script type="text/javascript">
@@ -34,7 +34,7 @@
 
     <div id="content">
 
-        <h2>DL Query</h2>
+        <h2 th:utext='${"Querying: " + mos.render(reasoningOntology)}'>Reasoning ontology</h2>
 
         <div id='resultsForm'>
             <!-- results will go here -->

@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,9 @@ import java.util.stream.Collectors;
 @RequestMapping(value="/dlquery")
 public class DLQueryController extends ApplicationController {
 
+    @Value("${reasoning.root.iri}")
+    private String reasoningRootIRI;
+
     @Autowired
     private ParserService service;
 
@@ -43,15 +47,24 @@ public class DLQueryController extends ApplicationController {
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
 
+    private OWLOntology getReasoningActiveOnt() {
+        return kit.getOntologyForIRI(IRI.create(reasoningRootIRI)).orElseThrow();
+    }
+
     @RequestMapping(method=RequestMethod.GET)
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
             final Model model) throws OntServerException, ParseException {
 
-        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+        OWLOntology reasoningOnt = getReasoningActiveOnt();
+
+        OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
+
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         model.addAttribute("reasonerName", r.getReasonerName());
-        model.addAttribute("activeOntology", kit.getActiveOntology());
+        model.addAttribute("reasoningOntology", reasoningOnt);
+        model.addAttribute("mos", owlRenderer);
         model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("expression", expression);
 
@@ -68,14 +81,16 @@ public class DLQueryController extends ApplicationController {
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
 
-        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+        OWLOntology reasoningOnt = getReasoningActiveOnt();
+
+        OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         try {
             OWLClassExpression owlClassExpression = service.getOWLClassExpression(expression, df, checker);
             List<OWLObjectWithOntology> results = reasonerService.getResults(owlClassExpression, query, r).stream()
-                    .map ( e -> new OWLObjectWithOntology(e, kit.getActiveOntology()))
+                    .map ( e -> new OWLObjectWithOntology(e, reasoningOnt))
                     .sorted((o1, o2) -> kit.getComparator().compare(o1.getOWLObject(), o2.getOWLObject()))
                     .collect(Collectors.toList());
 
