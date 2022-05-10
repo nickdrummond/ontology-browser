@@ -79,7 +79,7 @@ public class OWLClassesController extends ApplicationController {
 
         Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
 
         OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
 
@@ -101,7 +101,7 @@ public class OWLClassesController extends ApplicationController {
 
         Comparator<Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
 
         OWLIndividualsByTypeHierarchyService hierarchyService = new OWLIndividualsByTypeHierarchyService(r, comparator);
 

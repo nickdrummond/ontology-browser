@@ -10,7 +10,7 @@ var EQUIVALENTS = 2;
 var DESCENDANTS = 3;
 var SUPERCLASSES = 4;
 var ANCESTORS = 5;
-var QUERY_COUNT = 1;
+var QUERY_COUNT = 6;
 
 var PARAM_QUERYTYPE = "query";
 var PARAM_EXPRESSION = "expression";
@@ -23,12 +23,12 @@ var CALLBACK = 2;
 var queryURL = baseUrl + "dlquery/results";
 
 var queryArray = [
-    ["instances", null, inferredInstancesReceived] //,
-//    ["subclasses", null, inferredSubclassesReceived],
-//    ["equivalents", null, inferredEquivalentsReceived],
-//    ["descendants", null, inferredDescendantsReceived],
-//    ["superclasses", null, inferredSuperclassesReceived],
-//    ["ancestors", null, inferredAncestorsReceived]
+    ["instances", null, inferredInstancesReceived],
+    ["subclasses", null, inferredSubclassesReceived],
+    ["equivalents", null, inferredEquivalentsReceived],
+    ["descendants", null, inferredDescendantsReceived],
+    ["superclasses", null, inferredSuperclassesReceived],
+    ["ancestors", null, inferredAncestorsReceived]
 ];
 
 ////////////////////////////////////////////////////////////////////////////////////////////

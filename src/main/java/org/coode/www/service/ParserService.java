@@ -28,7 +28,13 @@ public class ParserService {
         ManchesterOWLSyntaxClassExpressionParser parser =
                 new ManchesterOWLSyntaxClassExpressionParser(df, owlEntityChecker);
 
-        return parser.parse(expression);
+        return parser.parse(makeSafe(expression));
+    }
+
+    // Apostrophes are not parsed correctly without escaping
+    // May cause problems for error message offsets?
+    private String makeSafe(String expression) {
+        return expression.replaceAll("'", "\\\\'");
     }
 
     /**
