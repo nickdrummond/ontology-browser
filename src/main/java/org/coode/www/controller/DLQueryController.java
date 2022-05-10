@@ -9,6 +9,7 @@ import org.coode.www.model.OWLObjectWithOntology;
 import org.coode.www.model.QueryType;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.ParserService;
+import org.coode.www.service.ReasonerFactoryService;
 import org.coode.www.service.ReasonerService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
@@ -42,6 +43,9 @@ public class DLQueryController extends ApplicationController {
     @Autowired
     private ReasonerService reasonerService;
 
+    @Autowired
+    private ReasonerFactoryService reasonerFactoryService;
+
     @RequestMapping(method=RequestMethod.GET)
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
@@ -63,12 +67,14 @@ public class DLQueryController extends ApplicationController {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
-        OWLReasoner reasoner = kit.getOWLReasoner();
+
+        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+        System.out.println("r.getReasonerName() = " + r.getReasonerName());
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         try {
             OWLClassExpression owlClassExpression = service.getOWLClassExpression(expression, df, checker);
-            List<OWLObjectWithOntology> results = reasonerService.getResults(owlClassExpression, query, reasoner).stream()
+            List<OWLObjectWithOntology> results = reasonerService.getResults(owlClassExpression, query, r).stream()
                     .map ( e -> new OWLObjectWithOntology(e, kit.getActiveOntology()))
                     .sorted((o1, o2) -> kit.getComparator().compare(o1.getOWLObject(), o2.getOWLObject()))
                     .collect(Collectors.toList());

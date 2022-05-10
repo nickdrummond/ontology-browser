@@ -42,8 +42,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     OWLOntologyManager getOWLOntologyManager();
 
-    OWLReasoner getOWLReasoner();
-
     Comparator<OWLObject> getComparator();
 
     OWLEntityFinder getFinder();

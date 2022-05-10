@@ -10,15 +10,11 @@
 
 <div th:replace='base :: menu'></div>
 
-<div th:replace='base :: entityfinder'></div>
-
 <div id="main">
 
     <div id="content">
 
         <h2>DL Query</h2>
-        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-           href='./' class='permalink'>permalink</a>
 
         <div class='codebox'>
 

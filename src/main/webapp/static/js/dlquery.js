@@ -4,13 +4,13 @@
  */
 var BUSY_IMAGE = baseUrl + "static/images/busy.gif";
 
-var EQUIVALENTS = 0;
-var SUBCLASSES = 1;
-var DESCENDANTS = 2;
-var SUPERCLASSES = 3;
-var ANCESTORS = 4;
-var INSTANCES = 5; // NOT to be confused with individuals/
-var QUERY_COUNT = 6;
+//var EQUIVALENTS = 0;
+//var SUBCLASSES = 1;
+//var DESCENDANTS = 2;
+//var SUPERCLASSES = 3;
+//var ANCESTORS = 4;
+var INSTANCES = 0; // NOT to be confused with individuals/
+var QUERY_COUNT = 1;
 
 var PARAM_QUERYTYPE = "query";
 var PARAM_EXPRESSION = "expression";
@@ -23,11 +23,11 @@ var CALLBACK = 2;
 var queryURL = baseUrl + "dlquery/results";
 
 var queryArray = [
-    ["equivalents", null, inferredEquivalentsReceived],
-    ["subclasses", null, inferredSubclassesReceived],
-    ["descendants", null, inferredDescendantsReceived],
-    ["superclasses", null, inferredSuperclassesReceived],
-    ["ancestors", null, inferredAncestorsReceived],
+//    ["equivalents", null, inferredEquivalentsReceived],
+//    ["subclasses", null, inferredSubclassesReceived],
+//    ["descendants", null, inferredDescendantsReceived],
+//    ["superclasses", null, inferredSuperclassesReceived],
+//    ["ancestors", null, inferredAncestorsReceived],
     ["instances", null, inferredInstancesReceived]
 ];
 

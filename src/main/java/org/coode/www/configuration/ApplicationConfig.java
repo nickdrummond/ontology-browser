@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
 
@@ -33,6 +32,14 @@ public class ApplicationConfig {
     public ReasonerMomento structural(@Value("${reasoner.structural.cls}") String cls,
                                       @Value("${reasoner.structural.label}") String label) {
         return new ReasonerMomento(label, cls);
+    }
+
+    @Value("${reasoner.openllet.label}")
+    private String openlletLabel;
+
+    @Bean
+    public ReasonerMomento openllet(@Value("${reasoner.openllet.cls}") String cls) {
+        return new ReasonerMomento(openlletLabel, cls);
     }
 
     @Bean
@@ -68,6 +75,6 @@ public class ApplicationConfig {
     @Bean
     @Autowired
     public ReasonerFactoryService reasonerFactoryService(List<ReasonerMomento> reasoners) {
-        return new ReasonerFactoryService(reasoners);
+        return new ReasonerFactoryService(reasoners, openlletLabel);
     }
 }

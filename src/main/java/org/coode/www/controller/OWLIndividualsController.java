@@ -10,10 +10,12 @@ import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.GeoService;
 import org.coode.www.service.MediaService;
 import org.coode.www.service.OWLIndividualsService;
+import org.coode.www.service.ReasonerFactoryService;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +38,9 @@ public class OWLIndividualsController extends ApplicationController {
     @Autowired
     private MediaService mediaService;
 
+    @Autowired
+    private ReasonerFactoryService reasonerFactoryService;
+
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLIndividuals() throws OntServerException, NotFoundException {
 
@@ -54,11 +59,11 @@ public class OWLIndividualsController extends ApplicationController {
 
         OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, kit);
 
-        Comparator<Tree<OWLEntity>> comparator = (o1, o2) ->
-                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        Comparator<Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLIndividualsByTypeHierarchyService hierarchyService =
-                new OWLIndividualsByTypeHierarchyService(kit.getOWLReasoner(), comparator);
+        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+
+        OWLIndividualsByTypeHierarchyService hierarchyService = new OWLIndividualsByTypeHierarchyService(r, comparator);
 
         Tree<OWLEntity> prunedTree = hierarchyService.getPrunedTree(owlIndividual);
 

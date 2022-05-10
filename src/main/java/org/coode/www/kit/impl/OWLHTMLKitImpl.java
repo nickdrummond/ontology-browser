@@ -6,7 +6,6 @@ import org.coode.html.url.RestURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.owl.mngr.OWLReasonerManager;
 import org.coode.owl.mngr.impl.*;
 import org.coode.owl.mngr.impl.OWLObjectComparator;
 import org.coode.www.kit.OWLHTMLKit;
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
-import java.net.URL;
 import java.util.*;
 import java.util.Optional;
 
@@ -39,10 +37,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     private final URI root;
 
     private OWLOntology activeOntology;
-
-    private SynchronizedOWLReasoner reasoner;
-
-    private OWLReasonerManager reasonerManager;
 
     private ShortFormProvider shortFormProvider;
 
@@ -93,11 +87,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         if (nameCache != null){
             nameCache.dispose();
             nameCache = null;
-        }
-        if (reasoner != null){
-            reasonerManager.dispose();
-            reasonerManager = null;
-            reasoner = null;
         }
         uriShortFormProvider = null;
         owlEntityChecker = null;
@@ -206,7 +195,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public void setActiveOntology(@Nonnull OWLOntology ont) {
         activeOntology = ont;
-        reasoner = null;
     }
 
     public void addActiveOntologyListener(ActiveOntologyProvider.Listener l) {
@@ -232,38 +220,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public OWLOntologyManager getOWLOntologyManager() {
         return mngr;
-    }
-
-    public synchronized OWLReasoner getOWLReasoner() {
-        if (reasoner == null){
-
-            String selectedReasoner = null;//config.getReasoner();
-
-            try {
-                logger.debug("Creating reasoner: " + selectedReasoner);
-
-                if (reasonerManager == null) {
-                    reasonerManager = new OWLReasonerManagerImpl(this);
-                }
-
-                OWLReasoner r = reasonerManager.getReasoner(selectedReasoner);
-
-                if (r == null || !r.isConsistent()){
-                    // set the reasoner back to Structural
-                    r = reasonerManager.getReasoner(OWLReasonerManagerImpl.STRUCTURAL);
-                    if (r == null){
-                        throw new RuntimeException("Cannot create " + OWLReasonerManagerImpl.STRUCTURAL);
-                    }
-                    logger.warn("Could not create reasoner: " + selectedReasoner + ". Setting the reasoner back to " + OWLReasonerManagerImpl.STRUCTURAL);
-                }
-
-                reasoner = new SynchronizedOWLReasoner(r);
-            }
-            catch (Throwable e) {
-                throw new RuntimeException(selectedReasoner + ": " + e.getClass().getSimpleName() + " - " + e.getMessage(), e);
-            }
-        }
-        return reasoner;
     }
 
     public Comparator<OWLObject> getComparator() {
