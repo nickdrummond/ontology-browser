@@ -327,6 +327,10 @@ form#load {
     margin-left: 5px; margin-right: 5px;
 }
 
+#dlQuerySubmit{
+    margin-left: 5px;
+}
+
 .iri{
     color: #002;
     font-size: smaller;

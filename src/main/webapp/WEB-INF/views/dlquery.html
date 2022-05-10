@@ -12,21 +12,17 @@
 
 <div id="main">
 
-    <div id="content">
+    <div class='codebox'>
 
-        <h2>DL Query</h2>
+        <form class='autocomplete' method='get' id='dlQueryForm' action=''>
+            <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
+            <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
+            <input id="dlQuerySubmit" type='submit' value='query' />
 
-        <div class='codebox'>
+            <h4 th:text='${reasonerName}'>Reasoner name</h4>
+        </form>
 
-            <p>Reasoner: Unknown</p>
-
-            <form class='autocomplete' method='get' id='dlQueryForm' action=''>
-                <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
-                <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
-                <input type='submit' value='query' />
-            </form>
-
-            <script type="text/javascript">
+        <script type="text/javascript">
             var options = {
               parser : baseUrl + 'dlquery/parse',
               autocomplete: baseUrl + 'dlquery/ac'
@@ -34,10 +30,16 @@
             new ExpressionEditor("dlQuery", options);
         </script>
 
-        </div>
+    </div>
+
+    <div id="content">
+
+        <h2>DL Query</h2>
 
         <div id='resultsForm'>
             <!-- results will go here -->
+            <p>Provide a class description in Manchester OWL Syntax on the left.</p>
+            <p>Autocomplete with <em>Ctrl-Space</em></p>
         </div>
     </div>
 </div>

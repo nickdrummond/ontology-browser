@@ -51,6 +51,9 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "") final String expression,
             final Model model) throws OntServerException, ParseException {
 
+        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+
+        model.addAttribute("reasonerName", r.getReasonerName());
         model.addAttribute("activeOntology", kit.getActiveOntology());
         model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("expression", expression);
