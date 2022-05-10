@@ -7,7 +7,6 @@ import org.semanticweb.owlapi.reasoner.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +16,15 @@ public class ReasonerFactoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(ReasonerFactoryService.class);
 
-    private String DEFAULT_REASONER_LABEL;
+    private final String defaultToldReasoner;
+    private final String defaultInferredReasoner;
 
-    private Map<String, OWLReasonerFactory> facsByName = new HashMap<String, OWLReasonerFactory>();
+    private Map<String, OWLReasonerFactory> facsByName = new HashMap<>();
     private Map<String, OWLReasoner> reasonerByName = new HashMap<>();
 
-    public ReasonerFactoryService(List<ReasonerMomento> momentos, String defaultLabel) {
-        DEFAULT_REASONER_LABEL = defaultLabel;
+    public ReasonerFactoryService(List<ReasonerMomento> momentos, String defaultInferredReasoner, String defaultToldReasoner) {
+        this.defaultInferredReasoner = defaultInferredReasoner;
+        this.defaultToldReasoner = defaultToldReasoner;
 
         for (ReasonerMomento momento : momentos){
             String label = momento.getLabel();
@@ -44,13 +45,13 @@ public class ReasonerFactoryService {
 
     public OWLReasonerFactory getFactoryFor(String name) {
         if (name == null) {
-            name = DEFAULT_REASONER_LABEL;
+            name = defaultInferredReasoner;
         }
         return facsByName.get(name);
     }
 
     public synchronized OWLReasoner getReasoner(OWLOntology ont) throws OWLReasonerRuntimeException {
-        return getReasoner(null, ont);
+        return getReasoner(defaultInferredReasoner, ont);
     }
         /**
          * Get a reasoner.
@@ -58,9 +59,6 @@ public class ReasonerFactoryService {
          * @return an instance of OWLReasoner or null if no match can be found.
          */
     public synchronized OWLReasoner getReasoner(String name, OWLOntology ont) throws OWLReasonerRuntimeException {
-        if (name == null) {
-            name = DEFAULT_REASONER_LABEL;
-        }
         OWLReasoner r = reasonerByName.get(name);
         if (r == null) {
             OWLReasonerFactory fac = getFactoryFor(name);
@@ -74,5 +72,9 @@ public class ReasonerFactoryService {
             }
         }
         return r;
+    }
+
+    public OWLReasoner getToldReasoner(OWLOntology ont) {
+        return getReasoner(defaultToldReasoner, ont);
     }
 }

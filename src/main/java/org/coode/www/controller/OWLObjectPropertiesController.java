@@ -80,7 +80,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(r, comparator);
 

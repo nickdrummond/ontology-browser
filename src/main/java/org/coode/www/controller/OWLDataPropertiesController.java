@@ -78,7 +78,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         Comparator<Tree<OWLDataProperty>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
 
         OWLDataPropertyHierarchyService hierarchyService = new OWLDataPropertyHierarchyService(r, comparator);
 

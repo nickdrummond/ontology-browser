@@ -69,7 +69,7 @@ public class DLQueryController extends ApplicationController {
         OWLEntityChecker checker = kit.getOWLEntityChecker();
 
         OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
-        System.out.println("r.getReasonerName() = " + r.getReasonerName());
+
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         try {

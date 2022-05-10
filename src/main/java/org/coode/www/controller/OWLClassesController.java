@@ -52,7 +52,7 @@ public class OWLClassesController extends ApplicationController {
 
         Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getReasoner(kit.getActiveOntology());
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
         OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
 
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);

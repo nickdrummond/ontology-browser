@@ -28,14 +28,16 @@ public class ApplicationConfig {
         return new OntologyIRIShortFormProvider();
     }
 
-    @Bean
-    public ReasonerMomento structural(@Value("${reasoner.structural.cls}") String cls,
-                                      @Value("${reasoner.structural.label}") String label) {
-        return new ReasonerMomento(label, cls);
-    }
+    @Value("${reasoner.structural.label}")
+    private String structuralLabel;
 
     @Value("${reasoner.openllet.label}")
     private String openlletLabel;
+
+    @Bean
+    public ReasonerMomento structural(@Value("${reasoner.structural.cls}") String cls) {
+        return new ReasonerMomento(structuralLabel, cls);
+    }
 
     @Bean
     public ReasonerMomento openllet(@Value("${reasoner.openllet.cls}") String cls) {
@@ -75,6 +77,6 @@ public class ApplicationConfig {
     @Bean
     @Autowired
     public ReasonerFactoryService reasonerFactoryService(List<ReasonerMomento> reasoners) {
-        return new ReasonerFactoryService(reasoners, openlletLabel);
+        return new ReasonerFactoryService(reasoners, openlletLabel, structuralLabel);
     }
 }
