@@ -219,7 +219,7 @@ td.key{
 }
 
 #tabs li {
-    display: inline; /* maybe change to flow? */
+    list-style: circle;
 }
 
 #tabs a, #tabs span.currentpage {
@@ -425,6 +425,11 @@ img.thumb{
 
     #menu {
         width: auto;
+    }
+
+    #tabs {
+        display: flex;
+        justify-content: space-evenly;
     }
 
     p.footer {

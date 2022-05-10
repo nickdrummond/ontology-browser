@@ -53,13 +53,11 @@ public class OWLClassesService {
                 fac.getAnnotations(owlClass, activeOntologies, comparator),
                 fac.getEquivalents(owlClass, activeOntologies, comparator),
                 fac.getSuperclasses(owlClass, activeOntologies, comparator),
-                fac.getDisjoints(owlClass, activeOntologies, comparator),
                 fac.getMembers(owlClass, activeOntologies, comparator),
-                fac.getUsage(owlClass, activeOntologies, comparator)
+                fac.getUsage(owlClass, activeOntologies, comparator),
+                fac.getDisjoints(owlClass, activeOntologies, comparator)
         )) {
-            if (c.isPresent()) {
-                characteristics.add(c.get());
-            }
+            c.ifPresent(characteristics::add);
         }
 
         return characteristics;
