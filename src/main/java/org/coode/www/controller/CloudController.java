@@ -33,7 +33,7 @@ public class CloudController extends ApplicationController {
     private int thresholdDefault;
 
     @Value("${cloud.zoom.default}")
-    private static int zoomDefault;
+    private int zoomDefault;
 
     @RequestMapping(value = "/classes")
     public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
