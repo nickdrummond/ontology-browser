@@ -28,12 +28,14 @@ public class OWLEntitiesController extends ApplicationController {
     public @ResponseBody SearchResults find(
             @RequestParam(required=true) final String name) throws OntServerException {
 
-        List<OWLEntity> entities = service.findByName(name, kit);
-
         SearchResults results = new SearchResults();
 
-        for (OWLEntity owlEntity: entities) {
-            results.addResult(new SearchResult(kit.getURLScheme().getURLForOWLObject(owlEntity).toString(), "", nameService.getName(owlEntity, kit)));
+        // Minimum search length of 2
+        if (name.length() > 1) {
+            List<OWLEntity> entities = service.findByName(name, kit);
+            for (OWLEntity owlEntity : entities) {
+                results.addResult(new SearchResult(kit.getURLScheme().getURLForOWLObject(owlEntity).toString(), "", nameService.getName(owlEntity, kit)));
+            }
         }
 
         return results;
