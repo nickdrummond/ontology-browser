@@ -73,10 +73,6 @@ li {
     display: block;
 }
 
-#title {
-    display: flex;
-}
-
 #menu, #welcome, #title {
     margin: 5px;
     width: 100%;
@@ -208,9 +204,6 @@ td.key{
 
 #find, .autosuggest li {
     width: 98%;
-    line-height: 24px;
-    font-size: 18pt;
-    text-align: center;
 }
 
 #tabs {
@@ -360,7 +353,7 @@ form#load {
 
 img.icon {
     position: relative;
-    top: 6px;
+    top: 2px;
     width: 24px;
     height: 24px;
 }
@@ -397,7 +390,6 @@ img.thumb{
       flex-flow: row wrap;
     }
 
-/* This is where ont selector and search clash */
 @media screen and (min-width: 800px) {
 
     html, body {
@@ -410,6 +402,7 @@ img.thumb{
     }
 
     #title {
+        display:flex;
         flex: 0 1 auto;
         width: auto;
     }
@@ -463,6 +456,13 @@ img.thumb{
     .characteristics {
         flex: 0 1 auto;
         overflow: auto;
+    }
+
+    #find, .autosuggest li {
+        width: 98%;
+        line-height: 24px;
+        font-size: 18pt;
+        text-align: center;
     }
 }
 
