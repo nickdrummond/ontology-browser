@@ -16,7 +16,7 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
     @Autowired
     private OntologyIRIShortFormProvider sfp;
 
-    @Value("${ontology.root.iri}")
+    @Value("${ontology.root.location}")
     private String rootIri;
 
     @Override
@@ -25,7 +25,7 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
             if (iri.toString().equals(rootIri)) {
                 return "All ontologies";
             } else {
-                return sfp.getShortForm(iri) + " (" + iri.toString() + ")";
+                return sfp.getShortForm(iri) + " (" + iri + ")";
             }
         }).orElse("Anonymous");
     }

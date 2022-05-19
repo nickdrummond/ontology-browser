@@ -14,7 +14,7 @@ import java.net.URI;
 public class KitConfig {
 
     @Bean
-    public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.iri}") String root) throws OWLOntologyCreationException {
+    public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}") String root) throws OWLOntologyCreationException {
         System.err.println("Loading Kit... " + root);
         return new OWLHTMLKitImpl(OWLManager.createOWLOntologyManager(), URI.create(root));
     }

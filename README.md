@@ -25,3 +25,10 @@ Some dependencies are local (in /repo) as they do not exist on any mvn repo.
 `mvn clean package cargo:run`
 
 ## Deployment to Heroku
+
+Set the root ontology location and reasoner root ontology IRI:
+
+    heroku config:set ONTOLOGY_ROOT_LOCATION=<your ontology URL>
+    heroku config:set REASONING_ROOT_IRI=<IRI of the ontology to be reasoned with>
+
+https://devcenter.heroku.com/articles/config-vars#using-the-heroku-cli
