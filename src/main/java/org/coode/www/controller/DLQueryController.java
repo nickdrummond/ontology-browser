@@ -54,6 +54,7 @@ public class DLQueryController extends ApplicationController {
     @RequestMapping(method=RequestMethod.GET)
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
+            @RequestParam(required = false, defaultValue = "instances") final QueryType query,
             final Model model) throws OntServerException, ParseException {
 
         OWLOntology reasoningOnt = getReasoningActiveOnt();
@@ -67,6 +68,8 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("expression", expression);
+        model.addAttribute("query", query);
+        model.addAttribute("queries", QueryType.values());
 
         return "dlquery";
     }

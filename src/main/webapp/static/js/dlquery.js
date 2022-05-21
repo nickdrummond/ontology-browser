@@ -5,12 +5,12 @@
 var BUSY_IMAGE = baseUrl + "static/images/small_busy.gif";
 
 var INSTANCES = 0; // NOT to be confused with individuals/
-//var SUBCLASSES = 1;
-//var EQUIVALENTS = 2;
-//var DESCENDANTS = 3;
-//var SUPERCLASSES = 4;
-//var ANCESTORS = 5;
-var QUERY_COUNT = 1;
+var SUBCLASSES = 1;
+var EQUIVALENTS = 2;
+var DESCENDANTS = 3;
+var SUPERCLASSES = 4;
+var ANCESTORS = 5;
+var QUERY_COUNT = 6;
 
 var PARAM_QUERYTYPE = "query";
 var PARAM_EXPRESSION = "expression";
@@ -23,12 +23,12 @@ var CALLBACK = 2;
 var queryURL = baseUrl + "dlquery/results";
 
 var queryArray = [
-    ["instances", null, inferredInstancesReceived]//,
-//    ["subclasses", null, inferredSubclassesReceived],
-//    ["equivalents", null, inferredEquivalentsReceived],
-//    ["descendants", null, inferredDescendantsReceived],
-//    ["superclasses", null, inferredSuperclassesReceived],
-//    ["ancestors", null, inferredAncestorsReceived]
+    ["instances", null, inferredInstancesReceived],
+    ["subclasses", null, inferredSubclassesReceived],
+    ["equivalents", null, inferredEquivalentsReceived],
+    ["descendants", null, inferredDescendantsReceived],
+    ["superclasses", null, inferredSuperclassesReceived],
+    ["ancestors", null, inferredAncestorsReceived]
 ];
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,8 +39,13 @@ $(document).ready(function(){
     }
 });
 
+function getParameter(key) {
+    return new URLSearchParams(window.location.search).get(key);
+}
+
 function sendQuery(){
     var expression = getValueOfElementByID("dlQuery");
+    var query = getParameter("query");
 
     if (expression != ""){
 
@@ -49,8 +54,10 @@ function sendQuery(){
         document.getElementById("resultsForm").innerHTML="";
 
         for (var i=0; i<QUERY_COUNT; i++){
-            queryArray[i][XML_OBJ]=getXmlHttpObject(queryArray[i][CALLBACK]);
-            sendSubQuery(expression, syntax, queryArray[i][NAME], queryArray[i][XML_OBJ]);
+            if (queryArray[i][NAME] == query) {
+                queryArray[i][XML_OBJ]=getXmlHttpObject(queryArray[i][CALLBACK]);
+                sendSubQuery(expression, syntax, queryArray[i][NAME], queryArray[i][XML_OBJ]);
+            }
         }
     }
 }

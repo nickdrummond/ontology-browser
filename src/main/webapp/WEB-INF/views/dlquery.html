@@ -17,9 +17,20 @@
         <form class='autocomplete' method='get' id='dlQueryForm' action=''>
             <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
             <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
-            <input id="dlQuerySubmit" type='submit' value='query' />
 
-            <h4 th:text='${"using " + reasonerName}'>Reasoner name</h4>
+            <div id="dlQueryOptions">
+                <ul id="queries">
+                    <li th:each="q : ${queries}">
+                        <input type='radio' name='query'
+                               th.id='${"q-" + q}'
+                               th:value='${q}'
+                               th:checked="${q == query}"/>
+                        <label th:for='${"q-" + q}'
+                               th:text='${q}'></label>
+                    </li>
+                </ul>
+                <input id="dlQuerySubmit" type='submit' value='query' />
+            </div>
         </form>
 
         <script type="text/javascript">
@@ -34,7 +45,7 @@
 
     <div id="content">
 
-        <h2 th:utext='${"Querying: " + mos.render(reasoningOntology)}'>Reasoning ontology</h2>
+        <h2 th:utext='${"Querying: " + mos.render(reasoningOntology) + " using " + reasonerName}'>Reasoning ontology and reasoner</h2>
 
         <div id='resultsForm'>
             <!-- results will go here -->
