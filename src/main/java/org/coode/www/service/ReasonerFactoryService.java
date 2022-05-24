@@ -7,10 +7,7 @@ import org.semanticweb.owlapi.reasoner.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ReasonerFactoryService {
 
@@ -36,6 +33,14 @@ public class ReasonerFactoryService {
             catch (Throwable e){
                 logger.info("Reasoner cannot be found: " + label);
             }
+        }
+    }
+
+    public void clear() {
+        Collection<OWLReasoner> reasoners = reasonerByName.values();
+        reasonerByName.clear();
+        for (OWLReasoner reasoner: reasoners) {
+            reasoner.dispose();
         }
     }
 

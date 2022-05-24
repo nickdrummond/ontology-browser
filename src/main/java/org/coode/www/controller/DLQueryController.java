@@ -1,9 +1,11 @@
 package org.coode.www.controller;
 
-import java.util.Optional;
+import java.util.*;
+
+import com.fasterxml.jackson.databind.util.LRUMap;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.exception.OntServerException;
-import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.exception.QueryTimeoutException;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.OWLObjectWithOntology;
 import org.coode.www.model.QueryType;
@@ -18,17 +20,14 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.co.nickdrummond.parsejs.ParseException;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -47,6 +46,20 @@ public class DLQueryController extends ApplicationController {
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
 
+    @Value("${reasoning.cache.count}")
+    private int cacheCount;
+
+    /**
+     * Use a single thread for all of the reasoner queries to prevent overloading the server.
+     */
+    private final ExecutorService es = Executors.newSingleThreadExecutor();
+
+    /**
+     * Cache the last x results in futures, allowing the result to continue to be computed regardless
+     * of the server or client timing out - long queries can then be retrieved on future requests.
+     */
+    private final LRUMap<String, Future<Characteristic>> cache = new LRUMap<>(0, cacheCount);
+
     private OWLOntology getReasoningActiveOnt() {
         return kit.getOntologyForIRI(IRI.create(reasoningRootIRI)).orElseThrow();
     }
@@ -61,6 +74,8 @@ public class DLQueryController extends ApplicationController {
 
         OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
 
+        preload(expression, query);
+
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         model.addAttribute("reasonerName", r.getReasonerName());
@@ -74,40 +89,57 @@ public class DLQueryController extends ApplicationController {
         return "dlquery";
     }
 
-    @RequestMapping(value="results",method=RequestMethod.GET)
-    public String getResults(
-            @RequestParam(required = true) final String expression,
-            @RequestParam(required = true) final QueryType query,
-            HttpServletResponse response,
-            final Model model) throws OntServerException {
+    private void preload(@NonNull final String expression, @NonNull final QueryType query) {
+        String key = expression + query.name();
+        if (!expression.isEmpty() && cache.get(key) == null) {
+            cache.put(key, computeResults(expression, query));
+        }
+    }
 
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
+    private Future<Characteristic> computeResults(final String expression, final QueryType query) {
+        return es.submit(() -> {
+            long start = System.currentTimeMillis();
 
-        OWLOntology reasoningOnt = getReasoningActiveOnt();
+            OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+            OWLEntityChecker checker = kit.getOWLEntityChecker();
 
-        OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
+            OWLOntology reasoningOnt = getReasoningActiveOnt();
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
+            OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
 
-        try {
             OWLClassExpression owlClassExpression = service.getOWLClassExpression(expression, df, checker);
             List<OWLObjectWithOntology> results = reasonerService.getResults(owlClassExpression, query, r).stream()
                     .map ( e -> new OWLObjectWithOntology(e, reasoningOnt))
                     .sorted((o1, o2) -> kit.getComparator().compare(o1.getOWLObject(), o2.getOWLObject()))
                     .collect(Collectors.toList());
 
-            logger.debug("Results count: " + results.size());
+            logger.debug(query + " of \"" + expression + "\": " + results.size() + " results in " + (System.currentTimeMillis()-start) + "ms");
 
-            Characteristic resultsCharacteristic = new Characteristic(null, query.name(), results);
+            return new Characteristic(null, query.name(), results);
+        });
+    }
+
+    @RequestMapping(value="results",method=RequestMethod.GET)
+    public String getResults(
+            @RequestParam(required = true) final String expression,
+            @RequestParam(required = true) final QueryType query,
+            final Model model) throws OntServerException, QueryTimeoutException, ParserException {
+
+        try {
+            preload(expression, query);
+
+            Characteristic resultsCharacteristic = cache.get(expression+query.name()).get(10, TimeUnit.SECONDS);
+
+            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
             model.addAttribute("results", resultsCharacteristic);
             model.addAttribute("mos", owlRenderer);
 
             return "base :: results";
-        } catch (ParserException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            return "Bad OWLClassExpression: " + expression;
+        } catch (ExecutionException e) {
+            throw new OntServerException(e);
+        } catch (InterruptedException | TimeoutException e) {
+            throw new QueryTimeoutException();
         }
     }
 
@@ -136,5 +168,12 @@ public class DLQueryController extends ApplicationController {
         } catch (ParseException e) {
             return e.toString();
         }
+    }
+
+    @RequestMapping("/refresh")
+    public String refresh() {
+        cache.clear();
+        reasonerFactoryService.clear();
+        return "redirect:.";
     }
 }
