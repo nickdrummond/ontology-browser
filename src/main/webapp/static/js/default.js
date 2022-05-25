@@ -33,14 +33,13 @@ function scrollTreeToSelection() {
 
 function createSlideToggles() {
     $("<img class=\"min\" src=\"" + baseUrl + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
-        var values = $(this).nextAll("ul").first(); // for some reason just next does not work
+        var values = $(this).nextAll("ul, table").first(); // for some reason just next does not work
         var hidden = values.is(":visible");
         var characteristic = $(this).next("h4").text();
         rememberCharacteristicHidden(characteristic, hidden);
 
         values.slideToggle('fast');
-    }).prependTo(".characteristic, #owlselector");
-
+    }).prependTo(".characteristic, #owlselector, #metrics");
 }
 
 function rememberCharacteristicHidden(characteristic, hidden) {
@@ -57,7 +56,7 @@ function hideCharacteristics() {
     for(let key of keys) {
       if (key.startsWith(HIDDEN)) {
         var characteristic = key.substr(HIDDEN.length);
-        $("h4:contains('" + characteristic + "')").nextAll("ul").first().hide();
+        $("h4:contains('" + characteristic + "')").nextAll("ul, table").first().hide();
       }
     }
 }

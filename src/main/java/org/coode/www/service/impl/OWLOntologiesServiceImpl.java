@@ -8,6 +8,8 @@ import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
 import org.coode.www.service.OWLOntologiesService;
 import org.semanticweb.owlapi.io.UnparsableOntologyException;
+import org.semanticweb.owlapi.metrics.*;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
@@ -102,6 +104,20 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
             c.ifPresent(characteristics::add);
         }
         return characteristics;
+    }
+
+    @Override
+    public List<OWLMetric<?>> getMetrics(OWLOntology owlOntology) {
+        List<OWLMetric<?>> metrics = new ArrayList<>();
+        metrics.add(new AxiomCount(owlOntology));
+        metrics.add(new LogicalAxiomCount(owlOntology));
+        metrics.add(new AxiomTypeMetric(owlOntology, AxiomType.DECLARATION));
+        metrics.add(new ReferencedIndividualCount(owlOntology));
+        metrics.add(new ReferencedClassCount(owlOntology));
+        metrics.add(new ReferencedObjectPropertyCount(owlOntology));
+        metrics.add(new ReferencedDataPropertyCount(owlOntology));
+        metrics.add(new DLExpressivity(owlOntology));
+        return metrics;
     }
 
     @Override

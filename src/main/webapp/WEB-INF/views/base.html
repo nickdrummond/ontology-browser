@@ -122,6 +122,19 @@
     </ul>
 </div>
 
+<div id="metrics" th:fragment="metrics (metrics)" th:if="${metrics != null}">
+    <h4>Metrics</h4>
+    <table>
+        <thead><td></td><td></td><td th:if="${showImportMetrics}">with imports</td></thead>
+        <tr th:each="metric : ${metrics}">
+            <td class="metric" th:utext="${metric.getName()}"/>
+            <td class="mvalue" th:utext="${metric.getValue()}"/>
+            <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
+            <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"/>
+        </tr>
+    </table>
+</div>
+
 <div class="googlemaps" th:fragment="map (geo)" th:if="${geo != null}">
     <iframe width="425" height="350" frameborder="0" scrolling="no"
             src="http://maps.google.com/maps"

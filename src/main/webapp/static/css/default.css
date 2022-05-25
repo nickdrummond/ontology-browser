@@ -95,6 +95,37 @@ li {
     width: 100%;
 }
 
+#metrics {
+    margin: 5px;
+}
+
+#metrics table {
+    border: solid 1px #c7cfd5;
+    background: #fff;
+    color: #000;
+    padding: 5px 5px 5px 25px;
+    margin: 5px 0 10px 0;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    text-align: right;
+    width: 99%;
+}
+
+#metrics table tr:hover {
+    background: #eeeeee;
+}
+
+#metrics table td {
+    padding: 4px;
+    border: none;
+    overflow-wrap: anywhere;
+}
+
+#metrics tbody td:first-child{
+    display: list-item;
+    text-align: left;
+}
+
 a.burger, a.burger:hover, a.burger:active {
     padding: 5px;
     font-size: 14pt;
@@ -132,7 +163,7 @@ a.burger, a.burger:hover, a.burger:active {
 }
 
 .characteristic li {
-    margin: 5px;
+    padding: 4px;
     clear: both;
 }
 
@@ -470,6 +501,10 @@ img.thumb{
     .characteristics {
         flex: 0 1 auto;
         overflow: auto;
+    }
+
+    #metrics {
+        flex: 0 1 auto;
     }
 
     #find, .autosuggest li {

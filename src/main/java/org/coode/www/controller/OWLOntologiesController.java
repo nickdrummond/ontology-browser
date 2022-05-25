@@ -1,5 +1,6 @@
 package org.coode.www.controller;
 
+import java.util.List;
 import java.util.Optional;
 import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.output.WriterOutputStream;
@@ -12,6 +13,7 @@ import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLOntologiesService;
 import org.coode.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
+import org.semanticweb.owlapi.metrics.OWLMetric;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +60,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(owlOntology);
 
-        String title = owlOntology.equals(kit.getRootOntology()) ?
-                "All ontologies" :
-                sfp.getShortForm(owlOntology) + " (Ontology)";
+        String title = sfp.getShortForm(owlOntology) + " (Ontology)";
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlOntology));
 
@@ -71,6 +71,8 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("iri", iri);
         model.addAttribute("hierarchy", ontologyTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlOntology, kit));
+        model.addAttribute("metrics", service.getMetrics(owlOntology));
+        model.addAttribute("showImportMetrics", !owlOntology.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
