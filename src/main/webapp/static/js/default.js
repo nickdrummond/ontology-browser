@@ -11,6 +11,8 @@ var HIDDEN = "hidden.";
 
 $(document).ready(function(){
 
+    openFullscreen();
+
     hideCharacteristics();
 
     scrollTreeToSelection();
@@ -21,9 +23,15 @@ $(document).ready(function(){
 
 });
 
-$(window).resize(function() {
-    scrollTreeToSelection();
-});
+function openFullscreen() {
+  if (document.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (document.webkitRequestFullscreen) { /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (document.msRequestFullscreen) { /* IE11 */
+    elem.msRequestFullscreen();
+  }
+}
 
 function scrollTreeToSelection() {
     var minihierarchy = $(".minihierarchy");
