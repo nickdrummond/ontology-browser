@@ -87,7 +87,7 @@
 <div class="results" th:fragment="results" th:replace="::characteristic (${results})">
 </div>
 
-<div class="characteristic" th:fragment="characteristic (ch)">
+<div th:class='${"characteristic " + ch.name.replaceAll(" ", "_").toLowerCase()}' th:fragment="characteristic (ch)">
 
     <h4 th:text='${ch.name}'>Some Characteristic</h4>
     <span th:text='${"(" + ch.objects.size() + ")"}'>(2)</span>

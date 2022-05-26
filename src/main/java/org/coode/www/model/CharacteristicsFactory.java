@@ -163,22 +163,22 @@ public class CharacteristicsFactory {
     }
 
     public Optional<Characteristic> getObjectPropertyAssertions(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
-        return asCharacteristicNew("Property Assertions", ind, wrap(onts, c,
+        return asCharacteristicNew("Object Property Assertions", ind, wrap(onts, c,
                 ont -> ont.objectPropertyAssertionAxioms(ind)));
     }
 
     public Optional<Characteristic> getDataPropertyAssertions(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
-        return asCharacteristicNew("Property Assertions", ind, wrap(onts, c,
+        return asCharacteristicNew("Data Property Assertions", ind, wrap(onts, c,
                 ont -> ont.dataPropertyAssertionAxioms(ind)));
     }
 
     public Optional<Characteristic> getNegativeObjectPropertyAssertions(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
-        return asCharacteristicNew("Negative Property Assertions", ind, wrap(onts, c,
+        return asCharacteristicNew("Negative Object Property Assertions", ind, wrap(onts, c,
                 ont -> ont.negativeObjectPropertyAssertionAxioms(ind)));
     }
 
     public Optional<Characteristic> getNegativeDataPropertyAssertions(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
-        return asCharacteristicNew("Negative Property Assertions", ind, wrap(onts, c,
+        return asCharacteristicNew("Negative Data Property Assertions", ind, wrap(onts, c,
                 ont -> ont.negativeObjectPropertyAssertionAxioms(ind)));
     }
 

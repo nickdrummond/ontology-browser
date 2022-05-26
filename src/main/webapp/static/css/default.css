@@ -173,6 +173,13 @@ a.burger, a.burger:hover, a.burger:active {
     float: right;
 }
 
+.characteristic.object_property_assertions .active-entity,
+.characteristic.negative_object_property_assertions .active-entity,
+.characteristic.data_property_assertions .active-entity,
+.characteristic.negative_data_property_assertions .active-entity{
+    display: none;
+}
+
 .imageHolder{
     overflow: auto;
     text-align: center;
