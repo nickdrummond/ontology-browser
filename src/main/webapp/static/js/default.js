@@ -21,6 +21,10 @@ $(document).ready(function(){
 
 });
 
+$(window).resize(function() {
+    scrollTreeToSelection();
+});
+
 function scrollTreeToSelection() {
     var minihierarchy = $(".minihierarchy");
     if (minihierarchy.is(":visible")){
