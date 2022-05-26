@@ -2,6 +2,8 @@
 
 /* Mobile first design */
 
+/* General styles */
+
 html {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -61,10 +63,6 @@ div {
 
 li {
     margin-top: 3px;
-}
-
-.clearfix {
-    clear: both;
 }
 
 /* Components */
@@ -233,8 +231,14 @@ td.key{
     justify-content: center;
 }
 
+#as_find {
+    max-height: 75vh;
+    overflow: auto;
+}
+
 #find, .autosuggest li {
     width: 98%;
+    padding-left: 10px;
 }
 
 #tabs {
@@ -468,6 +472,7 @@ img.thumb{
     #tabs {
         display: flex;
         justify-content: space-evenly;
+        padding-left: 0;
     }
 
     p.footer {
@@ -508,10 +513,8 @@ img.thumb{
     }
 
     #find, .autosuggest li {
-        width: 98%;
         line-height: 24px;
         font-size: 18pt;
-        text-align: center;
     }
 }
 

@@ -24,9 +24,16 @@ $(document).ready(function(){
 function scrollTreeToSelection() {
     var minihierarchy = $(".minihierarchy");
     if (minihierarchy.is(":visible")){
-    var active = $("span.active-entity", minihierarchy);
+        var active = $("span.active-entity", minihierarchy);
         if (active.size() > 0) {
-            scrollToElement(active.first(), minihierarchy);
+            // let js work out getting into the pane
+            active.get(0).scrollIntoView(false);
+            // then reposition to the middle
+            var p = minihierarchy.scrollTop();
+            if (p > 0) {
+                var h = minihierarchy.height();
+                minihierarchy.scrollTop(p+(0.5*h));
+            }
         }
     }
 }
@@ -124,28 +131,4 @@ function getChildren(li){
     });
 
     return childList;
-}
-
-
-function scrollToElement(element, scrollParent){
-
-    if (!scrollParent){
-        scrollParent = element.offsetParent();
-    }
-
-    var pos = element.position();
-    if (pos){
-        var offset = pos.top;
-
-        if (offset < 0){
-            scrollParent.scrollTop(offset);
-        }
-        else{
-            var scrollerHeight = scrollParent.height();
-            var elementHeight = element.height();
-            if (offset + elementHeight > scrollerHeight){
-                scrollParent.scrollTop(offset + elementHeight - scrollerHeight);
-            }
-        }
-    }
 }
