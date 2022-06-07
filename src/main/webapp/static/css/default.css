@@ -1,5 +1,12 @@
 @import url("owl.css");
 
+@font-face {
+  font-family: 'aurebesh';
+  src: url('aurebesh.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* Mobile first design */
 
 /* General styles */
@@ -438,6 +445,14 @@ img.thumb{
 
 .warn {
     color: #ff0000;
+}
+
+.aurebesh {
+    font-family: 'aurebesh';
+}
+
+.basic {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;;
 }
 
     /* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */

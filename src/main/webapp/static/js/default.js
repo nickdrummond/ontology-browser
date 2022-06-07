@@ -21,6 +21,7 @@ $(document).ready(function(){
 
     createTreeListeners();
 
+    createAurebeshHandler();
 });
 
 function openFullscreen() {
@@ -59,6 +60,25 @@ function createSlideToggles() {
 
         values.slideToggle('fast');
     }).prependTo(".characteristic, #owlselector, #metrics");
+}
+
+function createAurebeshHandler() {
+    var key = "language";
+    var aurebesh = "aurebesh";
+    var basic = "basic";
+
+    function setLanguage(lang) {
+      var notLang = (lang == aurebesh) ? basic : aurebesh;
+      sessionStorage.setItem(key, lang);
+      $("html, #find").addClass(lang).removeClass(notLang);
+      $("#aurebesh").addClass(notLang).removeClass(lang).html(notLang);
+    }
+
+    setLanguage((sessionStorage.getItem(key) == aurebesh) ? aurebesh : basic);
+
+    $("#aurebesh").click(function(e){
+        setLanguage((sessionStorage.getItem(key) == aurebesh) ? basic : aurebesh);
+    });
 }
 
 function rememberCharacteristicHidden(characteristic, hidden) {
