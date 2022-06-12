@@ -1,15 +1,13 @@
 package org.coode.www.service;
 
-import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.kit.OWLHTMLKit;
-import org.semanticweb.owlapi.model.OWLEntity;
+import org.coode.www.model.OWLObjectWithOntology;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +25,7 @@ public class SearchService {
         }
 
         String searchStr = (input.endsWith(wildcard)) ? ".*" + input.replace("\\" + wildcard, ".*") :
-                        ".*" + input + ".*";
+                ".*" + input + ".*";
 
         // Sort first by index of search and then alphabetically
         Comparator<OWLEntity> c = new Comparator<>() {
@@ -42,8 +40,7 @@ public class SearchService {
                 int i2 = sf2.indexOf(str);
                 if (i1 == i2) {
                     return sf1.compareTo(sf2);
-                }
-                else if (i1 < i2) {
+                } else if (i1 < i2) {
                     return -1;
                 }
                 return 1;
@@ -52,4 +49,35 @@ public class SearchService {
 
         return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).collect(Collectors.toList());
     }
+
+    public List<OWLObjectWithOntology> findByAnnotation(String value, Optional<OWLAnnotationProperty> prop, OWLHTMLKit kit) {
+        Set<OWLObjectWithOntology> results = new HashSet<>();
+        for (OWLOntology ont : kit.getOWLOntologyManager().getOntologies()) {
+            for (OWLAnnotationAssertionAxiom ax : ont.getAxioms(AxiomType.ANNOTATION_ASSERTION)) {
+                if (prop.isEmpty() || prop.get().equals(ax.getProperty())) {
+                    OWLAnnotationValue v = ax.getValue();
+                    if (v.isLiteral() && v.asLiteral().isPresent() && v.asLiteral().get().getLiteral().contains(value)) {
+                        results.add(new OWLObjectWithOntology(ax, ont));
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(results);
+    }
+
+    public Set<OWLEntity> getEntities(IRI iri, OWLHTMLKit kit) {
+        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+        OWLOntology activeOnt = kit.getActiveOntology();
+        return EntityType.values().stream()
+                .map(t -> {
+                    OWLEntity e = df.getOWLEntity(t, iri);
+                    if (activeOnt.containsEntityInSignature(e, Imports.INCLUDED)) {
+                        return e;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
 }
