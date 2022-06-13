@@ -377,8 +377,14 @@ form#load {
     display: flex;
 }
 
-#dlQuery{
+.dlQueryWrapper {
+    display: flex;
+    flex-flow: column;
     flex: 6 1 auto;
+}
+
+.dlQuery{
+    flex: 1 1 auto;
     margin: 5px;
 }
 

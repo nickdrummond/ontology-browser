@@ -15,7 +15,10 @@
     <div id="queryPane" class='codebox'>
 
         <form class='autocomplete' method='get' id='dlQueryForm' action=''>
-            <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
+            <div class="dlQueryWrapper">
+                <textarea name='expression' placeholder="Query - eg participant value R2-D2" class='dlQuery' id='dlQuery' th:text='${expression}'>Pizza</textarea>
+                <textarea name='minus' placeholder="Subtract from above - eg participant value C-3PO" class='dlQuery' id='dlQuery2' th:text='${minus}'>hasTopping some CheeseTopping</textarea>
+            </div>
             <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
 
             <div id="dlQueryOptions">
@@ -39,6 +42,7 @@
               autocomplete: baseUrl + 'dlquery/ac'
             };
             new ExpressionEditor("dlQuery", options);
+            new ExpressionEditor("dlQuery2", options);
         </script>
 
     </div>

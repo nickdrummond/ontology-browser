@@ -6,6 +6,7 @@ var BUSY_IMAGE = baseUrl + "static/images/busy.gif";
 
 var PARAM_QUERYTYPE = "query";
 var PARAM_EXPRESSION = "expression";
+var PARAM_MINUS = "minus";
 var PARAM_SYNTAX = "syntax";
 
 var MAX_RETRIES = 3;
@@ -26,11 +27,12 @@ function getParameter(key) {
 
 function sendQuery(){
     var expression = getValueOfElementByID("dlQuery");
+    var minus = getValueOfElementByID("dlQuery2");
     var query = getQueryFromForm();
 
     if ((expression != "") && (query != "")){
         var syntax = getValueOfElementByID("dlQuerySyntax");
-        sendSubQuery(expression, syntax, query, 1);
+        sendSubQuery(expression, minus, syntax, query, 1);
     }
 }
 
@@ -43,7 +45,7 @@ function getQueryFromForm() {
     }
 }
 
-function sendSubQuery(expression, syntax, queryType, retry){
+function sendSubQuery(expression, minus, syntax, queryType, retry){
 
     var xmlHttpReq = getXmlHttpObject();
 
@@ -53,6 +55,10 @@ function sendSubQuery(expression, syntax, queryType, retry){
     else{
         var req = queryURL + "?" + PARAM_QUERYTYPE + "=" + queryType + "&" +
                              PARAM_EXPRESSION + "=" + expression;
+
+        if (minus != null) {
+            req = req + "&" + PARAM_MINUS + "=" + minus;
+        }
 
         xmlHttpReq.open("GET", req, true);
 
@@ -77,7 +83,7 @@ function sendSubQuery(expression, syntax, queryType, retry){
                 var t = 5 * retry; // retry at greater delay each time
                 resultWrite(queryType + ": timeout", "Slow query. Retrying in " + t + " seconds...");
                 setTimeout(function() {
-                    sendSubQuery(expression, syntax, queryType, retry+1);
+                    sendSubQuery(expression, minus, syntax, queryType, retry+1);
                 }, t*1000);
             }
             else {

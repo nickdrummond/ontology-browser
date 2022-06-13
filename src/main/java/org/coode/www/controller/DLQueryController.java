@@ -2,7 +2,7 @@ package org.coode.www.controller;
 
 import java.util.*;
 
-import com.fasterxml.jackson.databind.util.LRUMap;
+import org.apache.commons.collections4.map.LRUMap;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.QueryTimeoutException;
@@ -52,13 +52,12 @@ public class DLQueryController extends ApplicationController {
     /**
      * Use a single thread for all of the reasoner queries to prevent overloading the server.
      */
-    private final ExecutorService es = Executors.newSingleThreadExecutor();
-
+    private final ExecutorService es = Executors.newFixedThreadPool(2);
     /**
      * Cache the last x results in futures, allowing the result to continue to be computed regardless
      * of the server or client timing out - long queries can then be retrieved on future requests.
      */
-    private final LRUMap<String, Future<Characteristic>> cache = new LRUMap<>(0, cacheCount);
+    private Map<String, Future<Characteristic>> cache;
 
     private OWLOntology getReasoningActiveOnt() {
         return kit.getOntologyForIRI(IRI.create(reasoningRootIRI)).orElseThrow();
@@ -67,6 +66,7 @@ public class DLQueryController extends ApplicationController {
     @RequestMapping(method=RequestMethod.GET)
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
+            @RequestParam(required = false) final String minus,
             @RequestParam(required = false, defaultValue = "instances") final QueryType query,
             final Model model) throws OntServerException, ParseException {
 
@@ -76,6 +76,10 @@ public class DLQueryController extends ApplicationController {
 
         preload(expression, query);
 
+        if (minus != null && !minus.isEmpty()) {
+            preload(minus, query);
+        }
+
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         model.addAttribute("reasonerName", r.getReasonerName());
@@ -83,13 +87,17 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("expression", expression);
+        model.addAttribute("minus", minus);
         model.addAttribute("query", query);
         model.addAttribute("queries", QueryType.values());
 
         return "dlquery";
     }
 
-    private void preload(@NonNull final String expression, @NonNull final QueryType query) {
+    synchronized private void preload(@NonNull final String expression, @NonNull final QueryType query) {
+        if (cache == null) {
+            cache = Collections.synchronizedMap(new LRUMap<>(cacheCount));
+        }
         String key = expression + query.name();
         if (!expression.isEmpty() && cache.get(key) == null) {
             cache.put(key, computeResults(expression, query));
@@ -122,13 +130,28 @@ public class DLQueryController extends ApplicationController {
     @RequestMapping(value="results",method=RequestMethod.GET)
     public String getResults(
             @RequestParam(required = true) final String expression,
+            @RequestParam(required = false) final String minus,
             @RequestParam(required = true) final QueryType query,
             final Model model) throws OntServerException, QueryTimeoutException, ParserException {
 
         try {
+
+            if (minus != null && !minus.isEmpty()) {
+                preload(minus, query);
+            }
+
             preload(expression, query);
 
             Characteristic resultsCharacteristic = cache.get(expression+query.name()).get(10, TimeUnit.SECONDS);
+
+            if (minus != null && !minus.isEmpty()) {
+                Characteristic minusCharacteristic = cache.get(minus + query.name()).get(10, TimeUnit.SECONDS);
+                String name = resultsCharacteristic.getName();
+                // Wish there was a neater immutable version of this
+                List<OWLObjectWithOntology> results = new ArrayList<>(resultsCharacteristic.getObjects());
+                boolean b = results.removeAll(minusCharacteristic.getObjects());
+                resultsCharacteristic = new Characteristic(null, name, results);
+            }
 
             OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
