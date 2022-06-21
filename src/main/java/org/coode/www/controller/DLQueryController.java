@@ -4,8 +4,10 @@ import java.util.*;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.coode.owl.mngr.OWLEntityFinder;
+import org.coode.owl.mngr.impl.PropertyComparator;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.QueryTimeoutException;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.OWLObjectWithOntology;
 import org.coode.www.model.QueryType;
@@ -57,7 +59,7 @@ public class DLQueryController extends ApplicationController {
      * Cache the last x results in futures, allowing the result to continue to be computed regardless
      * of the server or client timing out - long queries can then be retrieved on future requests.
      */
-    private Map<String, Future<Characteristic>> cache;
+    private Map<String, Future<Set<OWLEntity>>> cache;
 
     private OWLOntology getReasoningActiveOnt() {
         return kit.getOntologyForIRI(IRI.create(reasoningRootIRI)).orElseThrow();
@@ -67,6 +69,7 @@ public class DLQueryController extends ApplicationController {
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
             @RequestParam(required = false) final String minus,
+            @RequestParam(required = false) final String order,
             @RequestParam(required = false, defaultValue = "instances") final QueryType query,
             final Model model) throws OntServerException, ParseException {
 
@@ -88,13 +91,15 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("ontologies", kit.getOntologies());
         model.addAttribute("expression", expression);
         model.addAttribute("minus", minus);
+        model.addAttribute("order", order);
         model.addAttribute("query", query);
         model.addAttribute("queries", QueryType.values());
 
         return "dlquery";
     }
 
-    synchronized private void preload(@NonNull final String expression, @NonNull final QueryType query) {
+    synchronized private void preload(@NonNull final String expression,
+                                      @NonNull final QueryType query) {
         if (cache == null) {
             cache = Collections.synchronizedMap(new LRUMap<>(cacheCount));
         }
@@ -104,7 +109,8 @@ public class DLQueryController extends ApplicationController {
         }
     }
 
-    private Future<Characteristic> computeResults(final String expression, final QueryType query) {
+    private Future<Set<OWLEntity>> computeResults(final String expression,
+                                                  final QueryType query) {
         return es.submit(() -> {
             long start = System.currentTimeMillis();
 
@@ -116,21 +122,30 @@ public class DLQueryController extends ApplicationController {
             OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
 
             OWLClassExpression owlClassExpression = service.getOWLClassExpression(expression, df, checker);
-            List<OWLObjectWithOntology> results = reasonerService.getResults(owlClassExpression, query, r).stream()
-                    .map ( e -> new OWLObjectWithOntology(e, reasoningOnt))
-                    .sorted((o1, o2) -> kit.getComparator().compare(o1.getOWLObject(), o2.getOWLObject()))
-                    .collect(Collectors.toList());
+
+            Set<OWLEntity> results = reasonerService.getResults(owlClassExpression, query, r);
 
             logger.debug(query + " of \"" + expression + "\": " + results.size() + " results in " + (System.currentTimeMillis()-start) + "ms");
 
-            return new Characteristic(null, query.name(), results);
+            return results;
         });
+    }
+
+    private OWLOntology getDeclarationOntology(OWLEntity e, OWLHTMLKit kit) {
+        OWLDeclarationAxiom decl = kit.getOWLOntologyManager().getOWLDataFactory().getOWLDeclarationAxiom(e);
+        for (OWLOntology o : getReasoningActiveOnt().getImportsClosure()) {
+            if (o.containsAxiom(decl)) {
+                return o;
+            }
+        }
+        return getReasoningActiveOnt();
     }
 
     @RequestMapping(value="results",method=RequestMethod.GET)
     public String getResults(
             @RequestParam(required = true) final String expression,
             @RequestParam(required = false) final String minus,
+            @RequestParam(required = false) final String order,
             @RequestParam(required = true) final QueryType query,
             final Model model) throws OntServerException, QueryTimeoutException, ParserException {
 
@@ -142,16 +157,28 @@ public class DLQueryController extends ApplicationController {
 
             preload(expression, query);
 
-            Characteristic resultsCharacteristic = cache.get(expression+query.name()).get(10, TimeUnit.SECONDS);
+            Comparator<OWLObject> c = kit.getComparator();
+
+            if (order != null && !order.isEmpty()) {
+                OWLOntology reasoningOnt = getReasoningActiveOnt();
+                OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
+                OWLDataProperty orderProperty = kit.getOWLEntityChecker().getOWLDataProperty(order);
+                if (orderProperty != null) {
+                    System.out.println("Sorting by: " + orderProperty);
+                    c = new PropertyComparator(orderProperty, c, r);
+                }
+            }
+
+            Set<OWLEntity> results = cache.get(expression + query.name()).get(10, TimeUnit.SECONDS);
 
             if (minus != null && !minus.isEmpty()) {
-                Characteristic minusCharacteristic = cache.get(minus + query.name()).get(10, TimeUnit.SECONDS);
-                String name = resultsCharacteristic.getName();
+                Set<OWLEntity> minusResults = cache.get(minus + query.name()).get(10, TimeUnit.SECONDS);
                 // Wish there was a neater immutable version of this
-                List<OWLObjectWithOntology> results = new ArrayList<>(resultsCharacteristic.getObjects());
-                boolean b = results.removeAll(minusCharacteristic.getObjects());
-                resultsCharacteristic = new Characteristic(null, name, results);
+                Set<OWLEntity> resultsCopy = new HashSet<>(results);
+                resultsCopy.removeAll(minusResults);
+                results = resultsCopy;
             }
+            Characteristic resultsCharacteristic = buildCharacteristic(query.name(), results, c);
 
             OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
@@ -164,6 +191,14 @@ public class DLQueryController extends ApplicationController {
         } catch (InterruptedException | TimeoutException e) {
             throw new QueryTimeoutException();
         }
+    }
+
+    private Characteristic buildCharacteristic(String name, Set<OWLEntity> results, Comparator<OWLObject> comp) {
+        return new Characteristic(null, name,
+                results.stream()
+                        .sorted(comp)
+                        .map(e -> new OWLObjectWithOntology(e, getDeclarationOntology(e, kit)))
+                        .collect(Collectors.toList()));
     }
 
     @RequestMapping(value = "/ac", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
