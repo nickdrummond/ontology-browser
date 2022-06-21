@@ -64,19 +64,24 @@ public class ReasonerFactoryService {
          * @return an instance of OWLReasoner or null if no match can be found.
          */
     public synchronized OWLReasoner getReasoner(String name, OWLOntology ont) throws OWLReasonerRuntimeException {
-        OWLReasoner r = reasonerByName.get(name);
+        String key = makeKey(name, ont);
+        OWLReasoner r = reasonerByName.get(key);
         if (r == null) {
             OWLReasonerFactory fac = getFactoryFor(name);
             if (fac != null) {
-                logger.warn("Creating reasoner..." + name);
+                logger.warn("Creating reasoner..." + name + " for ontology " + ont.getOntologyID());
                 r = new SynchronizedOWLReasoner(fac.createNonBufferingReasoner(ont, new SimpleConfiguration()));
-                reasonerByName.put(name, r);
+                reasonerByName.put(key, r);
             }
             else {
                 throw new RuntimeException("No reasoner found for " + name);
             }
         }
         return r;
+    }
+
+    private String makeKey(String name, OWLOntology ont) {
+        return name + "-" + ont.getOntologyID().toString();
     }
 
     public OWLReasoner getToldReasoner(OWLOntology ont) {

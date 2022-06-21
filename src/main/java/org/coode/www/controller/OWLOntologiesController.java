@@ -53,8 +53,7 @@ public class OWLOntologiesController extends ApplicationController {
                               final Model model) throws OntServerException, NotFoundException {
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
-        Comparator<Tree<OWLOntology>> comparator = (o1, o2) ->
-                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        Comparator<Tree<OWLOntology>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
         OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), comparator);
 
@@ -94,30 +93,5 @@ public class OWLOntologiesController extends ApplicationController {
         catch (OWLOntologyStorageException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @RequestMapping(method= RequestMethod.POST)
-    public String loadOntology(@ModelAttribute final LoadOntology loadOntology) throws OntServerException {
-
-        String ontologyId = service.load(loadOntology.getUri(), loadOntology.isClear(), kit);
-
-        if (loadOntology.getRedirect() != null) {
-            return "redirect:" + loadOntology.getRedirect();
-        }
-        else {
-            return "redirect:/ontologies/" + ontologyId;
-        }
-    }
-
-    @RequestMapping(value="/active",
-            method=RequestMethod.POST,
-            consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> setActiveOntology(
-            @ModelAttribute("id") final String ontId) throws NotFoundException, OntServerException {
-
-        OWLOntology ontology = service.getOntologyFor(ontId, kit);
-
-        service.setActiveOntology(ontology, kit);
-        return new ResponseEntity<>("Active ontology changed", HttpStatus.OK);
     }
 }

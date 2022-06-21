@@ -17,8 +17,6 @@ public interface OWLOntologiesService {
 
     String getIdFor(OWLOntology ontology);
 
-    String load(URI uri, boolean clear, OWLHTMLKit kit) throws OntServerException;
-
     OWLOntology getActiveOntology(OWLHTMLKit kit);
 
     Set<OWLOntology> getOntologies(OWLHTMLKit kit);
@@ -26,6 +24,4 @@ public interface OWLOntologiesService {
     List<Characteristic> getCharacteristics(OWLOntology owlOntology, OWLHTMLKit kit);
 
     List<OWLMetric<?>> getMetrics(OWLOntology owlOntology);
-
-    void setActiveOntology(OWLOntology ontology, OWLHTMLKit kit) throws OntServerException;
 }

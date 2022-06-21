@@ -18,8 +18,8 @@ import java.util.*;
 public class OWLIndividualsService {
 
     // TODO need to index the entities by ID
-    public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final OWLHTMLKit kit) throws NotFoundException {
-        for (OWLOntology ont : kit.getActiveOntologies()){
+    public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final Set<OWLOntology> ontologies) throws NotFoundException {
+        for (OWLOntology ont : ontologies){
             for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature()) {
                 if (getIdFor(owlIndividual).equals(propertyId)) {
                     return owlIndividual;
@@ -38,13 +38,12 @@ public class OWLIndividualsService {
         }
     }
 
-    public List<Characteristic> getCharacteristics(OWLNamedIndividual owlIndividual, OWLHTMLKit kit) {
-        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getComparator();
+    public List<Characteristic> getCharacteristics(final OWLNamedIndividual owlIndividual,
+                                                   final Set<OWLOntology> activeOntologies,
+                                                   final Comparator<OWLObject> comparator,
+                                                   final ShortFormProvider shortFormProvider) {
 
         CharacteristicsFactory fac = new CharacteristicsFactory();
-
-        ShortFormProvider shortFormProvider = kit.getShortFormProvider();
 
         List<Characteristic> characteristics = fac.getAnnotationCharacteristics(owlIndividual, activeOntologies, comparator, shortFormProvider);
 

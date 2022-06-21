@@ -39,49 +39,6 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
         return String.valueOf(ontology.getOntologyID().hashCode());
     }
 
-    /**
-     * @return the ID of the active ontology
-     */
-    @Override public String load(URI uri, boolean clear, OWLHTMLKit kit) throws OntServerException {
-
-        Map<URI, Throwable> fail = new HashMap<>();
-
-        if (clear) {
-            kit.clearOntologies();
-        }
-
-        try {
-            if (uri.isAbsolute()) {
-                OWLOntology ont = kit.loadOntology(uri);
-                return String.valueOf(ont.hashCode());
-            }
-            else {
-                throw new IllegalArgumentException("Ontology URIs must be absolute: " + uri);
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            fail.put(uri, e);
-        }
-        catch (OutOfMemoryError e) {
-            fail.put(uri, e);
-            // clear all ontologies as we are in an unpredictable state
-            kit.clearOntologies();
-            throw new OntServerException("Out of memory trying to load ontologies");
-        }
-
-        for (URI f : fail.keySet()) {
-            String message;
-            if (fail.get(f) instanceof UnparsableOntologyException) {
-                message = "Maybe it is not an ontology/linked data file.";
-            } else {
-                message = fail.get(f).getMessage();
-            }
-            logger.warn(message);
-        }
-        return String.valueOf(kit.getActiveOntology().hashCode());
-    }
-
     @Override public OWLOntology getActiveOntology(final OWLHTMLKit kit) {
         return kit.getActiveOntology();
     }
@@ -120,11 +77,4 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
         return metrics;
     }
 
-    @Override
-    public void setActiveOntology(OWLOntology ontology, OWLHTMLKit kit) throws OntServerException {
-        OWLOntology activeOntology = kit.getActiveOntology();
-        if (!ontology.equals(activeOntology)) {
-            kit.setActiveOntology(ontology);
-        }
-    }
 }
