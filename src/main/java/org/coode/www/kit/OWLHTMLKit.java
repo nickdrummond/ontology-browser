@@ -57,4 +57,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
     void refresh() throws OWLOntologyCreationException;
 
     void clearOntologies();
+
+    void setLabelParams(URI labelURI, String labelLang);
 }

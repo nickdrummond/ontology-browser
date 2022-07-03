@@ -521,13 +521,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             writeLiteralContents(node.getLiteral());
             write("\"");
             write("</span>");
-            if (node.isRDFPlainLiteral()){
-                if (node.hasLang()){
-                    final String lang = node.getLang();
-                    write(" <span style='color: black;'>@" + lang + "</span>");
-                }
+            if (node.hasLang()){
+                final String lang = node.getLang();
+                write(" <span style='color: black;'>@" + lang + "</span>");
             }
-            else{
+            else {
                 write("(");
                 dt.accept(this);
                 write(")");

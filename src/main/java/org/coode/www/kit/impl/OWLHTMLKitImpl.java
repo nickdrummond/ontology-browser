@@ -10,15 +10,16 @@ import org.coode.owl.mngr.impl.*;
 import org.coode.owl.mngr.impl.OWLObjectComparator;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.FixedSimpleShortFormProvider;
+import org.coode.www.renderer.LabelShortFormProvider;
 import org.coode.www.renderer.OntologyShortFormProvider;
 import org.coode.www.renderer.QuotingBiDirectionalShortFormProvider;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
@@ -28,9 +29,6 @@ import java.util.Optional;
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private static final Logger logger = LoggerFactory.getLogger(OWLHTMLKitImpl.class);
-
-    // TODO move to config
-    private static final String RENDERER_LABEL = "label";
 
     private final OWLOntologyManager mngr;
 
@@ -57,6 +55,10 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     private OWLOntology rootOntology;
 
     protected URLScheme urlScheme;
+
+    private URI labelURI;
+
+    private String labelLang;
 
     public OWLHTMLKitImpl(OWLOntologyManager mngr, URI root) throws OWLOntologyCreationException {
 
@@ -141,6 +143,12 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         for (OWLOntology ont : mngr.getOntologies()){
             mngr.removeOntology(ont);
         }
+    }
+
+    @Override
+    public void setLabelParams(URI labelURI, String labelLang) {
+        this.labelURI = labelURI;
+        this.labelLang = labelLang;
     }
 
     private void loadedOntology(OWLOntology ont) {
@@ -247,7 +255,12 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public ShortFormProvider getShortFormProvider() {
         if (shortFormProvider == null){
-            shortFormProvider = new FixedSimpleShortFormProvider();
+            OWLDataFactory df = mngr.getOWLDataFactory();
+            OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(IRI.create(labelURI));
+            shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
+                    labelLang,
+                    getActiveOntologies(),
+                    new FixedSimpleShortFormProvider());
         }
         return shortFormProvider;
     }
@@ -262,15 +275,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public OWLOntology getRootOntology() {
         return rootOntology;
-    }
-
-    private Optional<IRI> getImportIRIForOntology(OWLOntology root) {
-        if (root.isAnonymous()){
-            // TODO need a workaround as this will not work
-            // see OWL API bug - https://sourceforge.net/tracker/?func=detail&aid=3110834&group_id=90989&atid=595534
-            return Optional.ofNullable(mngr.getOntologyDocumentIRI(root));
-        }
-        return root.getOntologyID().getDefaultDocumentIRI();
     }
 
     private CachingBidirectionalShortFormProvider getNameCache(){
