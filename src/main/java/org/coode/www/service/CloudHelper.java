@@ -3,8 +3,10 @@ package org.coode.www.service;
 import org.coode.www.cloud.CloudModel;
 import org.semanticweb.owlapi.model.OWLEntity;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CloudHelper<O extends OWLEntity> {
 
@@ -14,7 +16,7 @@ public class CloudHelper<O extends OWLEntity> {
     private int threshold = 0;
     private int zoom = 0;
     private boolean normalise = false;
-    private boolean inverted = false;
+    private boolean inverted = true;
 
     private CloudModel<O> model;
 
@@ -42,6 +44,8 @@ public class CloudHelper<O extends OWLEntity> {
         return model.getEntities(threshold);
     }
 
+    public List<O> getOrderedEntities() { return getEntities().stream().sorted(model.getComparator()).collect(Collectors.toList()); }
+
     public String getColor(O entity) {
         int value = model.getValue(entity);
         int score;
@@ -56,7 +60,7 @@ public class CloudHelper<O extends OWLEntity> {
         if (!inverted) {
             score = 255 - score;
         }
-        Color color = new Color(score, score, score);
+        Color color = new Color(score, score, 0);
         String rgb = Integer.toHexString(color.getRGB());
         return "#" + rgb.substring(2, rgb.length());
     }

@@ -270,6 +270,13 @@ td.key{
 
 .cloud{
     text-align: center;
+    margin: auto;
+    width: 90%;
+    background-color: black;
+}
+
+.cloud span.entity {
+    margin: 5pt;
 }
 
 /* Let the cloud spans determine the color */

@@ -17,7 +17,7 @@
         <h2 th:text="${title}">Title</h2>
 
         <div th:fragment="cloud" class="cloud">
-            <span th:each="entity : ${helper.getEntities()}"
+            <span class="entity" th:each="entity : ${helper.getOrderedEntities()}"
                th:utext="${mos.render(entity)}"
                th:styleappend="'font-size:' + ${helper.getFontSize(entity)} + 'pt; color:' + ${helper.getColor(entity)}">Entity</span>
         </div>
