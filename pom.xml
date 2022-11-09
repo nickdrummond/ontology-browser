@@ -259,7 +259,6 @@
               <path>/</path>
               <enableNaming>false</enableNaming>
               <finalName>standalone.jar</finalName>
-              <charset>utf-8</charset>
             </configuration>
           </execution>
         </executions>
