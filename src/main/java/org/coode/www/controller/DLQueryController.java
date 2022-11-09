@@ -29,6 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import uk.co.nickdrummond.parsejs.ParseException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -71,31 +72,8 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = false) final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(required = false, defaultValue = "instances") final QueryType query,
-            final Model model) throws OntServerException, ParseException {
-
-        OWLOntology reasoningOnt = getReasoningActiveOnt();
-
-        OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
-
-        preload(expression, query);
-
-        if (minus != null && !minus.isEmpty()) {
-            preload(minus, query);
-        }
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
-
-        model.addAttribute("reasonerName", r.getReasonerName());
-        model.addAttribute("reasoningOntology", reasoningOnt);
-        model.addAttribute("mos", owlRenderer);
-        model.addAttribute("ontologies", kit.getOntologies());
-        model.addAttribute("expression", expression);
-        model.addAttribute("minus", minus);
-        model.addAttribute("order", order);
-        model.addAttribute("query", query);
-        model.addAttribute("queries", QueryType.values());
-
-        return "dlquery";
+            final HttpServletRequest request) throws OntServerException, ParseException {
+        return redirect(request);
     }
 
     synchronized private void preload(@NonNull final String expression,
@@ -147,50 +125,8 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = false) final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(required = true) final QueryType query,
-            final Model model) throws OntServerException, QueryTimeoutException, ParserException {
-
-        try {
-
-            if (minus != null && !minus.isEmpty()) {
-                preload(minus, query);
-            }
-
-            preload(expression, query);
-
-            Comparator<OWLObject> c = kit.getComparator();
-
-            if (order != null && !order.isEmpty()) {
-                OWLOntology reasoningOnt = getReasoningActiveOnt();
-                OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
-                OWLDataProperty orderProperty = kit.getOWLEntityChecker().getOWLDataProperty(order);
-                if (orderProperty != null) {
-                    System.out.println("Sorting by: " + orderProperty);
-                    c = new PropertyComparator(orderProperty, c, r);
-                }
-            }
-
-            Set<OWLEntity> results = cache.get(expression + query.name()).get(10, TimeUnit.SECONDS);
-
-            if (minus != null && !minus.isEmpty()) {
-                Set<OWLEntity> minusResults = cache.get(minus + query.name()).get(10, TimeUnit.SECONDS);
-                // Wish there was a neater immutable version of this
-                Set<OWLEntity> resultsCopy = new HashSet<>(results);
-                resultsCopy.removeAll(minusResults);
-                results = resultsCopy;
-            }
-            Characteristic resultsCharacteristic = buildCharacteristic(query.name(), results, c);
-
-            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
-
-            model.addAttribute("results", resultsCharacteristic);
-            model.addAttribute("mos", owlRenderer);
-
-            return "base :: results";
-        } catch (ExecutionException e) {
-            throw new OntServerException(e);
-        } catch (InterruptedException | TimeoutException e) {
-            throw new QueryTimeoutException();
-        }
+            final HttpServletRequest request) throws OntServerException, QueryTimeoutException, ParserException {
+        return redirect(request);
     }
 
     private Characteristic buildCharacteristic(String name, Set<OWLEntity> results, Comparator<OWLObject> comp) {
@@ -203,35 +139,21 @@ public class DLQueryController extends ApplicationController {
 
     @RequestMapping(value = "/ac", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String autocompleteOWLClassExpression(
-            @RequestParam(required = true) String expression) throws OntServerException {
-
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-        OWLEntityFinder finder = kit.getFinder();
-        ShortFormProvider sfp = kit.getShortFormProvider();
-
-        return service.autocomplete(expression, df, checker, finder, sfp).toString();
+            @RequestParam(required = true) String expression,
+            final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     // TODO return the actual ParseResult or an XML rendering of the parse exception
     @RequestMapping(value = "/parse", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String parseOWLClassExpression(
-            @RequestParam(required = true) String expression) throws OntServerException {
-
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-
-        try {
-            return service.parse(expression, df, checker).toString();
-        } catch (ParseException e) {
-            return e.toString();
-        }
+            @RequestParam(required = true) String expression,
+            final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     @RequestMapping("/refresh")
-    public String refresh() {
-        cache.clear();
-        reasonerFactoryService.clear();
-        return "redirect:.";
+    public String refresh(final HttpServletRequest request) {
+        return redirect(request);
     }
 }

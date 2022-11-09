@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Writer;
 import java.util.Comparator;
@@ -39,59 +40,20 @@ public class OWLOntologiesController extends ApplicationController {
     private OntologyIRIShortFormProvider sfp;
 
     @RequestMapping(method=RequestMethod.GET)
-    public String getOntologies() throws OntServerException {
-
-        OWLOntology rootOntology = kit.getRootOntology();
-
-        String id = service.getIdFor(rootOntology);
-
-        return "redirect:/ontologies/" + id;
+    public String getOntologies(final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET)
     public String getOntology(@PathVariable final String ontId,
-                              final Model model) throws OntServerException, NotFoundException {
-        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
-
-        Comparator<Tree<OWLOntology>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), comparator);
-
-        Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(owlOntology);
-
-        String title = sfp.getShortForm(owlOntology) + " (Ontology)";
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlOntology));
-
-        final IRI iri = owlOntology.getOntologyID().getOntologyIRI().orElse(IRI.create("Anonymous"));
-
-        model.addAttribute("title", title);
-        model.addAttribute("type", "Ontologies");
-        model.addAttribute("iri", iri);
-        model.addAttribute("hierarchy", ontologyTree);
-        model.addAttribute("characteristics", service.getCharacteristics(owlOntology, kit));
-        model.addAttribute("metrics", service.getMetrics(owlOntology));
-        model.addAttribute("showImportMetrics", !owlOntology.getImports().isEmpty());
-        model.addAttribute("mos", owlRenderer);
-
-        return "owlentity";
+                              final HttpServletRequest request) throws OntServerException, NotFoundException {
+        return redirect(request);
     }
 
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET, produces="application/rdf+xml")
-    public void exportOntology(@PathVariable final String ontId,
-                               final HttpServletResponse response,
-                               final Writer writer) throws OntServerException, NotFoundException {
+    public String exportOntology(@PathVariable final String ontId,
+                                 final HttpServletRequest request) throws OntServerException, NotFoundException {
 
-        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
-
-        try {
-            OWLDocumentFormat format = new RDFXMLDocumentFormat();
-            WriterOutputStream out = new WriterOutputStream(writer);
-            response.addHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
-            kit.getOWLOntologyManager().saveOntology(owlOntology, format, out);
-        }
-        catch (OWLOntologyStorageException e) {
-            throw new RuntimeException(e);
-        }
+        return redirect(request);
     }
 }

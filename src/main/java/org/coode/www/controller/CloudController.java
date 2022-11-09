@@ -10,6 +10,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.http.HttpRequest;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -40,11 +43,8 @@ public class CloudController extends ApplicationController {
                                   @RequestParam Optional<Integer> zoom,
                                   @RequestParam Optional<Integer> threshold,
                                   @RequestParam(defaultValue="false") boolean normalise,
-                                  final Model model) throws OntServerException {
-
-        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit.getOntologies());
-
-        return cloud(kit, model, "Classes Usage Cloud", cloudModel, zoom, threshold, normalise);
+                                  final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     @RequestMapping(value = "/individuals")
@@ -52,11 +52,8 @@ public class CloudController extends ApplicationController {
                                       @RequestParam Optional<Integer> zoom,
                                       @RequestParam Optional<Integer> threshold,
                                       @RequestParam(defaultValue="false") boolean normalise,
-                                      final Model model) throws OntServerException {
-
-        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOntologies());
-
-        return cloud(kit, model, "Individuals Usage Cloud", cloudModel, zoom, threshold, normalise);
+                                      final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     @RequestMapping(value = "/objectproperties")
@@ -64,11 +61,8 @@ public class CloudController extends ApplicationController {
                                            @RequestParam Optional<Integer> zoom,
                                            @RequestParam Optional<Integer> threshold,
                                            @RequestParam(defaultValue="false") boolean normalise,
-                                           final Model model) throws OntServerException {
-
-        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit.getOntologies());
-
-        return cloud(kit, model, "Object Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+                                           final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     @RequestMapping(value = "/dataproperties")
@@ -76,11 +70,8 @@ public class CloudController extends ApplicationController {
                                          @RequestParam Optional<Integer> zoom,
                                          @RequestParam Optional<Integer> threshold,
                                          @RequestParam(defaultValue="false") boolean normalise,
-                                         final Model model) throws OntServerException {
-
-        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit.getOntologies());
-
-        return cloud(kit, model, "Data Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+                                         final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     @RequestMapping(value = "/annotationproperties")
@@ -88,11 +79,8 @@ public class CloudController extends ApplicationController {
                                                @RequestParam Optional<Integer> zoom,
                                                @RequestParam Optional<Integer> threshold,
                                                @RequestParam(defaultValue="false") boolean normalise,
-                                               final Model model) throws OntServerException {
-
-        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit.getOntologies());
-
-        return cloud(kit, model, "Annotation Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+                                               final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     @RequestMapping(value = "/datatypes")
@@ -100,11 +88,8 @@ public class CloudController extends ApplicationController {
                                     @RequestParam Optional<Integer> zoom,
                                     @RequestParam Optional<Integer> threshold,
                                     @RequestParam(defaultValue="false") boolean normalise,
-                                    final Model model) throws OntServerException {
-
-        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit.getOntologies());
-
-        return cloud(kit, model, "Datatypes Usage Cloud", cloudModel, zoom, threshold, normalise);
+                                    final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
     public <T extends OWLEntity>String cloud(final OWLHTMLKit kit,

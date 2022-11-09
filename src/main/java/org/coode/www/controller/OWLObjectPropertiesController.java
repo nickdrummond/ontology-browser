@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 
 @Controller
@@ -31,66 +32,20 @@ public class OWLObjectPropertiesController extends ApplicationController {
     private ReasonerFactoryService reasonerFactoryService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLObjectProperties() throws OntServerException {
-
-        final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-
-        OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
-
-        String id = service.getIdFor(owlTopObjectProperty);
-
-        return "redirect:/objectproperties/" + id;
+    public String getOWLObjectProperties(final HttpServletRequest request) throws OntServerException {
+        return redirect(request);
     }
 
 
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLObjectProperty(@PathVariable final String propertyId,
-                                       final Model model) throws OntServerException, NotFoundException {
-
-        OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);
-
-        Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
-
-        OWLObjectPropertyHierarchyService hierarchyService =
-                new OWLObjectPropertyHierarchyService(r, comparator);
-
-        Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getPrunedTree(property);
-
-        String entityName = kit.getShortFormProvider().getShortForm(property);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(property));
-
-        model.addAttribute("title", entityName + " (Object Property)");
-        model.addAttribute("type", "Object Properties");
-        model.addAttribute("iri", property.getIRI());
-        model.addAttribute("hierarchy", prunedTree);
-        model.addAttribute("characteristics", service.getCharacteristics(property, kit));
-        model.addAttribute("mos", owlRenderer);
-
-        return "owlentity";
+                                       final HttpServletRequest request) throws OntServerException, NotFoundException {
+        return redirect(request);
     }
 
     @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String propertyId,
-                              final Model model) throws OntServerException, NotFoundException {
-
-        OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);
-
-        Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
-
-        OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(r, comparator);
-
-        Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getChildren(property);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
-
-        model.addAttribute("t", prunedTree);
-        model.addAttribute("mos", owlRenderer);
-
-        return "base :: tree";
+                              final HttpServletRequest request) throws OntServerException, NotFoundException {
+        return redirect(request);
     }
 }

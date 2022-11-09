@@ -45,13 +45,8 @@ public class OWLIndividualsController extends ApplicationController {
     private ReasonerFactoryService reasonerFactoryService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLIndividuals() throws OntServerException, NotFoundException {
-
-        OWLNamedIndividual firstIndividual = service.getFirstIndividual(kit);
-
-        String id = service.getIdFor(firstIndividual);
-
-        return "redirect:/individuals/" + id;
+    public String getOWLIndividuals(final HttpServletRequest request) throws OntServerException, NotFoundException {
+        return redirect(request);
     }
 
 
@@ -60,54 +55,6 @@ public class OWLIndividualsController extends ApplicationController {
                                    @RequestParam(required=false) final String ontId,
                                    final HttpServletRequest request,
                                    final Model model) throws OntServerException, NotFoundException {
-
-        OWLOntology activeOntology = kit.getActiveOntology();
-
-        if (ontId != null) {
-            activeOntology = ontService.getOntologyFor(ontId, kit);
-        }
-
-        Set<OWLOntology> ontologies = activeOntology.getImportsClosure();
-
-        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ontologies);
-
-        Comparator<Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(activeOntology);
-
-        OWLIndividualsByTypeHierarchyService hierarchyService = new OWLIndividualsByTypeHierarchyService(r, comparator);
-
-        Tree<OWLEntity> prunedTree = hierarchyService.getPrunedTree(owlIndividual);
-
-        ShortFormProvider sfp = kit.getShortFormProvider();
-
-        String entityName = sfp.getShortForm(owlIndividual);
-
-        OWLHTMLRenderer owlRenderer = new MediaRenderer(kit, Optional.of(owlIndividual));
-
-        Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ontologies);
-        if (maybeLoc.isPresent()) {
-            GeoService.Loc loc = maybeLoc.get();
-            model.addAttribute("geo", loc);
-        }
-
-        if (mediaService.isImageURL(owlIndividual.getIRI())) {
-            model.addAttribute("image", owlIndividual.getIRI().toString());
-        }
-
-        if (mediaService.isSoundURL(owlIndividual.getIRI())) {
-            model.addAttribute("sound", owlIndividual.getIRI().toString());
-        }
-
-        List<Characteristic> characteristics = service.getCharacteristics(owlIndividual, ontologies, kit.getComparator(), sfp);
-
-        model.addAttribute("title", entityName + " (Individual)");
-        model.addAttribute("type", "Individuals");
-        model.addAttribute("iri", owlIndividual.getIRI());
-        model.addAttribute("hierarchy", prunedTree);
-        model.addAttribute("characteristics", characteristics);
-        model.addAttribute("mos", owlRenderer);
-
-        return "owlentity";
+        return redirect(request);
     }
 }

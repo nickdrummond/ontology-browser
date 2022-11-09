@@ -28,35 +28,12 @@ public class RootController extends ApplicationController {
     public String index(final Model model,
                         @RequestParam(required=false) final String redirect,
                         final HttpServletRequest request) throws OntServerException {
-
-        if (redirect != null) {
-            return "redirect:" + redirect;
-        }
-        else {
-            IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOntologies());
-
-            CloudHelper<OWLNamedIndividual> helper = new CloudHelper<>(cloudModel);
-            helper.setThreshold(14);
-            helper.setZoom(4);
-            helper.setNormalise(true);
-
-            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
-
-            Set<OWLOntology> ontologies = kit.getOntologies();
-
-            model.addAttribute("activeOntology", kit.getActiveOntology());
-            model.addAttribute("ontologies", ontologies);
-            model.addAttribute("cloud", cloudModel);
-            model.addAttribute("helper", helper);
-            model.addAttribute("mos", owlRenderer);
-
-            return "index";
-        }
+        return redirect(request);
     }
 
     @RequestMapping("/refresh")
-    public String refresh(final HttpSession session) throws OWLOntologyCreationException {
-        kit.refresh();
-        return "redirect:/";
+    public String refresh(final HttpSession session,
+                          final HttpServletRequest request) throws OWLOntologyCreationException {
+        return redirect(request);
     }
 }
