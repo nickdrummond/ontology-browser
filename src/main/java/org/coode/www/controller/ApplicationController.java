@@ -38,7 +38,7 @@ abstract public class ApplicationController {
         sb.append(redirectRoot);
         sb.append(request.getRequestURI());
         String qs = request.getQueryString();
-        if (!qs.isEmpty()) {
+        if (qs != null && !qs.isEmpty()) {
             sb.append("?");
             sb.append(qs);
         }
