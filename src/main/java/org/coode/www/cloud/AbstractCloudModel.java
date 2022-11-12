@@ -9,7 +9,7 @@ import java.util.Set;
 
 public abstract class AbstractCloudModel<O> implements CloudModel<O> {
 
-    private Map<O, Integer> entityValueMap = new HashMap<O, Integer>();
+    private final Map<O, Integer> entityValueMap = new HashMap();
 
     private int min;
     private int max;

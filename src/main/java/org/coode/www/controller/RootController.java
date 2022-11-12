@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,10 @@ import java.util.Set;
 
 @Controller
 public class RootController extends ApplicationController {
+
+    // required for refresh as the query controller has access to the reasoner(s) and results cache!
+    @Autowired
+    private DLQueryController queryController;
 
     // Entry point
     @RequestMapping("/")
@@ -57,6 +62,7 @@ public class RootController extends ApplicationController {
     @RequestMapping("/refresh")
     public String refresh(final HttpSession session) throws OWLOntologyCreationException {
         kit.refresh();
+        queryController.refresh();
         return "redirect:/";
     }
 }

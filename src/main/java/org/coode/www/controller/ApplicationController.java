@@ -2,8 +2,6 @@ package org.coode.www.controller;
 
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ApplicationInfo;
-import org.coode.www.service.OptionsService;
-import org.coode.www.service.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -18,7 +18,7 @@ public class CloudHelper<O extends OWLEntity> {
     private boolean normalise = false;
     private boolean inverted = true;
 
-    private CloudModel<O> model;
+    private final CloudModel<O> model;
 
     public CloudHelper(CloudModel<O> cloudModel) {
         this.model = cloudModel;
