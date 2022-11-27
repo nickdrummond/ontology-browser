@@ -1,34 +1,38 @@
 # Ontology Browser
 
-A "fork" of the ontology browser from the [CO-ODE project](https://code.google.com/p/ontology-browser/) now hosted at https://github.com/co-ode-owl-plugins/ontology-browser.
+The browser loads a single ontology (and its imports) on startup and 
+renders it for easy navigation.
 
-This branch has mongo disabled
+![Image of Ontology browser](docs/classes.png)
 
-![Image of Ontology browser](docs/aardvark.png)
+## Features
+* Navigation of all entities (classes, properties, individuals and datatypes)
+* Hierarchies
+* Entity usage
+* Manchester OWL Syntax rendering
+* Ontology metrics
+* Searching
+* DL Query (with set subtraction)
 
-## Aims
-* Make it easily buildable - maven
-* Make it easily runnable - jetty (local) heroku (remote)
-* Have it running again for demo purposes
-* Make it more scalable - sort out stupid config problems
-* Extract all rendering into views - jsp? or maybe just go full blown Spring MVC
-* Tests!!
+## Run
 
-## Run locally
+Set the root ontology location and reasoner root ontology IRI environment variables:
 
-Ontology Browser uses MongoDB to store permalink information.
-MongoDB should be running on localhost on the default port before starting.
+    ONTOLOGY_ROOT_LOCATION=<your ontology URL>
+    REASONING_ROOT_IRI=<IRI of the ontology to be reasoned with>
 
-Using maven to build.
-Some dependencies are local (in /repo) as they do not exist on any mvn repo.
+Using maven to build:
 
 `mvn clean package cargo:run`
 
-## Deployment to Heroku
+## Notes
 
-Set the root ontology location and reasoner root ontology IRI:
+This is a "fork" of the ontology browser from the [CO-ODE project](https://code.google.com/p/ontology-browser/) now hosted at https://github.com/co-ode-owl-plugins/ontology-browser.
 
-    heroku config:set ONTOLOGY_ROOT_LOCATION=<your ontology URL>
-    heroku config:set REASONING_ROOT_IRI=<IRI of the ontology to be reasoned with>
+Unlike v1, there is no storing of sessions/multi config.
 
-https://devcenter.heroku.com/articles/config-vars#using-the-heroku-cli
+## Implementation
+
+This is implemented using Java 11, Spring MVC, [OWLAPI](https://github.com/owlcs/owlapi), Thymeleaf.
+
+Some dependencies are local (in /repo) as they do not exist on any mvn repo.
