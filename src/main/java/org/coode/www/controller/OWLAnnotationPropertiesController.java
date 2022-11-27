@@ -1,6 +1,6 @@
 package org.coode.www.controller;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -17,20 +17,23 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value="/annotationproperties")
-@SessionAttributes("kit")
 public class OWLAnnotationPropertiesController extends ApplicationController {
 
     @Autowired
     private OWLAnnotationPropertiesService service;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLAnnotationProperties(@ModelAttribute("kit") final OWLHTMLKit kit)
+    public String getOWLAnnotationProperties()
             throws OntServerException, NotFoundException {
 
         OWLOntology activeOntology = kit.getActiveOntology();
 
         List<OWLAnnotationProperty> annotationProperties
                 = service.getAnnotationProperties(activeOntology, kit.getComparator());
+
+        if (annotationProperties.isEmpty()) {
+            throw new NotFoundException("Annotation properties", "");
+        }
 
         OWLAnnotationProperty firstAnnotationProperty = annotationProperties.get(0);
 
@@ -42,7 +45,6 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLAnnotationProperty(@PathVariable final String propertyId,
-                                           @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLAnnotationProperty owlAnnotationProperty = service.getOWLAnnotationPropertyFor(propertyId, kit);

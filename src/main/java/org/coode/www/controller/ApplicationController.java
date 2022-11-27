@@ -1,8 +1,7 @@
 package org.coode.www.controller;
 
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ApplicationInfo;
-import org.coode.www.service.OptionsService;
-import org.coode.www.service.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +15,13 @@ abstract public class ApplicationController {
     protected ApplicationInfo applicationInfo;
 
     @Autowired
-    protected SessionManager sessionManager;
-
-    @Autowired
-    protected OptionsService optionsService;
+    protected OWLHTMLKit kit;
 
     @ModelAttribute("applicationInfo")
     public ApplicationInfo getApplicationInfo() {
         return applicationInfo;
     }
+
+    @ModelAttribute("kit")
+    public OWLHTMLKit getKit() { return kit; }
 }

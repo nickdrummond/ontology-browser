@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
@@ -45,7 +46,7 @@ public class OWLHTMLVisitorTest {
             mock(URLScheme.class),
             Collections.emptySet(),
             mock(OWLOntology.class),
-            com.google.common.base.Optional.absent());
+            Optional.empty());
 
     @Test
     public void test() {

@@ -2,52 +2,65 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace='base :: header (title=${"DL Query"})'></head>
+<head th:replace='base :: header (title=${"DL query: " + expression})'></head>
 
-<body>
+<body class="wrapper">
+
+<div th:replace='base :: title'></div>
 
 <div th:replace='base :: menu'></div>
 
 <div id="main">
 
-    <div th:replace='base :: title'></div>
+    <div id="queryPane" class='codebox'>
 
-    <div id="content">
+        <form class='autocomplete' method='get' id='dlQueryForm' action=''>
+            <div class="dlQueryWrapper">
+                <textarea name='expression' placeholder="Query - eg participant value R2-D2" class='dlQuery' id='dlQuery' th:text='${expression}'>Pizza</textarea>
+                <textarea name='minus' placeholder="Subtract from above - eg participant value C-3PO" class='dlQuery' id='dlQuery2' th:text='${minus}'>hasTopping some CheeseTopping</textarea>
+            </div>
+            <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
+            <input name='order' id='order' type='hidden' th:value='${order}' />
 
-        <h2>DL Query</h2>
-        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-           href='./' class='permalink'>permalink</a>
+            <div id="dlQueryOptions">
+                <ul id="queries">
+                    <li th:each="q : ${queries}">
+                        <input type='radio' name='query'
+                               th.id='${"q-" + q}'
+                               th:value='${q}'
+                               th:checked="${q == query}"/>
+                        <label th:for='${"q-" + q}'
+                               th:text='${q}'></label>
+                    </li>
+                </ul>
+                <input id="dlQuerySubmit" type='submit' value='query' />
+            </div>
+        </form>
 
-        <div class='codebox'>
-
-            <p>Reasoner: <a href="../options/" th:href='@{/options/}'>JFact</a></p>
-
-            <form class='autocomplete' method='get' id='dlQueryForm' action=''>
-                <textarea name='expression' id='dlQuery' th:text='${expression}'>hasTopping some PizzaTopping</textarea>
-                <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
-                <input type='submit' value='query' />
-            </form>
-
-            <script type="text/javascript">
+        <script type="text/javascript">
             var options = {
               parser : baseUrl + 'dlquery/parse',
               autocomplete: baseUrl + 'dlquery/ac'
             };
             new ExpressionEditor("dlQuery", options);
+            new ExpressionEditor("dlQuery2", options);
         </script>
-
-        </div>
-
-
-        <div id='resultsForm'>
-            <!-- results will go here -->
-        </div>
 
     </div>
 
-    <div th:replace='base :: footer'></div>
+    <div id="content">
 
+        <h2 th:utext='${"Querying: " + mos.render(reasoningOntology) + " using " + reasonerName}'>Reasoning ontology and reasoner</h2>
+
+        <div id='resultsForm'>
+            <!-- results will go here -->
+            <p>Provide a class description in Manchester OWL Syntax on the left.</p>
+            <p>Autocomplete with <em>Ctrl-Space</em></p>
+        </div>
+    </div>
 </div>
+
+<div th:replace='base :: footer'></div>
 
 </body>
 </html>

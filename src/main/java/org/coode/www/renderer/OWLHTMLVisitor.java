@@ -1,7 +1,6 @@
 package org.coode.www.renderer;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -15,11 +14,9 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,8 +82,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     ////////// Ontology
 
     public void visit(@Nonnull OWLOntology ontology) {
-        final URL urlForOntology = urlScheme.getURLForOWLObject(ontology);
-        String link = urlForOntology.toString();
+        String link = urlScheme.getURLForOWLObject(ontology);
         String cssClass = CSS_ONTOLOGY_URI;
         if (activeOntology != null && ontology.equals(activeOntology)){
             cssClass = CSS_ACTIVE_ONTOLOGY_URI;
@@ -119,13 +115,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private String getOntologyIdString(final OWLOntology ont){
-        return ont.getOntologyID().getDefaultDocumentIRI().transform(new Function<IRI, String>(){
-            @Nullable
-            @Override
-            public String apply(IRI iri) {
-                return iri.toString();
-            }
-        }).or(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
+        return ont.getOntologyID().getDefaultDocumentIRI().map(IRI::toString)
+                .orElse(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
     }
 
     ////////// Entities
@@ -530,13 +521,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             writeLiteralContents(node.getLiteral());
             write("\"");
             write("</span>");
-            if (node.isRDFPlainLiteral()){
-                if (node.hasLang()){
-                    final String lang = node.getLang();
-                    write(" <span style='color: black;'>@" + lang + "</span>");
-                }
+            if (node.hasLang()){
+                final String lang = node.getLang();
+                write(" <span style='color: black;'>@" + lang + "</span>");
             }
-            else{
+            else {
                 write("(");
                 dt.accept(this);
                 write(")");
@@ -691,10 +680,6 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         writeAnnotations(axiom);
     }
 
-    private String getName(OWLEntity entity){
-        return sfProvider.getShortForm(entity).replaceAll(" ", "&nbsp;");
-    }
-
     // just make sure a named class is first if there is one
     private List<OWLClassExpression> orderOps(Set<OWLClassExpression> ops) {
         List<OWLClassExpression> orderedOps = new ArrayList<OWLClassExpression>(ops);
@@ -711,9 +696,19 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         return orderedOps;
     }
 
+    // Make names line breakable on underscore
+    private String renderBreakableName(OWLEntity entity){
+        return sfProvider.getShortForm(entity).replaceAll("_(?=[^_])", "_<wbr>");
+    }
+
+    // Make string line breakable on /
+    private String makeBreakable(String s) {
+        return s.replaceAll("/(?=[^/])", "/<wbr>").replace("#", "#<wbr>");
+    }
+
     private void writeIRIWithBoldFragment(IRI iri, String shortForm) {
         // Encourage wrapping on / instead of other characters
-        final String fullURI = iri.toString().replaceAll("/(?=[^/])", "/<wbr>");
+        final String fullURI = makeBreakable(iri.toString());
 
         int index = -1;
         if (shortForm != null) {
@@ -774,39 +769,39 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private void writeOWLEntity(OWLEntity entity, String cssClass) {
         final URI uri = entity.getIRI().toURI();
 
-        String name = getName(entity);
+        String renderedName = renderBreakableName(entity);
 
         Set<String> cssClasses = new HashSet<>();
         cssClasses.add(cssClass);
 
         if (!activeObject.isPresent()){
             // TODO reverse lookup URL
-            final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
+            final String urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);
-            write(" title=\"" + uri + "\">" + name + "</a>");
+            write(" title=\"" + uri + "\">" + renderedName + "</a>");
         }
         else{
             if (activeObject.get().equals(entity)){
                 cssClasses.add(CSS_ACTIVE_ENTITY);
                 write("<span");
                 writeCSSClasses(cssClasses);
-                write(">" + name + "</span>");
+                write(">" + renderedName + "</span>");
             }
             else{
-                final URL urlForTarget = urlScheme.getURLForOWLObject(entity);
+                final String urlForTarget = urlScheme.getURLForOWLObject(entity);
                 write("<a href=\"" + urlForTarget + "\"");
 
                 writeCSSClasses(cssClasses);
                 write(" title=\"" + uri + "\">");
-                write(name);
+                write(renderedName);
                 write("</a>");
             }
         }
     }
 
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {
-        final Collection<OWLClassExpression> types = EntitySearcher.getTypes(individual, ontologies);
+        final Collection<OWLClassExpression> types = EntitySearcher.getTypes(individual, ontologies.stream()).collect(Collectors.toList());
         if (!types.isEmpty()){
             writeOpList(types, ", ", false);
         }
@@ -814,7 +809,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         Set<OWLAnnotation> annotations = new HashSet<OWLAnnotation>();
 
         for (OWLOntology o : ontologies) {
-            annotations.addAll(EntitySearcher.getAnnotations(individual, o));
+            annotations.addAll(EntitySearcher.getAnnotations(individual, o).collect(Collectors.toList()));
         }
         if (!annotations.isEmpty()){
             write("<ul>");
@@ -827,7 +822,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLDataPropertyExpression, OWLLiteral> dataValues =
-                EntitySearcher.getDataPropertyValues(individual, ontologies);
+                EntitySearcher.getDataPropertyValues(individual, ontologies.stream());
         if (!dataValues.isEmpty()){
             write("<ul>");
             for (OWLDataPropertyExpression p : dataValues.keySet()){
@@ -841,7 +836,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLDataPropertyExpression, OWLLiteral> negDataValues =
-                EntitySearcher.getNegativeDataPropertyValues(individual, ontologies);
+                EntitySearcher.getNegativeDataPropertyValues(individual, ontologies.stream());
         if (!negDataValues.isEmpty()){
             write("<ul>");
 
@@ -856,7 +851,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLObjectPropertyExpression, OWLIndividual> objValues =
-                EntitySearcher.getObjectPropertyValues(individual, ontologies);
+                EntitySearcher.getObjectPropertyValues(individual, ontologies.stream());
         if (!objValues.isEmpty()){
             write("<ul>");
 
@@ -872,7 +867,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLObjectPropertyExpression, OWLIndividual> negbjValues =
-                EntitySearcher.getNegativeObjectPropertyValues(individual, ontologies);
+                EntitySearcher.getNegativeObjectPropertyValues(individual, ontologies.stream());
         if (!negbjValues.isEmpty()){
             write("<ul>");
 
@@ -919,7 +914,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         try {
             URI uri = new URI(literal);
             if (uri.isAbsolute()){
-                write("<a href='" + uri + "' target='ext_ref'>" + uri + "</a>");
+                write("<a href='" + uri + "' target='ext_ref'>" + makeBreakable(uri.toString()) + "</a>");
                 writtenExternalRef = true;
             }
         }
@@ -973,15 +968,28 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     private <O extends OWLObject> void writeKeywordOpList(Iterable<O> args, String keyword, boolean wrap) {
         for (Iterator<O> i = args.iterator(); i.hasNext();) {
-            i.next().accept(this);
+            O o = i.next();
+            if (o.isNamed()
+                    || o instanceof OWLObjectOneOf
+                    || o instanceof OWLObjectComplementOf
+                    || o instanceof OWLDataComplementOf) {
+                o.accept(this);
+            }
+            else {
+                write("(");
+                o.accept(this);
+                write(")");
+            }
             if (i.hasNext()){
-                write(" ");
-                writeKeyword(keyword);
-                write(" ");
                 if (wrap && indent > 0){
                     write("<br>"); // cannot use <br /> in java browser
                     writeIndent();
                 }
+                else {
+                    write(" ");
+                }
+                writeKeyword(keyword);
+                write(" ");
             }
         }
     }

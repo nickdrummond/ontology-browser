@@ -4,7 +4,7 @@
 
 <head th:fragment='header (title)'>
 
-    <title th:text='${applicationInfo.name + " : " + title}'>Application Name : Page Name</title>
+    <title th:text='${"Star Wars Ontology : " + title}'>Application Name : Page Name</title>
 
     <meta charset='UTF-8'/>
     <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
@@ -33,61 +33,31 @@
 <body>
 
 <div id='title' th:fragment='title'>
-    <img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
-    <h1><a th:href='@{/}' th:text='${applicationInfo.name}'>Application Name</a></h1>
+    <h1><img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
+        <a th:href='@{/}' >Star Wars Ontology</a></h1>
     <a style='display: none;' href='#content'>skip to content</a>
+    <div id="entityfinder" th:fragment="entityfinder">
+        <form id='findForm' method='get'>
+            <input id='find' class='autocomplete' type='text' name='input' placeholder='search...'/>
+        </form>
+
+        <script type='text/javascript'>
+                var options = {
+                    script: baseUrl + 'entities/?',
+                    varname: 'name',
+                    cache: false,
+                    callback: function (obj){
+                        window.location = obj.id;
+                    }
+                };
+                var as = new AutoSuggest("find", options);
+        </script>
+    </div>
 </div>
 
 <div id='menu' th:fragment="menu">
 
-    <div id='options'>
-        <a id='signout' th:href='@{/signout}'>
-            <img th:src='@{/static/images/close.png}' width='16' height='16' title='Clear' />
-            Clear
-        </a>
-
-        <a class='optionLink' th:href='@{/options/}' >Options</a>
-
-        <form id='rendererForm'>
-            <input type='checkbox' name='renderLabels' id="renderLabels"
-                   th:checked='${kit.config.renderer == "label"}'/>
-            <label for='renderLabels'>Labels</label>
-        </form>
-    </div> <!-- options -->
-
-    <form id="activeOnt">
-        <select name="id">
-            <option th:each='ontology : ${kit.ontologies}'
-                    th:selected='${ontology eq kit.activeOntology}'
-                    th:text='${{ontology.ontologyID}}'
-                    th:value='${{ontology.ontologyID.hashCode()}}'>An ontology</option>
-        </select>
-    </form>
-
-    <form class='autocomplete' method='get' id='findForm'>
-        <input type='text' name='input' placeholder='Search for an Entity' id='find'/>
-    </form>
-    <script type='text/javascript'>
-        var options = {
-            script: baseUrl + 'entities/?',
-            varname: 'name',
-            cache: false,
-            callback: function (obj){
-                window.location = obj.id;
-            }
-        };
-        var as = new AutoSuggest("find", options);
-    </script>
-
     <div th:replace='base :: tabs'>Tabs</div>
-
-    <div th:replace="base :: list(${type}, ${entities})">
-        A list
-    </div>
-
-    <div th:replace="base :: hierarchy(${type}, ${hierarchy})">
-        A hierarchy
-    </div>
 
 </div> <!-- menu -->
 
@@ -99,20 +69,31 @@
     <li><a th:href='@{/dataproperties/}'>Data&nbsp;Properties</a></li>
     <li><a th:href='@{/annotationproperties/}'>Annotation&nbsp;Properties</a></li>
     <li><a th:href='@{/datatypes/}'>Datatypes</a></li>
+
+    <li>Usage&nbsp;cloud:
+        <a th:href='@{/clouds/classes}'>cl</a>
+        <a th:href='@{/clouds/individuals}'>in</a>
+        <a th:href='@{/clouds/objectproperties}'>op</a>
+        <a th:href='@{/clouds/dataproperties}'>dp</a>
+        <a th:href='@{/clouds/annotationproperties}'>ap</a>
+        <a th:href='@{/clouds/datatypes}'>dt</a>
+    </li>
 </ul> <!-- tabs -->
+
+
 
 <div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
 
 <div class="results" th:fragment="results" th:replace="::characteristic (${results})">
 </div>
 
-<div class="characteristic" th:fragment="characteristic (ch)">
+<div th:class='${"characteristic " + ch.name.replaceAll(" ", "_").toLowerCase()}' th:fragment="characteristic (ch)">
 
-    <h4 th:text='${ch.name + " (" + ch.objects.size() + ")"}'>Some Characteristic (2)</h4>
-
+    <h4 th:text='${ch.name}'>Some Characteristic</h4>
+    <span th:text='${"(" + ch.objects.size() + ")"}'>(2)</span>
     <ul th:remove="all-but-first">
-        <li class="asserted" th:each="object : ${ch.objects}" th:utext="${mos.render(object)}">
-
+        <li class="asserted" th:each="object : ${ch.objects}">
+            <span class="owlobject" th:utext="${mos.render(object.getOWLObject())}">
             <a href="../../classes/1934778517/" class='Class'
                title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
             <span class='keyword'>&equiv;</span>
@@ -123,6 +104,8 @@
             <span class='only'>only</span>
             <a href="../../classes/677040734/" class='Class'
                title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
+            </span>
+            <span class="source-ont" th:utext="${mos.render(object.getOWLOntology())}">pizza.owl</span>
         </li>
         <li class="asserted">
             <span class="keyword">Functional</span>
@@ -137,6 +120,19 @@
             )
         </li>
     </ul>
+</div>
+
+<div id="metrics" th:fragment="metrics (metrics)" th:if="${metrics != null}">
+    <h4>Metrics</h4>
+    <table>
+        <thead><td></td><td></td><td th:if="${showImportMetrics}">with imports</td></thead>
+        <tr th:each="metric : ${metrics}">
+            <td class="metric" th:utext="${metric.getName()}"/>
+            <td class="mvalue" th:utext="${metric.getValue()}"/>
+            <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
+            <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"/>
+        </tr>
+    </table>
 </div>
 
 <div class="googlemaps" th:fragment="map (geo)" th:if="${geo != null}">
@@ -169,16 +165,16 @@
     </ul>
 </li>
 
-<div class="owlselector" th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
+<div id='owlselector' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${type}">
         <li th:replace="base::tree(${hierarchy})">Top Thing</li>
     </ul>
 </div>
 
-<div class="owlselector" th:fragment="list (title, entities)" th:if="${entities != null}">
+<div id='owlselector' th:fragment="list (title, entities)" th:if="${entities != null}">
     <h4 th:text="${title}">Title</h4>
-    <ul>
+    <ul class="minihierarchy" th:classappend="${type}">
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
             a thing
         </li>
@@ -186,8 +182,10 @@
 </div>
 
 <p class='footer' th:fragment='footer'>
-    <a th:href='${applicationInfo.url + "/"}' th:text='${"OWL Browser v" + applicationInfo.version}'>Version info</a>
-    <a th:href='${applicationInfo.url + "/wiki/GettingStarted"}' class='help' target='_blank'>Help</a>
+    <a href="#" id="aurebesh" class="aurebesh">aurebesh</a>
+    <a href="https://nickdrummond.github.io/star-wars-ontology/">Project Convor - building Star Wars in OWL</a>
+    <a href='https://github.com/nickdrummond/ontology-browser/tree/Star_Wars_Ontology_static'>rendered with Ontology Browser</a>
+    <a href="mailto:nickdrummond@yahoo.com">Contact</a>
 </p>
 
 </body>

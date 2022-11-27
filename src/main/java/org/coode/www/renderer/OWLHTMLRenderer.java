@@ -1,7 +1,8 @@
 package org.coode.www.renderer;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.www.kit.OWLHTMLKit;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import java.io.PrintWriter;
@@ -27,5 +28,11 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
         obj.accept(rendererVisitor);
         writer.flush();
         return writer.getBuffer().toString();
+    }
+
+    public String renderFullIRI(IRI iri) {
+        return iri.getIRIString()
+                .replaceAll("/(?=[^/])", "/<wbr>")
+                .replace("#", "#<wbr>");
     }
 }

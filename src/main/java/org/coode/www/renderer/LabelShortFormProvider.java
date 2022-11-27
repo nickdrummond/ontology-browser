@@ -1,10 +1,7 @@
 package org.coode.www.renderer;
 
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.ServerConfig;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.AnnotationValueShortFormProvider;
-import org.semanticweb.owlapi.util.PropertyAssertionValueShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import javax.annotation.Nonnull;
@@ -13,39 +10,23 @@ import java.util.*;
 /**
  * A shortformProvider that uses the server properties to render
  * 1) An annotation value on the label (in the given language), if available otherwise
- * 2) A property value on the label property (again, given the language), otherwise
- * 3) uses the default shortFormProvider provided
+ * 2) uses the default shortFormProvider provided
  */
 public class LabelShortFormProvider implements ShortFormProvider {
 
     private AnnotationValueShortFormProvider delegate;
 
-    public LabelShortFormProvider(final OWLHTMLKit kit, final ShortFormProvider defaultSFP) {
-
-        ServerConfig config = kit.getConfig();
-
-        final String lang = config.getLabelLang();
-
-        final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-
-        final OWLOntologySetProvider activeOntologiesSetProvider = kit::getActiveOntologies;
-
-        // the property assertion sfp
-        OWLDataProperty dataProp = df.getOWLDataProperty(config.getLabelPropertyIri());
-        ShortFormProvider pValueProvider =
-                new PropertyAssertionValueShortFormProvider(
-                        Collections.<OWLPropertyExpression>singletonList(dataProp),
-                        createLangMap((OWLDataPropertyExpression)dataProp, lang),
-                        activeOntologiesSetProvider,
-                        defaultSFP);
+    public LabelShortFormProvider(final OWLAnnotationProperty annotProp,
+                                  final String lang,
+                                  final Set<OWLOntology> ontologies,
+                                  final ShortFormProvider defaultSFP) {
 
         // the annotation label sfp
-        OWLAnnotationProperty annotProp = df.getOWLAnnotationProperty(config.getLabelAnnotationIri());
         delegate = new AnnotationValueShortFormProvider(
                 Collections.singletonList(annotProp),
                 createLangMap(annotProp, lang),
-                activeOntologiesSetProvider,
-                pValueProvider);
+                ontologies::stream,
+                defaultSFP);
     }
 
     @Nonnull

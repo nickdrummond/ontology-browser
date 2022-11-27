@@ -4,32 +4,28 @@
 
 <head th:replace='base :: header (title=${title})'></head>
 
-<body>
+<body class="wrapper">
+
+<div th:replace='base :: title'></div>
 
 <div th:replace='base :: menu'></div>
 
 <div id="main">
 
-    <div th:replace='base :: title'></div>
-
     <div id="content">
 
-        <h2 th:text="${title}"></h2>
-        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-           href='./' class='permalink'>permalink</a>
+        <h2 th:text="${title}">Title</h2>
 
-        <div class="cloud">
-            <span th:each="entity : ${cloud.entities}"
+        <div th:fragment="cloud" class="cloud">
+            <span class="entity" th:each="entity : ${helper.getOrderedEntities()}"
                th:utext="${mos.render(entity)}"
-               th:with="value=${cloud.getValue(entity)}"
-               th:styleappend="'font-size:' + ${helper.getFontSize(value)} + 'pt; color:' + ${helper.getColor(value)}">Entity</span>
+               th:styleappend="'font-size:' + ${helper.getFontSize(entity)} + 'pt; color:' + ${helper.getColor(entity)}">Entity</span>
         </div>
 
     </div>
-
-    <div th:replace='base :: footer'></div>
-
 </div>
+
+<div th:replace='base :: footer'></div>
 
 </body>
 </html>

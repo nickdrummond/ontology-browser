@@ -516,8 +516,9 @@ _bsn.AutoSuggest.prototype.setHighlight = function(n)
 
     this.iHighlighted = Number(n);
 
-    list.childNodes[this.iHighlighted-1].className = "as_highlight";
-
+    var hNode = list.childNodes[this.iHighlighted-1];
+    hNode.className = "as_highlight";
+    hNode.scrollIntoView(false);
 
     this.killTimeout();
 }

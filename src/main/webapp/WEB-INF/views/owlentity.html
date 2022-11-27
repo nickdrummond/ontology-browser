@@ -4,37 +4,26 @@
 
 <head th:replace='base :: header (title=${title})'></head>
 
-<body>
+<body class="wrapper">
+
+<div th:replace='base :: title'></div>
 
 <div th:replace='base :: menu'></div>
 
 <div id="main">
 
-    <div th:replace='base :: title'></div>
+    <div id='entities' th:replace="base :: list(${type}, ${entities})">
+        A list
+    </div>
 
-    <div id="content">
-        <h2 th:text="${title}">An OWLClass</h2>
-        <a th:href="@{/(label=${kit.getCurrentLabel()}, redirect=@{__${#httpServletRequest.requestURI}__})}"
-           href='./' class='permalink'>permalink</a>
+    <div id='hierarchy'  th:replace="base :: hierarchy(${type}, ${hierarchy})">
+        A hierarchy
+    </div>
 
+    <div id='content'>
+        <span><h2 th:text="${title}">An OWLClass</h2></span>
         <div class="iri">
-            <a th:href="${iri}" href='http://example.com/entity-url' >
-                <img th:src="@{/static/images/external.png}"
-                     src="../../static/images/external.png"
-                     title="Attempt to open link in another window" />
-            </a>
-            <form method='POST' action='./' th:action="@{/ontologies}">
-                <input name='uri' type='hidden'
-                       value='http://example.com/entity-url'
-                       th:value="${iri}"/>
-                <input name='redirect' type='hidden'
-                       value='.'
-                       th:value="@{__${#httpServletRequest.requestURI}__}"/>
-                <input type='image' alt='Attempt to load owl/rdf'
-                       src='../../static/images/download.png'
-                       th:src="@{/static/images/download.png}"/>
-            </form>
-            <h3 th:utext="${mos.render(iri)}">http://example.com/entity-url</h3>
+            <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
         </div>
 
         <div th:replace="base :: image (${image})">
@@ -55,13 +44,16 @@
                     A characteristic
                 </div>
             </div>
+
+            <div th:replace="base :: metrics (${metrics})">
+                Possibly some metrics
+            </div>
         </div>
 
     </div>
-
-    <div th:replace='base :: footer'></div>
-
 </div>
+
+<div th:replace='base :: footer'></div>
 
 </body>
 </html>

@@ -1,51 +1,90 @@
 package org.coode.www.service;
 
+import org.coode.owl.mngr.impl.SynchronizedOWLReasoner;
 import org.coode.www.model.ReasonerMomento;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.reasoner.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ReasonerFactoryService {
 
     private static final Logger logger = LoggerFactory.getLogger(ReasonerFactoryService.class);
 
-    // TODO urgh!
-    public static String STRUCTURAL;
+    private final String defaultToldReasoner;
+    private final String defaultInferredReasoner;
 
-    // TODO urgh!
-    public static String OWLLINK;
+    private Map<String, OWLReasonerFactory> facsByName = new HashMap<>();
+    private Map<String, OWLReasoner> reasonerByName = new HashMap<>();
 
-    private final String OWLLINK_CONFIG = "org.semanticweb.owlapi.owllink.OWLlinkReasonerConfiguration";
+    public ReasonerFactoryService(List<ReasonerMomento> momentos, String defaultInferredReasoner, String defaultToldReasoner) {
+        this.defaultInferredReasoner = defaultInferredReasoner;
+        this.defaultToldReasoner = defaultToldReasoner;
 
-    private Map<String, OWLReasonerFactory> facsByName = new HashMap<String, OWLReasonerFactory>();
-
-    public ReasonerFactoryService(List<ReasonerMomento> reasoners) {
-        for (ReasonerMomento reasoner : reasoners){
+        for (ReasonerMomento momento : momentos){
+            String label = momento.getLabel();
             try {
-                final OWLReasonerFactory fac = (OWLReasonerFactory) Class.forName(reasoner.getCls()).newInstance();
-                facsByName.put(fac.getReasonerName(), fac);
-
-                // assuming the structural reasoner is first
-                if (STRUCTURAL == null){
-                    STRUCTURAL = fac.getReasonerName();
-                }
+                final OWLReasonerFactory fac = (OWLReasonerFactory) Class.forName(momento.getCls()).newInstance();
+                facsByName.put(label, fac);
+                logger.info("Reasoner found: " + label);
             }
             catch (Throwable e){
-                logger.info("Reasoner cannot be found: " + reasoner);
+                logger.info("Reasoner cannot be found: " + label);
             }
         }
+    }
 
-        for (String name : facsByName.keySet()){
-            logger.info("Reasoner found: " + name);
+    public void clear() {
+        Collection<OWLReasoner> reasoners = reasonerByName.values();
+        reasonerByName.clear();
+        for (OWLReasoner reasoner: reasoners) {
+            reasoner.dispose();
         }
     }
 
     public List<String> getAvailableReasoners(){
-        return new ArrayList<String>(facsByName.keySet());
+        return new ArrayList<>(facsByName.keySet());
+    }
+
+    public OWLReasonerFactory getFactoryFor(String name) {
+        if (name == null) {
+            name = defaultInferredReasoner;
+        }
+        return facsByName.get(name);
+    }
+
+    public synchronized OWLReasoner getReasoner(OWLOntology ont) throws OWLReasonerRuntimeException {
+        return getReasoner(defaultInferredReasoner, ont);
+    }
+        /**
+         * Get a reasoner.
+         * @param name one of the names provided by {@code getAvailableReasonerNames()}.
+         * @return an instance of OWLReasoner or null if no match can be found.
+         */
+    public synchronized OWLReasoner getReasoner(String name, OWLOntology ont) throws OWLReasonerRuntimeException {
+        String key = makeKey(name, ont);
+        OWLReasoner r = reasonerByName.get(key);
+        if (r == null) {
+            OWLReasonerFactory fac = getFactoryFor(name);
+            if (fac != null) {
+                logger.warn("Creating reasoner..." + name + " for ontology " + ont.getOntologyID());
+                r = new SynchronizedOWLReasoner(fac.createNonBufferingReasoner(ont, new SimpleConfiguration()));
+                reasonerByName.put(key, r);
+            }
+            else {
+                throw new RuntimeException("No reasoner found for " + name);
+            }
+        }
+        return r;
+    }
+
+    private String makeKey(String name, OWLOntology ont) {
+        return name + "-" + ont.getOntologyID().toString();
+    }
+
+    public OWLReasoner getToldReasoner(OWLOntology ont) {
+        return getReasoner(defaultToldReasoner, ont);
     }
 }

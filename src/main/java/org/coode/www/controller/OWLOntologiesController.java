@@ -1,6 +1,7 @@
 package org.coode.www.controller;
 
-import com.google.common.base.Optional;
+import java.util.List;
+import java.util.Optional;
 import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.coode.www.exception.NotFoundException;
@@ -12,6 +13,7 @@ import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLOntologiesService;
 import org.coode.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
+import org.semanticweb.owlapi.metrics.OWLMetric;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,6 @@ import java.util.Comparator;
 
 @Controller
 @RequestMapping(value="/ontologies")
-@SessionAttributes("kit")
 public class OWLOntologiesController extends ApplicationController {
 
     @Autowired
@@ -38,7 +39,7 @@ public class OWLOntologiesController extends ApplicationController {
     private OntologyIRIShortFormProvider sfp;
 
     @RequestMapping(method=RequestMethod.GET)
-    public String getOntologies(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
+    public String getOntologies() throws OntServerException {
 
         OWLOntology rootOntology = kit.getRootOntology();
 
@@ -49,30 +50,28 @@ public class OWLOntologiesController extends ApplicationController {
 
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET)
     public String getOntology(@PathVariable final String ontId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
-        Comparator<Tree<OWLOntology>> comparator = (o1, o2) ->
-                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        Comparator<Tree<OWLOntology>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
         OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), comparator);
 
         Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(owlOntology);
 
-        String title = owlOntology.equals(kit.getRootOntology()) ?
-                "All ontologies" :
-                sfp.getShortForm(owlOntology) + " (Ontology)";
+        String title = sfp.getShortForm(owlOntology) + " (Ontology)";
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlOntology));
 
-        final IRI iri = owlOntology.getOntologyID().getOntologyIRI().or(IRI.create("Anonymous"));
+        final IRI iri = owlOntology.getOntologyID().getOntologyIRI().orElse(IRI.create("Anonymous"));
 
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", iri);
         model.addAttribute("hierarchy", ontologyTree);
         model.addAttribute("characteristics", service.getCharacteristics(owlOntology, kit));
+        model.addAttribute("metrics", service.getMetrics(owlOntology));
+        model.addAttribute("showImportMetrics", !owlOntology.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
@@ -80,7 +79,6 @@ public class OWLOntologiesController extends ApplicationController {
 
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET, produces="application/rdf+xml")
     public void exportOntology(@PathVariable final String ontId,
-                               @ModelAttribute("kit") final OWLHTMLKit kit,
                                final HttpServletResponse response,
                                final Writer writer) throws OntServerException, NotFoundException {
 
@@ -95,32 +93,5 @@ public class OWLOntologiesController extends ApplicationController {
         catch (OWLOntologyStorageException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @RequestMapping(method= RequestMethod.POST)
-    public String loadOntology(@ModelAttribute final LoadOntology loadOntology,
-                               @ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
-
-        String ontologyId = service.load(loadOntology.getUri(), loadOntology.isClear(), kit);
-
-        if (loadOntology.getRedirect() != null) {
-            return "redirect:" + loadOntology.getRedirect();
-        }
-        else {
-            return "redirect:/ontologies/" + ontologyId;
-        }
-    }
-
-    @RequestMapping(value="/active",
-            method=RequestMethod.POST,
-            consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> setActiveOntology(
-            @ModelAttribute("id") final String ontId,
-            @ModelAttribute("kit") final OWLHTMLKit kit) throws NotFoundException, OntServerException {
-
-        OWLOntology ontology = service.getOntologyFor(ontId, kit);
-
-        service.setActiveOntology(ontology, kit);
-        return new ResponseEntity<>("Active ontology changed", HttpStatus.OK);
     }
 }

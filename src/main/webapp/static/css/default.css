@@ -1,13 +1,21 @@
 @import url("owl.css");
 
+@font-face {
+  font-family: 'aurebesh';
+  src: url('aurebesh.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Mobile first design */
+
+/* General styles */
+
 html {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    overflow-y: scroll;
 }
 
 body {
-    background-color: #000;
-    color: #fff;
     font-size: 9pt;
     margin: 0;
     padding: 0;
@@ -16,9 +24,7 @@ body {
 h1 {
     font-size: 20pt;
     font-weight: bold;
-    display: inline;
-    margin-top: 0;
-    margin-bottom: 12px;
+    margin: 4px;
 }
 
 h2, h3, h4 {
@@ -41,6 +47,7 @@ h4 {
     font-size: 10pt;
     line-height: 9pt;
     display: inline;
+    margin: 0;
 }
 
 a {
@@ -65,78 +72,83 @@ li {
     margin-top: 3px;
 }
 
-.clearfix {
-    clear: both;
-}
-
-
-
 /* Components */
 
-#menu, #welcome{
-    padding: 10px;
-    position: absolute;
-    width: 300px;
-    height:100%;
-    overflow: auto;
-    display: inline-block;
-    float: left;
+#options {
+    display: block;
 }
 
-#main {
-    background-color: #f1f5f9;
-    color: #111;
-    position: absolute;
-    min-height:100%;
-    min-width: 300px;
-    left: 320px;
-    right: 0;
-    vertical-align: top;
-    padding-right: 10px;
+#menu, #welcome, #title {
+    margin: 5px;
+    width: 100%;
+}
+
+#entityfinder {
+    flex: 1 1 auto;
+    margin: 0 5px;
 }
 
 #content {
-    margin-top: 20px;
-    padding-left: 10px;
+    margin-top: 15px;
+}
+
+#owlselector {
+    margin: 5px;
+}
+
+#main {
+    width: 100%;
+}
+
+#metrics {
+    margin: 5px;
+}
+
+#metrics table {
+    border: solid 1px #c7cfd5;
+    background: #fff;
+    color: #000;
+    padding: 5px 5px 5px 25px;
+    margin: 5px 0 10px 0;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    text-align: right;
+    width: 99%;
+}
+
+#metrics table tr:hover {
+    background: #eeeeee;
+}
+
+#metrics table td {
+    padding: 4px;
+    border: none;
+    overflow-wrap: anywhere;
+}
+
+#metrics tbody td:first-child{
+    display: list-item;
+    text-align: left;
 }
 
 a.burger, a.burger:hover, a.burger:active {
-    background-color: #000;
-    color: #fff;
     padding: 5px;
     font-size: 14pt;
     text-decoration: none;
-    -moz-border-top-right-radius: 6px;
-    -moz-border-bottom-right-radius: 6px;
-    -webkit-border-top-right-radius: 6px;
-    -webkit-border-bottom-right-radius: 6px;
+    float: right;
 }
 
 #welcome li {
     margin-top: 10px;
 }
 
-.owlselector {
-    position: absolute;
-    top: 250px;
-    bottom: 20px;
-    right: 10px;
-    left: 10px;
-}
-
-.owlselector ul {
-    border: solid 1px #c7cfd5;
-    background: #fff;
-    color: #000;
-    padding: 5px 5px 5px 25px;
-    margin: 0 0 10px 0;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-}
-
 .characteristics {
-    height: 100%;
-    overflow: auto;
+    vertical-align: top;
+    padding-right: 5px; /* enough space for the scroller */
+}
+
+.characteristic {
+    margin: 5px;
 }
 
 .characteristic h3 {
@@ -156,7 +168,23 @@ a.burger, a.burger:hover, a.burger:active {
 }
 
 .characteristic li {
-    margin: 5px;
+    padding: 4px;
+    clear: both;
+}
+
+.characteristic li:hover {
+    background: #eeeeee;
+}
+
+.characteristic .source-ont {
+    float: right;
+}
+
+.characteristic.object_property_assertions .active-entity,
+.characteristic.negative_object_property_assertions .active-entity,
+.characteristic.data_property_assertions .active-entity,
+.characteristic.negative_data_property_assertions .active-entity{
+    display: none;
 }
 
 .imageHolder{
@@ -192,10 +220,6 @@ td.key{
     padding: 5px;
 }
 
-#title {
-    padding: 0;
-}
-
 #signout img {
     position: relative;
     top: 4px;
@@ -206,14 +230,29 @@ td.key{
     padding-right: 25px;
 }
 
-#activeOnt {
-    display: inline;
+#findForm, #activeOnt {
+    display: block;
+    margin: 5px 0;
 }
 
 #activeOnt select {
-    height: 24px;
     width: 100%;
-    margin: 10px 0;
+    height: 24px;
+}
+
+#findForm {
+    display: flex;
+    justify-content: center;
+}
+
+#as_find {
+    max-height: 75vh;
+    overflow: auto;
+}
+
+#find, .autosuggest li {
+    width: 98%;
+    padding-left: 10px;
 }
 
 #tabs {
@@ -221,13 +260,23 @@ td.key{
     margin-bottom: 16px;
 }
 
+#tabs li {
+    list-style: circle;
+}
+
 #tabs a, #tabs span.currentpage {
-    color: #fff;
     padding: 2px;
 }
 
 .cloud{
     text-align: center;
+    margin: auto;
+    width: 90%;
+    background-color: black;
+}
+
+.cloud span.entity {
+    margin: 5pt;
 }
 
 /* Let the cloud spans determine the color */
@@ -261,12 +310,6 @@ a.permalink {
     font-size: smaller;
 }
 
-.owlselector ul {
-    height: 90%;
-    max-height: 800px;
-    overflow: auto;
-}
-
 .minihierarchy, .minihierarchy ul {
     list-style-type: none;
     border: none;
@@ -276,6 +319,13 @@ a.permalink {
 }
 
 ul.minihierarchy {
+    border: solid 1px #c7cfd5;
+    background: #fff;
+    color: #000;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    overflow: auto;
+    height: 200px;
     padding-left: 10px;
 }
 
@@ -299,35 +349,61 @@ ul.minihierarchy {
 }
 
 p.footer {
+    display: flex;
+    justify-content: space-around;
     font-size: 7pt;
-    margin: 30px;
-    clear: both;
+    margin: 5px;
+    width: 100%;
 }
 
 form.autocomplete {
     display: inline;
 }
 
-form#load {
-    margin-bottom: 50px;
+#queries {
+    padding: 0;
 }
 
-#find {
-    width: 97.8%;
-    height: 18px;
-    margin-bottom: 10px;
+#queries li {
+    list-style-type: none;
+}
+
+form#load {
+    margin-bottom: 50px;
 }
 
 #rendererForm {
     display: inline;
 }
 
-#dlQuery{
-    width: 90%;
-    height: 200px;
-    display: block;
-    margin-bottom: 10px;
-    margin-left: 5px; margin-right: 5px;
+#queryPane {
+    flex: 2 2 auto;
+}
+
+#dlQueryForm {
+    display: flex;
+}
+
+.dlQueryWrapper {
+    display: flex;
+    flex-flow: column;
+    flex: 6 1 auto;
+}
+
+.dlQuery{
+    flex: 1 1 auto;
+    margin: 5px;
+}
+
+#dlQueryOptions {
+    flex: 2 1 auto;
+    margin: 5px;
+}
+
+#dlQuerySubmit{
+    margin: 5px;
+    background: none;
+    border: solid 1px black;
 }
 
 .iri{
@@ -353,7 +429,7 @@ form#load {
 
 img.icon {
     position: relative;
-    top: 4px;
+    top: 2px;
     width: 24px;
     height: 24px;
 }
@@ -384,21 +460,113 @@ img.thumb{
     color: #ff0000;
 }
 
-
-/* This is where ont selector and search clash */
-@media screen and (max-width: 630px) {
-
-#menu{
-    width: 200px;
+.aurebesh {
+    font-family: 'aurebesh';
 }
 
-#main {
-    left: 220px;
+.basic {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;;
+}
+
+    /* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+    .wrapper {
+      display: flex;
+      flex-flow: row wrap;
     }
 
+
+@media screen and (max-width: 800px) and (max-height: 450px) {
+
+    ul.minihierarchy {
+        width: 70%;
+    }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (min-width: 800px) and (min-height: 450px) {
+    html, body {
+        height: 100vh;
+    }
+
+    .wrapper {
+        height: 100vh;
+    }
+}
+
+@media screen and (min-width: 800px) {
+
+    .wrapper {
+      flex-flow: column;
+    }
+
+    #title {
+        display:flex;
+        flex: 0 1 auto;
+        width: auto;
+    }
+
+    #main {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        overflow: hidden;
+        width: auto;
+    }
+
+    #menu {
+        width: auto;
+    }
+
+    #tabs {
+        display: flex;
+        justify-content: space-evenly;
+        padding-left: 0;
+    }
+
+    p.footer {
+        flex: 0 1 auto;
+        width: auto;
+    }
+
+    #owlselector {
+        flex: 2 1 auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #owlselector .min {
+        display: none;
+    }
+
+    ul.minihierarchy {
+        flex: 1 1 auto;
+        overflow: auto;
+        height: auto;
+    }
+
+    #content {
+        flex: 3 1 auto;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .characteristics {
+        flex: 0 1 auto;
+        overflow: auto;
+    }
+
+    #metrics {
+        flex: 0 1 auto;
+    }
+
+    #find, .autosuggest li {
+        line-height: 24px;
+        font-size: 18pt;
+    }
+}
+
+@media screen and (max-width: 450px), (max-height: 450px) {
 
     body, input, select {
         font-size: 11pt;
@@ -411,34 +579,12 @@ img.thumb{
     h4 {
         font-size: 12pt;
     }
+}
 
-    /* Doesn't quite match the 100% on the selector */
-    #find {
-        width: 98.3%;
-    }
+@media screen and (min-width: 800px) and (max-height: 450px) {
 
-    #findForm {
-        float: none;
-    }
-
-    form#bookmarks,
-    form#load,
-    #activeOnt select {
-        float: none;
-        clear: both;
-        width: 100%;
-    }
-
-    .owlselector {
-        position: absolute;
-        top: 300px;
-        bottom: auto;
-        right: 10px;
-        left: 10px;
-        min-height: 500px;
-    }
-
-    #options a {
-        padding-right: 5px;
+    ul.minihierarchy {
+        height: 200px;
     }
 }
+

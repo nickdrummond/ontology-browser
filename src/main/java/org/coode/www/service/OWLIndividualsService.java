@@ -1,6 +1,5 @@
 package org.coode.www.service;
 
-import com.google.common.base.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
@@ -15,14 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static java.util.Arrays.asList;
-
 @Service
 public class OWLIndividualsService {
 
     // TODO need to index the entities by ID
-    public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final OWLHTMLKit kit) throws NotFoundException {
-        for (OWLOntology ont : kit.getActiveOntologies()){
+    public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final Set<OWLOntology> ontologies) throws NotFoundException {
+        for (OWLOntology ont : ontologies){
             for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature()) {
                 if (getIdFor(owlIndividual).equals(propertyId)) {
                     return owlIndividual;
@@ -41,31 +38,23 @@ public class OWLIndividualsService {
         }
     }
 
-    public List<Characteristic> getCharacteristics(OWLNamedIndividual owlIndividual, OWLHTMLKit kit) {
-        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getComparator();
+    public List<Characteristic> getCharacteristics(final OWLNamedIndividual owlIndividual,
+                                                   final Set<OWLOntology> activeOntologies,
+                                                   final Comparator<OWLObject> comparator,
+                                                   final ShortFormProvider shortFormProvider) {
 
         CharacteristicsFactory fac = new CharacteristicsFactory();
 
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Optional<Characteristic> c : asList(
-                fac.getTypes(owlIndividual, activeOntologies, comparator),
-                fac.getSameAs(owlIndividual, activeOntologies, comparator),
-                fac.getDifferentFrom(owlIndividual, activeOntologies, comparator),
-                fac.getUsage(owlIndividual, activeOntologies, comparator)
-        )) {
-            if (c.isPresent()) {
-                characteristics.add(c.get());
-            }
-        }
+        List<Characteristic> characteristics = fac.getAnnotationCharacteristics(owlIndividual, activeOntologies, comparator, shortFormProvider);
 
-        ShortFormProvider shortFormProvider = kit.getShortFormProvider();
-
-        characteristics.addAll(fac.getAnnotationCharacterists (owlIndividual, activeOntologies, comparator, shortFormProvider));
-        characteristics.addAll(fac.getDataPropertyAssertions  (owlIndividual, activeOntologies, comparator, shortFormProvider));
-        characteristics.addAll(fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator, shortFormProvider));
-
-        // TODO negative property assertions
+        fac.getTypes(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getNegativeObjectPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getDataPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getNegativeDataPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getUsage(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getSameAs(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getDifferentFrom(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
 
         return characteristics;
     }

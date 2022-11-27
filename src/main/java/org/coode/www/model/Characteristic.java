@@ -10,12 +10,12 @@ public class Characteristic {
 
     private String name;
 
-    private List<? extends OWLObject> objects;
+    private List<OWLObjectWithOntology> objects;
 
     public Characteristic() {
     }
 
-    public Characteristic(OWLObject subject, String name, List<? extends OWLObject> objects) {
+    public Characteristic(OWLObject subject, String name, List<OWLObjectWithOntology> objects) {
         this.subject = subject;
         this.name = name;
         this.objects = objects;
@@ -37,11 +37,11 @@ public class Characteristic {
         this.name = name;
     }
 
-    public List<? extends OWLObject> getObjects() {
+    public List<OWLObjectWithOntology> getObjects() {
         return objects;
     }
 
-    public void setObjects(List<? extends OWLObject> objects) {
+    public void setObjects(List<OWLObjectWithOntology> objects) {
         this.objects = objects;
     }
 }

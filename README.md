@@ -2,8 +2,7 @@
 
 A "fork" of the ontology browser from the [CO-ODE project](https://code.google.com/p/ontology-browser/) now hosted at https://github.com/co-ode-owl-plugins/ontology-browser.
 
-Unfortunately, the mongo db implementation used for the
-demo on heroku is no longer available (someone want to migrate to an alternative?)
+This branch has mongo disabled
 
 ![Image of Ontology browser](docs/aardvark.png)
 
@@ -27,5 +26,9 @@ Some dependencies are local (in /repo) as they do not exist on any mvn repo.
 
 ## Deployment to Heroku
 
-Unfortunately, the mongo implementation used on heroku is no longer available and
-I have no dev time to migrate to another store.
+Set the root ontology location and reasoner root ontology IRI:
+
+    heroku config:set ONTOLOGY_ROOT_LOCATION=<your ontology URL>
+    heroku config:set REASONING_ROOT_IRI=<IRI of the ontology to be reasoned with>
+
+https://devcenter.heroku.com/articles/config-vars#using-the-heroku-cli

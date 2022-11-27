@@ -4,32 +4,15 @@
  */
 var BUSY_IMAGE = baseUrl + "static/images/busy.gif";
 
-var EQUIVALENTS = 0;
-var SUBCLASSES = 1;
-var DESCENDANTS = 2;
-var SUPERCLASSES = 3;
-var ANCESTORS = 4;
-var INSTANCES = 5; // NOT to be confused with individuals/
-var QUERY_COUNT = 6;
-
 var PARAM_QUERYTYPE = "query";
 var PARAM_EXPRESSION = "expression";
+var PARAM_MINUS = "minus";
+var PARAM_ORDER = "order";
 var PARAM_SYNTAX = "syntax";
 
-var NAME = 0;
-var XML_OBJ = 1;
-var CALLBACK = 2;
+var MAX_RETRIES = 3;
 
 var queryURL = baseUrl + "dlquery/results";
-
-var queryArray = [
-    ["equivalents", null, inferredEquivalentsReceived],
-    ["subclasses", null, inferredSubclassesReceived],
-    ["descendants", null, inferredDescendantsReceived],
-    ["superclasses", null, inferredSuperclassesReceived],
-    ["ancestors", null, inferredAncestorsReceived],
-    ["instances", null, inferredInstancesReceived]
-];
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,80 +22,91 @@ $(document).ready(function(){
     }
 });
 
+function getParameter(key) {
+    return new URLSearchParams(window.location.search).get(key);
+}
+
 function sendQuery(){
     var expression = getValueOfElementByID("dlQuery");
+    var minus = getValueOfElementByID("dlQuery2");
+    var order = getValueOfElementByID("order");
+    var query = getQueryFromForm();
 
-    if (expression != ""){
-
+    if ((expression != "") && (query != "")){
         var syntax = getValueOfElementByID("dlQuerySyntax");
+        sendSubQuery(expression, minus, order, syntax, query, 1);
+    }
+}
 
-        document.getElementById("resultsForm").innerHTML="";
-
-        for (var i=0; i<QUERY_COUNT; i++){
-            queryArray[i][XML_OBJ]=getXmlHttpObject(queryArray[i][CALLBACK]);
-            sendSubQuery(expression, syntax, queryArray[i][NAME], queryArray[i][XML_OBJ]);
+function getQueryFromForm() {
+    var ele = document.getElementsByName('query');
+    for(i=0; i<ele.length; i++) {
+        if(ele[i].checked) {
+            return ele[i].value;
         }
     }
 }
 
-function sendSubQuery(expression, syntax, querytype, xmlHttpReq){
+function sendSubQuery(expression, minus, order, syntax, queryType, retry){
+
+    var xmlHttpReq = getXmlHttpObject();
 
     if (xmlHttpReq==null) {
         alert ("Browser does not support HTTP Request");
     }
     else{
-        var req = queryURL + "?" + PARAM_QUERYTYPE + "=" + querytype + "&" +
-                             PARAM_EXPRESSION + "=" + expression
+        var req = queryURL + "?" + PARAM_QUERYTYPE + "=" + queryType + "&" +
+                             PARAM_EXPRESSION + "=" + expression;
+
+        if (minus) {
+            req = req + "&" + PARAM_MINUS + "=" + minus;
+        }
+        if (order) {
+            req = req + "&" + PARAM_ORDER + "=" + order;
+        }
+
         xmlHttpReq.open("GET", req, true);
 
         xmlHttpReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
+        xmlHttpReq.onload = function() {
+            var response = xmlHttpReq.responseText;
+            var status = xmlHttpReq.status;
+
+            if (status==200) { // OK
+                resultsForm.innerHTML=response;
+            }
+            else{
+                resultWrite(queryType + ": error!", status + ":" + response);
+            }
+        };
+
+        // timeouts
+        xmlHttpReq.timeout = 10000;
+        xmlHttpReq.ontimeout = function(e) {
+            if (retry <= MAX_RETRIES) {
+                var t = 5 * retry; // retry at greater delay each time
+                resultWrite(queryType + ": timeout", "Slow query. Retrying in " + t + " seconds...");
+                setTimeout(function() {
+                    sendSubQuery(expression, minus, order, syntax, queryType, retry+1);
+                }, t*1000);
+            }
+            else {
+                resultWrite(queryType + ": timeout", "Perhaps your query is a little heavy for this poor server." +
+                 "Please <a href='https://github.com/nickdrummond/star-wars-ontology/issues'>let us know</a>");
+            }
+        }
+
         xmlHttpReq.send();
 
-        var busy = document.createElement('div');
-        busy.setAttribute('id', querytype);
-        busy.innerHTML = "<h4 style='display: inline;'>" + querytype +
-                         "</h4><img src='" + BUSY_IMAGE + "' width='18px' height='18px' />";
-        document.getElementById("resultsForm").appendChild(busy);
+        resultWrite(queryType + "<img src='" + BUSY_IMAGE + "' width='10px' height='10px' />", "");
     }
 }
 
-function receivedResults(i) {
-    if (queryArray[i][XML_OBJ].readyState==4){
-        var resultElement = document.getElementById(queryArray[i][NAME]);
-        var response = queryArray[i][XML_OBJ].responseText;
-
-        if (queryArray[i][XML_OBJ].status==200) { //OK
-            resultElement.innerHTML=response;
-        }
-        else{
-            resultElement.innerHTML="<h4>" + queryArray[i][NAME] + " (0)</h4>"
-        }
-    }
-}
-
-function inferredEquivalentsReceived() {
-    receivedResults(EQUIVALENTS);
-}
-
-function inferredSubclassesReceived() {
-    receivedResults(SUBCLASSES);
-}
-
-function inferredDescendantsReceived() {
-    receivedResults(DESCENDANTS);
-}
-
-function inferredSuperclassesReceived() {
-    receivedResults(SUPERCLASSES);
-}
-
-function inferredAncestorsReceived() {
-    receivedResults(ANCESTORS);
-}
-
-function inferredInstancesReceived() {
-    receivedResults(INSTANCES);
+function resultWrite(header, message) {
+    var resultsForm = document.getElementById("resultsForm");
+    resultsForm.innerHTML="<div class='characteristic'><h4>"
+           + header + "</h4><p>" + message + "</p></div>";
 }
 
 ///////////////////////
@@ -144,7 +138,7 @@ function focusComponent(id){
 
 /////////////////////////
 
-function getXmlHttpObject(callback) {
+function getXmlHttpObject() {
     var objXMLHttp=null;
     if (window.XMLHttpRequest) { // for IE7 and other standard browsers
         objXMLHttp=new XMLHttpRequest();
@@ -152,6 +146,5 @@ function getXmlHttpObject(callback) {
     else if (window.ActiveXObject) { // for IE6 and earlier
         objXMLHttp=new ActiveXObject("Microsoft.XMLHTTP");
     }
-    objXMLHttp.onreadystatechange=callback;
     return objXMLHttp;
 }

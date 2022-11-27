@@ -1,6 +1,5 @@
 package org.coode.www.service;
 
-import com.google.common.base.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
@@ -10,10 +9,7 @@ import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 
@@ -57,13 +53,11 @@ public class OWLClassesService {
                 fac.getAnnotations(owlClass, activeOntologies, comparator),
                 fac.getEquivalents(owlClass, activeOntologies, comparator),
                 fac.getSuperclasses(owlClass, activeOntologies, comparator),
-                fac.getDisjoints(owlClass, activeOntologies, comparator),
                 fac.getMembers(owlClass, activeOntologies, comparator),
-                fac.getUsage(owlClass, activeOntologies, comparator)
+                fac.getUsage(owlClass, activeOntologies, comparator),
+                fac.getDisjoints(owlClass, activeOntologies, comparator)
         )) {
-            if (c.isPresent()) {
-                characteristics.add(c.get());
-            }
+            c.ifPresent(characteristics::add);
         }
 
         return characteristics;

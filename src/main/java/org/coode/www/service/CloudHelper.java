@@ -3,24 +3,25 @@ package org.coode.www.service;
 import org.coode.www.cloud.CloudModel;
 import org.semanticweb.owlapi.model.OWLEntity;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CloudHelper<O extends OWLEntity> {
 
     // capped maximum size of the font used to display entities
-    private static final int MAX_SIZE = 40;
+    private static final int MAX_SIZE = 60;
 
     private int threshold = 0;
     private int zoom = 0;
     private boolean normalise = false;
-    private boolean inverted = false;
+    private boolean inverted = true;
 
-    private CloudModel<O> model;
+    private final CloudModel<O> model;
 
-    public CloudHelper(CloudModel<O> cloudModel, int threshold, int zoom) {
+    public CloudHelper(CloudModel<O> cloudModel) {
         this.model = cloudModel;
-        this.threshold = threshold;
-        this.zoom = zoom;
     }
 
     public void setNormalise(boolean normalise) {
@@ -31,11 +32,22 @@ public class CloudHelper<O extends OWLEntity> {
         this.inverted = inverted;
     }
 
-    public CloudModel<O> getModel() {
-        return model;
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
     }
 
-    public String getColor(int value) {
+    public void setZoom(int zoom) {
+        this.zoom = zoom;
+    }
+
+    public Set<O> getEntities() {
+        return model.getEntities(threshold);
+    }
+
+    public List<O> getOrderedEntities() { return getEntities().stream().sorted(model.getComparator()).collect(Collectors.toList()); }
+
+    public String getColor(O entity) {
+        int value = model.getValue(entity);
         int score;
         if (normalise) {
             int relativeScore = value - model.getMin();
@@ -48,12 +60,13 @@ public class CloudHelper<O extends OWLEntity> {
         if (!inverted) {
             score = 255 - score;
         }
-        Color color = new Color(score, score, score);
+        Color color = new Color(score, score, 0);
         String rgb = Integer.toHexString(color.getRGB());
         return "#" + rgb.substring(2, rgb.length());
     }
 
-    public int getFontSize(int value) {
+    public int getFontSize(O entity) {
+        int value = model.getValue(entity);
         int size;
         if (normalise) {
             int displayMin = zoom;

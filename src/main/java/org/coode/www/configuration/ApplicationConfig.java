@@ -1,7 +1,6 @@
 package org.coode.www.configuration;
 
 import org.coode.www.model.ApplicationInfo;
-import org.coode.www.model.Bookmarks;
 import org.coode.www.model.ReasonerMomento;
 import org.coode.www.service.ReasonerFactoryService;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
 
@@ -30,15 +28,20 @@ public class ApplicationConfig {
         return new OntologyIRIShortFormProvider();
     }
 
+    @Value("${reasoner.structural.label}")
+    private String structuralLabel;
+
+    @Value("${reasoner.openllet.label}")
+    private String openlletLabel;
+
     @Bean
-    public Bookmarks bookmarks(@Value("${bookmarks.source}") String bookmarksSource) {
-        return new Bookmarks(new ClassPathResource(bookmarksSource));
+    public ReasonerMomento structural(@Value("${reasoner.structural.cls}") String cls) {
+        return new ReasonerMomento(structuralLabel, cls);
     }
 
     @Bean
-    public ReasonerMomento structural(@Value("${reasoner.structural.cls}") String cls,
-                                      @Value("${reasoner.structural.label}") String label) {
-        return new ReasonerMomento(label, cls);
+    public ReasonerMomento openllet(@Value("${reasoner.openllet.cls}") String cls) {
+        return new ReasonerMomento(openlletLabel, cls);
     }
 
     @Bean
@@ -74,6 +77,6 @@ public class ApplicationConfig {
     @Bean
     @Autowired
     public ReasonerFactoryService reasonerFactoryService(List<ReasonerMomento> reasoners) {
-        return new ReasonerFactoryService(reasoners);
+        return new ReasonerFactoryService(reasoners, openlletLabel, structuralLabel);
     }
 }

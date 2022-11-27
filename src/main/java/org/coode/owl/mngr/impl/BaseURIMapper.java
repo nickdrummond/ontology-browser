@@ -15,13 +15,11 @@ import java.net.URI;
  */
 public class BaseURIMapper implements OWLOntologyIRIMapper {
 
-    private URI baseURI;
-
+    private final URI baseURI;
 
     public BaseURIMapper(URI baseURI) {
         this.baseURI = baseURI;
     }
-
 
     public IRI getDocumentIRI(IRI ontologyIRI) {
         String base = getBase(ontologyIRI).toString();

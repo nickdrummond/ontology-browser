@@ -1,10 +1,10 @@
 package org.coode.www.service;
 
-import com.google.common.base.Optional;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -43,24 +43,18 @@ public class GeoService {
                             }
                         }
                     } else if (iri.equals(IRI.create(latitude))) {
-                        Optional<OWLLiteral> maybeLiteral = axiom.getValue().asLiteral();
-                        if (maybeLiteral.isPresent()) {
-                            loc.latitude = maybeLiteral.get().getLiteral().trim();
-                        }
+                        axiom.getValue().asLiteral().ifPresent(owlLiteral -> loc.latitude = owlLiteral.getLiteral().trim());
                     } else if (iri.equals(IRI.create(longitude))) {
-                        Optional<OWLLiteral> maybeLiteral = axiom.getValue().asLiteral();
-                        if (maybeLiteral.isPresent()) {
-                            loc.longitude = maybeLiteral.get().getLiteral().trim();
-                        }
+                        axiom.getValue().asLiteral().ifPresent(owlLiteral -> loc.longitude = owlLiteral.getLiteral().trim());
                     }
 
                     if (loc.latitude != null && loc.longitude != null) {
-                        return Optional.fromNullable(loc);
+                        return Optional.ofNullable(loc);
                     }
                 }
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public static class Loc {

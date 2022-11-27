@@ -28,7 +28,13 @@ public class ParserService {
         ManchesterOWLSyntaxClassExpressionParser parser =
                 new ManchesterOWLSyntaxClassExpressionParser(df, owlEntityChecker);
 
-        return parser.parse(expression);
+        return parser.parse(makeSafe(expression));
+    }
+
+    // Apostrophes are not parsed correctly without escaping
+    // May cause problems for error message offsets?
+    private String makeSafe(String expression) {
+        return expression.replaceAll("'", "\\\\'");
     }
 
     /**
@@ -62,6 +68,7 @@ public class ParserService {
         }
     }
 
+    // TODO review if the OWLAPI even produces $$ token now
     private AutocompleteResult exceptionToAutocomplete(final String expression,
                                                        final ParserException e,
                                                        final OWLEntityFinder finder,
@@ -79,9 +86,8 @@ public class ParserService {
             if (lastToken.endsWith(ERROR_TOKEN)){
                 lastToken = lastToken.substring(0, lastToken.length()-ERROR_TOKEN.length()); // remove the $$
             }
-            else if (lastToken.equals("<EOF>")){
+            else if (lastToken.equals("|EOF|")){
                 lastToken = e.getTokenSequence().get(e.getTokenSequence().size()-2); // EOF is last
-                lastToken = lastToken.substring(0, lastToken.length()-ERROR_TOKEN.length()); // remove the $$
             }
             else if (!expression.endsWith(lastToken)){ // later invalid tokens are not in the list
                 lastToken = expression.substring(expression.lastIndexOf(" ")+1); // we just have to guess at the last word

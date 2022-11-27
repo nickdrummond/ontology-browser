@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.text.ParseException;
 import java.util.Locale;
@@ -17,22 +16,22 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
     @Autowired
     private OntologyIRIShortFormProvider sfp;
 
-    @Value("${ontology.root.iri}")
+    @Value("${ontology.root.location}")
     private String rootIri;
 
     @Override
     public String print(OWLOntologyID owlOntologyID, Locale locale) {
-        return owlOntologyID.getDefaultDocumentIRI().transform(iri -> {
+        return owlOntologyID.getDefaultDocumentIRI().map(iri -> {
             if (iri.toString().equals(rootIri)) {
                 return "All ontologies";
             } else {
-                return sfp.getShortForm(iri) + " (" + iri.toString() + ")";
+                return sfp.getShortForm(iri) + " (" + iri + ")";
             }
-        }).or("Anonymous");
+        }).orElse("Anonymous");
     }
 
     @Override
     public OWLOntologyID parse(String s, Locale locale) throws ParseException {
-        throw new NotImplementedException();
+        throw new RuntimeException("Ouch!");
     }
 }

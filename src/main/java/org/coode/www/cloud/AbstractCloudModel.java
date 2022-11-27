@@ -9,7 +9,7 @@ import java.util.Set;
 
 public abstract class AbstractCloudModel<O> implements CloudModel<O> {
 
-    private Map<O, Integer> entityValueMap = new HashMap<O, Integer>();
+    private final Map<O, Integer> entityValueMap = new HashMap();
 
     private int min;
     private int max;
@@ -69,11 +69,6 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
     }
 
     public Comparator<O> getComparator() {
-        return new Comparator<O>() {
-            public int compare(O entity, O entity1) {
-                // we want to reverse the score comparison, to show biggest first
-                return entityValueMap.get(entity1).compareTo(entityValueMap.get(entity));
-            }
-        };
+        return Comparator.comparing(entity -> entityValueMap.get(entity));
     }
 }

@@ -4,6 +4,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
+import org.semanticweb.owlapi.metrics.OWLMetric;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.net.URI;
@@ -16,13 +17,11 @@ public interface OWLOntologiesService {
 
     String getIdFor(OWLOntology ontology);
 
-    String load(URI uri, boolean clear, OWLHTMLKit kit) throws OntServerException;
-
     OWLOntology getActiveOntology(OWLHTMLKit kit);
 
     Set<OWLOntology> getOntologies(OWLHTMLKit kit);
 
     List<Characteristic> getCharacteristics(OWLOntology owlOntology, OWLHTMLKit kit);
 
-    void setActiveOntology(OWLOntology ontology, OWLHTMLKit kit) throws OntServerException;
+    List<OWLMetric<?>> getMetrics(OWLOntology owlOntology);
 }

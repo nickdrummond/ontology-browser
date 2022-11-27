@@ -3,8 +3,6 @@ package org.coode.www.kit;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.www.model.OntologyConfig;
-import org.coode.www.model.ServerConfig;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -20,28 +18,7 @@ import java.util.Set;
 
 public interface OWLHTMLKit extends ActiveOntologyProvider {
 
-    ServerConfig getConfig();
-
-    void setConfig(@Nonnull ServerConfig serverConfig);
-
-    @Deprecated
-    URL getBaseUrl();
-
-    void setBaseUrl(URL baseUrl);
-    
     URLScheme getURLScheme();
-
-    String getCurrentLabel();
-
-    void dispose();
-
-    /**
-     * Is the kit currently in use?
-     * @return true if there are ontologies to browse
-     */
-    boolean isActive();
-
-    OntologyConfig getOntConfig();
 
     /**
      * Get the ontologies used for reasoning
@@ -55,8 +32,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     OWLOntology loadOntology(URI ontPhysicalURI) throws OWLOntologyCreationException;
 
-    void loadOntologies(OntologyConfig ontConfig);
-
     /**
      * First get an ontology with a matching version IRI if one exists.
      * If not, get an ontology with a matching ontology IRI.
@@ -66,8 +41,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
     Optional<OWLOntology> getOntologyForIRI(IRI iri);
 
     OWLOntologyManager getOWLOntologyManager();
-
-    OWLReasoner getOWLReasoner();
 
     Comparator<OWLObject> getComparator();
 
@@ -79,13 +52,11 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     OntologyIRIShortFormProvider getOntologyShortFormProvider();
 
-    /**
-     * Get rid of all caches (such as renderings) and clear the reasoner.
-     * Do not clear the loaded ontologies - this is done with clearOntologies
-     */
-    void clear();
+    OWLOntology getRootOntology();
+
+    void refresh() throws OWLOntologyCreationException;
 
     void clearOntologies();
 
-    OWLOntology getRootOntology();
+    void setLabelParams(URI labelURI, String labelLang);
 }

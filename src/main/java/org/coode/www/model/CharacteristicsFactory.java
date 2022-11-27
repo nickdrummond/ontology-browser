@@ -1,7 +1,5 @@
 package org.coode.www.model;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -9,300 +7,217 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CharacteristicsFactory {
 
-    public Optional<Characteristic> getAnnotations(OWLEntity owlEntity, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLAnnotation> annots = new ArrayList<>();
-        for (OWLOntology ont : ontologies){
-            annots.addAll(EntitySearcher.getAnnotations(owlEntity.getIRI(), ont));
-        }
-        return asCharacteristic("Annotations", owlEntity, annots, comparator);
+    public Optional<Characteristic> getAnnotations(OWLOntology ont, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Annotations", ont,
+                wrapWithOntology(ont.getAnnotations(), ont, c));
     }
 
-    public Optional<Characteristic> getAnnotations(OWLOntology owlOntology, Comparator<OWLObject> comparator) {
-        List<OWLAnnotation> annotations = new ArrayList<>(owlOntology.getAnnotations());
-        return asCharacteristic("Annotations", owlOntology, annotations, comparator);
+    public Optional<Characteristic> getImports(OWLOntology ont, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Imports", ont,
+                wrapWithOntology(ont.getDirectImportsDocuments(), ont, c));
     }
 
-    public Optional<Characteristic> getImports(OWLOntology owlOntology, Comparator<OWLObject> comparator) {
-        List<IRI> imports = new ArrayList<>(owlOntology.getDirectImportsDocuments());
-        return asCharacteristic("Imports", owlOntology, imports, comparator);
+    public Optional<Characteristic> getGeneralClassAxioms(OWLOntology ont, Comparator<OWLObject> c) {
+        return asCharacteristicNew("General Class Axioms", ont,
+                wrapWithOntology(ont.getGeneralClassAxioms(), ont, c));
     }
 
-    public Optional<Characteristic> getGeneralClassAxioms(OWLOntology owlOntology, Comparator<OWLObject> comparator) {
-        List<OWLClassAxiom> axioms = new ArrayList<>(owlOntology.getGeneralClassAxioms());
-        return asCharacteristic("General Class Axioms", owlOntology, axioms, comparator);
+    public Optional<Characteristic> getAnnotations(OWLEntity ent, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Annotations", ent, wrap(onts, c,
+                ont -> EntitySearcher.getAnnotations(ent, ont)));
     }
 
-    public Optional<Characteristic> getEquivalents(OWLClass owlClass, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLClassExpression> equivs = new ArrayList<>(EntitySearcher.getEquivalentClasses(owlClass, ontologies));
-        equivs.remove(owlClass);
-        return asCharacteristic("Equivalents", owlClass, equivs, comparator);
+    public Optional<Characteristic> getEquivalents(OWLClass cls, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Equivalents", cls, wrap(onts, c,
+                ont -> EntitySearcher.getEquivalentClasses(cls, ont).filter(e -> !e.equals(cls))));
     }
 
-    public Optional<Characteristic> getEquivalents(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLObjectPropertyExpression> equivs = new ArrayList<>(EntitySearcher.getEquivalentProperties(owlObjectProperty, ontologies));
-        equivs.remove(owlObjectProperty);
-        return asCharacteristic("Equivalents", owlObjectProperty, equivs, comparator);
+    public Optional<Characteristic> getEquivalents(OWLObjectProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Equivalents", prop, wrap(onts, c,
+                ont -> EntitySearcher.getEquivalentProperties(prop, ont).filter(e -> !e.equals(prop))));
     }
 
-    public Optional<Characteristic> getEquivalents(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLDataPropertyExpression> equivs = new ArrayList<>(EntitySearcher.getEquivalentProperties(owlDataProperty, ontologies));
-        equivs.remove(owlDataProperty);
-        return asCharacteristic("Equivalents", owlDataProperty, equivs, comparator);
+    public Optional<Characteristic> getEquivalents(OWLDataProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Equivalents", prop, wrap(onts, c,
+                ont -> EntitySearcher.getEquivalentProperties(prop, ont).filter(e -> !e.equals(prop))));
     }
 
-    public Optional<Characteristic> getSuperclasses(OWLClass owlClass, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLClassExpression> clses = new ArrayList<>(EntitySearcher.getSuperClasses(owlClass, ontologies));
-        return asCharacteristic("Superclasses", owlClass, clses, comparator);
+    public Optional<Characteristic> getSuperclasses(OWLClass cls, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Superclasses", cls, wrap(onts, c,
+                ont -> EntitySearcher.getSuperClasses(cls, ont)));
     }
 
-    public Optional<Characteristic> getSupers(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLObjectPropertyExpression> supers = new ArrayList<>(EntitySearcher.getSuperProperties(owlObjectProperty, ontologies));
-        return asCharacteristic("Superproperties", owlObjectProperty, supers, comparator);
+    public Optional<Characteristic> getSupers(OWLObjectProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Superproperties", prop, wrap(onts, c,
+                ont -> EntitySearcher.getSuperProperties(prop, ont)));
     }
 
-    public Optional<Characteristic> getSupers(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLDataPropertyExpression> supers = new ArrayList<>(EntitySearcher.getSuperProperties(owlDataProperty, ontologies));
-        return asCharacteristic("Superproperties", owlDataProperty, supers, comparator);
+    public Optional<Characteristic> getSupers(OWLDataProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Superproperties", prop, wrap(onts, c,
+                ont -> EntitySearcher.getSuperProperties(prop, ont)));
     }
 
-    public Optional<Characteristic> getSupers(OWLAnnotationProperty owlAnnotationProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLAnnotationProperty> supers = new ArrayList<>(EntitySearcher.getSuperProperties(owlAnnotationProperty, ontologies));
-        return asCharacteristic("Superproperties", owlAnnotationProperty, supers, comparator);
+    public Optional<Characteristic> getSupers(OWLAnnotationProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Superproperties", prop, wrap(onts, c,
+                ont -> EntitySearcher.getSuperProperties(prop, ont)));
     }
 
-    public Optional<Characteristic> getDisjoints(OWLClass owlClass, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLClassExpression> disjoints = new ArrayList<>(EntitySearcher.getDisjointClasses(owlClass, ontologies));
-        disjoints.remove(owlClass);
-        return asCharacteristic("Disjoints", owlClass, disjoints, comparator);
+    public Optional<Characteristic> getDisjoints(OWLClass cls, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Disjoints", cls, wrap(onts, c,
+                ont -> EntitySearcher.getDisjointClasses(cls, ont).filter(e -> !e.equals(cls))));
     }
 
-    public Optional<Characteristic> getDisjoints(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLObjectPropertyExpression> disjoints = new ArrayList<>(EntitySearcher.getDisjointProperties(owlObjectProperty, ontologies));
-        disjoints.remove(owlObjectProperty);
-        return asCharacteristic("Disjoints", owlObjectProperty, disjoints, comparator);
+    public Optional<Characteristic> getDisjoints(OWLObjectProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Disjoints", prop, wrap(onts, c,
+                ont -> EntitySearcher.getDisjointProperties(prop, ont).filter(e -> !e.equals(prop))));
     }
 
-    public Optional<Characteristic> getDisjoints(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLDataPropertyExpression> disjoints = new ArrayList<>(EntitySearcher.getDisjointProperties(owlDataProperty, ontologies));
-        disjoints.remove(owlDataProperty);
-        return asCharacteristic("Disjoints", owlDataProperty, disjoints, comparator);
+    public Optional<Characteristic> getDisjoints(OWLDataProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Disjoints", prop, wrap(onts, c,
+                ont -> EntitySearcher.getDisjointProperties(prop, ont).filter(e -> !e.equals(prop))));
     }
 
-    public Optional<Characteristic> getMembers(OWLClass owlClass, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLIndividual> members = new ArrayList<>(EntitySearcher.getInstances(owlClass, ontologies));
-        return asCharacteristic("Members", owlClass, members, comparator);
+    public Optional<Characteristic> getMembers(OWLClass cls, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Members", cls, wrap(onts, c,
+                ont -> EntitySearcher.getInstances(cls, ont)));
     }
 
-    public Optional<Characteristic> getDomains(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLClassExpression> domains = new ArrayList<>(EntitySearcher.getDomains(owlObjectProperty, ontologies));
-        return asCharacteristic("Domains", owlObjectProperty, domains, comparator);
+    public Optional<Characteristic> getDomains(OWLObjectProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Domains", prop, wrap(onts, c,
+                ont -> EntitySearcher.getDomains(prop, ont)));        
     }
 
-    public Optional<Characteristic> getDomains(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLClassExpression> domains = new ArrayList<>(EntitySearcher.getDomains(owlDataProperty, ontologies));
-        return asCharacteristic("Domains", owlDataProperty, domains, comparator);
+    public Optional<Characteristic> getDomains(OWLDataProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Domains", prop, wrap(onts, c,
+                ont -> EntitySearcher.getDomains(prop, ont)));
     }
 
-    public Optional<Characteristic> getDomains(OWLAnnotationProperty owlAnnotationProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<IRI> domains = new ArrayList<>(EntitySearcher.getDomains(owlAnnotationProperty, ontologies));
-        return asCharacteristic("Domains", owlAnnotationProperty, domains, comparator);
+    public Optional<Characteristic> getDomains(OWLAnnotationProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Domains", prop, wrap(onts, c,
+                ont -> EntitySearcher.getDomains(prop, ont)));
     }
 
-    public Optional<Characteristic> getRanges(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLClassExpression> ranges = new ArrayList<>(EntitySearcher.getRanges(owlObjectProperty, ontologies));
-        return asCharacteristic("Ranges", owlObjectProperty, ranges, comparator);
+    public Optional<Characteristic> getRanges(OWLObjectProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Ranges", prop, wrap(onts, c,
+                ont -> EntitySearcher.getRanges(prop, ont)));
     }
 
-    public Optional<Characteristic> getRanges(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLDataRange> ranges = new ArrayList<>(EntitySearcher.getRanges(owlDataProperty, ontologies));
-        return asCharacteristic("Ranges", owlDataProperty, ranges, comparator);
+    public Optional<Characteristic> getRanges(OWLDataProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Ranges", prop, wrap(onts, c,
+                ont -> EntitySearcher.getRanges(prop, ont)));
     }
 
-    public Optional<Characteristic> getRanges(OWLAnnotationProperty owlAnnotationProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<IRI> ranges = new ArrayList<>(EntitySearcher.getRanges(owlAnnotationProperty, ontologies));
-        return asCharacteristic("Ranges", owlAnnotationProperty, ranges, comparator);
+    public Optional<Characteristic> getRanges(OWLAnnotationProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Ranges", prop, wrap(onts, c,
+                ont -> EntitySearcher.getRanges(prop, ont)));
     }
 
-    public Optional<Characteristic> getInverses(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLObjectPropertyExpression> inverses = new ArrayList<>(EntitySearcher.getInverses(owlObjectProperty, ontologies));
-        return asCharacteristic("Inverses", owlObjectProperty, inverses, comparator);
+    public Optional<Characteristic> getInverses(OWLObjectProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Inverses", prop, wrap(onts, c,
+                ont -> EntitySearcher.getInverses(prop, ont)));
     }
 
-    public Optional<Characteristic> getUsage(OWLEntity owlEntity, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        UsageVisibilityVisitor usageVisibilityVisitor = new UsageVisibilityVisitor();
-        List<OWLObject> usage = new ArrayList<>();
-        for (OWLOntology ont : ontologies){
-            for (OWLAxiom ax : ont.getReferencingAxioms(owlEntity, Imports.EXCLUDED)){
-                if (usageVisibilityVisitor.getShowUsage(ax, owlEntity)){
-                    usage.add(ax);
-                }
-            }
-            // TODO get annotations that have this entity IRI as a value (getRefAxioms doesn't pick these up)
-        }
-        return asCharacteristic("Usage", owlEntity, usage, comparator);
+    // TODO get annotations that have this entity IRI as a value (getRefAxioms doesn't pick these up)
+    public Optional<Characteristic> getUsage(OWLEntity ent, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        UsageVisibilityVisitor vis = new UsageVisibilityVisitor();
+        return asCharacteristicNew("Usage", ent, wrap(onts, c,
+                ont -> ont.referencingAxioms(ent, Imports.EXCLUDED).filter(ax -> vis.getShowUsage(ax, ent))));
     }
 
-    public Optional<Characteristic> getPropertyCharacteristics(OWLObjectProperty owlObjectProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLObjectPropertyCharacteristicAxiom> axioms = new ArrayList<>();
-        for (OWLOntology ont: ontologies) {
-            for (OWLAxiom ax : ont.getReferencingAxioms(owlObjectProperty)) {
-                if (ax instanceof OWLObjectPropertyCharacteristicAxiom) {
-                    axioms.add((OWLObjectPropertyCharacteristicAxiom)ax);
-                }
-            }
-        }
-        return asCharacteristic("Characteristics", owlObjectProperty, axioms, comparator);
+    public Optional<Characteristic> getPropertyCharacteristics(OWLObjectProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Characteristics", prop, wrap(onts, c,
+                ont -> ont.referencingAxioms(prop).filter(ax -> ax instanceof OWLObjectPropertyCharacteristicAxiom)));
     }
 
-    public Optional<Characteristic> getPropertyCharacteristics(OWLDataProperty owlDataProperty, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLDataPropertyCharacteristicAxiom> axioms = new ArrayList<>();
-        for (OWLOntology ont: ontologies) {
-            for (OWLAxiom ax : ont.getReferencingAxioms(owlDataProperty)) {
-                if (ax instanceof OWLDataPropertyCharacteristicAxiom) {
-                    axioms.add((OWLDataPropertyCharacteristicAxiom)ax);
-                }
-            }
-        }
-        return asCharacteristic("Characteristics", owlDataProperty, axioms, comparator);
+    public Optional<Characteristic> getPropertyCharacteristics(OWLDataProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Characteristics", prop, wrap(onts, c,
+                ont -> ont.referencingAxioms(prop).filter(ax -> ax instanceof OWLDataPropertyCharacteristicAxiom)));
     }
 
-    public Optional<Characteristic> getDatatypeDefinitions(OWLDatatype owlDatatype, Set<OWLOntology> activeOntologies, Comparator<OWLObject> comparator) {
-        List<OWLDataRange> ranges = new ArrayList<>();
-        for (OWLOntology ont : activeOntologies){
-            for (OWLDatatypeDefinitionAxiom ax : ont.getDatatypeDefinitions(owlDatatype)){
-                ranges.add(ax.getDataRange());
-            }
-        }
-        return asCharacteristic("Datatype Definitions", owlDatatype, ranges, comparator);
+    public Optional<Characteristic> getDatatypeDefinitions(OWLDatatype dt, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Datatype Definitions", dt, wrap(onts, c,
+                ont -> ont.datatypeDefinitions(dt).map(OWLDatatypeDefinitionAxiom::getDatatype)));
     }
 
-    public Optional<Characteristic> getTypes(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLClassExpression> types = new ArrayList<>(EntitySearcher.getTypes(owlIndividual, ontologies));
-        return asCharacteristic("Types", owlIndividual, types, comparator);
+    public Optional<Characteristic> getSameAs(OWLIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Same As", ind, wrap(onts, c,
+                ont -> EntitySearcher.getSameIndividuals(ind, ont).filter(e -> !e.equals(ind))));
     }
 
-    public Optional<Characteristic> getSameAs(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLIndividual> sameAs = new ArrayList<>(EntitySearcher.getSameIndividuals(owlIndividual, ontologies));
-        sameAs.remove(owlIndividual);
-        return asCharacteristic("Same As", owlIndividual, sameAs, comparator);
+    public Optional<Characteristic> getDifferentFrom(OWLIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Different From", ind, wrap(onts, c,
+                ont -> EntitySearcher.getDifferentIndividuals(ind, ont).filter(e -> !e.equals(ind))));
     }
 
-    public Optional<Characteristic> getDifferentFrom(OWLIndividual owlIndividual, Set<OWLOntology> ontologies, Comparator<OWLObject> comparator) {
-        List<OWLIndividual> differentFrom = new ArrayList<>(EntitySearcher.getDifferentIndividuals(owlIndividual, ontologies));
-        differentFrom.remove(owlIndividual);
-        return asCharacteristic("Different From", owlIndividual, differentFrom, comparator);
+    public Optional<Characteristic> getTypes(OWLIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Types", ind, wrap(onts, c,
+                ont -> EntitySearcher.getTypes(ind, ont)));
     }
 
-    public Collection<? extends Characteristic> getObjectPropertyAssertions(
-            OWLNamedIndividual owlIndividual,
-            Set<OWLOntology> ontologies,
-            Comparator<OWLObject> comparator,
-            ShortFormProvider shortFormProvider) {
-
-        final Map<OWLObjectPropertyExpression, Collection<OWLIndividual>> propMap =
-                EntitySearcher.getObjectPropertyValues(owlIndividual, ontologies).asMap();
-
-        final List<OWLObjectPropertyExpression> orderedProps = new ArrayList<>(propMap.keySet());
-
-        Collections.sort(orderedProps, comparator);
-
-        List<Characteristic> characteristics = new ArrayList<>();
-
-        for (OWLObjectPropertyExpression p : orderedProps) {
-            // TODO improved expression rendering
-            String label = p.isAnonymous() ? p.toString() : shortFormProvider.getShortForm(p.asOWLObjectProperty());
-            characteristics.add(new Characteristic(
-                            owlIndividual,
-                            label,
-                            new ArrayList<>(propMap.get(p)))
-            );
-        }
-
-        return characteristics;
+    public Optional<Characteristic> getObjectPropertyAssertions(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Object Property Assertions", ind, wrap(onts, c,
+                ont -> ont.objectPropertyAssertionAxioms(ind)));
     }
 
-    public Collection<? extends Characteristic> getDataPropertyAssertions(
-            OWLNamedIndividual owlIndividual,
-            Set<OWLOntology> ontologies,
-            Comparator<OWLObject> comparator,
-            ShortFormProvider shortFormProvider) {
-
-        final Map<OWLDataPropertyExpression, Collection<OWLLiteral>> propMap =
-                EntitySearcher.getDataPropertyValues(owlIndividual, ontologies).asMap();
-
-        final List<OWLDataPropertyExpression> orderedProps = new ArrayList<>(propMap.keySet());
-
-        Collections.sort(orderedProps, comparator);
-
-        List<Characteristic> characteristics = new ArrayList<>();
-
-        for (OWLDataPropertyExpression p : orderedProps) {
-            // TODO improved expression rendering
-            String label = p.isAnonymous() ? p.toString() : shortFormProvider.getShortForm(p.asOWLDataProperty());
-            characteristics.add(new Characteristic(
-                            owlIndividual,
-                            label,
-                            new ArrayList<>(propMap.get(p)))
-            );
-        }
-
-        return characteristics;
+    public Optional<Characteristic> getDataPropertyAssertions(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Data Property Assertions", ind, wrap(onts, c,
+                ont -> ont.dataPropertyAssertionAxioms(ind)));
     }
 
-    public List<Characteristic> getAnnotationCharacterists(
-            OWLNamedIndividual owlIndividual,
-            Set<OWLOntology> ontologies,
-            Comparator<OWLObject> comparator,
-            ShortFormProvider shortFormProvider) {
-
-        final Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> assertedProps =
-                getAnnotationPropertyMap(owlIndividual, ontologies);
-
-        final List<OWLAnnotationProperty> orderedProps = new ArrayList<>(assertedProps.keySet());
-
-        Collections.sort(orderedProps, comparator);
-
-        List<Characteristic> characteristics = new ArrayList<>();
-
-        for (OWLAnnotationProperty p : orderedProps) {
-            characteristics.add(new Characteristic(
-                            owlIndividual,
-                            shortFormProvider.getShortForm(p),
-                            new ArrayList<>(assertedProps.get(p)))
-            );
-        }
-
-        return characteristics;
+    public Optional<Characteristic> getNegativeObjectPropertyAssertions(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Negative Object Property Assertions", ind, wrap(onts, c,
+                ont -> ont.negativeObjectPropertyAssertionAxioms(ind)));
     }
 
-    private Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> getAnnotationPropertyMap(
-            OWLNamedIndividual individual,
-            Set<OWLOntology> onts) {
+    public Optional<Characteristic> getNegativeDataPropertyAssertions(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c) {
+        return asCharacteristicNew("Negative Data Property Assertions", ind, wrap(onts, c,
+                ont -> ont.negativeObjectPropertyAssertionAxioms(ind)));
+    }
 
-        Map<OWLAnnotationProperty, Set<OWLAnnotationValue>> props = new HashMap<>();
+    public List<Characteristic> getAnnotationCharacteristics(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c, ShortFormProvider shortFormProvider) {
 
+        final Map<OWLAnnotationProperty, List<OWLObjectWithOntology>> assertedProps = new HashMap<>();
+
+        // TODO sort by value?
         for (OWLOntology ont : onts){
-            for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(individual.getIRI())) {
+            for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(ind.getIRI())) {
                 OWLAnnotationProperty p = ax.getProperty();
-                Set<OWLAnnotationValue> objects = props.get(p);
-                if (objects == null){
-                    objects = Sets.newHashSet();
-                    props.put(p, objects);
-                }
-                objects.add(ax.getAnnotation().getValue());
+                List<OWLObjectWithOntology> objects = assertedProps.computeIfAbsent(p, k -> new ArrayList<>());
+                objects.add(new OWLObjectWithOntology(ax.getAnnotation().getValue(), ont));
             }
         }
-        return props;
+
+        return assertedProps.keySet().stream().sorted(c).map(p ->
+                        asCharacteristicNew(shortFormProvider.getShortForm(p), ind, assertedProps.get(p)).get() // we know its not empty
+                ).collect(Collectors.toList());
     }
 
-    private Optional<Characteristic> asCharacteristic(String name, OWLObject owlObject, List<? extends OWLObject> results, Comparator<OWLObject> comparator) {
-        if (!results.isEmpty()) {
-            Collections.sort(results, comparator);
-            return Optional.of(new Characteristic(owlObject, name, results));
-        }
-        return Optional.absent();
+    /* All ontology queries return collections of OWLObjects - we want to wrap these with the ontology the assertions
+     * are in
+     */
+    private List<OWLObjectWithOntology> wrap(Set<OWLOntology> onts, Comparator<OWLObject> c,
+                                             Function<OWLOntology, Stream<? extends OWLObject>> f) {
+        return onts.stream().flatMap(o -> f.apply(o).map(ax -> new OWLObjectWithOntology(ax, o)))
+                .sorted((o1, o2) -> c.compare(o1.getOWLObject(), o2.getOWLObject()))
+                .collect(Collectors.toList());
+    }
+
+    private List<OWLObjectWithOntology> wrapWithOntology(Set<? extends OWLObject> objs, OWLOntology ont, Comparator<OWLObject> c) {
+        return objs.stream()
+                .sorted(c)
+                .map(o -> new OWLObjectWithOntology(o, ont))
+                .collect(Collectors.toList());
+    }
+
+    private Optional<Characteristic> asCharacteristicNew(String name, OWLObject owlObject, List<OWLObjectWithOntology> results) {
+        return results.isEmpty() ? Optional.empty() : Optional.of(new Characteristic(owlObject, name, results));
     }
 }

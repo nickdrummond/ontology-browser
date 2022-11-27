@@ -1,6 +1,6 @@
 package org.coode.www.controller;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
@@ -8,10 +8,12 @@ import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLClassesService;
 import org.coode.www.service.OWLIndividualsService;
+import org.coode.www.service.ReasonerFactoryService;
 import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,17 +23,19 @@ import java.util.Comparator;
 
 @Controller
 @RequestMapping(value="/classes")
-@SessionAttributes("kit")
 public class OWLClassesController extends ApplicationController {
 
     @Autowired
     private OWLClassesService service;
 
     @Autowired
+    private ReasonerFactoryService reasonerFactoryService;
+
+    @Autowired
     private OWLIndividualsService individualsService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLClasses(@ModelAttribute("kit") final OWLHTMLKit kit) throws OntServerException {
+    public String getOWLClasses() throws OntServerException {
 
         OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
 
@@ -42,15 +46,14 @@ public class OWLClassesController extends ApplicationController {
 
     @RequestMapping(value="/{classId}", method=RequestMethod.GET)
     public String getOWLClass(@PathVariable final String classId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
-        Comparator<Tree<OWLClass>> comparator = (o1, o2) ->
-                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(kit.getOWLReasoner(), comparator);
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
 
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);
 
@@ -70,19 +73,19 @@ public class OWLClassesController extends ApplicationController {
 
     @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String classId,
-                              @ModelAttribute("kit") final OWLHTMLKit kit,
                               final Model model) throws OntServerException, NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
-        Comparator<Tree<OWLClass>> comparator = (o1, o2) ->
-                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(kit.getOWLReasoner(), comparator);
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+
+        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
 
         Tree<OWLClass> prunedTree = hierarchyService.getChildren(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
@@ -92,20 +95,19 @@ public class OWLClassesController extends ApplicationController {
 
     @RequestMapping(value="/{classId}/instances", method=RequestMethod.GET)
     public String getInstances(@PathVariable final String classId,
-                               @ModelAttribute("kit") final OWLHTMLKit kit,
                                final Model model) throws OntServerException, NotFoundException {
 
         OWLEntity owlClass = service.getOWLClassFor(classId, kit);
 
-        Comparator<Tree<OWLEntity>> comparator = (o1, o2) ->
-                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        Comparator<Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLIndividualsByTypeHierarchyService hierarchyService =
-                new OWLIndividualsByTypeHierarchyService(kit.getOWLReasoner(), comparator);
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+
+        OWLIndividualsByTypeHierarchyService hierarchyService = new OWLIndividualsByTypeHierarchyService(r, comparator);
 
         Tree<OWLEntity> prunedTree = hierarchyService.getChildren(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.absent());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

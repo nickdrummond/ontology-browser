@@ -1,0 +1,26 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:include='base :: header (title=${"Welcome"})'></head>
+
+<body class="wrapper">
+
+<div th:replace='base :: title'></div>
+
+<div th:replace='base :: menu'></div>
+
+<div><p style="font-size: 1.5em; margin: 20px">Welcome to the Star Wars Ontology created in <a href="https://nickdrummond.github.io/star-wars-ontology/">Project Convor</a>
+    - representing Star Wars storytelling in OWL. Select a popular individual below or search the ontology yourself above.</p>
+</div>
+
+<div id='main'>
+
+    <div th:replace='cloud :: cloud'></div>
+
+</div>
+
+<div th:replace='base :: footer'></div>
+
+</body>
+</html>
