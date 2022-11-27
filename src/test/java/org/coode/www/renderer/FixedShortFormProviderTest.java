@@ -6,7 +6,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.*;
 
 public class FixedShortFormProviderTest {
 

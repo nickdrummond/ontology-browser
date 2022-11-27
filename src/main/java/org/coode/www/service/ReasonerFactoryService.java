@@ -16,8 +16,8 @@ public class ReasonerFactoryService {
     private final String defaultToldReasoner;
     private final String defaultInferredReasoner;
 
-    private Map<String, OWLReasonerFactory> facsByName = new HashMap<>();
-    private Map<String, OWLReasoner> reasonerByName = new HashMap<>();
+    private final Map<String, OWLReasonerFactory> facsByName = new HashMap<>();
+    private final Map<String, OWLReasoner> reasonerByName = new HashMap<>();
 
     public ReasonerFactoryService(List<ReasonerMomento> momentos, String defaultInferredReasoner, String defaultToldReasoner) {
         this.defaultInferredReasoner = defaultInferredReasoner;
@@ -26,7 +26,7 @@ public class ReasonerFactoryService {
         for (ReasonerMomento momento : momentos){
             String label = momento.getLabel();
             try {
-                final OWLReasonerFactory fac = (OWLReasonerFactory) Class.forName(momento.getCls()).newInstance();
+                final OWLReasonerFactory fac = (OWLReasonerFactory) Class.forName(momento.getCls()).getDeclaredConstructor().newInstance();
                 facsByName.put(label, fac);
                 logger.info("Reasoner found: " + label);
             }

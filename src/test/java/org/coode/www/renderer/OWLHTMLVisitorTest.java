@@ -15,7 +15,7 @@ import java.util.Optional;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -25,7 +25,7 @@ public class OWLHTMLVisitorTest {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<String[]> data() {
         return Arrays.asList(new String[][]{
-                {"With fragment", "http://example.org/thing#Name", "http://<wbr>example.org/<wbr>thing#<b>Name</b>"},
+                {"With fragment", "http://example.org/thing#Name", "http://<wbr>example.org/<wbr>thing#<wbr><b>Name</b>"},
                 {"Without fragment", "http://example.org/thing/", "http://<wbr>example.org/<wbr>thing/"}
         });
     }

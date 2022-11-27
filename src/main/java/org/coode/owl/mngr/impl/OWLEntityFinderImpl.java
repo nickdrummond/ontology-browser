@@ -100,11 +100,7 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
     public Set<OWLEntity> getOWLEntities(String str, NamedObjectType type, OWLOntology ont) {
         final Set<OWLEntity> results = getOWLEntities(str, type);
         if (ont != null){
-            for (OWLEntity result : results){
-                if (!ont.containsEntityInSignature(result.getIRI())){
-                    results.remove(result);
-                }
-            }
+            results.removeIf(result -> !ont.containsEntityInSignature(result.getIRI()));
         }
         return results;
     }

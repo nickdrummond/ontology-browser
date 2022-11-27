@@ -14,7 +14,7 @@
 
     <owlapi.version>5.1.20</owlapi.version>
     <jfact.version>5.0.3</jfact.version>
-    <spring.version>5.3.18</spring.version>
+    <spring.version>5.3.20</spring.version>
     <gaphu.version>0.0.9</gaphu.version>
     <suggestor.version>1.0.0</suggestor.version>
     <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
@@ -24,7 +24,8 @@
     <logback.version>1.2.0</logback.version>
 
     <junit.version>4.13.1</junit.version>
-    <mockito.version>1.9.0</mockito.version>
+    <hamcrest.version>2.0.0.0</hamcrest.version>
+    <mockito.version>4.9.0</mockito.version>
 
     <jetty.version>9.3.0.v20150612</jetty.version>
 
@@ -161,9 +162,15 @@
     </dependency>
 
     <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-junit</artifactId>
+      <version>${hamcrest.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>${mockito.version}</version>
+      <version>4.4.0</version>
       <scope>test</scope>
     </dependency>
 

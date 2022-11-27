@@ -14,7 +14,7 @@ import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 import java.util.Comparator;
 
 import static org.coode.www.service.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Integration test using StructuralReasoner implementation.

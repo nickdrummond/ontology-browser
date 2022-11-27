@@ -12,9 +12,9 @@ import uk.co.nickdrummond.parsejs.ParseException;
 import uk.co.nickdrummond.parsejs.ParseResult;
 
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 
 public class ParserServiceTest {
 

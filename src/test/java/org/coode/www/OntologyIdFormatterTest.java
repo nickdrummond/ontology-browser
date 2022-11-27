@@ -1,16 +1,13 @@
 package org.coode.www;
 
-import com.google.common.base.Optional;
 import org.coode.www.formatter.OntologyIdFormatter;
 import org.junit.Test;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyID;
-import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 
 import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class OntologyIdFormatterTest {
 
