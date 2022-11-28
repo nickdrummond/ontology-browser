@@ -1,6 +1,7 @@
 package org.coode.www.renderer;
 
 import org.semanticweb.owlapi.model.*;
+import org.springframework.lang.NonNull;
 
 public class UsageVisibilityVisitor implements OWLAxiomVisitor {
 
@@ -8,7 +9,7 @@ public class UsageVisibilityVisitor implements OWLAxiomVisitor {
     private OWLEntity currentEntity;
 
     @Override
-    public void visit(OWLDeclarationAxiom axiom) {
+    public void visit(@NonNull OWLDeclarationAxiom axiom) {
         showUsage = false;
     }
 
@@ -70,12 +71,12 @@ public class UsageVisibilityVisitor implements OWLAxiomVisitor {
         }
     }
 
-    public void visit(OWLDifferentIndividualsAxiom ax) {
+    public void visit(@NonNull OWLDifferentIndividualsAxiom ax) {
         visitNaryIndAxiom(ax);
     }
 
 
-    public void visit(OWLSameIndividualAxiom ax) {
+    public void visit(@NonNull OWLSameIndividualAxiom ax) {
         visitNaryIndAxiom(ax);
     }
 

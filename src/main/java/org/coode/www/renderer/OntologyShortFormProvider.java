@@ -2,6 +2,7 @@ package org.coode.www.renderer;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
+import org.springframework.lang.NonNull;
 
 /**
  * Attempt to provide a better rendering for Anonymous ontologies.
@@ -18,7 +19,7 @@ public class OntologyShortFormProvider extends OntologyIRIShortFormProvider{
     }
 
     @Override
-    public String getShortForm(final OWLOntology ontology) {
+    public String getShortForm(@NonNull final OWLOntology ontology) {
         if (ontology == root){
             return ROOT_ONTOLOGY_RENDERING;
         }

@@ -4,6 +4,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.springframework.lang.NonNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class QuotingBiDirectionalShortFormProvider extends CachingBidirectionalS
         rebuild(entities.stream());
     }
 
-    protected String generateShortForm(OWLEntity owlEntity) {
+    protected String generateShortForm(@NonNull OWLEntity owlEntity) {
             String shortform = provider.getShortForm(owlEntity);
             if (shortform.contains(" ")){ // if this is a multiword name
                 shortform = "\"" + shortform + "\"";

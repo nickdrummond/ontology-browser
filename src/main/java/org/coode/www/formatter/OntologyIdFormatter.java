@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nonnull;
 import java.text.ParseException;
 import java.util.Locale;
 
@@ -20,7 +21,7 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
     private String rootIri;
 
     @Override
-    public String print(OWLOntologyID owlOntologyID, Locale locale) {
+    public String print(@Nonnull OWLOntologyID owlOntologyID, @Nonnull Locale locale) {
         return owlOntologyID.getDefaultDocumentIRI().map(iri -> {
             if (iri.toString().equals(rootIri)) {
                 return "All ontologies";
@@ -31,7 +32,7 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
     }
 
     @Override
-    public OWLOntologyID parse(String s, Locale locale) throws ParseException {
+    public OWLOntologyID parse(@Nonnull String s, @Nonnull Locale locale) throws ParseException {
         throw new RuntimeException("Ouch!");
     }
 }

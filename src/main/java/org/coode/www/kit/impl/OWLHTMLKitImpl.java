@@ -22,6 +22,7 @@ import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
@@ -72,7 +73,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
         // do nothing
         OWLOntologyLoaderListener ontLoadListener = new OWLOntologyLoaderListener() {
-            public void startedLoadingOntology(LoadingStartedEvent loadingStartedEvent) {
+            public void startedLoadingOntology(@NonNull LoadingStartedEvent loadingStartedEvent) {
                 // do nothing
             }
 

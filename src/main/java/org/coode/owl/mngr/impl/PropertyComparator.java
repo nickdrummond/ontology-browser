@@ -2,6 +2,7 @@ package org.coode.owl.mngr.impl;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.springframework.lang.NonNull;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -33,13 +34,13 @@ public class PropertyComparator implements Comparator<OWLObject> {
     private final OWLObjectVisitorEx<Optional<Integer>> propertyExtr = new OWLObjectVisitorEx<>() {
 
         @Override
-        public Optional<Integer> visit(OWLNamedIndividual individual) {
+        public Optional<Integer> visit(@NonNull OWLNamedIndividual individual) {
             Set<OWLLiteral> years = r.getDataPropertyValues(individual, property);
             return years.stream().filter(OWLLiteral::isInteger).map(OWLLiteral::parseInteger).findFirst();
         }
 
         @Override
-        public Optional<Integer> doDefault(Object object) {
+        public Optional<Integer> doDefault(@NonNull Object object) {
             return Optional.empty();
         }
     };

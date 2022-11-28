@@ -13,7 +13,6 @@ import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
 import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * Custom matchers

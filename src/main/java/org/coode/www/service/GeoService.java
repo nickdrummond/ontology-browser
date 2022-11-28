@@ -49,7 +49,7 @@ public class GeoService {
                     }
 
                     if (loc.latitude != null && loc.longitude != null) {
-                        return Optional.ofNullable(loc);
+                        return Optional.of(loc);
                     }
                 }
             }
