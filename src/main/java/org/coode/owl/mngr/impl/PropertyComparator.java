@@ -1,7 +1,5 @@
 package org.coode.owl.mngr.impl;
 
-import org.coode.www.kit.OWLHTMLKit;
-import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
@@ -32,7 +30,7 @@ public class PropertyComparator implements Comparator<OWLObject> {
         return fallback;
     }
 
-    private OWLObjectVisitorEx<Optional<Integer>> propertyExtr = new OWLObjectVisitorEx<>() {
+    private final OWLObjectVisitorEx<Optional<Integer>> propertyExtr = new OWLObjectVisitorEx<>() {
 
         @Override
         public Optional<Integer> visit(OWLNamedIndividual individual) {
@@ -45,4 +43,4 @@ public class PropertyComparator implements Comparator<OWLObject> {
             return Optional.empty();
         }
     };
-};
+}

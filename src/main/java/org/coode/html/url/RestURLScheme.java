@@ -6,9 +6,6 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 /**
  * URL scheme for dynamic server-side resolution
  *

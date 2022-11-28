@@ -27,15 +27,11 @@ public class OWLClassHierarchyServiceTest {
 
     private OWLDataFactory dataFactory;
 
-    private OWLReasoner reasoner;
-
     private OWLOntology ontology;
 
     private OWLOntologyManager mngr;
 
     private OWLClass owlThing, a, a2, b, b2, b3, b4, c;
-
-    private Comparator<? super Tree<OWLClass>> comparator;
 
     @Before
     public void setup() throws OWLOntologyCreationException {
@@ -44,8 +40,8 @@ public class OWLClassHierarchyServiceTest {
         owlThing = dataFactory.getOWLThing();
 
         ontology = mngr.createOntology();
-        reasoner = new StructuralReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
-        comparator = (o1, o2) -> o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        OWLReasoner reasoner = new StructuralReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+        Comparator<? super Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
         service = new OWLClassHierarchyService(reasoner, comparator);
 
         a = cls("a");

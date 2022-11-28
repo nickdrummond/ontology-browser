@@ -95,7 +95,7 @@ public class ParserService {
             pos = expression.length() - lastToken.length();
         }
 
-        Map<String, List<String>> expected = new HashMap<String, List<String>>();
+        Map<String, List<String>> expected = new HashMap<>();
 
         String search = lastToken + ".*"; // starts with
 
@@ -104,7 +104,7 @@ public class ParserService {
             if (hasExpectedToken(e)){
                 final Set<String> keywords = e.getExpectedKeywords();
                 if (!keywords.isEmpty()){
-                    List<String> matchingKeywords = new ArrayList<String>();
+                    List<String> matchingKeywords = new ArrayList<>();
                     for (String keyword : keywords){
                         if (lastToken.length() == 0 || keyword.startsWith(lastToken)){
                             matchingKeywords.add(keyword);
@@ -133,7 +133,7 @@ public class ParserService {
                 }
             }
             else{
-                expected.put("literal", Collections.<String>emptyList());
+                expected.put("literal", Collections.emptyList());
             }
         }
         else{
@@ -161,7 +161,7 @@ public class ParserService {
     }
 
     private void addKeywords(Map<String, List<String>> map, String token){
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
 
         for (ManchesterOWLSyntax keyword : ManchesterOWLSyntax.values()){
             if (keyword.isClassExpressionConnectiveKeyword() ||
@@ -175,10 +175,10 @@ public class ParserService {
     }
 
     private <T extends OWLEntity> void addResults(Map<String, List<String>> map, Class<T> cls, Collection<T> matches, ShortFormProvider sfp) {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (T match : matches){
             String name = sfp.getShortForm(match);
-            if (name.indexOf(" ") > -1){
+            if (name.contains(" ")){
                 name = "\"" + name + "\"";
             }
             names.add(name);

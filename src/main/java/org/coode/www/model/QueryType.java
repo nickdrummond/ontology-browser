@@ -6,5 +6,5 @@ public enum QueryType {
     superclasses,
     equivalents,
     descendants,
-    ancestors;
+    ancestors
 }

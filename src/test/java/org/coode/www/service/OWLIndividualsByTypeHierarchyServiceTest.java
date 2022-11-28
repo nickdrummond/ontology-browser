@@ -28,13 +28,9 @@ public class OWLIndividualsByTypeHierarchyServiceTest {
 
     private OWLDataFactory dataFactory;
 
-    private OWLReasoner reasoner;
-
     private OWLOntology ontology;
 
     private OWLOntologyManager mngr;
-
-    private Comparator<? super Tree<OWLEntity>> comparator;
 
     private OWLClass owlThing, a, a2;
 
@@ -47,8 +43,8 @@ public class OWLIndividualsByTypeHierarchyServiceTest {
         owlThing = dataFactory.getOWLThing();
 
         ontology = mngr.createOntology();
-        reasoner = new StructuralReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
-        comparator = (o1, o2) -> o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        OWLReasoner reasoner = new StructuralReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+        Comparator<? super Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
         service = new OWLIndividualsByTypeHierarchyService(reasoner, comparator);
 
         a = cls("a");

@@ -1,23 +1,23 @@
 package org.coode.www.renderer;
 
 import org.coode.html.url.URLScheme;
-
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.junit.Test;
-import static org.mockito.Mockito.mock;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class OWLHTMLVisitorTest {
@@ -40,7 +40,7 @@ public class OWLHTMLVisitorTest {
     public String fExpected;
 
     // TODO too many dependencies = smell
-    private OWLHTMLVisitor visitor = new OWLHTMLVisitor(
+    private final OWLHTMLVisitor visitor = new OWLHTMLVisitor(
             mock(ShortFormProvider.class),
             mock(OntologyShortFormProvider.class),
             mock(URLScheme.class),

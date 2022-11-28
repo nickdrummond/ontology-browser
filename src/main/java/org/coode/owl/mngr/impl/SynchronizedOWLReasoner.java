@@ -175,49 +175,6 @@ public class SynchronizedOWLReasoner implements OWLReasoner {
         return r.isSatisfiable(classExpression);
     }
 
-// OWLAPI v3.0
-//    public synchronized NodeSet<OWLObjectProperty> getDisjointObjectProperties(OWLObjectPropertyExpression pe, boolean direct) throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
-//        return r.getDisjointObjectProperties(pe, direct);
-//    }
-//
-//    public synchronized Node<OWLObjectProperty> getEquivalentObjectProperties(OWLObjectPropertyExpression pe) throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
-//        return r.getEquivalentObjectProperties(pe);
-//    }
-//
-//    public synchronized Node<OWLObjectProperty> getInverseObjectProperties(OWLObjectPropertyExpression pe) throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
-//        return r.getInverseObjectProperties(pe);
-//    }
-//
-//    public synchronized Node<OWLObjectProperty> getTopObjectPropertyNode() {
-//        return r.getTopObjectPropertyNode();
-//    }
-//
-//    public synchronized NodeSet<OWLObjectProperty> getSubObjectProperties(OWLObjectPropertyExpression pe, boolean direct) throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
-//        return r.getSubObjectProperties(pe, direct);
-//    }
-//
-//    public synchronized NodeSet<OWLObjectProperty> getSuperObjectProperties(OWLObjectPropertyExpression pe, boolean direct) throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
-//        return r.getSuperObjectProperties(pe, direct);
-//    }
-//
-//    public synchronized NodeSet<OWLClass> getDisjointClasses(OWLClassExpression ce, boolean direct) {
-//        return r.getDisjointClasses(ce, direct);
-//    }
-//
-//    public synchronized NodeSet<OWLDataProperty> getDisjointDataProperties(OWLDataPropertyExpression pe, boolean direct) throws InconsistentOntologyException, FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
-//        return r.getDisjointDataProperties(pe, direct);
-//    }
-//
-//    public synchronized Node<OWLObjectProperty> getBottomObjectPropertyNode() {
-//        return r.getBottomObjectPropertyNode();
-//    }
-//
-//    public void prepareReasoner() throws ReasonerInterruptedException, TimeOutException {
-//        r.prepareReasoner();
-//    }
-
-    
-// OWLAPI v3.1
     public synchronized void precomputeInferences(InferenceType... inferenceTypes) throws ReasonerInterruptedException, TimeOutException, InconsistentOntologyException {
         r.precomputeInferences(inferenceTypes);
     }

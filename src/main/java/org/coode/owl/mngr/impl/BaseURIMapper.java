@@ -2,6 +2,7 @@ package org.coode.owl.mngr.impl;
 
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyIRIMapper;
+import org.springframework.lang.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class BaseURIMapper implements OWLOntologyIRIMapper {
         this.baseURI = baseURI;
     }
 
-    public IRI getDocumentIRI(IRI ontologyIRI) {
+    public IRI getDocumentIRI(@NonNull IRI ontologyIRI) {
         String base = getBase(ontologyIRI).toString();
         String ontologyName = ontologyIRI.toString().substring(base.length());
         URI loc = URI.create(baseURI + ontologyName);
@@ -51,11 +52,11 @@ public class BaseURIMapper implements OWLOntologyIRIMapper {
     }
 
     private URI getBase(IRI iri){
-        String baseURIStr = "";
-        String uriParts[] = iri.toString().split("/");
+        StringBuilder baseURIStr = new StringBuilder();
+        String[] uriParts = iri.toString().split("/");
         for (int i=0; i<uriParts.length-1; i++){
-            baseURIStr += uriParts[i] + "/";
+            baseURIStr.append(uriParts[i]).append("/");
         }
-        return URI.create(baseURIStr);
+        return URI.create(baseURIStr.toString());
     }
 }

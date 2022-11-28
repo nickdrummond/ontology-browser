@@ -139,11 +139,7 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
     public Set<OWLEntity> getOWLEntities(IRI iri, NamedObjectType type, OWLOntology ont) {
         final Set<OWLEntity> results = getOWLEntities(iri, type);
         if (ont != null){
-            for (OWLEntity result : results){
-                if (!ont.containsEntityInSignature(result)){
-                    results.remove(result);
-                }
-            }
+            results.removeIf(result -> !ont.containsEntityInSignature(result));
         }
         return results;
     }

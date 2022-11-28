@@ -1,6 +1,8 @@
 package org.coode.www.renderer;
 
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.AnnotationValueShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
@@ -14,7 +16,7 @@ import java.util.*;
  */
 public class LabelShortFormProvider implements ShortFormProvider {
 
-    private AnnotationValueShortFormProvider delegate;
+    private final AnnotationValueShortFormProvider delegate;
 
     public LabelShortFormProvider(final OWLAnnotationProperty annotProp,
                                   final String lang,
@@ -39,9 +41,9 @@ public class LabelShortFormProvider implements ShortFormProvider {
     }
 
     private <P> Map<P, List<String>> createLangMap(P p, String lang) {
-        final Map<P, List<String>> lMap = new HashMap<P, List<String>>();
+        final Map<P, List<String>> lMap = new HashMap<>();
         if (lang.length() > 0){
-            List<String> langs = new ArrayList<String>();
+            List<String> langs = new ArrayList<>();
             langs.add(lang);
             langs.add(""); // default to no language
             lMap.put(p, langs);

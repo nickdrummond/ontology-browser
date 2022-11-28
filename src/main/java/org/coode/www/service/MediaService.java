@@ -3,13 +3,14 @@ package org.coode.www.service;
 import org.semanticweb.owlapi.model.IRI;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class MediaService {
 
-    private List<String> imgs = Arrays.asList(".png",  ".jpg", ".jpeg", ".gif");
-    private List<String> sounds = Arrays.asList(".mp3",  ".wav");
+    private final List<String> imgs = Arrays.asList(".png",  ".jpg", ".jpeg", ".gif");
+    private final List<String> sounds = Arrays.asList(".mp3",  ".wav");
 
     public boolean isImageURL(IRI iri) {
         String iriStr = iri.toString().toLowerCase();

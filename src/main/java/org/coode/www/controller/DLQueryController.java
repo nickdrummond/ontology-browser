@@ -1,7 +1,5 @@
 package org.coode.www.controller;
 
-import java.util.*;
-
 import org.apache.commons.collections4.map.LRUMap;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.impl.PropertyComparator;
@@ -26,9 +24,13 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import uk.co.nickdrummond.parsejs.ParseException;
 
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 

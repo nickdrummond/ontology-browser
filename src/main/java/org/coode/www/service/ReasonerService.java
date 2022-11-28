@@ -16,12 +16,12 @@ public class ReasonerService {
                                      final QueryType query,
                                      final OWLReasoner r) {
         switch(query){
-            case equivalents: return ImmutableSet.<OWLEntity>copyOf(r.getEquivalentClasses(owlClassExpression).getEntities());
-            case subclasses: return ImmutableSet.<OWLEntity>copyOf(r.getSubClasses(owlClassExpression, true).getFlattened());
-            case descendants: return ImmutableSet.<OWLEntity>copyOf(r.getSubClasses(owlClassExpression, false).getFlattened());
-            case superclasses: return ImmutableSet.<OWLEntity>copyOf(r.getSuperClasses(owlClassExpression, true).getFlattened());
-            case ancestors: return ImmutableSet.<OWLEntity>copyOf(r.getSuperClasses(owlClassExpression, false).getFlattened());
-            case instances: return ImmutableSet.<OWLEntity>copyOf(r.getInstances(owlClassExpression, false).getFlattened());
+            case equivalents: return ImmutableSet.copyOf(r.getEquivalentClasses(owlClassExpression).getEntities());
+            case subclasses: return ImmutableSet.copyOf(r.getSubClasses(owlClassExpression, true).getFlattened());
+            case descendants: return ImmutableSet.copyOf(r.getSubClasses(owlClassExpression, false).getFlattened());
+            case superclasses: return ImmutableSet.copyOf(r.getSuperClasses(owlClassExpression, true).getFlattened());
+            case ancestors: return ImmutableSet.copyOf(r.getSuperClasses(owlClassExpression, false).getFlattened());
+            case instances: return ImmutableSet.copyOf(r.getInstances(owlClassExpression, false).getFlattened());
         }
         throw new IllegalArgumentException("Unexpected query: " + query);
     }

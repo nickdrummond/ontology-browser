@@ -11,7 +11,7 @@ import org.semanticweb.owlapi.util.SimpleIRIShortFormProvider;
  */
 public class FixedSimpleShortFormProvider implements ShortFormProvider {
 
-    private SimpleIRIShortFormProvider iriShortFormProvider = new SimpleIRIShortFormProvider();
+    private final SimpleIRIShortFormProvider iriShortFormProvider = new SimpleIRIShortFormProvider();
 
     @Override
     public String getShortForm(final OWLEntity entity) {

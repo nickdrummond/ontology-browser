@@ -33,9 +33,10 @@ public interface OWLEntityFinder {
     Set<? extends OWLEntity> getOWLEntities(String str, NamedObjectType type, OWLOntology ont);
 
     /**
+     * @param iri the id of the searched for entity
+     * @param type the type of the searched for entity
      *
-     * @param iri
-     *@param type  @return can return a set if the type is entities (an individual and a class could be returned)
+     * @return can return a set if the type is entities (an individual and a class could be returned)
      */
     Set<? extends OWLEntity> getOWLEntities(IRI iri, NamedObjectType type);
     Set<? extends OWLEntity> getOWLEntities(IRI iri, NamedObjectType type, OWLOntology ont);

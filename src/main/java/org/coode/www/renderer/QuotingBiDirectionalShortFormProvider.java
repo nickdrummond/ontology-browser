@@ -18,13 +18,13 @@ public class QuotingBiDirectionalShortFormProvider extends CachingBidirectionalS
         Set<OWLEntity> entities = new HashSet<>();
         for (OWLOntology ont: ontologies) {
             entities.addAll(ont.getSignature());
-        };
+        }
         rebuild(entities.stream());
     }
 
     protected String generateShortForm(OWLEntity owlEntity) {
             String shortform = provider.getShortForm(owlEntity);
-            if (shortform.indexOf(" ") > -1){ // if this is a multiword name
+            if (shortform.contains(" ")){ // if this is a multiword name
                 shortform = "\"" + shortform + "\"";
             }
             return shortform;

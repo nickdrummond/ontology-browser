@@ -13,7 +13,7 @@ public class DatatypesByUsageCloud extends AbstractOWLCloudModel<OWLDatatype>{
     }
 
     public Set<OWLDatatype> getEntities() {
-        Set<OWLDatatype> entities = new HashSet<OWLDatatype>();
+        Set<OWLDatatype> entities = new HashSet<>();
         for (OWLOntology ont : ontologies) {
             entities.addAll(ont.getDatatypesInSignature());
         }

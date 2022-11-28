@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class SearchService {
 
-    private String wildcard = "*";
+    private final String wildcard = "*";
 
     public List<OWLEntity> findByName(final String input, final OWLHTMLKit kit) {
 
@@ -29,8 +29,8 @@ public class SearchService {
 
         // Sort first by index of search and then alphabetically
         Comparator<OWLEntity> c = new Comparator<>() {
-            ShortFormProvider sfp = kit.getShortFormProvider();
-            String str = input.replaceAll("\\" + wildcard, "").toLowerCase();
+            final ShortFormProvider sfp = kit.getShortFormProvider();
+            final String str = input.replaceAll("\\" + wildcard, "").toLowerCase();
 
             @Override
             public int compare(OWLEntity o1, OWLEntity o2) {

@@ -1,13 +1,11 @@
 package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.semanticweb.owlapi.metrics.OWLMetric;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Set;
 

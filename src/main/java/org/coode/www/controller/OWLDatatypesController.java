@@ -1,9 +1,7 @@
 package org.coode.www.controller;
 
-import java.util.Optional;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.exception.OntServerException;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLDatatypesService;
@@ -14,9 +12,12 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 
 @Controller
@@ -47,8 +48,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         Set<OWLOntology> ontologies = kit.getOntologies();
 
-        Comparator<Tree<OWLDatatype>> comparator = (o1, o2) ->
-                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        Comparator<Tree<OWLDatatype>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(
                 kit.getOWLOntologyManager().getOWLDataFactory(),
@@ -77,8 +77,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         OWLDatatype property = service.getOWLDatatypeFor(propertyId, kit);
 
-        Comparator<Tree<OWLDatatype>> comparator = (o1, o2) ->
-                o1.value.iterator().next().compareTo(o2.value.iterator().next());
+        Comparator<Tree<OWLDatatype>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(
                 kit.getOWLOntologyManager().getOWLDataFactory(),

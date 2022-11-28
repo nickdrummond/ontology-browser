@@ -66,7 +66,7 @@ public class OWLIndividualsService {
             throw new NotFoundException("OWLIndividual", "any");
         }
         else {
-            Collections.sort(inds, kit.getComparator());
+            inds.sort(kit.getComparator());
             return inds.get(0);
         }
     }

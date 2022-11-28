@@ -69,6 +69,6 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
     }
 
     public Comparator<O> getComparator() {
-        return Comparator.comparing(entity -> entityValueMap.get(entity));
+        return Comparator.comparing(entityValueMap::get);
     }
 }

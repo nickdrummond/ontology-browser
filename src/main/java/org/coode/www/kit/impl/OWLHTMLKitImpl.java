@@ -6,7 +6,8 @@ import org.coode.html.url.RestURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.owl.mngr.impl.*;
+import org.coode.owl.mngr.impl.BaseURIMapper;
+import org.coode.owl.mngr.impl.OWLEntityFinderImpl;
 import org.coode.owl.mngr.impl.OWLObjectComparator;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.FixedSimpleShortFormProvider;
@@ -16,15 +17,18 @@ import org.coode.www.renderer.QuotingBiDirectionalShortFormProvider;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.*;
+import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
+import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 
@@ -48,7 +52,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private OWLObjectComparator comparator;
 
-    private Map<URI, OWLOntologyIRIMapper> baseMapper = Maps.newHashMap();
+    private final Map<URI, OWLOntologyIRIMapper> baseMapper = Maps.newHashMap();
 
     private final Set<ActiveOntologyProvider.Listener> listeners = Sets.newHashSet();
 
@@ -66,6 +70,23 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
         this.root = root;
 
+        // do nothing
+        OWLOntologyLoaderListener ontLoadListener = new OWLOntologyLoaderListener() {
+            public void startedLoadingOntology(LoadingStartedEvent loadingStartedEvent) {
+                // do nothing
+            }
+
+            public void finishedLoadingOntology(LoadingFinishedEvent loadingFinishedEvent) {
+                if (loadingFinishedEvent.isSuccessful() && !loadingFinishedEvent.isImported()) {
+                    OWLOntologyID id = loadingFinishedEvent.getOntologyID();
+                    Optional<OWLOntology> ont = Optional.ofNullable(mngr.getOntology(id));
+                    if (ont.isPresent()) {
+                        ont = getOntologyForIRI(loadingFinishedEvent.getDocumentIRI());
+                    }
+                    ont.ifPresent(OWLHTMLKitImpl.this::loadedOntology);
+                }
+            }
+        };
         mngr.addOntologyLoaderListener(ontLoadListener);
 
         loadOntology(root);
@@ -108,23 +129,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         }
         return urlScheme;
     }
-
-    private OWLOntologyLoaderListener ontLoadListener = new OWLOntologyLoaderListener() {
-        public void startedLoadingOntology(LoadingStartedEvent loadingStartedEvent) {
-            // do nothing
-        }
-
-        public void finishedLoadingOntology(LoadingFinishedEvent loadingFinishedEvent) {
-            if (loadingFinishedEvent.isSuccessful() && !loadingFinishedEvent.isImported()){
-                OWLOntologyID id = loadingFinishedEvent.getOntologyID();
-                Optional<OWLOntology> ont = Optional.ofNullable(mngr.getOntology(id));
-                if (ont.isPresent()){
-                    ont = getOntologyForIRI(loadingFinishedEvent.getDocumentIRI());
-                }
-                ont.ifPresent(OWLHTMLKitImpl.this::loadedOntology);
-            }
-        }
-    };
 
     public OWLOntology loadOntology(URI physicalURI) throws OWLOntologyCreationException {
         IRI iri = IRI.create(physicalURI);
@@ -288,12 +292,12 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     // create a set of CommonBaseURIMappers for finding ontologies
     // using the base of explicitly loaded ontologies as a hint
     private void handleCommonBaseMappers(URI physicalURI) {
-        String baseURIStr = "";
-        String uriParts[] = physicalURI.toString().split("/");
+        StringBuilder baseURIStr = new StringBuilder();
+        String[] uriParts = physicalURI.toString().split("/");
         for (int i=0; i<uriParts.length-1; i++){
-            baseURIStr += uriParts[i] + "/";
+            baseURIStr.append(uriParts[i]).append("/");
         }
-        URI baseURI = URI.create(baseURIStr);
+        URI baseURI = URI.create(baseURIStr.toString());
 
         if (baseMapper.get(baseURI) == null){
             final BaseURIMapper mapper = new BaseURIMapper(baseURI);

@@ -1,7 +1,6 @@
 package org.coode.www;
 
 import org.coode.www.model.ApplicationInfo;
-import org.coode.www.service.OptionsService;
 import org.coode.www.service.SessionManager;
 import org.springframework.context.annotation.Bean;
 

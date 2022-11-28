@@ -1,7 +1,6 @@
 package org.coode.www.renderer;
 
 
-import java.util.Optional;
 import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.kit.OWLHTMLKit;
@@ -10,6 +9,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -23,8 +23,6 @@ public class MediaRenderer extends OWLHTMLRenderer {
 
     // TODO inject
     private final MediaService mediaService;
-
-    private boolean inlineMedia = true;
 
     public MediaRenderer(OWLHTMLKit kit, Optional<? extends OWLObject> activeObject) {
         super(kit, activeObject);
@@ -42,9 +40,7 @@ public class MediaRenderer extends OWLHTMLRenderer {
             sb.append( super.render(obj));
         }
 
-        if (inlineMedia){
-            sb.append(tryInlineMedia(obj));
-        }
+        sb.append(tryInlineMedia(obj));
 
         return sb.toString();
     }
@@ -57,18 +53,8 @@ public class MediaRenderer extends OWLHTMLRenderer {
         else if (obj instanceof IRI){
             iri = (IRI)obj;
         }
-        if (iri != null){
-            if (mediaService.isImageURL(iri)){
-                return "<img class=\"thumb\" src=\"" + iri + "\" height=\"100\" />";
-            }
-            else{
-                // TODO: make a play button
-//                if (URLUtils.isSoundURL(iri)){
-//                    out.print("<EMBED src=\"");
-//                    out.print(iri);
-//                    out.println("\" autostart=\"true\" hidden=\"true\"/>");
-//                }
-            }
+        if (iri != null && mediaService.isImageURL(iri)){
+            return "<img class=\"thumb\" src=\"" + iri + "\" height=\"100\" />";
         }
         return "";
     }

@@ -13,7 +13,7 @@ public class DataPropsByUsageCloud extends AbstractOWLCloudModel<OWLDataProperty
     }
 
     public Set<OWLDataProperty> getEntities() {
-        Set<OWLDataProperty> dataProperties = new HashSet<OWLDataProperty>();
+        Set<OWLDataProperty> dataProperties = new HashSet<>();
         for (OWLOntology ont : ontologies) {
             dataProperties.addAll(ont.getDataPropertiesInSignature());
         }

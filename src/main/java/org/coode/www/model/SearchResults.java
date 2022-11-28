@@ -9,7 +9,7 @@ import java.util.List;
 public class SearchResults {
 
     @XmlElement(name="rs")
-    private List<SearchResult> results = new ArrayList<SearchResult>();
+    private final List<SearchResult> results = new ArrayList<>();
 
     public SearchResults() {
     }

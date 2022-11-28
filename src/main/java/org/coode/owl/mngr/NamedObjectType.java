@@ -13,11 +13,11 @@ public enum NamedObjectType {
     individuals ("Individuals", "Individual"),
     datatypes ("Datatypes", "Datatype");
 
-    private static NamedObjectType[] entitySubTypes =
+    private static final NamedObjectType[] entitySubTypes =
             new NamedObjectType[]{classes, objectproperties, dataproperties, annotationproperties, individuals, datatypes};
 
-    private String plural;
-    private String singular;
+    private final String plural;
+    private final String singular;
 
     NamedObjectType(String plural, String singular){
         this.plural = plural;

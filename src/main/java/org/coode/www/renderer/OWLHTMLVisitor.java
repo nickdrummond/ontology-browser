@@ -1,6 +1,5 @@
 package org.coode.www.renderer;
 
-import java.util.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -84,13 +83,13 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLOntology ontology) {
         String link = urlScheme.getURLForOWLObject(ontology);
         String cssClass = CSS_ONTOLOGY_URI;
-        if (activeOntology != null && ontology.equals(activeOntology)){
+        if (ontology.equals(activeOntology)){
             cssClass = CSS_ACTIVE_ONTOLOGY_URI;
         }
 
         boolean writeLink = false;
 
-        if (!activeObject.isPresent()){
+        if (activeObject.isEmpty()){
             writeLink = true;
         }
         else{
@@ -211,13 +210,13 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     public void visit(@Nonnull OWLObjectOneOf desc) {
         write("{");
-        writeOpList(desc.getIndividuals(), ", ", false);
+        writeOpList(desc.getIndividuals(), ", ");
         write("}");
     }
 
     public void visit(@Nonnull OWLDataOneOf desc) {
         write("{");
-        writeOpList(desc.getValues(), ", ", false);
+        writeOpList(desc.getValues(), ", ");
         write("}");
     }
 
@@ -260,7 +259,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLDatatypeRestriction node) {
         node.getDatatype().accept(this);
         write(" [");
-        writeOpList(node.getFacetRestrictions(), ", ", false);
+        writeOpList(node.getFacetRestrictions(), ", ");
         write("]");
     }
 
@@ -352,7 +351,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         writeKeyword(ManchesterOWLSyntax.HAS_KEY.toString());
         write(" ");
         write("(");
-        writeOpList(axiom.getPropertyExpressions(), ", ", false);
+        writeOpList(axiom.getPropertyExpressions(), ", ");
         write(")");
         writeAnnotations(axiom);
     }
@@ -582,7 +581,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLDisjointClassesAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DISJOINT_CLASSES.toString());
         write("(");
-        writeOpList(axiom.getClassExpressions(), ", ", false);
+        writeOpList(axiom.getClassExpressions(), ", ");
         write(")");
         writeAnnotations(axiom);
     }
@@ -590,7 +589,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLDisjointObjectPropertiesAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DISJOINT_PROPERTIES.toString());
         write("(");
-        writeOpList(axiom.getProperties(), ", ", false);
+        writeOpList(axiom.getProperties(), ", ");
         write(")");
         writeAnnotations(axiom);
     }
@@ -598,7 +597,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLDisjointDataPropertiesAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DISJOINT_PROPERTIES.toString());
         write("(");
-        writeOpList(axiom.getProperties(), ", ", false);
+        writeOpList(axiom.getProperties(), ", ");
         write(")");
         writeAnnotations(axiom);
     }
@@ -606,7 +605,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLDifferentIndividualsAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DIFFERENT_INDIVIDUALS.toString());
         write("(");
-        writeOpList(axiom.getIndividuals(), ", ", false);
+        writeOpList(axiom.getIndividuals(), ", ");
         write(")");
         writeAnnotations(axiom);
     }
@@ -614,7 +613,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLDisjointUnionAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DISJOINT_UNION_OF.toString());
         write("(");
-        writeOpList(axiom.getClassExpressions(), ", ", false);
+        writeOpList(axiom.getClassExpressions(), ", ");
         write(")");
         writeAnnotations(axiom);
     }
@@ -682,16 +681,14 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     // just make sure a named class is first if there is one
     private List<OWLClassExpression> orderOps(Set<OWLClassExpression> ops) {
-        List<OWLClassExpression> orderedOps = new ArrayList<OWLClassExpression>(ops);
-        Collections.sort(orderedOps, new Comparator<OWLClassExpression>() {
-            public int compare(OWLClassExpression d1, OWLClassExpression d2) {
-                if (d1 instanceof OWLClass) {
-                    return -1;
-                } else if (d2 instanceof OWLClass) {
-                    return 1;
-                }
-                return 0;
+        List<OWLClassExpression> orderedOps = new ArrayList<>(ops);
+        orderedOps.sort((d1, d2) -> {
+            if (d1 instanceof OWLClass) {
+                return -1;
+            } else if (d2 instanceof OWLClass) {
+                return 1;
             }
+            return 0;
         });
         return orderedOps;
     }
@@ -774,7 +771,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         Set<String> cssClasses = new HashSet<>();
         cssClasses.add(cssClass);
 
-        if (!activeObject.isPresent()){
+        if (activeObject.isEmpty()){
             // TODO reverse lookup URL
             final String urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
@@ -803,10 +800,10 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {
         final Collection<OWLClassExpression> types = EntitySearcher.getTypes(individual, ontologies.stream()).collect(Collectors.toList());
         if (!types.isEmpty()){
-            writeOpList(types, ", ", false);
+            writeOpList(types, ", ");
         }
 
-        Set<OWLAnnotation> annotations = new HashSet<OWLAnnotation>();
+        Set<OWLAnnotation> annotations = new HashSet<>();
 
         for (OWLOntology o : ontologies) {
             annotations.addAll(EntitySearcher.getAnnotations(individual, o).collect(Collectors.toList()));
@@ -829,7 +826,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
                 write("<li>");
                 p.accept(this);
                 write("<ul><li>");
-                writeOpList(dataValues.get(p), "</li><li>", false);
+                writeOpList(dataValues.get(p), "</li><li>");
                 write("</ul></li>");
             }
             write("</ul>");
@@ -844,7 +841,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
                 write("<li>not ");
                 p.accept(this);
                 write("<ul><li>");
-                writeOpList(negDataValues.get(p), "</li><li>", false);
+                writeOpList(negDataValues.get(p), "</li><li>");
                 write("</ul></li>");
             }
             write("</ul>");
@@ -859,7 +856,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
                 write("<li>");
                 p.accept(this);
                 write("<ul><li>");
-                writeOpList(objValues.get(p), "</li><li>", false);
+                writeOpList(objValues.get(p), "</li><li>");
                 write("</ul></li>");
             }
             write("</ul>");
@@ -875,7 +872,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
                 write("<li>not ");
                 p.accept(this);
                 write("<ul><li>");
-                writeOpList(negbjValues.get(p), "</li><li>", false);
+                writeOpList(negbjValues.get(p), "</li><li>");
                 write("</ul></li>");
             }
             write("</ul>");
@@ -953,15 +950,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         writeAnnotations(axiom);
     }
 
-    private <O extends OWLObject> void writeOpList(Iterable<O> args, String separator, boolean wrap) {
+    private <O extends OWLObject> void writeOpList(Iterable<O> args, String separator) {
         for (Iterator<O> i = args.iterator(); i.hasNext();) {
             i.next().accept(this);
             if (i.hasNext()){
                 write(separator);
-                if (wrap && indent > 0){
-                    write("<br>"); // cannot use <br /> in java browser
-                    writeIndent();
-                }
             }
         }
     }

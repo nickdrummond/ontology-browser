@@ -1,12 +1,12 @@
 package org.coode.www.renderer;
 
-import java.util.Optional;
 import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Optional;
 
 public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
 

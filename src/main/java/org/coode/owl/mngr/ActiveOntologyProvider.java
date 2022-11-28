@@ -10,7 +10,7 @@ public interface ActiveOntologyProvider {
 
     void removeActiveOntologyListener(Listener l);
 
-    public interface Listener{
+    interface Listener{
         void activeOntologyChanged(OWLOntology ont);
     }
 }

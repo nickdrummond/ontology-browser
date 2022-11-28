@@ -2,8 +2,8 @@ package org.coode.www.model;
 
 public class ReasonerMomento {
 
-    private String label;
-    private String cls;
+    private final String label;
+    private final String cls;
 
     public ReasonerMomento(String label, String cls) {
         this.label = label;

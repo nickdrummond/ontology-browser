@@ -25,9 +25,7 @@ public class Matchers {
      * t(a, t(b), t(c))
      */
     public static Object[] t(Object... o) {
-        return Arrays.stream(o)
-                .map(Matchers::toNode)
-                .collect(Collectors.toList()).toArray();
+        return Arrays.stream(o).map(Matchers::toNode).toArray();
     }
 
     private static Object toNode(Object o) {
@@ -50,7 +48,7 @@ public class Matchers {
 
     public static CustomTypeSafeMatcher<Tree<? extends OWLEntity>> looksLike(final Object[] expected) {
 
-        return new CustomTypeSafeMatcher<Tree<? extends OWLEntity>>("A matching tree") {
+        return new CustomTypeSafeMatcher<>("A matching tree") {
 
             private Tree<? extends OWLEntity> parentNode;
             private Tree<? extends OWLEntity> actualNode;
@@ -69,29 +67,29 @@ public class Matchers {
                         .appendText(" -> ")
                         .appendText(expectedNode != null ? expectedNode.toString() : "not expected")
                         .appendText(" was actually ")
-                        .appendText(actualNode != null ? actualNode.value.getClass() + " " + actualNode.value.toString() : "not there")
+                        .appendText(actualNode != null ? actualNode.value.getClass() + " " + actualNode.value : "not there")
                         .appendText("\n\n")
                         .appendValue(item);
             }
 
             // Walk both actual and expected hierarchies
             private boolean childrenMatch(final Tree<? extends OWLEntity> actual, final Object[] expected) {
-                for (int i=1; i<expected.length; i++) {
+                for (int i = 1; i < expected.length; i++) {
                     Object[] expectedChild = (Object[]) expected[i];
 
                     parentNode = actual;
                     if (actual.children.size() < i) {
-                        expectedNode = (Iterable)expectedChild[0];
+                        expectedNode = (Iterable) expectedChild[0];
                         actualNode = null;
                         return false;
                     }
-                    if (!matches(actual.children.get(i-1), expectedChild)) {
+                    if (!matches(actual.children.get(i - 1), expectedChild)) {
                         return false;
                     }
                 }
-                if (actual.children.size() > expected.length-1) {
+                if (actual.children.size() > expected.length - 1) {
                     parentNode = actual;
-                    actualNode = actual.children.get(expected.length-1);
+                    actualNode = actual.children.get(expected.length - 1);
                     return false;
                 }
                 return true;
@@ -99,8 +97,8 @@ public class Matchers {
 
             private boolean matches(final Tree<? extends OWLEntity> actual, final Object[] expected) {
 
-                if (!Iterators.elementsEqual(actual.value.iterator(), ((Iterable)expected[0]).iterator())) {
-                    expectedNode = (Iterable)expected[0];
+                if (!Iterators.elementsEqual(actual.value.iterator(), ((Iterable) expected[0]).iterator())) {
+                    expectedNode = (Iterable) expected[0];
                     actualNode = actual;
                     return false;
                 }
