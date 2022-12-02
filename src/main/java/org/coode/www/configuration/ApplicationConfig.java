@@ -1,8 +1,11 @@
 package org.coode.www.configuration;
 
+import org.apache.commons.collections4.map.LRUMap;
+import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ApplicationInfo;
 import org.coode.www.model.ReasonerMomento;
 import org.coode.www.service.ReasonerFactoryService;
+import org.coode.www.service.ReasonerService;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +13,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Configuration
 @ComponentScan({"org.coode.www.service", "org.coode.www.repository", "org.coode.www.controller"})
@@ -78,5 +84,18 @@ public class ApplicationConfig {
     @Autowired
     public ReasonerFactoryService reasonerFactoryService(List<ReasonerMomento> reasoners) {
         return new ReasonerFactoryService(reasoners, openlletLabel, structuralLabel);
+    }
+
+    @Bean
+    public ExecutorService reasonerThreadPool(@Value("${reasoning.threads}") int reasoningThreads) {
+        return Executors.newFixedThreadPool(reasoningThreads);
+    }
+
+    @Bean
+    public ReasonerService reasonerService(@Value("${reasoning.cache.count}") int cacheCount,
+                                           ReasonerFactoryService reasonerFactoryService,
+                                           OWLHTMLKit kit,
+                                           ExecutorService reasonerThreadPool) {
+        return new ReasonerService(kit, reasonerThreadPool, Collections.synchronizedMap(new LRUMap<>(cacheCount)), reasonerFactoryService);
     }
 }
