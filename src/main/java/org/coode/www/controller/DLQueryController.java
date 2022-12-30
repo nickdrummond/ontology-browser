@@ -44,18 +44,20 @@ public class DLQueryController extends ApplicationController {
     @RequestMapping(method=RequestMethod.GET)
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
-            @RequestParam(required = false) final String minus,
+            @RequestParam(required = false, defaultValue = "") final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(required = false, defaultValue = "instances", name = "query") final QueryType queryType,
             final Model model) throws OntServerException, ParseException {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
-        parserService.getOWLClassExpression(expression, df, checker);
 
-        reasonerService.asyncQuery(new DLQuery(parserService.getOWLClassExpression(expression, df, checker), queryType));
+        if (!expression.isEmpty()) {
+            OWLClassExpression owlClassExpression = parserService.getOWLClassExpression(expression, df, checker);
+            reasonerService.asyncQuery(new DLQuery(owlClassExpression, queryType));
+        }
 
-        if (minus != null && !minus.isEmpty()) {
+        if (!minus.isEmpty()) {
             reasonerService.asyncQuery(new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType));
         }
 
