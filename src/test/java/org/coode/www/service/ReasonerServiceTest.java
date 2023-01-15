@@ -24,8 +24,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class ReasonerServiceTest {
 
-    public DLQuery q1 = new DLQuery(new OWLClassImpl(IRI.create("test")), QueryType.instances);
-    public DLQuery q2 = new DLQuery(new OWLClassImpl(IRI.create("test2")), QueryType.instances);
+    public final DLQuery q1 = new DLQuery(new OWLClassImpl(IRI.create("test")), QueryType.instances);
+    public final DLQuery q2 = new DLQuery(new OWLClassImpl(IRI.create("test2")), QueryType.instances);
 
     @Mock
     private OWLHTMLKit kit;

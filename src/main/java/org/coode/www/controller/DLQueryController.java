@@ -78,10 +78,10 @@ public class DLQueryController extends ApplicationController {
 
     @RequestMapping(value="results",method=RequestMethod.GET)
     public String getResults(
-            @RequestParam(required = true) final String expression,
+            @RequestParam final String expression,
             @RequestParam(required = false) final String minus,
             @RequestParam(required = false) final String order,
-            @RequestParam(required = true, name="query") final QueryType queryType,
+            @RequestParam(name="query") final QueryType queryType,
             final Model model) throws OntServerException, QueryTimeoutException, ParserException {
 
         try {
@@ -133,7 +133,7 @@ public class DLQueryController extends ApplicationController {
 
     @RequestMapping(value = "/ac", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String autocompleteOWLClassExpression(
-            @RequestParam(required = true) String expression) throws OntServerException {
+            @RequestParam String expression) throws OntServerException {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
@@ -146,7 +146,7 @@ public class DLQueryController extends ApplicationController {
     // TODO return the actual ParseResult or an XML rendering of the parse exception
     @RequestMapping(value = "/parse", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String parseOWLClassExpression(
-            @RequestParam(required = true) String expression) throws OntServerException {
+            @RequestParam String expression) throws OntServerException {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();

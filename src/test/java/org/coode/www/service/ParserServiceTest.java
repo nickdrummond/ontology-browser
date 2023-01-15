@@ -39,7 +39,7 @@ public class ParserServiceTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfBadOWLExpression() throws ParseException {
+    public void shouldThrowExceptionIfBadOWLExpression() {
         String validOWLExpression = "hasTopping some Piz";
 
         OWLDataFactory df = new OWLDataFactoryImpl();

@@ -194,7 +194,7 @@ public class CharacteristicsFactory {
         }
 
         return assertedProps.keySet().stream().sorted(c).map(p ->
-                        asCharacteristicNew(shortFormProvider.getShortForm(p), ind, assertedProps.get(p)).get() // we know its not empty
+                        asCharacteristicNew(shortFormProvider.getShortForm(p), ind, assertedProps.get(p)).get() // we know it's not empty
                 ).collect(Collectors.toList());
     }
 

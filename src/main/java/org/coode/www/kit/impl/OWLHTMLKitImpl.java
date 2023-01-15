@@ -27,6 +27,7 @@ import org.springframework.lang.NonNull;
 import javax.annotation.Nonnull;
 import java.net.URI;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -303,7 +304,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         if (baseMapper.get(baseURI) == null){
             final BaseURIMapper mapper = new BaseURIMapper(baseURI);
             baseMapper.put(baseURI, mapper);
-            mngr.addIRIMapper(mapper);
+            mngr.setIRIMappers(new HashSet<>(baseMapper.values()));
         }
     }
 }
