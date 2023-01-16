@@ -68,11 +68,6 @@ public class ReasonerService {
         return kit.getOntologyForIRI(IRI.create(reasoningRootIRI)).orElseThrow();
     }
 
-    public void clear() {
-        cache.clear();
-        reasonerFactoryService.clear();
-    }
-
     private Future<Set<OWLEntity>> computeResults(final DLQuery query) {
         return es.submit(() -> {
             long start = System.currentTimeMillis();

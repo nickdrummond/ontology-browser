@@ -48,20 +48,4 @@ public class ReasonerServiceTest {
         assertSame(request, request2);
         assertEquals(1, cache.size());
     }
-
-    @Test
-    public void clearRemovesAllCacheAndReasoners() {
-        Map<DLQuery, Future<Set<OWLEntity>>> cache = Collections.synchronizedMap(new LRUMap<>(10));
-        ReasonerService service = new ReasonerService(kit, reasonerThreadPool, cache, reasonerFactoryService);
-
-        service.asyncQuery(q1);
-        service.asyncQuery(q2);
-
-        assertEquals(2, cache.size());
-
-        service.clear();
-
-        assertTrue(cache.isEmpty());
-        verify(reasonerFactoryService).clear();
-    }
 }

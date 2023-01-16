@@ -28,8 +28,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     void setActiveOntology(@Nonnull OWLOntology ont);
 
-    OWLOntology loadOntology(URI ontPhysicalURI) throws OWLOntologyCreationException;
-
     /**
      * First get an ontology with a matching version IRI if one exists.
      * If not, get an ontology with a matching ontology IRI.
@@ -51,10 +49,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
     OntologyIRIShortFormProvider getOntologyShortFormProvider();
 
     OWLOntology getRootOntology();
-
-    void refresh() throws OWLOntologyCreationException;
-
-    void clearOntologies();
 
     void setLabelParams(URI labelURI, String labelLang);
 }

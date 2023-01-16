@@ -55,11 +55,4 @@ public class RootController extends ApplicationController {
             return "index";
         }
     }
-
-    @RequestMapping("/refresh")
-    public String refresh(final HttpSession session) throws OWLOntologyCreationException {
-        kit.refresh();
-        queryController.refresh();
-        return "redirect:/";
-    }
 }

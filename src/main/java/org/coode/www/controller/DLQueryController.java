@@ -158,13 +158,6 @@ public class DLQueryController extends ApplicationController {
         }
     }
 
-    @RequestMapping("/refresh")
-    public String refresh() {
-        reasonerService.clear();
-        return "redirect:.";
-    }
-
-
     private OWLOntology getDeclarationOntology(OWLEntity e, OWLHTMLKit kit) {
         OWLDeclarationAxiom decl = kit.getOWLOntologyManager().getOWLDataFactory().getOWLDeclarationAxiom(e);
         OWLOntology rActiveOnt = reasonerService.getReasoningActiveOnt();

@@ -1,5 +1,6 @@
 *.iml
 *.log
 .idea
+.extract
 target
 caches
