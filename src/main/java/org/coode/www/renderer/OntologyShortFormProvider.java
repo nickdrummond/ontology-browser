@@ -6,7 +6,6 @@ import org.springframework.lang.NonNull;
 
 /**
  * Attempt to provide a better rendering for Anonymous ontologies.
- * TODO FIXME for RDF (eg BBC wildlife) since OWLAPI update always anonymous
  */
 public class OntologyShortFormProvider extends OntologyIRIShortFormProvider{
 
@@ -24,7 +23,7 @@ public class OntologyShortFormProvider extends OntologyIRIShortFormProvider{
             return ROOT_ONTOLOGY_RENDERING;
         }
         else if (ontology.isAnonymous()){
-            return ontology.getOWLOntologyManager().getOntologyDocumentIRI(ontology).toString();
+            return ontology.getOWLOntologyManager().getOntologyDocumentIRI(ontology).getFragment();
         }
         else {
             return super.getShortForm(ontology);

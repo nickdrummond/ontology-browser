@@ -1,7 +1,5 @@
 package org.coode.www.model;
 
-import com.github.jsonldjava.shaded.com.google.common.collect.Collections2;
-import com.github.jsonldjava.shaded.com.google.common.collect.Sets;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -186,7 +184,6 @@ public class CharacteristicsFactory {
 
         final Map<OWLAnnotationProperty, List<OWLObjectWithOntology>> assertedProps = new HashMap<>();
 
-        // TODO sort by value?
         for (OWLOntology ont : onts){
             for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(ind.getIRI())) {
                 OWLAnnotationProperty p = ax.getProperty();
