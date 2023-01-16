@@ -58,7 +58,7 @@ public class OWLClassesController extends ApplicationController {
 
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlClass));
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlClass);
 
         String entityName = kit.getShortFormProvider().getShortForm(owlClass);
 
@@ -86,7 +86,7 @@ public class OWLClassesController extends ApplicationController {
 
         Tree<OWLClass> prunedTree = hierarchyService.getChildren(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
@@ -108,7 +108,7 @@ public class OWLClassesController extends ApplicationController {
 
         Tree<OWLEntity> prunedTree = hierarchyService.getChildren(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

@@ -38,7 +38,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private final boolean USE_SYMBOLS = true;
 
     // the object currently on the page (will be highlighted)
-    private final Optional<? extends OWLObject> activeObject;
+    private OWLObject activeObject;
 
     private final URLScheme urlScheme;
 
@@ -59,14 +59,15 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             OntologyIRIShortFormProvider ontologySFProvider,
             URLScheme urlScheme,
             Set<OWLOntology> ontologies,
-            OWLOntology activeOntology,
-            Optional<? extends OWLObject> activeObject) {
-
+            OWLOntology activeOntology) {
         this.sfProvider = sfProvider;
         this.ontologyIriSFProvider = ontologySFProvider;
         this.urlScheme = urlScheme;
         this.ontologies = ImmutableSet.copyOf(ontologies);
         this.activeOntology = activeOntology;
+    }
+
+    public void setActiveObject(OWLObject activeObject) {
         this.activeObject = activeObject;
     }
 
@@ -89,19 +90,18 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         boolean writeLink = false;
 
-        if (activeObject.isEmpty()){
+        if (activeObject == null){
+            writeLink = true;
+        }
+        else if (!activeObject.equals(ontology)){
             writeLink = true;
         }
         else{
-            if (!activeObject.get().equals(ontology)){
-                writeLink = true;
-            }
-            else{
-                write("<span class='" + CSS_ACTIVE_ENTITY + " " + cssClass + "'>");
-                write(ontologyIriSFProvider.getShortForm(ontology));
-                write("</span>");
-            }
+            write("<span class='" + CSS_ACTIVE_ENTITY + " " + cssClass + "'>");
+            write(ontologyIriSFProvider.getShortForm(ontology));
+            write("</span>");
         }
+
 
         if (writeLink){
             write("<a class='" + cssClass + "'");
@@ -115,7 +115,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     private String getOntologyIdString(final OWLOntology ont){
         return ont.getOntologyID().getDefaultDocumentIRI().map(IRI::toString)
-                .orElse(ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString());
+                .orElseGet(() -> this.getOntologyDocString(ont));
+    }
+
+    private String getOntologyDocString(final OWLOntology ont) {
+        return ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString();
     }
 
     ////////// Entities
@@ -771,29 +775,26 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         Set<String> cssClasses = new HashSet<>();
         cssClasses.add(cssClass);
 
-        if (activeObject.isEmpty()){
-            // TODO reverse lookup URL
+        if (activeObject == null){
             final String urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);
             write(" title=\"" + uri + "\">" + renderedName + "</a>");
         }
+        else if (activeObject.equals(entity)){
+            cssClasses.add(CSS_ACTIVE_ENTITY);
+            write("<span");
+            writeCSSClasses(cssClasses);
+            write(">" + renderedName + "</span>");
+        }
         else{
-            if (activeObject.get().equals(entity)){
-                cssClasses.add(CSS_ACTIVE_ENTITY);
-                write("<span");
-                writeCSSClasses(cssClasses);
-                write(">" + renderedName + "</span>");
-            }
-            else{
-                final String urlForTarget = urlScheme.getURLForOWLObject(entity);
-                write("<a href=\"" + urlForTarget + "\"");
+            final String urlForTarget = urlScheme.getURLForOWLObject(entity);
+            write("<a href=\"" + urlForTarget + "\"");
 
-                writeCSSClasses(cssClasses);
-                write(" title=\"" + uri + "\">");
-                write(renderedName);
-                write("</a>");
-            }
+            writeCSSClasses(cssClasses);
+            write(" title=\"" + uri + "\">");
+            write(renderedName);
+            write("</a>");
         }
     }
 

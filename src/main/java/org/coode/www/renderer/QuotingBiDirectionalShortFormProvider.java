@@ -15,7 +15,6 @@ public class QuotingBiDirectionalShortFormProvider extends CachingBidirectionalS
     public QuotingBiDirectionalShortFormProvider(ShortFormProvider provider, Set<OWLOntology> ontologies) {
         super();
         this.provider = provider;
-        // TODO: should names also include all standard xsd datatypes - not just the ones referenced?
         Set<OWLEntity> entities = new HashSet<>();
         for (OWLOntology ont: ontologies) {
             entities.addAll(ont.getSignature());

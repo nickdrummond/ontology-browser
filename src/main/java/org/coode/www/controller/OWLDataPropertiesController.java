@@ -59,7 +59,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDataProperty);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.of(owlDataProperty));
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlDataProperty);
 
         model.addAttribute("title", entityName + " (Data Property)");
         model.addAttribute("type", "Data Properties");
@@ -85,7 +85,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         Tree<OWLDataProperty> prunedTree = hierarchyService.getChildren(property);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

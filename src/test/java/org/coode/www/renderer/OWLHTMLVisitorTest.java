@@ -45,8 +45,7 @@ public class OWLHTMLVisitorTest {
             mock(OntologyShortFormProvider.class),
             mock(URLScheme.class),
             Collections.emptySet(),
-            mock(OWLOntology.class),
-            Optional.empty());
+            mock(OWLOntology.class));
 
     @Test
     public void test() {

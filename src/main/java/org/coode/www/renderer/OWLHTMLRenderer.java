@@ -6,23 +6,26 @@ import org.semanticweb.owlapi.model.OWLObject;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Optional;
 
 public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
 
     private final OWLHTMLVisitor rendererVisitor;
 
-    public OWLHTMLRenderer(OWLHTMLKit kit, Optional<? extends OWLObject> activeObject) {
+    public OWLHTMLRenderer(final OWLHTMLKit kit) {
         rendererVisitor = new OWLHTMLVisitor(
                 kit.getShortFormProvider(),
                 kit.getOntologyShortFormProvider(),
                 kit.getURLScheme(),
                 kit.getActiveOntologies(),
-                kit.getActiveOntology(),
-                activeObject);
+                kit.getActiveOntology());
     }
 
-    public String render(OWLObject obj){
+    public OWLHTMLRenderer(final OWLHTMLKit kit, final OWLObject activeObject) {
+        this(kit);
+        rendererVisitor.setActiveObject(activeObject);
+    }
+
+    public String render(final OWLObject obj){
         StringWriter writer = new StringWriter();
         rendererVisitor.setWriter(new PrintWriter(writer));
         obj.accept(rendererVisitor);
@@ -30,7 +33,7 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
         return writer.getBuffer().toString();
     }
 
-    public String renderFullIRI(IRI iri) {
+    public String renderFullIRI(final IRI iri) {
         return iri.getIRIString()
                 .replaceAll("/(?=[^/])", "/<wbr>")
                 .replace("#", "#<wbr>");

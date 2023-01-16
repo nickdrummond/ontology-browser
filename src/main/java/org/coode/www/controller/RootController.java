@@ -42,7 +42,7 @@ public class RootController extends ApplicationController {
             helper.setZoom(4);
             helper.setNormalise(true);
 
-            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
+            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
             Set<OWLOntology> ontologies = kit.getOntologies();
 

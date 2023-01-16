@@ -24,7 +24,7 @@ public class MediaRenderer extends OWLHTMLRenderer {
     // TODO inject
     private final MediaService mediaService;
 
-    public MediaRenderer(OWLHTMLKit kit, Optional<? extends OWLObject> activeObject) {
+    public MediaRenderer(OWLHTMLKit kit, OWLObject activeObject) {
         super(kit, activeObject);
         this.entityFinder = kit.getFinder();
         this.mediaService = new MediaService();

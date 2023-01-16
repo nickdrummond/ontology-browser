@@ -61,7 +61,7 @@ public class DLQueryController extends ApplicationController {
             reasonerService.asyncQuery(new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType));
         }
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
         model.addAttribute("reasonerName", reasonerService.getReasoner().getReasonerName());
         model.addAttribute("reasoningOntology", reasonerService.getReasoningActiveOnt());
@@ -118,7 +118,7 @@ public class DLQueryController extends ApplicationController {
             }
             Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c);
 
-            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
+            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
             model.addAttribute("results", resultsCharacteristic);
             model.addAttribute("mos", owlRenderer);

@@ -73,7 +73,7 @@ public class OWLEntitiesController extends ApplicationController {
             }
         }
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, Optional.empty());
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
         String propLabel = property.orElse("All annotations");
 

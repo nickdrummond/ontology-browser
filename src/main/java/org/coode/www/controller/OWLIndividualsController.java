@@ -85,7 +85,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         String entityName = sfp.getShortForm(owlIndividual);
 
-        OWLHTMLRenderer owlRenderer = new MediaRenderer(kit, Optional.of(owlIndividual));
+        OWLHTMLRenderer owlRenderer = new MediaRenderer(kit, owlIndividual);
 
         Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ontologies);
         if (maybeLoc.isPresent()) {
