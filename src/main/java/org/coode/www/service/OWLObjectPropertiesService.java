@@ -4,6 +4,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
+import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -62,7 +63,7 @@ public class OWLObjectPropertiesService {
                 fac.getEquivalents(owlObjectProperty, activeOntologies, comparator),
                 fac.getSupers(owlObjectProperty, activeOntologies, comparator),
                 fac.getDisjoints(owlObjectProperty, activeOntologies, comparator),
-                fac.getUsage(owlObjectProperty, activeOntologies, comparator)
+                fac.getUsage(owlObjectProperty, activeOntologies, comparator, new UsageVisibilityVisitor())
         )) {
             c.ifPresent(characteristics::add);
         }

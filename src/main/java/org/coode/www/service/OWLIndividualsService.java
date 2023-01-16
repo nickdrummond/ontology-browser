@@ -4,6 +4,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
+import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -52,7 +53,7 @@ public class OWLIndividualsService {
         fac.getNegativeObjectPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
         fac.getDataPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
         fac.getNegativeDataPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-        fac.getUsage(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
+        fac.getUsage(owlIndividual, activeOntologies, comparator, new UsageVisibilityVisitor()).ifPresent(characteristics::add);
         fac.getSameAs(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
         fac.getDifferentFrom(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
 

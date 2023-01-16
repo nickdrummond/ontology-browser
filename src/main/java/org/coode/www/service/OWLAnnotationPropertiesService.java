@@ -5,6 +5,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
+import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -46,7 +47,7 @@ public class OWLAnnotationPropertiesService {
                 fac.getDomains(owlAnnotationProperty, activeOntologies, comparator),
                 fac.getRanges(owlAnnotationProperty, activeOntologies, comparator),
                 fac.getSupers(owlAnnotationProperty, activeOntologies, comparator),
-                fac.getUsage(owlAnnotationProperty, activeOntologies, comparator)
+                fac.getUsage(owlAnnotationProperty, activeOntologies, comparator, new UsageVisibilityVisitor())
         )) {
             c.ifPresent(characteristics::add);
         }

@@ -1,5 +1,7 @@
 package org.coode.www.model;
 
+import com.github.jsonldjava.shaded.com.google.common.collect.Collections2;
+import com.github.jsonldjava.shaded.com.google.common.collect.Sets;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -123,21 +125,21 @@ public class CharacteristicsFactory {
                 ont -> EntitySearcher.getInverses(prop, ont)));
     }
 
-    // TODO get annotations that have this entity IRI as a value (getRefAxioms doesn't pick these up)
-    public Optional<Characteristic> getUsage(OWLEntity ent, Set<OWLOntology> onts, Comparator<OWLObject> c) {
-        UsageVisibilityVisitor vis = new UsageVisibilityVisitor();
+    public Optional<Characteristic> getUsage(OWLEntity ent, Set<OWLOntology> onts, Comparator<OWLObject> c, UsageVisibilityVisitor vis) {
+        // Using the IRI as ont.referencingAxioms() doesn't pick up annotations that have this entity IRI as a value.
+        // This means puns will also show up in the usage which is probably useful for the user.
         return asCharacteristicNew("Usage", ent, wrap(onts, c,
-                ont -> ont.referencingAxioms(ent, Imports.EXCLUDED).filter(ax -> vis.getShowUsage(ax, ent))));
+                ont -> ont.referencingAxioms(ent.getIRI(), Imports.EXCLUDED).filter(ax -> vis.getShowUsage(ax, ent))));
     }
 
     public Optional<Characteristic> getPropertyCharacteristics(OWLObjectProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
         return asCharacteristicNew("Characteristics", prop, wrap(onts, c,
-                ont -> ont.referencingAxioms(prop).filter(ax -> ax instanceof OWLObjectPropertyCharacteristicAxiom)));
+                ont -> ont.referencingAxioms(prop, Imports.EXCLUDED).filter(ax -> ax instanceof OWLObjectPropertyCharacteristicAxiom)));
     }
 
     public Optional<Characteristic> getPropertyCharacteristics(OWLDataProperty prop, Set<OWLOntology> onts, Comparator<OWLObject> c) {
         return asCharacteristicNew("Characteristics", prop, wrap(onts, c,
-                ont -> ont.referencingAxioms(prop).filter(ax -> ax instanceof OWLDataPropertyCharacteristicAxiom)));
+                ont -> ont.referencingAxioms(prop, Imports.EXCLUDED).filter(ax -> ax instanceof OWLDataPropertyCharacteristicAxiom)));
     }
 
     public Optional<Characteristic> getDatatypeDefinitions(OWLDatatype dt, Set<OWLOntology> onts, Comparator<OWLObject> c) {

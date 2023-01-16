@@ -4,6 +4,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.CharacteristicsFactory;
+import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -50,7 +51,7 @@ public class OWLDatatypesService {
         for (Optional<Characteristic> c : asList(
                 fac.getAnnotations(owlDatatype, activeOntologies, comparator),
                 fac.getDatatypeDefinitions(owlDatatype, activeOntologies, comparator),
-                fac.getUsage(owlDatatype, activeOntologies, comparator)
+                fac.getUsage(owlDatatype, activeOntologies, comparator, new UsageVisibilityVisitor())
         )) {
             c.ifPresent(characteristics::add);
         }
