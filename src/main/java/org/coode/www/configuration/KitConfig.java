@@ -24,8 +24,7 @@ public class KitConfig {
         OntologyLoader loader = new OntologyLoader();
         OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
         OWLOntology ont = loader.loadOntologies(mngr, root);
-        OWLHTMLKit kit = new OWLHTMLKitImpl(mngr);
-        kit.setActiveOntology(ont);
+        OWLHTMLKit kit = new OWLHTMLKitImpl(mngr, ont);
         kit.setLabelParams(labelURI, labelLang);
         return kit;
     }

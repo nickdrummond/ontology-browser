@@ -53,8 +53,9 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private String labelLang;
 
-    public OWLHTMLKitImpl(OWLOntologyManager mngr) {
+    public OWLHTMLKitImpl(final OWLOntologyManager mngr, final OWLOntology rootOntology) {
         this.mngr = mngr;
+        this.rootOntology = rootOntology;
     }
 
     @Override
@@ -123,7 +124,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         if (finder == null){
             finder = new OWLEntityFinderImpl(getNameCache(), getOWLOntologyManager().getOWLDataFactory(), this);
         }
-
         return finder;
     }
 
@@ -161,7 +161,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private CachingBidirectionalShortFormProvider getNameCache(){
         if (nameCache == null){
-            // TODO throw away if the onts or the provider change
             nameCache = new QuotingBiDirectionalShortFormProvider(getShortFormProvider(), getActiveOntologies());
         }
         return nameCache;

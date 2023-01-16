@@ -43,7 +43,7 @@ public class OWLHTMLKitImplTest {
         when(mngr.getOntologyDocumentIRI(rootOnt)).thenReturn(locationIRI);
         when(rootOnt.getOntologyID()).thenReturn(new OWLOntologyID(IRI.create(rootBase), IRI.create(rootBase + "/1")));
 
-        kit = new OWLHTMLKitImpl(mngr);
+        kit = new OWLHTMLKitImpl(mngr, rootOnt);
     }
 
 
