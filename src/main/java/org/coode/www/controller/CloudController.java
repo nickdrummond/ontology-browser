@@ -26,16 +26,10 @@ import java.util.Set;
 @SessionAttributes("kit")
 public class CloudController extends ApplicationController {
 
-    @Value("${cloud.threshold.default}")
-    private int thresholdDefault;
-
-    @Value("${cloud.zoom.default}")
-    private int zoomDefault;
-
     @RequestMapping(value = "/classes")
     public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                  @RequestParam Optional<Integer> zoom,
-                                  @RequestParam Optional<Integer> threshold,
+                                  @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+                                  @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                   @RequestParam(defaultValue="false") boolean normalise,
                                   final Model model) throws OntServerException {
 
@@ -46,8 +40,8 @@ public class CloudController extends ApplicationController {
 
     @RequestMapping(value = "/individuals")
     public String getIndividualsCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                      @RequestParam Optional<Integer> zoom,
-                                      @RequestParam Optional<Integer> threshold,
+                                      @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+                                      @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                       @RequestParam(defaultValue="false") boolean normalise,
                                       final Model model) throws OntServerException {
 
@@ -58,8 +52,8 @@ public class CloudController extends ApplicationController {
 
     @RequestMapping(value = "/objectproperties")
     public String getObjectPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                           @RequestParam Optional<Integer> zoom,
-                                           @RequestParam Optional<Integer> threshold,
+                                           @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+                                           @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                            @RequestParam(defaultValue="false") boolean normalise,
                                            final Model model) throws OntServerException {
 
@@ -70,8 +64,8 @@ public class CloudController extends ApplicationController {
 
     @RequestMapping(value = "/dataproperties")
     public String getDataPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                         @RequestParam Optional<Integer> zoom,
-                                         @RequestParam Optional<Integer> threshold,
+                                         @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+                                         @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                          @RequestParam(defaultValue="false") boolean normalise,
                                          final Model model) throws OntServerException {
 
@@ -82,8 +76,8 @@ public class CloudController extends ApplicationController {
 
     @RequestMapping(value = "/annotationproperties")
     public String getAnnotationPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                               @RequestParam Optional<Integer> zoom,
-                                               @RequestParam Optional<Integer> threshold,
+                                               @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+                                               @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                                @RequestParam(defaultValue="false") boolean normalise,
                                                final Model model) throws OntServerException {
 
@@ -94,8 +88,8 @@ public class CloudController extends ApplicationController {
 
     @RequestMapping(value = "/datatypes")
     public String getDatatypesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                    @RequestParam Optional<Integer> zoom,
-                                    @RequestParam Optional<Integer> threshold,
+                                    @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+                                    @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                     @RequestParam(defaultValue="false") boolean normalise,
                                     final Model model) throws OntServerException {
 
@@ -108,13 +102,13 @@ public class CloudController extends ApplicationController {
                                              final Model model,
                                              final String title,
                                              final CloudModel<T> cloudModel,
-                                             final Optional<Integer> zoom,
-                                             final Optional<Integer> threshold,
+                                             final int zoom,
+                                             final int threshold,
                                              boolean normalise) {
 
         CloudHelper<T> helper = new CloudHelper<>(cloudModel);
-        helper.setZoom(zoom.orElse(zoomDefault));
-        helper.setThreshold(threshold.orElse(thresholdDefault));
+        helper.setZoom(zoom);
+        helper.setThreshold(threshold);
         helper.setNormalise(normalise);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
