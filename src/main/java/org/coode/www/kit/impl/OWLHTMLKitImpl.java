@@ -1,9 +1,7 @@
 package org.coode.www.kit.impl;
 
-import com.google.common.collect.Sets;
 import org.coode.html.url.RestURLScheme;
 import org.coode.html.url.URLScheme;
-import org.coode.owl.mngr.ActiveOntologyProvider;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.impl.OWLEntityFinderImpl;
 import org.coode.owl.mngr.impl.OWLObjectComparator;
@@ -43,9 +41,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private OWLObjectComparator comparator;
 
-    private final Set<ActiveOntologyProvider.Listener> listeners = Sets.newHashSet();
-
-    private OWLOntology rootOntology;
+    private final OWLOntology rootOntology;
 
     protected URLScheme urlScheme;
 
@@ -91,14 +87,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public void setActiveOntology(@Nonnull OWLOntology ont) {
         activeOntology = ont;
-    }
-
-    public void addActiveOntologyListener(ActiveOntologyProvider.Listener l) {
-        listeners.add(l);
-    }
-
-    public void removeActiveOntologyListener(ActiveOntologyProvider.Listener l) {
-        listeners.add(l);
     }
 
     public Set<OWLOntology> getOntologies() {

@@ -36,7 +36,7 @@ public class OWLEntitiesController extends ApplicationController {
 
     @RequestMapping(value="/", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody SearchResults find(
-            @RequestParam final String name) throws OntServerException {
+            @RequestParam final String name) {
 
         SearchResults results = new SearchResults();
 

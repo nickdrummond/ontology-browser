@@ -1,13 +1,11 @@
 package org.coode.www.controller;
 
 import org.coode.www.cloud.*;
-import org.coode.www.exception.OntServerException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -31,7 +28,7 @@ public class CloudController extends ApplicationController {
                                   @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                   @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                   @RequestParam(defaultValue="false") boolean normalise,
-                                  final Model model) throws OntServerException {
+                                  final Model model) {
 
         ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit.getOntologies());
 
@@ -43,7 +40,7 @@ public class CloudController extends ApplicationController {
                                       @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                       @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                       @RequestParam(defaultValue="false") boolean normalise,
-                                      final Model model) throws OntServerException {
+                                      final Model model) {
 
         IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOntologies());
 
@@ -55,7 +52,7 @@ public class CloudController extends ApplicationController {
                                            @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                            @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                            @RequestParam(defaultValue="false") boolean normalise,
-                                           final Model model) throws OntServerException {
+                                           final Model model) {
 
         ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit.getOntologies());
 
@@ -67,7 +64,7 @@ public class CloudController extends ApplicationController {
                                          @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                          @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                          @RequestParam(defaultValue="false") boolean normalise,
-                                         final Model model) throws OntServerException {
+                                         final Model model) {
 
         DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit.getOntologies());
 
@@ -79,7 +76,7 @@ public class CloudController extends ApplicationController {
                                                @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                                @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                                @RequestParam(defaultValue="false") boolean normalise,
-                                               final Model model) throws OntServerException {
+                                               final Model model) {
 
         AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit.getOntologies());
 
@@ -91,13 +88,14 @@ public class CloudController extends ApplicationController {
                                     @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                     @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
                                     @RequestParam(defaultValue="false") boolean normalise,
-                                    final Model model) throws OntServerException {
+                                    final Model model) {
 
         DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit.getOntologies());
 
         return cloud(kit, model, "Datatypes Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
+    @SuppressWarnings("SameReturnValue")
     public <T extends OWLEntity>String cloud(final OWLHTMLKit kit,
                                              final Model model,
                                              final String title,

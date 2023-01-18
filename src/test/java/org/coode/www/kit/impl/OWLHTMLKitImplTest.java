@@ -31,10 +31,9 @@ public class OWLHTMLKitImplTest {
     private final Set<OWLOntology> ontologies = new HashSet<>();
 
     private OWLOntology rootOnt;
-    private OWLOntology aOnt;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         rootOnt = mock(OWLOntology.class);
 
         ontologies.add(rootOnt);
@@ -79,7 +78,7 @@ public class OWLHTMLKitImplTest {
     }
 
     @Test
-    public void getOntologies() throws OWLOntologyCreationException {
+    public void getOntologies() {
         // simply passes the ontologies through
         assertEquals(ontologies, kit.getOntologies());
     }

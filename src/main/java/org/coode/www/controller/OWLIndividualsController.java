@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.exception.OntServerException;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.MediaRenderer;
@@ -47,7 +46,7 @@ public class OWLIndividualsController extends ApplicationController {
     private ReasonerFactoryService reasonerFactoryService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLIndividuals() throws OntServerException, NotFoundException {
+    public String getOWLIndividuals() throws NotFoundException {
 
         OWLNamedIndividual firstIndividual = service.getFirstIndividual(kit);
 
@@ -57,11 +56,12 @@ public class OWLIndividualsController extends ApplicationController {
     }
 
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value= "/{individualId}", method=RequestMethod.GET)
     public String getOWLIndividual(@PathVariable final String individualId,
                                    @RequestParam(required=false) final String ontId,
                                    final HttpServletRequest request,
-                                   final Model model) throws OntServerException, NotFoundException {
+                                   final Model model) throws NotFoundException {
 
         OWLOntology activeOntology = kit.getActiveOntology();
 

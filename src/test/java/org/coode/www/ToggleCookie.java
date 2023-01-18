@@ -1,6 +1,5 @@
 package org.coode.www;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +11,7 @@ public class ToggleCookie extends HttpServlet{
     private static final String LABEL_COOKIE_NAME = "label";
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         boolean clearing = false;
         resp.setContentType("text/plain");
         final Cookie[] cookies = req.getCookies();

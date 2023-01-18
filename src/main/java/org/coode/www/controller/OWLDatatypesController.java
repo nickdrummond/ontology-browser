@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.exception.OntServerException;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLDatatypesService;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.Set;
 
 @Controller
@@ -28,7 +26,7 @@ public class OWLDatatypesController extends ApplicationController {
     private OWLDatatypesService service;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLDatatypes() throws OntServerException {
+    public String getOWLDatatypes() {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
@@ -40,9 +38,10 @@ public class OWLDatatypesController extends ApplicationController {
     }
 
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLDatatype(@PathVariable final String propertyId,
-                                 final Model model) throws OntServerException, NotFoundException {
+                                 final Model model) throws NotFoundException {
 
         OWLDatatype owlDatatype = service.getOWLDatatypeFor(propertyId, kit);
 
@@ -71,9 +70,10 @@ public class OWLDatatypesController extends ApplicationController {
         return "owlentity";
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String propertyId,
-                              final Model model) throws OntServerException, NotFoundException {
+                              final Model model) throws NotFoundException {
 
         OWLDatatype property = service.getOWLDatatypeFor(propertyId, kit);
 

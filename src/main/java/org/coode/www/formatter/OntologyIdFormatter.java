@@ -8,7 +8,6 @@ import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import java.text.ParseException;
 import java.util.Locale;
 
 @Component
@@ -32,7 +31,7 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
     }
 
     @Override
-    public OWLOntologyID parse(@Nonnull String s, @Nonnull Locale locale) throws ParseException {
+    public OWLOntologyID parse(@Nonnull String s, @Nonnull Locale locale) {
         throw new RuntimeException("Ouch!");
     }
 }

@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.exception.OntServerException;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLAnnotationPropertiesService;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping(value="/annotationproperties")
@@ -25,7 +23,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
     @RequestMapping(value="/", method=RequestMethod.GET)
     public String getOWLAnnotationProperties()
-            throws OntServerException, NotFoundException {
+            throws NotFoundException {
 
         OWLOntology activeOntology = kit.getActiveOntology();
 
@@ -44,9 +42,10 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     }
 
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
     public String getOWLAnnotationProperty(@PathVariable final String propertyId,
-                              final Model model) throws OntServerException, NotFoundException {
+                              final Model model) throws NotFoundException {
 
         OWLAnnotationProperty owlAnnotationProperty = service.getOWLAnnotationPropertyFor(propertyId, kit);
 

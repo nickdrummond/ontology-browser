@@ -17,7 +17,7 @@ import java.util.regex.PatternSyntaxException;
  * Implementation of finder that takes a partial string and does a regexp search based on the renderings
  * in the name mapper provided.
  * - Stars (*) are replaced with .* for wildcard searching
- * - Searches are not case sensitive
+ * - Searches are not case-sensitive
  * - Search string must be valid java regexp (apart from variations described above)
  */
 public class OWLEntityFinderImpl implements OWLEntityFinder {

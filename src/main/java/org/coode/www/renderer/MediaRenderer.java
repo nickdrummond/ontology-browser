@@ -9,7 +9,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 
-import java.util.Optional;
 import java.util.Set;
 
 /**

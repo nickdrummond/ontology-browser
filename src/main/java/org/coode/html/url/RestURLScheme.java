@@ -7,12 +7,12 @@ import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 /**
- * URL scheme for dynamic server-side resolution
+ * A URL scheme for dynamic server-side resolution
  *
  * This will ONLY work if the hashCode() method for URIs is 1-1 mapping and completely deterministic
  * (for each vm the hash should be the same).
  * We may need to implement our own hash function if this is not the case.
- * It appears to work on a mac, but this will need to be double checked.
+ * It appears to work on OSX, but this will need to be double-checked.
  *
  * Creates URLs of the form:
  * serverbase/<type>/<hash-of-object-uri>/

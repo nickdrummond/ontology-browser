@@ -26,7 +26,7 @@ public class ReasonerService {
     private String reasoningRootIRI;
 
     /**
-     * Use a small thread pool for all of the reasoner queries to prevent overloading the server.
+     * Use a small thread pool for all reasoner queries to prevent overloading the server.
      */
     private final ExecutorService es;
     /**

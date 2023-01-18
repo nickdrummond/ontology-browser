@@ -41,13 +41,14 @@ public class DLQueryController extends ApplicationController {
     @Autowired
     private ReasonerService reasonerService;
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(method=RequestMethod.GET)
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
             @RequestParam(required = false, defaultValue = "") final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(required = false, defaultValue = "instances", name = "query") final QueryType queryType,
-            final Model model) throws OntServerException, ParseException {
+            final Model model) {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
@@ -76,6 +77,7 @@ public class DLQueryController extends ApplicationController {
         return "dlquery";
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="results",method=RequestMethod.GET)
     public String getResults(
             @RequestParam final String expression,
@@ -133,7 +135,7 @@ public class DLQueryController extends ApplicationController {
 
     @RequestMapping(value = "/ac", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String autocompleteOWLClassExpression(
-            @RequestParam String expression) throws OntServerException {
+            @RequestParam String expression) {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
@@ -146,7 +148,7 @@ public class DLQueryController extends ApplicationController {
     // TODO return the actual ParseResult or an XML rendering of the parse exception
     @RequestMapping(value = "/parse", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String parseOWLClassExpression(
-            @RequestParam String expression) throws OntServerException {
+            @RequestParam String expression) {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();

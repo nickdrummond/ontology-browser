@@ -1,4 +1,5 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<!--suppress HtmlUnknownTag, GrazieInspection, XmlDuplicatedId, CheckTagEmptyBody, HtmlExtraClosingTag -->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
@@ -126,13 +127,15 @@
 <div id="metrics" th:fragment="metrics (metrics)" th:if="${metrics != null}">
     <h4>Metrics</h4>
     <table>
-        <thead><td></td><td></td><td th:if="${showImportMetrics}">with imports</td></thead>
-        <tr th:each="metric : ${metrics}">
-            <td class="metric" th:utext="${metric.getName()}"/>
-            <td class="mvalue" th:utext="${metric.getValue()}"/>
-            <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
-            <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"/>
-        </tr>
+        <thead><tr><td></td><td></td><td th:if="${showImportMetrics}">with imports</td></tr></thead>
+        <tbody>
+            <tr th:each="metric : ${metrics}">
+                <td class="metric" th:utext="${metric.getName()}"></td>
+                <td class="mvalue" th:utext="${metric.getValue()}"></td>
+                <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
+                <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"></td>
+            </tr>
+        </tbody>
     </table>
 </div>
 

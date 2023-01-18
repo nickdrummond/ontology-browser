@@ -1,7 +1,6 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.exception.OntServerException;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLClassesService;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Comparator;
-import java.util.Optional;
 
 @Controller
 @RequestMapping(value="/classes")
@@ -36,7 +34,7 @@ public class OWLClassesController extends ApplicationController {
     private OWLIndividualsService individualsService;
 
     @RequestMapping(value="/", method=RequestMethod.GET)
-    public String getOWLClasses() throws OntServerException {
+    public String getOWLClasses() {
 
         OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
 
@@ -45,9 +43,10 @@ public class OWLClassesController extends ApplicationController {
         return "redirect:/classes/" + id;
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="/{classId}", method=RequestMethod.GET)
     public String getOWLClass(@PathVariable final String classId,
-                              final Model model) throws OntServerException, NotFoundException {
+                              final Model model) throws NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
@@ -72,9 +71,10 @@ public class OWLClassesController extends ApplicationController {
         return "owlentity";
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String classId,
-                              final Model model) throws OntServerException, NotFoundException {
+                              final Model model) throws NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
@@ -94,9 +94,10 @@ public class OWLClassesController extends ApplicationController {
         return "base :: tree";
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="/{classId}/instances", method=RequestMethod.GET)
     public String getInstances(@PathVariable final String classId,
-                               final Model model) throws OntServerException, NotFoundException {
+                               final Model model) throws NotFoundException {
 
         OWLEntity owlClass = service.getOWLClassFor(classId, kit);
 

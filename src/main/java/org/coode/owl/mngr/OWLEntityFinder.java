@@ -8,7 +8,7 @@ import java.util.Set;
  * Interface describing string -> named object behaviour.
  * Up to the implementation whether this is an absolute match based on eg:
  * - string version of URI
- * - string rendering of human readable name
+ * - string rendering of human-readable name
  * - partial string match (for search)
  */
 public interface OWLEntityFinder {

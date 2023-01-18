@@ -23,6 +23,7 @@ public class Matchers {
      * Handy sugar for creating the comparison arrays
      * t(a, t(b), t(c))
      */
+    @SuppressWarnings("GrazieInspection")
     public static Object[] t(Object... o) {
         return Arrays.stream(o).map(Matchers::toNode).toArray();
     }

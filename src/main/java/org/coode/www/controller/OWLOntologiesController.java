@@ -4,7 +4,6 @@ import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.exception.OntServerException;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLOntologiesService;
@@ -26,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Comparator;
-import java.util.Optional;
 
 @Controller
 @RequestMapping(value="/ontologies")
@@ -39,7 +37,7 @@ public class OWLOntologiesController extends ApplicationController {
     private OntologyIRIShortFormProvider sfp;
 
     @RequestMapping(method=RequestMethod.GET)
-    public String getOntologies() throws OntServerException {
+    public String getOntologies() {
 
         OWLOntology rootOntology = kit.getRootOntology();
 
@@ -48,9 +46,10 @@ public class OWLOntologiesController extends ApplicationController {
         return "redirect:/ontologies/" + id;
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET)
     public String getOntology(@PathVariable final String ontId,
-                              final Model model) throws OntServerException, NotFoundException {
+                              final Model model) throws NotFoundException {
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 
         Comparator<Tree<OWLOntology>> comparator = Comparator.comparing(o -> o.value.iterator().next());
@@ -80,7 +79,7 @@ public class OWLOntologiesController extends ApplicationController {
     @RequestMapping(value="/{ontId}", method=RequestMethod.GET, produces="application/rdf+xml")
     public void exportOntology(@PathVariable final String ontId,
                                final HttpServletResponse response,
-                               final Writer writer) throws OntServerException, NotFoundException {
+                               final Writer writer) throws NotFoundException {
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 

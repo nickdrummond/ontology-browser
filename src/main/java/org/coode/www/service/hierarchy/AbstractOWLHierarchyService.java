@@ -40,6 +40,7 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
     private Tree<T> buildTree(final Node<T> current, final Set<Node<T>> ancestors) {
         List<Tree<T>> subs = Lists.newArrayList();
         for (Node<T> subNode : subs(current.getRepresentativeElement())) {
+            //noinspection StatementWithEmptyBody
             if (subNode.isBottomNode()) {
                 // ignore Nothing
             }

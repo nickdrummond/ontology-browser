@@ -99,7 +99,7 @@ public class ParserService {
 
         String search = lastToken + ".*"; // starts with
 
-        if (pos == e.getStartPos()){ // then the error is the last token and we can determine the type
+        if (pos == e.getStartPos()){ // then the error is the last token, and we can determine the type
 
             if (hasExpectedToken(e)){
                 final Set<String> keywords = e.getExpectedKeywords();
