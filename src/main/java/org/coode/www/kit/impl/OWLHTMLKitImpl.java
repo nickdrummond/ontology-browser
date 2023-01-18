@@ -69,11 +69,11 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public Optional<OWLOntology> getOntologyForIRI(final IRI iri) {
-        return mngr.getOntologies().stream().filter(o -> {
-                    OWLOntologyID id = o.getOntologyID();
-                    return ((id.getVersionIRI().isPresent() && id.getVersionIRI().get().equals(iri)) ||
-                            (id.getOntologyIRI().isPresent() && id.getOntologyIRI().get().equals(iri)) ||
-                            (mngr.getOntologyDocumentIRI(o).equals(iri)));
+        return mngr.getOntologies().stream().filter(ont -> {
+                    OWLOntologyID id = ont.getOntologyID();
+                    return (id.getVersionIRI().filter(v -> v.equals(iri)).isPresent() ||
+                            id.getOntologyIRI().filter(o -> o.equals(iri)).isPresent() ||
+                            mngr.getOntologyDocumentIRI(ont).equals(iri));
                 })
                 .findFirst();
     }
