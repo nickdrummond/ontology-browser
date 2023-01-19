@@ -153,7 +153,7 @@
 <EMBED th:fragment="sound (url)"
        th:if="${sound != null}"
        th:src="${url}"  src="/notfound.mp3"
-       autostart="true" hidden="true"></EMBED>
+       autostart="true" style="display:none"></EMBED>
 
 <li th:fragment="tree (t)" th:if="${t != null}">
     <span class='expandable'>+</span>

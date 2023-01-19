@@ -180,7 +180,10 @@ public class CharacteristicsFactory {
                 ont -> ont.negativeObjectPropertyAssertionAxioms(ind)));
     }
 
-    public List<Characteristic> getAnnotationCharacteristics(OWLNamedIndividual ind, Set<OWLOntology> onts, Comparator<OWLObject> c, ShortFormProvider shortFormProvider) {
+    public List<Characteristic> getAnnotationCharacteristics(final OWLNamedIndividual ind,
+                                                             final Set<OWLOntology> onts,
+                                                             final Comparator<OWLObject> comp,
+                                                             final ShortFormProvider sfp) {
 
         final Map<OWLAnnotationProperty, List<OWLObjectWithOntology>> assertedProps = new HashMap<>();
 
@@ -192,17 +195,20 @@ public class CharacteristicsFactory {
             }
         }
 
-        return assertedProps.keySet().stream().sorted(c).map(p ->
-                        asCharacteristicNew(shortFormProvider.getShortForm(p), ind, assertedProps.get(p)).get() // we know it's not empty
-                ).collect(Collectors.toList());
+        return assertedProps.keySet().stream()
+                .sorted(comp)
+                .map(p -> asCharacteristicNew(sfp.getShortForm(p), ind, assertedProps.get(p)).get())
+                .collect(Collectors.toList());
     }
 
     /* All ontology queries return collections of OWLObjects - we want to wrap these with the ontology the assertions
      * are in
      */
-    private List<OWLObjectWithOntology> wrap(Set<OWLOntology> onts, Comparator<OWLObject> c,
-                                             Function<OWLOntology, Stream<? extends OWLObject>> f) {
-        return onts.stream().flatMap(o -> f.apply(o).map(ax -> new OWLObjectWithOntology(ax, o)))
+    private List<OWLObjectWithOntology> wrap(final Set<OWLOntology> onts,
+                                             final Comparator<OWLObject> c,
+                                             final Function<OWLOntology, Stream<? extends OWLObject>> f) {
+        return onts.stream()
+                .flatMap(o -> f.apply(o).map(ax -> new OWLObjectWithOntology(ax, o)))
                 .sorted((o1, o2) -> c.compare(o1.getOWLObject(), o2.getOWLObject()))
                 .collect(Collectors.toList());
     }
