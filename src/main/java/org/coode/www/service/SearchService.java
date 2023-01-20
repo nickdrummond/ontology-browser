@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,10 @@ public class SearchService {
         return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).collect(Collectors.toList());
     }
 
-    public List<OWLObjectWithOntology> findByAnnotation(String value, Optional<OWLAnnotationProperty> prop, OWLHTMLKit kit) {
+    public List<OWLObjectWithOntology> findByAnnotation(@Nonnull String value,
+                                                        OWLAnnotationProperty searchProp,
+                                                        @Nonnull OWLHTMLKit kit) {
+        Optional<OWLAnnotationProperty> prop = Optional.ofNullable(searchProp);
         Set<OWLObjectWithOntology> results = new HashSet<>();
         for (OWLOntology ont : kit.getOWLOntologyManager().getOntologies()) {
             for (OWLAnnotationAssertionAxiom ax : ont.getAxioms(AxiomType.ANNOTATION_ASSERTION)) {

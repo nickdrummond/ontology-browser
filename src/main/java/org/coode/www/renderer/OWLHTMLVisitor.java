@@ -880,7 +880,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
     }
 
-    private void writeCardinality(OWLCardinalityRestriction desc, String cardinalityType) {
+    private void writeCardinality(OWLCardinalityRestriction<? extends OWLPropertyRange> desc, String cardinalityType) {
         desc.getProperty().accept(this);
         write(" ");
         writeKeyword(cardinalityType, cardinalityType);
@@ -890,7 +890,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         writeOp(desc.getFiller(), true);
     }
 
-    private void writeUnaryPropertyAxiom(OWLUnaryPropertyAxiom axiom, String keyword) {
+    private void writeUnaryPropertyAxiom(OWLUnaryPropertyAxiom<? extends OWLPropertyExpression> axiom, String keyword) {
         writeKeyword(keyword);
         write(" (");
         writeOp(axiom.getProperty(), true);
@@ -942,7 +942,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
     }
 
-    private void writeAssertionAxiom(OWLPropertyAssertionAxiom axiom) {
+    private void writeAssertionAxiom(OWLPropertyAssertionAxiom<? extends OWLPropertyExpression, ? extends OWLPropertyAssertionObject> axiom) {
         axiom.getSubject().accept(this);
         write(" ");
         axiom.getProperty().accept(this);

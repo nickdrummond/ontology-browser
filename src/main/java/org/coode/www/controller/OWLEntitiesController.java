@@ -62,7 +62,7 @@ public class OWLEntitiesController extends ApplicationController {
             throw new OntServerException("Unknown property: " + property);
         }
 
-        List<OWLObjectWithOntology> results = service.findByAnnotation(search, optAnnot, kit);
+        List<OWLObjectWithOntology> results = service.findByAnnotation(search, optAnnot.orElse(null), kit);
 
         if (results.size() == 1) {
             OWLObject owlObject = results.get(0).getOWLObject();
