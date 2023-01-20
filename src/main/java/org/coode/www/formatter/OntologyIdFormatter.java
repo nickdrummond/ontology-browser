@@ -20,7 +20,7 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
     private String rootIri;
 
     @Override
-    public String print(@Nonnull OWLOntologyID owlOntologyID, @Nonnull Locale locale) {
+    public @Nonnull String print(@Nonnull OWLOntologyID owlOntologyID, @Nonnull Locale locale) {
         return owlOntologyID.getDefaultDocumentIRI().map(iri -> {
             if (iri.toString().equals(rootIri)) {
                 return "All ontologies";
@@ -31,7 +31,7 @@ public class OntologyIdFormatter implements Formatter<OWLOntologyID> {
     }
 
     @Override
-    public OWLOntologyID parse(@Nonnull String s, @Nonnull Locale locale) {
+    public @Nonnull OWLOntologyID parse(@Nonnull String s, @Nonnull Locale locale) {
         throw new RuntimeException("Ouch!");
     }
 }

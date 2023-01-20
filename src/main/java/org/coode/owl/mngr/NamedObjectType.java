@@ -36,7 +36,7 @@ public enum NamedObjectType {
         return entitySubTypes;
     }
 
-    public Class getCls() {
+    public Class<? extends OWLObject> getCls() {
         switch(this){
             case classes: return OWLClass.class;
             case objectproperties: return OWLObjectProperty.class;

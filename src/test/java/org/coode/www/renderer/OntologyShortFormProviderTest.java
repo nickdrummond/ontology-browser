@@ -18,11 +18,14 @@ public class OntologyShortFormProviderTest {
     @Test
     public void getShortForm() throws OWLOntologyCreationException {
         OWLOntologyManager mngr = new OWLManager().get();
+        OWLDataFactory df = mngr.getOWLDataFactory();
+
         OWLOntology ont = mngr.createOntology();
         String expected = "http://example.com/ont2";
         OWLOntology ont2 = mngr.createOntology(new OWLOntologyID(IRI.create(expected)));
 
-        mngr.applyChanges(new AddImport(ont, mngr.getOWLDataFactory().getOWLImportsDeclaration(ont2.getOntologyID().getOntologyIRI().get())));
+        OWLImportsDeclaration importsDecl = df.getOWLImportsDeclaration(ont2.getOntologyID().getOntologyIRI().orElseThrow());
+        mngr.applyChanges(new AddImport(ont, importsDecl));
 
         OntologyShortFormProvider provider = new OntologyShortFormProvider(ont);
         assertEquals("ont2", provider.getShortForm(ont2));

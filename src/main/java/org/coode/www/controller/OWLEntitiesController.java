@@ -8,10 +8,7 @@ import org.coode.www.model.SearchResults;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.NameService;
 import org.coode.www.service.SearchService;
-import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -54,13 +51,15 @@ public class OWLEntitiesController extends ApplicationController {
     @RequestMapping(value="annotation", method=RequestMethod.GET)
     public String findAnnotation(
             @RequestParam final String search,
-            @RequestParam(required=false) final Optional<String> property,
+            @RequestParam(required = false) final String property,
             final Model model) throws OntServerException {
 
-        Optional<OWLAnnotationProperty> optAnnot = property.map(p -> kit.getOWLEntityChecker().getOWLAnnotationProperty(p));
+        Optional<String> optProp = Optional.ofNullable(property);
 
-        if (property.isPresent() && optAnnot.isEmpty()) {
-            throw new OntServerException("Unknown property: " + property.get());
+        Optional<OWLAnnotationProperty> optAnnot = optProp.map(p -> kit.getOWLEntityChecker().getOWLAnnotationProperty(p));
+
+        if (optProp.isPresent() && optAnnot.isEmpty()) {
+            throw new OntServerException("Unknown property: " + property);
         }
 
         List<OWLObjectWithOntology> results = service.findByAnnotation(search, optAnnot, kit);
@@ -68,14 +67,15 @@ public class OWLEntitiesController extends ApplicationController {
         if (results.size() == 1) {
             OWLObject owlObject = results.get(0).getOWLObject();
             if (owlObject instanceof OWLAnnotationAssertionAxiom) {
-                OWLObject o = service.getEntities(((OWLAnnotationAssertionAxiom)owlObject).getSubject().asIRI().get(), kit).iterator().next();
+                Optional<IRI> iri = ((OWLAnnotationAssertionAxiom) owlObject).getSubject().asIRI();
+                OWLObject o = service.getEntities(iri.orElseThrow(), kit).iterator().next();
                 return "redirect:" + kit.getURLScheme().getURLForOWLObject(o);
             }
         }
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
-        String propLabel = property.orElse("All annotations");
+        String propLabel = optProp.orElse("All annotations");
 
         Characteristic resultsCharacteristic = new Characteristic(null, propLabel, results);
 

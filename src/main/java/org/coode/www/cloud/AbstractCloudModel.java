@@ -1,15 +1,15 @@
 package org.coode.www.cloud;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class AbstractCloudModel<O> implements CloudModel<O> {
 
-    private final Map<O, Integer> entityValueMap = new HashMap();
+    private final Map<O, Integer> entityValueMap = Maps.newHashMap();
 
     private int min;
     private int max;

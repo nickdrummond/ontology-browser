@@ -118,7 +118,6 @@ public class CharacteristicsFactoryTest {
 
         // sorted (prop, prop2)
         when(comparator.compare(prop, prop2)).thenReturn(-1);
-        when(comparator.compare(prop2, prop)).thenReturn(1);
 
         ShortFormProvider sfp = mock(ShortFormProvider.class);
         when(sfp.getShortForm(prop)).thenReturn("p");

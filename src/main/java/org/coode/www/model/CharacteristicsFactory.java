@@ -197,7 +197,7 @@ public class CharacteristicsFactory {
 
         return assertedProps.keySet().stream()
                 .sorted(comp)
-                .map(p -> asCharacteristicNew(sfp.getShortForm(p), ind, assertedProps.get(p)).get())
+                .map(p -> new Characteristic(ind, sfp.getShortForm(p), assertedProps.get(p)))
                 .collect(Collectors.toList());
     }
 
