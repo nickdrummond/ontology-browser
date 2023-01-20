@@ -7,7 +7,9 @@ import org.coode.owl.mngr.OWLEntityFinder;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,48 +38,32 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         this.activeOntologyProvider = activeOntologyProvider;
     }
 
-    public Set<OWLClass> getOWLClasses (String str){
-        Set<OWLClass> results = Sets.newHashSet();
-        getMatches(str, results, NamedObjectType.classes);
-        return results;
+    public Set<OWLEntity> getOWLClasses (String str){
+        return getMatches(str, NamedObjectType.classes);
     }
 
-    public Set<OWLObjectProperty> getOWLObjectProperties(String str) {
-        Set<OWLObjectProperty> results = Sets.newHashSet();
-        getMatches(str, results, NamedObjectType.objectproperties);
-        return results;
+    public Set<OWLEntity> getOWLObjectProperties(String str) {
+        return getMatches(str, NamedObjectType.objectproperties);
     }
 
-    public Set<OWLDataProperty> getOWLDataProperties(String str) {
-        Set<OWLDataProperty> results = Sets.newHashSet();
-        getMatches(str, results, NamedObjectType.dataproperties);
-        return results;
+    public Set<OWLEntity> getOWLDataProperties(String str) {
+        return getMatches(str, NamedObjectType.dataproperties);
     }
 
-
-    public Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str) {
-        Set<OWLAnnotationProperty> results = Sets.newHashSet();
-        getMatches(str, results, NamedObjectType.annotationproperties);
-        return results;
+    public Set<OWLEntity> getOWLAnnotationProperties(String str) {
+        return getMatches(str, NamedObjectType.annotationproperties);
     }
 
-
-    public Set<OWLNamedIndividual> getOWLIndividuals(String str) {
-        Set<OWLNamedIndividual> results = Sets.newHashSet();
-        getMatches(str, results, NamedObjectType.individuals);
-        return results;
+    public Set<OWLEntity> getOWLIndividuals(String str) {
+        return getMatches(str, NamedObjectType.individuals);
     }
 
-
-    public Set<OWLDatatype> getOWLDatatypes(String str) {
-        Set<OWLDatatype> results = Sets.newHashSet();
-        getMatches(str, results, NamedObjectType.datatypes);
-        return results;
+    public Set<OWLEntity> getOWLDatatypes(String str) {
+        return getMatches(str, NamedObjectType.datatypes);
     }
 
-
-    public Set<OWLProperty> getOWLProperties(String str) {
-        Set<OWLProperty> results = Sets.newHashSet();
+    public Set<OWLEntity> getOWLProperties(String str) {
+        Set<OWLEntity> results = Sets.newHashSet();
         results.addAll(getOWLObjectProperties(str));
         results.addAll(getOWLDataProperties(str));
         return results;
@@ -86,15 +72,13 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
     public Set<OWLEntity> getOWLEntities(String str) {
         Set<OWLEntity> results = Sets.newHashSet();
         for (NamedObjectType subType : NamedObjectType.entitySubtypes()){
-            getMatches(str, results, subType);
+            results.addAll(getMatches(str, subType));
         }
         return results;
     }
 
     public Set<OWLEntity> getOWLEntities(String str, NamedObjectType type) {
-        Set<OWLEntity> results = Sets.newHashSet();
-        getMatches(str, results, type);
-        return results;
+        return getMatches(str, type);
     }
 
     public Set<OWLEntity> getOWLEntities(String str, NamedObjectType type, OWLOntology ont) {
@@ -148,15 +132,23 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         cache.dispose();
     }
 
-    private <T extends OWLEntity> void getMatches(String str, Set<T> results, NamedObjectType type){
+    private Set<OWLEntity> getMatches(@Nonnull String str,
+                                      @Nonnull NamedObjectType type){
+
+        HashSet<OWLEntity> results = Sets.newHashSet();
+
         try{
             Pattern pattern = Pattern.compile(str.toLowerCase());
-            for (String rendering : cache.getShortForms()) { // not very efficient looking at all entity types
+
+            Class<? extends OWLObject> typeClass = type.getCls();
+
+            // not very efficient looking at all entity types
+            for (String rendering : cache.getShortForms()) {
                 Matcher m = pattern.matcher(rendering.toLowerCase());
                 if (m.matches()) {
                     for (OWLEntity entity : cache.getEntities(rendering)){
-                        if (type.getCls().isAssignableFrom(entity.getClass())){
-                            results.add((T)entity);
+                        if (typeClass.isAssignableFrom(entity.getClass())){
+                            results.add(entity);
                         }
                     }
                 }
@@ -165,6 +157,8 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         catch(PatternSyntaxException e){
             e.printStackTrace();
         }
+
+        return results;
     }
 
     private Iterable<? extends OWLOntology> getActiveOntologies() {

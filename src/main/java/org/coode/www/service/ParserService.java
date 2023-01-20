@@ -174,9 +174,12 @@ public class ParserService {
         map.put("keyword", names);
     }
 
-    private <T extends OWLEntity> void addResults(Map<String, List<String>> map, Class<T> cls, Collection<T> matches, ShortFormProvider sfp) {
+    private void addResults(final Map<String, List<String>> map,
+                            final Class<? extends OWLEntity> cls,
+                            final Collection<OWLEntity> matches,
+                            final ShortFormProvider sfp) {
         List<String> names = new ArrayList<>();
-        for (T match : matches){
+        for (OWLEntity match : matches){
             String name = sfp.getShortForm(match);
             if (name.contains(" ")){
                 name = "\"" + name + "\"";

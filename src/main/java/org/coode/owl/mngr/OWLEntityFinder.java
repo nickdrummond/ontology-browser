@@ -13,19 +13,19 @@ import java.util.Set;
  */
 public interface OWLEntityFinder {
 
-    Set<OWLClass> getOWLClasses(String str);
+    Set<OWLEntity> getOWLClasses(String str);
 
-    Set<OWLObjectProperty> getOWLObjectProperties(String str);
+    Set<OWLEntity> getOWLObjectProperties(String str);
 
-    Set<OWLDataProperty> getOWLDataProperties(String str);
+    Set<OWLEntity> getOWLDataProperties(String str);
 
-    Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str);
+    Set<OWLEntity> getOWLAnnotationProperties(String str);
 
-    Set<OWLNamedIndividual> getOWLIndividuals(String str);
+    Set<OWLEntity> getOWLIndividuals(String str);
 
-    Set<OWLDatatype> getOWLDatatypes(String str);
+    Set<OWLEntity> getOWLDatatypes(String str);
 
-    Set<OWLProperty> getOWLProperties(String str);
+    Set<OWLEntity> getOWLProperties(String str);
 
     Set<OWLEntity> getOWLEntities(String str);
 
