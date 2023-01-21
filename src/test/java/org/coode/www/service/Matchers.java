@@ -52,7 +52,7 @@ public class Matchers {
 
             private Tree<? extends OWLEntity> parentNode;
             private Tree<? extends OWLEntity> actualNode;
-            private Iterable expectedNode;
+            private Iterable<? extends OWLEntity> expectedNode;
 
             @Override
             protected boolean matchesSafely(Tree<? extends OWLEntity> actual) {
@@ -79,7 +79,7 @@ public class Matchers {
 
                     parentNode = actual;
                     if (actual.children.size() < i) {
-                        expectedNode = (Iterable) expectedChild[0];
+                        expectedNode = getNodeFrom(expectedChild[0]);
                         actualNode = null;
                         return false;
                     }
@@ -96,13 +96,22 @@ public class Matchers {
             }
 
             private boolean matches(final Tree<? extends OWLEntity> actual, final Object[] expected) {
-
-                if (!Iterators.elementsEqual(actual.value.iterator(), ((Iterable) expected[0]).iterator())) {
-                    expectedNode = (Iterable) expected[0];
+                if (!Iterators.elementsEqual(actual.value.iterator(), getNodeFrom(expected[0]).iterator())) {
+                    expectedNode = getNodeFrom(expected[0]);
                     actualNode = actual;
                     return false;
                 }
                 return childrenMatch(actual, expected);
+            }
+
+            private Iterable<? extends OWLEntity> getNodeFrom(Object o) {
+                if (o instanceof OWLClassNode) {
+                    return (OWLClassNode) o;
+                }
+                else if (o instanceof OWLNamedIndividualNode) {
+                    return (OWLNamedIndividualNode) o;
+                }
+                throw new RuntimeException("Unsupported tree node: " + o.getClass());
             }
         };
     }
