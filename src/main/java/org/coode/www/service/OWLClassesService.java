@@ -17,7 +17,6 @@ import static java.util.Arrays.asList;
 @Service
 public class OWLClassesService {
 
-    // TODO need to index the entities by ID
     public OWLClass getOWLClassFor(final String classId, final OWLHTMLKit kit) throws NotFoundException {
         OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
         if (getIdFor(owlThing).equals(classId)) {

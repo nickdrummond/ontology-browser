@@ -1,25 +1,28 @@
 package org.coode.www.controller;
 
+import org.coode.html.url.URLScheme;
 import org.coode.www.cloud.IndividualsByUsageCloud;
+import org.coode.www.model.XmlUrl;
+import org.coode.www.model.XmlUrlSet;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.CloudHelper;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
+import java.util.function.Consumer;
 
 @Controller
 public class RootController extends ApplicationController {
-
-    // required for refresh as the query controller has access to the reasoner(s) and results cache!
-    @Autowired
-    private DLQueryController queryController;
 
     // Entry point
     @RequestMapping("/")
@@ -50,5 +53,51 @@ public class RootController extends ApplicationController {
 
             return "index";
         }
+    }
+
+    @RequestMapping(value = "/sitemap.xml")
+    @ResponseBody
+    public XmlUrlSet sitemap() {
+        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
+        XmlUrlSet xmlUrlSet = new XmlUrlSet();
+
+        // base
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl));
+
+        // indices
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/ontologies"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/classes"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/individuals"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/objectproperties"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/dataproperties"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/annotationproperties"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/datatypes"));
+
+        // additional pages
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/dlquery/"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/classes"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/individuals"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/objectproperties"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/dataproperties"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/annotationproperties"));
+        xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/datatypes"));
+
+        OWLOntology activeOntology = kit.getActiveOntology();
+        URLScheme scheme = kit.getURLScheme();
+
+        // ontologies
+        activeOntology.getImportsClosure().forEach(o -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(o))));
+
+        // entities
+        Consumer<OWLEntity> action = i -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(i)));
+        activeOntology.getClassesInSignature(Imports.INCLUDED).forEach(action);
+        activeOntology.getIndividualsInSignature(Imports.INCLUDED).forEach(action);
+        activeOntology.getObjectPropertiesInSignature(Imports.INCLUDED).forEach(action);
+        activeOntology.getDataPropertiesInSignature(Imports.INCLUDED).forEach(action);
+        activeOntology.getAnnotationPropertiesInSignature(Imports.INCLUDED).forEach(action);
+        activeOntology.getDatatypesInSignature(Imports.INCLUDED).forEach(action);
+
+        return xmlUrlSet;
     }
 }

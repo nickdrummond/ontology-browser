@@ -19,7 +19,6 @@ import static java.util.Arrays.asList;
 @Service
 public class OWLAnnotationPropertiesService {
 
-    // TODO need to index the entities by ID
     public OWLAnnotationProperty getOWLAnnotationPropertyFor(final String propertyId, final OWLHTMLKit kit) throws NotFoundException {
         for (OWLOntology ont : kit.getActiveOntologies()){
             for (OWLAnnotationProperty owlAnnotationProperty: ont.getAnnotationPropertiesInSignature()) {

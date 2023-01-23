@@ -96,8 +96,9 @@ public class Matchers {
             }
 
             private boolean matches(final Tree<? extends OWLEntity> actual, final Object[] expected) {
-                if (!Iterators.elementsEqual(actual.value.iterator(), getNodeFrom(expected[0]).iterator())) {
-                    expectedNode = getNodeFrom(expected[0]);
+                Iterable<? extends OWLEntity> nodeFromExpected = getNodeFrom(expected[0]);
+                if (!Iterators.elementsEqual(actual.value.iterator(), nodeFromExpected.iterator())) {
+                    expectedNode = nodeFromExpected;
                     actualNode = actual;
                     return false;
                 }

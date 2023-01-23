@@ -18,7 +18,6 @@ import java.util.*;
 @Service
 public class OWLIndividualsService {
 
-    // TODO need to index the entities by ID
     public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final Set<OWLOntology> ontologies) throws NotFoundException {
         for (OWLOntology ont : ontologies){
             for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature()) {

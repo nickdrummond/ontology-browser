@@ -18,7 +18,6 @@ import static java.util.Arrays.asList;
 @Service
 public class OWLObjectPropertiesService {
 
-    // TODO need to index the entities by ID
     public OWLObjectProperty getOWLObjectPropertyFor(String propertyId, OWLHTMLKit kit) throws NotFoundException {
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
