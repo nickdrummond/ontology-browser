@@ -5,7 +5,7 @@
 
 <head th:fragment='header (title)'>
 
-    <title th:text='${"Star Wars Ontology : " + title}'>Application Name : Page Name</title>
+    <title th:text='${projectInfo.name + ":" + title}'>Project Name : Page Name</title>
 
     <meta charset='UTF-8'/>
     <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
@@ -35,7 +35,7 @@
 
 <div id='title' th:fragment='title'>
     <h1><img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
-        <a th:href='@{/}' >Star Wars Ontology</a></h1>
+        <a th:href='@{/}' th:text="${projectInfo.name}">Project Name</a></h1>
     <a style='display: none;' href='#content'>skip to content</a>
     <div id="entityfinder" th:fragment="entityfinder">
         <form id='findForm' method='get'>
@@ -187,9 +187,9 @@
 
 <p class='footer' th:fragment='footer'>
     <a href="#" id="aurebesh" class="aurebesh">aurebesh</a>
-    <a href="https://nickdrummond.github.io/star-wars-ontology/">Project Convor - building Star Wars in OWL</a>
-    <a href='https://github.com/nickdrummond/ontology-browser/tree/Star_Wars_Ontology_static'>rendered with Ontology Browser</a>
-    <a href="mailto:nickdrummond@yahoo.com">Contact</a>
+    <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}">Project Link</a>
+    <a href='https://github.com/nickdrummond/ontology-browser/'>rendered with Ontology Browser</a>
+    <a th:href='${"mailto:" + projectInfo.contact}'>Contact</a>
 </p>
 
 </body>

@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.ApplicationInfo;
+import org.coode.www.model.ProjectInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +12,14 @@ abstract public class ApplicationController {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    protected ApplicationInfo applicationInfo;
+    protected ProjectInfo projectInfo;
 
     @Autowired
     protected OWLHTMLKit kit;
 
-    @ModelAttribute("applicationInfo")
-    public ApplicationInfo getApplicationInfo() {
-        return applicationInfo;
+    @ModelAttribute("projectInfo")
+    public ProjectInfo getProjectInfo() {
+        return projectInfo;
     }
 
     @ModelAttribute("kit")

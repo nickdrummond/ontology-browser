@@ -2,7 +2,7 @@ package org.coode.www.configuration;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.ApplicationInfo;
+import org.coode.www.model.ProjectInfo;
 import org.coode.www.model.ReasonerMomento;
 import org.coode.www.service.ReasonerFactoryService;
 import org.coode.www.service.ReasonerService;
@@ -23,10 +23,11 @@ import java.util.concurrent.Executors;
 public class ApplicationConfig {
 
     @Bean
-    public ApplicationInfo applicationInfo(@Value("${application.name}") String applicationName,
-                                           @Value("${application.version}") String applicationVersion,
-                                           @Value("${application.url}") String applicationUrl) {
-        return new ApplicationInfo(applicationName, applicationVersion, applicationUrl);
+    public ProjectInfo applicationInfo(@Value("${project.name}") String name,
+                                       @Value("${project.contact}") String contact,
+                                       @Value("${project.url}") String url,
+                                       @Value("${project.tagline}") String tagline) {
+        return new ProjectInfo(name, contact, url, tagline);
     }
 
     @Bean
