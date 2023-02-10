@@ -20,6 +20,10 @@ Set the root ontology location and reasoner root ontology IRI environment variab
 
     ONTOLOGY_ROOT_LOCATION=<your ontology URL>
     REASONING_ROOT_IRI=<IRI of the ontology to be reasoned with>
+    PROJECT_NAME=<Ontology name>
+    PROJECT_URL=<Project documentation url>
+    PROJECT_TAGLINE=<Project tagline text>
+    PROJECT_CONTACT=<Email address of contact>
 
 Using maven to build:
 
