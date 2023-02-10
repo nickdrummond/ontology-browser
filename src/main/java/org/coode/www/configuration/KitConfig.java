@@ -17,8 +17,8 @@ import java.net.URI;
 public class KitConfig {
 
     @Bean
-    public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}") URI root,
-                                 @Value("${renderer.annotation.uri}") URI labelURI,
+    public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}")   URI root,
+                                 @Value("${renderer.annotation.uri}")  URI labelURI,
                                  @Value("${renderer.annotation.lang}") String labelLang) throws OWLOntologyCreationException {
         System.out.println("Loading Kit... " + root);
         OntologyLoader loader = new OntologyLoader();

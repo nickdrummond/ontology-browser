@@ -23,10 +23,10 @@ import java.util.concurrent.Executors;
 public class ApplicationConfig {
 
     @Bean
-    public ProjectInfo applicationInfo(@Value("${project.name}") String name,
-                                       @Value("${project.contact}") String contact,
-                                       @Value("${project.url}") String url,
-                                       @Value("${project.tagline}") String tagline) {
+    public ProjectInfo projectInfo(@Value("${project.name}")    String name,
+                                   @Value("${project.contact}") String contact,
+                                   @Value("${project.url}")     String url,
+                                   @Value("${project.tagline}") String tagline) {
         return new ProjectInfo(name, contact, url, tagline);
     }
 
@@ -52,31 +52,31 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ReasonerMomento jfact(@Value("${reasoner.jfact.cls}") String cls,
+    public ReasonerMomento jfact(@Value("${reasoner.jfact.cls}")   String cls,
                                  @Value("${reasoner.jfact.label}") String label) {
         return new ReasonerMomento(label, cls);
     }
 
     @Bean
-    public ReasonerMomento hermit(@Value("${reasoner.hermit.cls}") String cls,
+    public ReasonerMomento hermit(@Value("${reasoner.hermit.cls}")   String cls,
                                   @Value("${reasoner.hermit.label}") String label) {
         return new ReasonerMomento(label, cls);
     }
 
     @Bean
-    public ReasonerMomento owlLink(@Value("${reasoner.owllink.cls}") String cls,
+    public ReasonerMomento owlLink(@Value("${reasoner.owllink.cls}")   String cls,
                                    @Value("${reasoner.owllink.label}") String label) {
         return new ReasonerMomento(label, cls);
     }
 
     @Bean
-    public ReasonerMomento factpp(@Value("${reasoner.factpp.cls}") String cls,
+    public ReasonerMomento factpp(@Value("${reasoner.factpp.cls}")   String cls,
                                   @Value("${reasoner.factpp.label}") String label) {
         return new ReasonerMomento(label, cls);
     }
 
     @Bean
-    public ReasonerMomento pellet(@Value("${reasoner.pellet.cls}") String cls,
+    public ReasonerMomento pellet(@Value("${reasoner.pellet.cls}")   String cls,
                                   @Value("${reasoner.pellet.label}") String label) {
         return new ReasonerMomento(label, cls);
     }
