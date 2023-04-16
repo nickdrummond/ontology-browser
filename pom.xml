@@ -27,7 +27,7 @@
     <hamcrest.version>2.0.0.0</hamcrest.version>
     <mockito.version>4.9.0</mockito.version>
 
-    <jetty.version>9.3.0.v20150612</jetty.version>
+    <jetty.version>10.0.14</jetty.version>
 
     <compiler-plugin.version>2.5.1</compiler-plugin.version>
     <cargo-plugin.version>1.4.10</cargo-plugin.version>
