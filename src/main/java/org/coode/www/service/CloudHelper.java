@@ -52,7 +52,7 @@ public class CloudHelper<O extends OWLEntity> {
         if (normalise) {
             int relativeScore = value - model.getMin();
             int scoreRange = model.getRange();
-            score = 50 + ((relativeScore * 205) / scoreRange);
+            score = (scoreRange == 0) ? 255 : 50 + ((relativeScore * 205) / scoreRange);
         }
         else {
             score = Math.min(255, 50 + (zoom * value / 2));
@@ -73,7 +73,7 @@ public class CloudHelper<O extends OWLEntity> {
             int displayRange = MAX_SIZE - displayMin;
             int scoreRange = model.getRange();
             int relativeScore = value - model.getMin();
-            size = displayMin + ((relativeScore * displayRange) / scoreRange);
+            size = (scoreRange == 0) ? MAX_SIZE : displayMin + ((relativeScore * displayRange) / scoreRange);
         }
         else {
             size = Math.min(MAX_SIZE, zoom + (value / 2));

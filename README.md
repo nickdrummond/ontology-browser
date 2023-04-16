@@ -16,7 +16,24 @@ renders it for easy navigation.
 
 ## Run
 
-Set the root ontology location and reasoner root ontology IRI environment variables:
+### Maven
+
+`mvn clean jetty:run`
+
+Then navigate to http://localhost:8080
+
+This will give you a browser with a tiny example ontology.
+
+### Docker
+
+Run the Dockerfile, which will build from github by default and create an image
+based on [Jetty 10](https://hub.docker.com/_/jetty/)  Alpine
+
+Run the image and navigate to http://localhost:8080
+
+### Configuration
+
+To load your own, set the root ontology location and reasoner root ontology IRI environment variables:
 
     ONTOLOGY_ROOT_LOCATION=<your ontology URL>
     REASONING_ROOT_IRI=<IRI of the ontology to be reasoned with>
@@ -24,10 +41,6 @@ Set the root ontology location and reasoner root ontology IRI environment variab
     PROJECT_URL=<Project documentation url>
     PROJECT_TAGLINE=<Project tagline text>
     PROJECT_CONTACT=<Email address of contact>
-
-Using maven to build:
-
-`mvn clean package cargo:run`
 
 ## Notes
 

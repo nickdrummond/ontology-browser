@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,7 +42,17 @@ public class OntologyLoader {
 
         handleCommonBaseMappers(mngr, physicalURI);
 
-        return mngr.loadOntologyFromOntologyDocument(iri);
+        if (!physicalURI.isAbsolute()) {
+            ClassLoader classLoader = getClass().getClassLoader();
+            InputStream ontAsStream = classLoader.getResourceAsStream(physicalURI.getPath());
+            if (ontAsStream == null) {
+                throw new RuntimeException("Cannot load: " + physicalURI + " from classpath: " + classLoader.getResource("/"));
+            }
+            return mngr.loadOntologyFromOntologyDocument(ontAsStream);
+        }
+        else {
+            return mngr.loadOntologyFromOntologyDocument(iri);
+        }
     }
 
     // create a set of CommonBaseURIMappers for finding ontologies

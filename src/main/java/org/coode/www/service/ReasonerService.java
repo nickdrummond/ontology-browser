@@ -65,7 +65,7 @@ public class ReasonerService {
     }
 
     public OWLOntology getReasoningActiveOnt() {
-        return kit.getOntologyForIRI(IRI.create(reasoningRootIRI)).orElseThrow();
+        return kit.getOntologyForIRI(IRI.create(reasoningRootIRI)).orElse(kit.getActiveOntology());
     }
 
     private Future<Set<OWLEntity>> computeResults(final DLQuery query) {
