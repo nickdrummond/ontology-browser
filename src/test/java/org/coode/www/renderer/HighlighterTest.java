@@ -1,7 +1,6 @@
 package org.coode.www.renderer;
 
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -99,25 +98,25 @@ public class HighlighterTest {
     @Test
     public void shouldHighlightMarkupSplitOverTags() {
         String result = new Highlighter("defg").highlight("<a>abcde<em>fg</em></a>");
-        assertEquals("<a>abc<span class=\"highlight\">de<em>fg</span></em></a>", result);
+        assertEquals("<a>abc<span class=\"highlight\">de</span><em><span class=\"highlight\">fg</span></em></a>", result);
     }
 
     @Test
     public void shouldHighlightMarkupSplitOverTagsWithExtraContent() {
         String result = new Highlighter("defg").highlight("<a>abcde<em>fghij</em></a>");
-        assertEquals("<a>abc<span class=\"highlight\">de<em>fg</span>hij</em></a>", result);
+        assertEquals("<a>abc<span class=\"highlight\">de</span><em><span class=\"highlight\">fg</span>hij</em></a>", result);
     }
 
     @Test
     public void shouldHighlightMarkupSplitOverManyTagsWithExtraContent() {
         String result = new Highlighter("cdefghi").highlight("<a>abc<em>def</em>ghi</a>");
-        assertEquals("<a>ab<span class=\"highlight\">c<em>def</em>ghi</span></a>", result);
+        assertEquals("<a>ab<span class=\"highlight\">c</span><em><span class=\"highlight\">def</span></em><span class=\"highlight\">ghi</span></a>", result);
     }
 
     @Test
     public void shouldHighlightMarkupIgnoringOtherNonMatchingText() {
         String result = new Highlighter("cdefghi").highlight("<a>preamble</a>and<a>abc<em>def</em>ghi</a>");
-        assertEquals("<a>preamble</a>and<a>ab<span class=\"highlight\">c<em>def</em>ghi</span></a>", result);
+        assertEquals("<a>preamble</a>and<a>ab<span class=\"highlight\">c</span><em><span class=\"highlight\">def</span></em><span class=\"highlight\">ghi</span></a>", result);
     }
 
     @Test
@@ -127,7 +126,7 @@ public class HighlighterTest {
         //    and (of some (hadRole some StormTrooper)))
         String highlight = "some (hadRole some StormTrooper)";
         String source = "<a href=\"/individuals/-1399458952/\" class=\"Individual\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#Infiltrating_the_First_Order\">Infiltrating_<wbr>the_<wbr>First_<wbr>Order</a>: <a href=\"/objectproperties/1035051157/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#included\">included</a> <span class=\"some\">some</span> (<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/classes/-1155386512/\" class=\"Class\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#Injury\">Injury</a><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"keyword\">and</span> (<a href=\"/objectproperties/944795056/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#of\">of</a> <span class=\"some\">some</span> (<a href=\"/objectproperties/1627826554/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#hadRole\">hadRole</a> <span class=\"some\">some</span> <a href=\"/classes/-2145398193/\" class=\"Class\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#StormTrooper\">StormTrooper</a>)))";
-        String expected = "<a href=\"/individuals/-1399458952/\" class=\"Individual\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#Infiltrating_the_First_Order\">Infiltrating_<wbr>the_<wbr>First_<wbr>Order</a>: <a href=\"/objectproperties/1035051157/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#included\">included</a> <span class=\"some\">some</span> (<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/classes/-1155386512/\" class=\"Class\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#Injury\">Injury</a><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"keyword\">and</span> (<a href=\"/objectproperties/944795056/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#of\">of</a> <span class=\"highlight\"><span class=\"some\">some</span> (<a href=\"/objectproperties/1627826554/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#hadRole\">hadRole</a> <span class=\"some\">some</span> <a href=\"/classes/-2145398193/\" class=\"Class\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#StormTrooper\">StormTrooper</a>)</span>))";
+        String expected = "<a href=\"/individuals/-1399458952/\" class=\"Individual\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#Infiltrating_the_First_Order\">Infiltrating_<wbr>the_<wbr>First_<wbr>Order</a>: <a href=\"/objectproperties/1035051157/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#included\">included</a> <span class=\"some\">some</span> (<br>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/classes/-1155386512/\" class=\"Class\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#Injury\">Injury</a><br>&nbsp;&nbsp;&nbsp;&nbsp;<span class=\"keyword\">and</span> (<a href=\"/objectproperties/944795056/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#of\">of</a> <span class=\"some\"><span class=\"highlight\">some</span></span><span class=\"highlight\"> (</span><a href=\"/objectproperties/1627826554/\" class=\"Object Property\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#hadRole\"><span class=\"highlight\">hadRole</span></a><span class=\"highlight\"> </span><span class=\"some\"><span class=\"highlight\">some</span></span><span class=\"highlight\"> </span><a href=\"/classes/-2145398193/\" class=\"Class\" title=\"https://nickdrummond.github.io/star-wars-ontology/ontologies#StormTrooper\"><span class=\"highlight\">StormTrooper</span></a><span class=\"highlight\">)</span>))";
 
         Highlighter h = new Highlighter(highlight);
         String result = h.highlight(source);

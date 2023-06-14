@@ -1,8 +1,5 @@
 package org.coode.www.renderer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Put highlight markup around all matching portions of text.
  * All strings should be treated as simple - ie no regex
@@ -76,6 +73,7 @@ public class Highlighter {
                     return source.substring(0, startOfHighlight) +
                             START +
                             highlight.substring(0, posInHighlight) +
+                            END +
                             highlightMarkup(source.substring(nextTagStart), posInHighlight);
                 }
             }
@@ -87,10 +85,16 @@ public class Highlighter {
         else {
             int remainingLen = highlight.length() - pos;
             if (nextTagStart == -1 || nextTagStart >= remainingLen) {
-                return highlight.substring(pos) + END + highlightMarkup(source.substring(remainingLen), 0);
+                return START +
+                        highlight.substring(pos) +
+                        END +
+                        highlightMarkup(source.substring(remainingLen), 0);
             }
             else { // another tag
-                return highlight.substring(pos, pos+nextTagStart) + highlightMarkup(source.substring(nextTagStart), pos+nextTagStart);
+                return START +
+                        highlight.substring(pos, pos+nextTagStart) +
+                        END +
+                        highlightMarkup(source.substring(nextTagStart), pos+nextTagStart);
             }
         }
     }
