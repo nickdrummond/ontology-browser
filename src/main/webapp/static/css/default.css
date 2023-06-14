@@ -187,6 +187,11 @@ a.burger, a.burger:hover, a.burger:active {
     display: none;
 }
 
+.highlight {
+    background-color: #ffffaa;
+    display: inline-block;
+}
+
 .imageHolder{
     overflow: auto;
     text-align: center;
