@@ -1,0 +1,30 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace='base :: header (title=${title})'></head>
+
+<body class="wrapper">
+
+<div th:replace='base :: title'></div>
+
+<div th:replace='base :: menu'></div>
+
+<div id="main">
+
+    <div id="content">
+
+        <h2 th:text="${title}">Title</h2>
+
+        <ul th:fragment="axioms" class="axioms">
+            <li class="axiom" th:each="axiom : ${axioms}"
+               th:utext="${mos.render(axiom)}">Axiom</li>
+        </ul>
+
+    </div>
+</div>
+
+<div th:replace='base :: footer'></div>
+
+</body>
+</html>
