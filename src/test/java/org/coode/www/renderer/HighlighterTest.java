@@ -120,6 +120,11 @@ public class HighlighterTest {
     }
 
     @Test
+    public void shouldHighlightMarkupWithMutipleMatches() {
+        String result = new Highlighter("abc").highlight("<a>preamble</a>a<a>bc<em>def</em>ghiabc</a>");
+        assertEquals("<a>preamble</a><span class=\"highlight\">a</span><a><span class=\"highlight\">bc</span><em>def</em>ghi<span class=\"highlight\">abc</span></a>", result);
+    }
+    @Test
     public void shouldHighlightMatchingTextIgnoringMarkup() {
         // Infiltrating_the_First_Order: included some (
         //    Injury
