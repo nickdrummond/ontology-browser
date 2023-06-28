@@ -40,7 +40,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     // the object currently on the page (will be highlighted)
     private OWLObject activeObject;
 
-    private final URLScheme urlScheme;
+    private URLScheme urlScheme;
 
     private final ShortFormProvider sfProvider;
 
@@ -65,6 +65,9 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         this.urlScheme = urlScheme;
         this.ontologies = ImmutableSet.copyOf(ontologies);
         this.activeOntology = activeOntology;
+    }
+    public void setURLScheme(URLScheme urlScheme) {
+        this.urlScheme = urlScheme;
     }
 
     public void setActiveObject(OWLObject activeObject) {
@@ -1001,4 +1004,5 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             write("'");
         }
     }
+
 }

@@ -30,20 +30,20 @@ public class RestURLScheme extends AbstractURLScheme {
         }
 
         String type;
-        int code;
+        String code;
         StringBuilder sb = new StringBuilder("/"); // relative URLs
 
         if (owlObject instanceof OWLEntity){
             type = NamedObjectType.getType(owlObject).toString();
-            code = ((OWLEntity)owlObject).getIRI().hashCode();
+            code = getIdForEntity((OWLEntity) owlObject);
         }
         else if (owlObject instanceof OWLOntology){
             type = NamedObjectType.getType(owlObject).toString();
-            code = ((OWLOntology)owlObject).getOntologyID().hashCode();
+            code = String.valueOf(((OWLOntology)owlObject).getOntologyID().hashCode());
         }
         else{
             type = owlObject.getClass().getSimpleName();
-            code = owlObject.hashCode();
+            code = String.valueOf(owlObject.hashCode());
         }
 
         sb.append(type);
@@ -52,5 +52,9 @@ public class RestURLScheme extends AbstractURLScheme {
         sb.append("/");
 
         return sb.toString();
+    }
+
+    protected String getIdForEntity(OWLEntity entity) {
+        return String.valueOf(entity.getIRI().hashCode());
     }
 }

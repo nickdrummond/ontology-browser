@@ -1,5 +1,6 @@
 package org.coode.www.renderer;
 
+import org.coode.html.url.URLScheme;
 import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -23,6 +24,10 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
     public OWLHTMLRenderer(final OWLHTMLKit kit, final OWLObject activeObject) {
         this(kit);
         rendererVisitor.setActiveObject(activeObject);
+    }
+
+    public void setURLScheme(URLScheme urlScheme) {
+        rendererVisitor.setURLScheme(urlScheme);
     }
 
     public String render(final OWLObject obj){

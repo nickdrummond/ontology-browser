@@ -3,6 +3,7 @@ package org.coode.www.service.hierarchy;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
 
@@ -23,6 +24,10 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
         Set<Node<T>> nodes = Sets.newHashSet(ancestors(entity));
         nodes.add(equivs(entity));
         return buildTree(topNode(), nodes);
+    }
+
+    public Tree<T> getTree() {
+        return buildTree(topNode());
     }
 
     @Override
@@ -49,6 +54,20 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
             }
             else {
                 subs.add(new Tree<>(subNode));
+            }
+        }
+        subs.sort(comparator);
+        return new Tree<>(current, subs);
+    }
+    private Tree<T> buildTree(final Node<T> current) {
+        List<Tree<T>> subs = Lists.newArrayList();
+        for (Node<T> subNode : subs(current.getRepresentativeElement())) {
+            //noinspection StatementWithEmptyBody
+            if (subNode.isBottomNode()) {
+                // ignore Nothing
+            }
+            else {
+                subs.add(buildTree(subNode));
             }
         }
         subs.sort(comparator);

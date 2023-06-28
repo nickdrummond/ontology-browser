@@ -20,6 +20,10 @@
         A hierarchy
     </div>
 
+    <div id='hierarchy2'  th:replace="base :: hierarchy(${type}, ${hierarchy2})">
+        Another hierarchy
+    </div>
+
     <div id='content'>
         <h2 th:text="${title}">An OWLClass</h2>
         <div class="iri">

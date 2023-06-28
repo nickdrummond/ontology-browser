@@ -147,7 +147,12 @@ function getChildren(li){
         query = 'instances';
     }
 
-    var url = $('a', li).first().attr('href') + query;
+    var nodeUrl = $('a', li).first().attr('href');
+    var nodeUrlPieces = nodeUrl.split('?');
+    var url = nodeUrlPieces[0] + query;
+    if (nodeUrlPieces[1]) {
+        url = url + '?' + nodeUrlPieces[1];
+    }
 
     $.ajax({
         url: url,
