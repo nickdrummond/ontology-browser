@@ -5,14 +5,14 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.Tree;
+import org.coode.www.renderer.ElementRenderer;
+import org.coode.www.renderer.Highlighter;
 import org.coode.www.renderer.OWLHTMLRenderer;
+import org.coode.www.service.OWLAxiomService;
 import org.coode.www.service.OWLOntologiesService;
 import org.coode.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLDocumentFormat;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,11 +20,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value="/ontologies")
@@ -32,6 +35,9 @@ public class OWLOntologiesController extends ApplicationController {
 
     @Autowired
     private OWLOntologiesService service;
+
+    @Autowired
+    private OWLAxiomService axiomService;
 
     @Autowired
     private OntologyIRIShortFormProvider sfp;
@@ -92,5 +98,50 @@ public class OWLOntologiesController extends ApplicationController {
         catch (OWLOntologyStorageException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    @RequestMapping(value = "/{ontId}/axioms/")
+    public String axioms(final Model model,
+                         @PathVariable final String ontId,
+                         @RequestParam(required = false) String search,
+                         @RequestParam(required = false) String regex,
+                         @RequestParam(required = false, defaultValue = "true") boolean includeImports) throws NotFoundException {
+
+        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
+        Set<OWLOntology> onts = new HashSet<>();
+        if (includeImports) {
+            onts.addAll(owlOntology.getImportsClosure());
+        }
+        else {
+            onts.add(owlOntology);
+        }
+
+        ElementRenderer<OWLObject> owlRenderer;
+
+        if (search != null || regex != null) {
+            owlRenderer = new ElementRenderer<>() {
+
+                private Highlighter highlighter = new Highlighter(search);
+
+                @Override
+                public String render(OWLObject object) {
+                    return highlighter.highlight(new OWLHTMLRenderer(kit).render(object));
+                }
+            };
+        }
+        else {
+            owlRenderer = new OWLHTMLRenderer(kit);
+        }
+
+        Set<OWLAxiom> axioms = (regex != null) ?
+                axiomService.regexAxioms(regex, onts, kit.getShortFormProvider()) :
+                axiomService.findAxioms(search, onts, kit.getShortFormProvider());
+
+        model.addAttribute("title", axioms.size() + " axioms containing: " + search);
+        model.addAttribute("axioms", axioms);
+        model.addAttribute("mos", owlRenderer);
+
+        return "axioms";
     }
 }
