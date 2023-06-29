@@ -49,12 +49,12 @@ public class OWLRelationsController extends ApplicationController {
 
         String id = propertiesService.getIdFor(owlTopObjectProperty);
 
-        return "redirect:/relations/" + id;
+        return "redirect:/relations/onproperty/" + id;
     }
 
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
+    @RequestMapping(value="/onproperty/{propertyId}", method=RequestMethod.GET)
     public String getRelationsForProperty(@PathVariable final String propertyId,
                                           @RequestParam(defaultValue = "false") final boolean inverse,
                                           @RequestParam final @Nullable String orderBy,
@@ -81,7 +81,7 @@ public class OWLRelationsController extends ApplicationController {
         String entityName = kit.getShortFormProvider().getShortForm(property);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, property);
-        owlRenderer.setURLScheme(new RelationsURLScheme(kit, propertyId, inverse));
+        owlRenderer.setURLScheme(new RelationsURLScheme(kit, relationsHierarchyService));
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Relations on");
@@ -94,7 +94,7 @@ public class OWLRelationsController extends ApplicationController {
         return "owlentity";
     }
 
-    @RequestMapping(value="/{propertyId}/{individualId}", method=RequestMethod.GET)
+    @RequestMapping(value="/onproperty/{propertyId}/withindividual/{individualId}", method=RequestMethod.GET)
     public String getRelationsForProperty(@PathVariable final String propertyId,
                                           @PathVariable final String individualId,
                                           @RequestParam(defaultValue = "false") final boolean inverse,
@@ -123,7 +123,7 @@ public class OWLRelationsController extends ApplicationController {
         String entityName = sfp.getShortForm(individual);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, ImmutableSet.of(property, individual));
-        owlRenderer.setURLScheme(new RelationsURLScheme(kit, propertyId, inverse));
+        owlRenderer.setURLScheme(new RelationsURLScheme(kit, relationsHierarchyService));
 
         List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ontologies, kit.getComparator(), sfp);
 
@@ -140,7 +140,7 @@ public class OWLRelationsController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
+    @RequestMapping(value="/onproperty/{propertyId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String propertyId,
                               final Model model) throws NotFoundException {
 
@@ -162,7 +162,7 @@ public class OWLRelationsController extends ApplicationController {
         return "base :: tree";
     }
 
-    @RequestMapping(value="/{propertyId}/{individualId}/children", method=RequestMethod.GET)
+    @RequestMapping(value="/onproperty/{propertyId}/withindividual/{individualId}/children", method=RequestMethod.GET)
     public String getChildren(@PathVariable final String propertyId,
                               @PathVariable final String individualId,
                               @RequestParam(defaultValue = "false") final boolean inverse,
@@ -181,7 +181,7 @@ public class OWLRelationsController extends ApplicationController {
         Tree<OWLNamedIndividual> relationsTree = relationsHierarchyService.getChildren(individual);
 
         OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit); // no active entity, otherwise it highlights the expanding node
-        owlRenderer.setURLScheme(new RelationsURLScheme(kit, propertyId, inverse));
+        owlRenderer.setURLScheme(new RelationsURLScheme(kit, relationsHierarchyService));
 
         model.addAttribute("t", relationsTree);
         model.addAttribute("mos", owlRenderer);
