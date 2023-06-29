@@ -181,8 +181,10 @@
         <span th:if="${inverse}" class="keyword">InverseOf</span>
         <a th:href="'.?inverse=' + ${!inverse}" th:text="${title}">Title</a>
     </h4>
-    <ul class="minihierarchy" th:classappend="${title}">
-        <li th:replace="base::tree(${hierarchy})">Top Thing</li>
+    <ul class="minihierarchy" th:classappend="${title}" th:if="${!hierarchy.children.isEmpty()}">
+        <div class="removeme" th:each="child : ${hierarchy.children}" th:remove="tag">
+            <li th:replace="base::tree(${child})"></li>
+        </div>
     </ul>
 </div>
 
