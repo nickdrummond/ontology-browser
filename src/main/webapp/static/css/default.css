@@ -180,10 +180,10 @@ a.burger, a.burger:hover, a.burger:active {
     float: right;
 }
 
-.characteristic.object_property_assertions .active-entity,
-.characteristic.negative_object_property_assertions .active-entity,
-.characteristic.data_property_assertions .active-entity,
-.characteristic.negative_data_property_assertions .active-entity{
+.characteristic.object_property_assertions .Individual.active-entity,
+.characteristic.negative_object_property_assertions .Individual.active-entity,
+.characteristic.data_property_assertions .Individual.active-entity,
+.characteristic.negative_data_property_assertions .Individual.active-entity{
     display: none;
 }
 
