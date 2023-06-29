@@ -85,10 +85,11 @@ public class OWLRelationsController extends ApplicationController {
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Relations on");
-        model.addAttribute("type2", entityName);
         model.addAttribute("iri", property.getIRI());
         model.addAttribute("hierarchy", propertyTree);
         model.addAttribute("hierarchy2", relationsTree);
+        model.addAttribute("type2", entityName);
+        model.addAttribute("inverse", inverse);
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
@@ -129,10 +130,11 @@ public class OWLRelationsController extends ApplicationController {
 
         model.addAttribute("title", entityName + " (Individual)");
         model.addAttribute("type", "Relations on");
-        model.addAttribute("type2", sfp.getShortForm(property));
         model.addAttribute("iri", property.getIRI());
         model.addAttribute("hierarchy", propertyTree);
         model.addAttribute("hierarchy2", relationsTree);
+        model.addAttribute("type2", sfp.getShortForm(property));
+        model.addAttribute("inverse", inverse);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
 

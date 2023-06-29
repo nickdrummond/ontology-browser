@@ -58,7 +58,7 @@ function createSlideToggles() {
         rememberCharacteristicHidden(characteristic, hidden);
 
         values.slideToggle('fast');
-    }).prependTo(".characteristic, #owlselector, #metrics");
+    }).prependTo(".characteristic, .owlselector, #metrics");
 }
 
 function createAurebeshHandler() {

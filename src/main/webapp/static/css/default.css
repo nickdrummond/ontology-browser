@@ -92,7 +92,7 @@ li {
     margin-top: 15px;
 }
 
-#owlselector {
+.owlselector {
     margin: 5px;
 }
 
@@ -532,13 +532,13 @@ img.thumb{
         width: auto;
     }
 
-    #owlselector {
+    .owlselector {
         flex: 2 1 auto;
         display: flex;
         flex-direction: column;
     }
 
-    #owlselector .min {
+    .owlselector .min {
         display: none;
     }
 
