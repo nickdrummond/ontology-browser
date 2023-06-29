@@ -25,30 +25,29 @@ $(document).ready(function(){
 });
 
 function openFullscreen() {
-  if (document.requestFullscreen) {
-    elem.requestFullscreen();
-  } else if (document.webkitRequestFullscreen) { /* Safari */
-    elem.webkitRequestFullscreen();
-  } else if (document.msRequestFullscreen) { /* IE11 */
-    elem.msRequestFullscreen();
-  }
+    if (document.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (document.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+    } else if (document.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
 }
 
 function scrollTreeToSelection() {
-    var minihierarchy = $(".minihierarchy");
-    if (minihierarchy.is(":visible")){
-        var active = $("span.active-entity", minihierarchy);
+    $(".minihierarchy:visible").each(function() {
+        var active = $("span.active-entity", this);
         if (active.size() > 0) {
             // let js work out getting into the pane
             active.get(0).scrollIntoView(false);
             // then reposition to the middle
-            var p = minihierarchy.scrollTop();
+            var p = $(this).scrollTop();
             if (p > 0) {
-                var h = minihierarchy.height();
-                minihierarchy.scrollTop(p+(0.5*h));
+                var h = $(this).height();
+                $(this).scrollTop(p + (0.5 * h));
             }
         }
-    }
+    });
 }
 
 function createSlideToggles() {
@@ -68,10 +67,10 @@ function createAurebeshHandler() {
     var basic = "basic";
 
     function setLanguage(lang) {
-      var notLang = (lang == aurebesh) ? basic : aurebesh;
-      sessionStorage.setItem(key, lang);
-      $("html, #find").addClass(lang).removeClass(notLang);
-      $("#aurebesh").addClass(notLang).removeClass(lang).html(notLang);
+        var notLang = (lang == aurebesh) ? basic : aurebesh;
+        sessionStorage.setItem(key, lang);
+        $("html, #find").addClass(lang).removeClass(notLang);
+        $("#aurebesh").addClass(notLang).removeClass(lang).html(notLang);
     }
 
     setLanguage((sessionStorage.getItem(key) == aurebesh) ? aurebesh : basic);
@@ -93,10 +92,10 @@ function rememberCharacteristicHidden(characteristic, hidden) {
 function hideCharacteristics() {
     let keys = Object.keys(sessionStorage);
     for(let key of keys) {
-      if (key.startsWith(HIDDEN)) {
-        var characteristic = key.substr(HIDDEN.length);
-        $("h4:contains('" + characteristic + "')").nextAll("ul, table").first().hide();
-      }
+        if (key.startsWith(HIDDEN)) {
+            var characteristic = key.substr(HIDDEN.length);
+            $("h4:contains('" + characteristic + "')").nextAll("ul, table").first().hide();
+        }
     }
 }
 

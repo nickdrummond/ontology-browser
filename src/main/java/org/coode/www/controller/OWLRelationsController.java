@@ -1,8 +1,8 @@
 package org.coode.www.controller;
 
-import org.coode.html.url.RestURLScheme;
+import com.google.common.collect.ImmutableSet;
+import org.coode.html.url.RelationsURLScheme;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
@@ -30,28 +30,6 @@ import java.util.Set;
 @Controller
 @RequestMapping(value="/relations")
 public class OWLRelationsController extends ApplicationController {
-
-    private class RelationsURLScheme extends RestURLScheme {
-
-        private final boolean inverse;
-        private final String propertyId;
-
-        public RelationsURLScheme(OWLHTMLKit kit, String propertyId, boolean inverse) {
-            super(kit);
-            this.propertyId = propertyId;
-            this.inverse = inverse;
-        }
-        @Override
-        public String getURLForOWLObject(OWLObject owlObject) {
-            if (owlObject instanceof OWLObjectProperty) {
-                return "/relations/" + getIdForEntity((OWLObjectProperty)owlObject) + "/?inverse=" + inverse;
-            }
-            if (owlObject instanceof OWLNamedIndividual) {
-                return "/relations/" + propertyId + "/" + getIdForEntity((OWLNamedIndividual)owlObject) + "/?inverse=" + inverse;
-            }
-            return super.getURLForOWLObject(owlObject);
-        }
-    }
 
     @Autowired
     private OWLObjectPropertiesService propertiesService;
@@ -107,6 +85,7 @@ public class OWLRelationsController extends ApplicationController {
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Relations on");
+        model.addAttribute("type2", entityName);
         model.addAttribute("iri", property.getIRI());
         model.addAttribute("hierarchy", propertyTree);
         model.addAttribute("hierarchy2", relationsTree);
@@ -143,13 +122,14 @@ public class OWLRelationsController extends ApplicationController {
         ShortFormProvider sfp = kit.getShortFormProvider();
         String entityName = sfp.getShortForm(individual);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, individual);
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, ImmutableSet.of(property, individual));
         owlRenderer.setURLScheme(new RelationsURLScheme(kit, propertyId, inverse));
 
         List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ontologies, kit.getComparator(), sfp);
 
         model.addAttribute("title", entityName + " (Individual)");
         model.addAttribute("type", "Relations on");
+        model.addAttribute("type2", sfp.getShortForm(property));
         model.addAttribute("iri", property.getIRI());
         model.addAttribute("hierarchy", propertyTree);
         model.addAttribute("hierarchy2", relationsTree);
@@ -200,7 +180,7 @@ public class OWLRelationsController extends ApplicationController {
                 Comparator.comparing(o -> o.value.iterator().next())); // TODO order by property
         Tree<OWLNamedIndividual> relationsTree = relationsHierarchyService.getChildren(individual);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, null); // null, otherwise it highlights the expanding node
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit); // no active entity, otherwise it highlights the expanding node
         owlRenderer.setURLScheme(new RelationsURLScheme(kit, propertyId, inverse));
 
         model.addAttribute("t", relationsTree);

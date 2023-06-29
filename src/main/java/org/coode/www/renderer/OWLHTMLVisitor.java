@@ -37,8 +37,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     // the subset and equivalence symbols can be encoded in HTML
     private final boolean USE_SYMBOLS = true;
 
-    // the object currently on the page (will be highlighted)
-    private OWLObject activeObject;
+    // the active objects currently on the page (will be highlighted)
+    private Set<OWLObject> activeObjects = Collections.emptySet();
 
     private URLScheme urlScheme;
 
@@ -70,8 +70,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         this.urlScheme = urlScheme;
     }
 
-    public void setActiveObject(OWLObject activeObject) {
-        this.activeObject = activeObject;
+    public void setActiveObjects(Set<OWLObject> activeObjects) {
+        this.activeObjects = activeObjects;
     }
 
     public void setWriter(PrintWriter out) {
@@ -93,10 +93,10 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
         boolean writeLink = false;
 
-        if (activeObject == null){
+        if (activeObjects.isEmpty()){
             writeLink = true;
         }
-        else if (!activeObject.equals(ontology)){
+        else if (!activeObjects.contains(ontology)){
             writeLink = true;
         }
         else{
@@ -778,13 +778,13 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         Set<String> cssClasses = new HashSet<>();
         cssClasses.add(cssClass);
 
-        if (activeObject == null){
+        if (activeObjects.isEmpty()){
             final String urlForTarget = urlScheme.getURLForOWLObject(entity);
             write("<a href=\"" + urlForTarget + "\"");
             writeCSSClasses(cssClasses);
             write(" title=\"" + uri + "\">" + renderedName + "</a>");
         }
-        else if (activeObject.equals(entity)){
+        else if (activeObjects.contains(entity)){
             cssClasses.add(CSS_ACTIVE_ENTITY);
             write("<span");
             writeCSSClasses(cssClasses);
