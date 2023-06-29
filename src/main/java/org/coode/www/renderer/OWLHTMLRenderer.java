@@ -23,17 +23,19 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
                 kit.getActiveOntology());
     }
 
-    public OWLHTMLRenderer(final OWLHTMLKit kit, final Set<OWLObject> activeObjects) {
-        this(kit);
+    public OWLHTMLRenderer withActiveObject(final OWLObject activeObject) {
+        rendererVisitor.setActiveObjects(Collections.singleton(activeObject));
+        return this;
+    }
+
+    public OWLHTMLRenderer withActiveObjects(final Set<OWLObject> activeObjects) {
         rendererVisitor.setActiveObjects(activeObjects);
+        return this;
     }
 
-    public OWLHTMLRenderer(final OWLHTMLKit kit, final OWLObject activeObject) {
-        this(kit, Collections.singleton(activeObject));
-    }
-
-    public void setURLScheme(URLScheme urlScheme) {
+    public OWLHTMLRenderer withURLScheme(URLScheme urlScheme) {
         rendererVisitor.setURLScheme(urlScheme);
+        return this;
     }
 
     public String render(final OWLObject obj){

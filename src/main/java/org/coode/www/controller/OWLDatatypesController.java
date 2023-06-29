@@ -58,7 +58,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDatatype);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlDatatype);
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit).withActiveObject(owlDatatype);
 
         model.addAttribute("title", entityName + " (Datatype)");
         model.addAttribute("type", "Datatypes");

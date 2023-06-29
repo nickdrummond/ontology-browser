@@ -56,7 +56,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlAnnotationProperty);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, owlAnnotationProperty);
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit).withActiveObject(owlAnnotationProperty);
 
         model.addAttribute("title", entityName + " (Annotation Property)");
         model.addAttribute("type", "Annotation Properties");

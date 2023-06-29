@@ -60,7 +60,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(property);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit, property);
+        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit).withActiveObject(property);
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Object Properties");
