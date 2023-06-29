@@ -65,19 +65,21 @@
 <ul id='tabs' th:fragment='tabs'>
     <li><a th:href='@{/ontologies/}'>Ontologies</a></li>
     <li><a th:href='@{/classes/}'>Classes</a></li>
-    <li><a th:href='@{/individuals/}'>Individuals</a></li>
-    <li><a th:href='@{/objectproperties/}'>Object&nbsp;Properties</a></li>
-    <li><a th:href='@{/dataproperties/}'>Data&nbsp;Properties</a></li>
-    <li><a th:href='@{/annotationproperties/}'>Annotation&nbsp;Properties</a></li>
+    <li>Individuals:
+        <a th:href='@{/individuals/}'>by Type</a> /
+        <a th:href='@{/relations/}'>by Relation</a></li>
+    <li>Properties: <a th:href='@{/objectproperties/}'>Object</a> /
+        <a th:href='@{/dataproperties/}'>Data</a> /
+        <a th:href='@{/annotationproperties/}'>Annotation</a></li>
     <li><a th:href='@{/datatypes/}'>Datatypes</a></li>
     <li><a th:href='@{/dlquery/}'>DL Query</a></li>
 
-    <li>Usage&nbsp;cloud:
-        <a th:href='@{/clouds/classes}'>cl</a>
-        <a th:href='@{/clouds/individuals}'>in</a>
-        <a th:href='@{/clouds/objectproperties}'>op</a>
-        <a th:href='@{/clouds/dataproperties}'>dp</a>
-        <a th:href='@{/clouds/annotationproperties}'>ap</a>
+    <li>Usage:
+        <a th:href='@{/clouds/classes}'>cl</a> /
+        <a th:href='@{/clouds/individuals}'>in</a> /
+        <a th:href='@{/clouds/objectproperties}'>op</a> /
+        <a th:href='@{/clouds/dataproperties}'>dp</a> /
+        <a th:href='@{/clouds/annotationproperties}'>ap</a> /
         <a th:href='@{/clouds/datatypes}'>dt</a>
     </li>
 </ul> <!-- tabs -->
