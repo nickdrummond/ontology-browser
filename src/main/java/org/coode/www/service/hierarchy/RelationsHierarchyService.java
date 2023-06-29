@@ -14,9 +14,8 @@ import java.util.stream.Collectors;
 public class RelationsHierarchyService extends AbstractOWLHierarchyService<OWLNamedIndividual> {
 
     private final OWLObjectProperty property;
+
     private final boolean inverse;
-    @Nullable
-    private final OWLObjectProperty orderByProperty;
 
     private final OWLOntology ont;
 
@@ -33,15 +32,13 @@ public class RelationsHierarchyService extends AbstractOWLHierarchyService<OWLNa
     public RelationsHierarchyService(final OWLObjectProperty property,
                                      final OWLOntology ont,
                                      final boolean inverse,
-                                     final @Nullable OWLObjectProperty orderByProperty, // TODO push into comparator
                                      final Comparator<? super Tree<OWLNamedIndividual>> comparator) {
         super(comparator);
         this.property = property;
         this.ont = ont;
         this.inverse = inverse;
-        this.orderByProperty = orderByProperty;
 
-        // pun the property to avoid the generic tree
+        // dummy root - pun the property to avoid the generic tree
         this.root = ont.getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(property.getIRI());
     }
 
@@ -111,52 +108,6 @@ public class RelationsHierarchyService extends AbstractOWLHierarchyService<OWLNa
 
             roots = new ArrayList<>(nodes.keySet());
             roots.removeAll(nonRoots);
-
-            // Sort based on orderByProperty
-            if (orderByProperty != null) {
-                rebuildWithOrder(orderByProperty);
-            }
-        }
-    }
-
-    private void rebuildWithOrder(OWLObjectProperty orderByProperty) {
-        System.out.println("sorting...");
-
-        /*
-         * (d, e) = (d, e)
-         * (b, c) = (d, e), (b, c)
-         * (c, d) = (b, c, d, e) ?? place after entry where key = value, then move any other kv where v = k
-         * must move in pairs
-         * what about forks?
-         * (k, d) = (b, c), (c, d), (k, d), (d, e)
-         *
-         * TODO extract this into a testable thing
-         */
-
-        PairwiseOrdering<OWLIndividual> orderIndex = new PairwiseOrdering<>();
-        // build order indices
-        for (OWLAxiom ax: ont.getReferencingAxioms(orderByProperty, Imports.INCLUDED)) {
-            ax.accept(new OWLAxiomVisitor() {
-                @Override
-                public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-                    orderIndex.add(Arrays.asList(axiom.getObject(), axiom.getSubject()));
-                }
-            });
-        }
-        List<OWLIndividual> order = orderIndex.flattened();
-        Comparator<? super OWLIndividual> sorter = (Comparator<OWLIndividual>) (i1, i2) -> {
-            int o1 = order.indexOf(i1);
-            int o2 = order.indexOf(i2);
-            if (o1 == o2) return 0;
-            return (o1 < o2) ? -1 : 1;
-        };
-
-        // rework the indices
-        for (Map.Entry<OWLNamedIndividual, List<OWLNamedIndividual>> entry : nodes.entrySet()) {
-            List<OWLNamedIndividual> children = entry.getValue();
-            if (children.size() > 1) { // only sort if necessary
-                nodes.put(entry.getKey(), children.stream().sorted(sorter).collect(Collectors.toList()));
-            }
         }
     }
 

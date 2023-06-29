@@ -7,7 +7,6 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 public class RelationPropertyURLScheme extends RestURLScheme {
 
     public static final String ROOT_PATH = "/relations";
-    private boolean isInverse = false;
 
     public RelationPropertyURLScheme(OWLHTMLKit kit) {
         super(kit);
@@ -18,7 +17,7 @@ public class RelationPropertyURLScheme extends RestURLScheme {
         if (owlObject instanceof OWLObjectProperty) {
             return ROOT_PATH
                     + "/onproperty/" + getIdForEntity((OWLObjectProperty) owlObject)
-                    + "/?inverse=" + isInverse;
+                    + "/";
         }
         return super.getURLForOWLObject(owlObject);
     }

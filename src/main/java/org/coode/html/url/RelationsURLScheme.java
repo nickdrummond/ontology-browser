@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.model.OWLObject;
 public class RelationsURLScheme extends RelationPropertyURLScheme {
 
     private final RelationsHierarchyService service;
+    private String query = "";
 
     public RelationsURLScheme(OWLHTMLKit kit, RelationsHierarchyService service) {
         super(kit);
@@ -20,8 +21,13 @@ public class RelationsURLScheme extends RelationPropertyURLScheme {
             return ROOT_PATH
                     + "/onproperty/" + getIdForEntity(service.getProperty())
                     + "/withindividual/" + getIdForEntity((OWLNamedIndividual) owlObject)
-                    + "/?inverse=" + service.isInverse();
+                    + "/" + query;
         }
         return super.getURLForOWLObject(owlObject);
+    }
+
+    public URLScheme withQuery(String queryString) {
+        this.query = "?" + queryString;
+        return this;
     }
 }
