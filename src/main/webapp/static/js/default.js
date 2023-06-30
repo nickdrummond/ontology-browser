@@ -1,10 +1,4 @@
-
-
-var xmlHttpOption;                         // XML HTTP object for option
-var onSuccess;                             // page to go to once the option has been set (in the onload)
 var baseUrl;                               // this is set by the java side
-var optionsURL = "options/";
-var hierarchyURL = "hierarchy/";
 var HIDDEN = "hidden.";
 
 ////////////////////////////////////////////////////////////////////////////////////////////

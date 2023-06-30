@@ -16,10 +16,9 @@
 
         <h2 th:text="${title}">Title</h2>
 
-        <ul th:fragment="axioms" class="axioms">
-            <li class="axiom" th:each="axiom : ${axioms}"
-               th:utext="${mos.render(axiom)}">Axiom</li>
-        </ul>
+        <div th:replace="base :: characteristic (${axioms})">
+            A characteristic
+        </div>
 
     </div>
 </div>

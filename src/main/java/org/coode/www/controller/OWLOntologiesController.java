@@ -4,9 +4,11 @@ import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.coode.www.exception.NotFoundException;
+import org.coode.www.model.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.ElementRenderer;
 import org.coode.www.renderer.Highlighter;
+import org.coode.www.renderer.HighlightingHTMLRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLAxiomService;
 import org.coode.www.service.OWLOntologiesService;
@@ -25,9 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping(value="/ontologies")
@@ -108,37 +108,30 @@ public class OWLOntologiesController extends ApplicationController {
                          @RequestParam(required = false) String regex,
                          @RequestParam(required = false, defaultValue = "true") boolean includeImports) throws NotFoundException {
 
-        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
-        Set<OWLOntology> onts = new HashSet<>();
-        if (includeImports) {
-            onts.addAll(owlOntology.getImportsClosure());
-        }
-        else {
-            onts.add(owlOntology);
+        // Prevent injection attacks
+        if (search.contains("<") || search.contains(">") || search.contains("%")) {
+            throw new IllegalArgumentException("Search terms may be text only");
         }
 
-        ElementRenderer<OWLObject> owlRenderer;
+        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
+
+        Set<OWLOntology> onts = includeImports ? owlOntology.getImportsClosure() : Collections.singleton(owlOntology);
+
+        ElementRenderer<OWLObject> owlRenderer = new OWLHTMLRenderer(kit);
+
+        Characteristic axioms;
 
         if (search != null || regex != null) {
-            owlRenderer = new ElementRenderer<>() {
-
-                private Highlighter highlighter = new Highlighter(search);
-
-                @Override
-                public String render(OWLObject object) {
-                    return highlighter.highlight(new OWLHTMLRenderer(kit).render(object));
-                }
-            };
+            owlRenderer = new HighlightingHTMLRenderer<>(new Highlighter(search), owlRenderer);
+            axioms = (regex != null) ?
+                    axiomService.regexAxioms(regex, onts, kit.getShortFormProvider()) :
+                    axiomService.findAxioms(search, onts, kit.getShortFormProvider());
         }
         else {
-            owlRenderer = new OWLHTMLRenderer(kit);
+            axioms = axiomService.getAxioms(onts);
         }
 
-        Set<OWLAxiom> axioms = (regex != null) ?
-                axiomService.regexAxioms(regex, onts, kit.getShortFormProvider()) :
-                axiomService.findAxioms(search, onts, kit.getShortFormProvider());
-
-        model.addAttribute("title", axioms.size() + " axioms containing: " + search);
+        model.addAttribute("title", axioms.getName());
         model.addAttribute("axioms", axioms);
         model.addAttribute("mos", owlRenderer);
 

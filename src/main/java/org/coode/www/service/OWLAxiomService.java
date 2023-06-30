@@ -1,21 +1,19 @@
 package org.coode.www.service;
 
-import openllet.owlapi.OWL;
+import org.coode.www.model.Characteristic;
+import org.coode.www.model.OWLObjectWithOntology;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
 
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -23,34 +21,45 @@ public class OWLAxiomService {
 
     private final Map<OWLOntology, Map<OWLAxiom, String>> axiomsRenderingsByOntology = new HashMap<>();
 
-    public Set<OWLAxiom> findAxioms(final String search, final Set<OWLOntology> onts, final ShortFormProvider sfp) {
-        return onts.stream().map(o -> findAxioms(search, o, sfp)).flatMap(Collection::stream).collect(Collectors.toSet());
+    public Characteristic getAxioms(Set<OWLOntology> onts) {
+        // avoid generating search indices as not needed
+        List<OWLObjectWithOntology> results = onts.stream()
+                .flatMap(o -> wrappedWithOntology(o.axioms(Imports.EXCLUDED), o))
+                .collect(Collectors.toList());
+        return new Characteristic(null, "Axioms", results);
     }
 
-    public Set<OWLAxiom> findAxioms(final String search, final OWLOntology ont, final ShortFormProvider sfp) {
-        return doIt(search, ont, sfp, e -> e.getValue().contains(search));
+    public Characteristic findAxioms(final String search, final Set<OWLOntology> onts, final ShortFormProvider sfp) {
+        return resultsCharacteristic(search, onts, sfp, e -> e.getValue().contains(search));
     }
 
-    public Set<OWLAxiom> regexAxioms(final String search, final Set<OWLOntology> onts, final ShortFormProvider sfp) {
-        return onts.stream().map(o -> regexAxioms(search, o, sfp)).flatMap(Collection::stream).collect(Collectors.toSet());
+    public Characteristic regexAxioms(final String search, final Set<OWLOntology> onts, final ShortFormProvider sfp) {
+        return resultsCharacteristic(search, onts, sfp, e -> e.getValue().matches(search));
     }
 
-    public Set<OWLAxiom> regexAxioms(final String search, final OWLOntology ont, final ShortFormProvider sfp) {
-        return doIt(search, ont, sfp, e -> e.getValue().matches(search));
+    private Characteristic resultsCharacteristic(final String search,
+                                                 final Set<OWLOntology> onts,
+                                                 final ShortFormProvider sfp,
+                                                 final Predicate<? super Map.Entry<OWLAxiom, String>> filter) {
+        List<OWLObjectWithOntology> results = onts.stream()
+                .flatMap(o -> wrappedWithOntology(filterAxioms(search, o, sfp, filter), o))
+                .collect(Collectors.toList());
+        return new Characteristic(null, "Axioms containing \"" + search + "\"", results);
     }
 
-    private Set<OWLAxiom> doIt(final String search, final OWLOntology ont, final ShortFormProvider sfp,
-                               Predicate<? super Map.Entry<OWLAxiom, String>> filter) {
+    private Stream<OWLAxiom> filterAxioms(final String search,
+                                          final OWLOntology ont,
+                                          final ShortFormProvider sfp,
+                                          final Predicate<? super Map.Entry<OWLAxiom, String>> filter) {
         ensureCache(ont, sfp);
 
         if (search == null || search.isEmpty()) {
-            return axiomsRenderingsByOntology.get(ont).keySet();
+            return axiomsRenderingsByOntology.get(ont).keySet().stream();
         }
         else {
             return axiomsRenderingsByOntology.get(ont).entrySet().stream()
                     .filter(filter)
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toSet());
+                    .map(Map.Entry::getKey);
         }
     }
 
@@ -67,4 +76,7 @@ public class OWLAxiomService {
         return writer.toString();
     }
 
+    private Stream<OWLObjectWithOntology> wrappedWithOntology(Stream<OWLAxiom> axioms, OWLOntology ont) {
+        return axioms.map(a -> new OWLObjectWithOntology(a, ont));
+    }
 }
