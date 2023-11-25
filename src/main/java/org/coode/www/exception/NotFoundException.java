@@ -9,4 +9,8 @@ public class NotFoundException extends Exception {
     public NotFoundException(String type, String id) {
         super("Could not find " + type + " = " + id);
     }
+
+    public NotFoundException(String type) {
+        super("Could not find any entities of type " + type);
+    }
 }

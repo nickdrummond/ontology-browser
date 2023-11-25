@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.coode.html.url.URLScheme;
 import org.coode.owl.mngr.NamedObjectType;
+import org.coode.owl.mngr.OWLEntityFinder;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.search.EntitySearcher;
@@ -49,6 +50,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private final Set<OWLOntology> ontologies;
 
     private final OWLOntology activeOntology;
+    private final OWLEntityFinder finder;
 
     private PrintWriter out;
 
@@ -59,12 +61,14 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             OntologyIRIShortFormProvider ontologySFProvider,
             URLScheme urlScheme,
             Set<OWLOntology> ontologies,
-            OWLOntology activeOntology) {
+            OWLOntology activeOntology,
+            OWLEntityFinder finder) {
         this.sfProvider = sfProvider;
         this.ontologyIriSFProvider = ontologySFProvider;
         this.urlScheme = urlScheme;
         this.ontologies = ImmutableSet.copyOf(ontologies);
         this.activeOntology = activeOntology;
+        this.finder = finder;
     }
     public void setURLScheme(URLScheme urlScheme) {
         this.urlScheme = urlScheme;
@@ -152,7 +156,28 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     public void visit(@Nonnull IRI iri) {
-        writeIRIWithBoldFragment(iri, iri.getShortForm());
+        Set<? extends OWLEntity> entities = finder.getOWLEntities(iri, NamedObjectType.entities);
+        if (entities.isEmpty()){
+            writeIRIWithBoldFragment(iri, iri.getShortForm());
+        }
+        else if (entities.size() == 1){
+            entities.iterator().next().accept(this);
+        }
+        else {
+            boolean started = false;
+            StringBuilder sb = new StringBuilder();
+            for (OWLEntity entity : entities) {
+                if (started) {
+                    sb.append(", ");
+                } else {
+                    started = true;
+                }
+                entity.accept(this);
+                write(" (");
+                write(NamedObjectType.getType(entity).getPluralRendering());
+                write(" )");
+            }
+        }
     }
 
     public void visit(@Nonnull OWLAnonymousIndividual individual) {

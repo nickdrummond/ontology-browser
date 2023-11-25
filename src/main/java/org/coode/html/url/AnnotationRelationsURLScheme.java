@@ -1,16 +1,20 @@
 package org.coode.html.url;
 
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.service.hierarchy.AnnotationsHierarchyService;
 import org.coode.www.service.hierarchy.RelationsHierarchyService;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 
-public class RelationsURLScheme extends RelationPropertyURLScheme {
+public class AnnotationRelationsURLScheme extends RestURLScheme {
 
-    private final RelationsHierarchyService service;
+    public static final String ROOT_PATH = "/relations";
+    private final AnnotationsHierarchyService service;
     private String query = "";
 
-    public RelationsURLScheme(OWLHTMLKit kit, RelationsHierarchyService service) {
+    public AnnotationRelationsURLScheme(OWLHTMLKit kit, AnnotationsHierarchyService service) {
         super(kit);
         this.service = service;
     }
@@ -19,9 +23,14 @@ public class RelationsURLScheme extends RelationPropertyURLScheme {
     public String getURLForOWLObject(OWLObject owlObject) {
         if (owlObject instanceof OWLNamedIndividual && service.treeContains((OWLNamedIndividual)owlObject)) {
             return ROOT_PATH
-                    + "/onproperty/" + getIdForEntity(service.getProperty())
+                    + "/onannotationproperty/" + getIdForEntity(service.getProperty())
                     + "/withindividual/" + getIdForEntity((OWLNamedIndividual) owlObject)
                     + "/" + query;
+        }
+        else if (owlObject instanceof OWLAnnotationProperty) {
+            return ROOT_PATH
+                    + "/onannotationproperty/" + getIdForEntity((OWLAnnotationProperty) owlObject)
+                    + "/";
         }
         return super.getURLForOWLObject(owlObject);
     }

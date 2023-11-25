@@ -6,10 +6,8 @@ import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.impl.OWLEntityFinderImpl;
 import org.coode.owl.mngr.impl.OWLObjectComparator;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.renderer.FixedSimpleShortFormProvider;
-import org.coode.www.renderer.LabelShortFormProvider;
-import org.coode.www.renderer.OntologyShortFormProvider;
-import org.coode.www.renderer.QuotingBiDirectionalShortFormProvider;
+import org.coode.www.renderer.*;
+import org.coode.www.util.VocabUtils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
 import org.semanticweb.owlapi.model.*;
@@ -127,10 +125,14 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         if (shortFormProvider == null){
             OWLDataFactory df = mngr.getOWLDataFactory();
             OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(IRI.create(labelURI));
-            shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
-                    labelLang,
-                    getActiveOntologies(),
-                    new FixedSimpleShortFormProvider());
+            if (VocabUtils.isSkosXLLabelAnnotation(labelAnnotationProperty)) {
+                shortFormProvider = new SkosXLShortFormProvider(
+                        labelLang, getActiveOntologies(), new FixedSimpleShortFormProvider());
+            }
+            else {
+                shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
+                        labelLang, getActiveOntologies(), new FixedSimpleShortFormProvider());
+            }
         }
         return shortFormProvider;
     }

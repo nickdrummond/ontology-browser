@@ -1,6 +1,7 @@
 package org.coode.www.renderer;
 
 import org.coode.html.url.URLScheme;
+import org.coode.owl.mngr.OWLEntityFinder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -44,7 +45,8 @@ public class OWLHTMLVisitorTest {
             mock(OntologyShortFormProvider.class),
             mock(URLScheme.class),
             Collections.emptySet(),
-            mock(OWLOntology.class));
+            mock(OWLOntology.class),
+            mock(OWLEntityFinder.class));
 
     @Test
     public void test() {

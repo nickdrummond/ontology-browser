@@ -48,25 +48,23 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
             //noinspection StatementWithEmptyBody
             if (subNode.isBottomNode()) {
                 // ignore Nothing
-            }
-            else if (ancestors.contains(subNode)) { // recurse
+            } else if (ancestors.contains(subNode)) { // recurse
                 subs.add(buildTree(subNode, without(ancestors, subNode)));
-            }
-            else {
+            } else {
                 subs.add(new Tree<>(subNode));
             }
         }
         subs.sort(comparator);
         return new Tree<>(current, subs);
     }
+
     private Tree<T> buildTree(final Node<T> current) {
         List<Tree<T>> subs = Lists.newArrayList();
         for (Node<T> subNode : subs(current.getRepresentativeElement())) {
             //noinspection StatementWithEmptyBody
             if (subNode.isBottomNode()) {
                 // ignore Nothing
-            }
-            else {
+            } else {
                 subs.add(buildTree(subNode));
             }
         }
@@ -81,7 +79,10 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
     }
 
     protected abstract Node<T> topNode();
+
     protected abstract Set<Node<T>> subs(T entity);
+
     protected abstract Set<Node<T>> ancestors(T entity);
+
     protected abstract Node<T> equivs(T entity);
 }

@@ -20,7 +20,8 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
                 kit.getOntologyShortFormProvider(),
                 kit.getURLScheme(),
                 kit.getActiveOntologies(),
-                kit.getActiveOntology());
+                kit.getActiveOntology(),
+                kit.getFinder());
     }
 
     public OWLHTMLRenderer withActiveObject(final OWLObject activeObject) {
