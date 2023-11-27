@@ -38,7 +38,6 @@ public class OWLClassesService {
     }
 
     public List<Characteristic> getCharacteristics(final OWLClass owlClass, final OWLHTMLKit kit) {
-
         return new ClassCharacteristicsBuilder(owlClass, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
     }
 }

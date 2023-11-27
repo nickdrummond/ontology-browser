@@ -1,7 +1,6 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
-import org.coode.www.model.characteristics.CharacteristicsBuilder;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.*;
@@ -10,6 +9,7 @@ public class ClassCharacteristicsBuilder extends CharacteristicsBuilder<OWLClass
 
     public static final String SUPERS = "Superclasses";
     public static final String EQUIV = "Equivalents";
+    public static final String HASKEY = "Has Key";
     public static final String MEMBERS = "Members";
     public static final String DISJOINTS = "Disjoints";
 
@@ -17,6 +17,7 @@ public class ClassCharacteristicsBuilder extends CharacteristicsBuilder<OWLClass
             ANNOTATIONS,
             SUPERS,
             EQUIV,
+            HASKEY,
             USAGE,
             MEMBERS,
             DISJOINTS
@@ -55,6 +56,13 @@ public class ClassCharacteristicsBuilder extends CharacteristicsBuilder<OWLClass
         public AxiomWithMetadata visit(OWLEquivalentClassesAxiom axiom) {
             return doIt(EQUIV, axiom,
                     axiom.containsEntityInSignature(target),
+                    () -> axiom);
+        }
+
+        @Override
+        public AxiomWithMetadata visit(OWLHasKeyAxiom axiom) {
+            return doIt(HASKEY, axiom,
+                    axiom.getClassExpression().containsEntityInSignature(target),
                     () -> axiom);
         }
 

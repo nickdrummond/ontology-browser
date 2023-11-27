@@ -1,12 +1,9 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
-import org.coode.www.model.characteristics.CharacteristicsBuilder;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.*;
-
-import static java.util.stream.Collectors.groupingBy;
 
 public class IndividualCharacteristicsBuilder extends CharacteristicsBuilder<OWLNamedIndividual> {
     public static final String TYPES = "Types";

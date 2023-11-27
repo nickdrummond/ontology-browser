@@ -15,6 +15,7 @@ public class ObjectPropertyCharacteristicsBuilder extends CharacteristicsBuilder
     public static final String DOMAIN = "Domain";
     public static final String RANGE = "Range";
     public static final String INVERSES = "Inverses";
+    public static final String PROPERTY_CHAIN = "Property Chains";
     public static final String CHARACTERISTICS = "Characteristics";
     public static final String DISJOINTS = "Disjoints";
 
@@ -25,6 +26,7 @@ public class ObjectPropertyCharacteristicsBuilder extends CharacteristicsBuilder
             DOMAIN,
             RANGE,
             INVERSES,
+            PROPERTY_CHAIN,
             CHARACTERISTICS,
             USAGE,
             DISJOINTS
@@ -85,6 +87,13 @@ public class ObjectPropertyCharacteristicsBuilder extends CharacteristicsBuilder
             return doIt(INVERSES, axiom,
                     axiom.getFirstProperty().equals(target),
                     axiom::getSecondProperty);
+        }
+
+        @Override
+        public AxiomWithMetadata visit(OWLSubPropertyChainOfAxiom axiom) {
+            return doIt(PROPERTY_CHAIN, axiom,
+                    axiom.getSuperProperty().equals(target),
+                    () -> axiom);
         }
 
         @Override

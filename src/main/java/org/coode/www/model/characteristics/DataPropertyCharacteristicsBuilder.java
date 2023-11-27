@@ -1,7 +1,6 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
-import org.coode.www.model.characteristics.CharacteristicsBuilder;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.Comparator;

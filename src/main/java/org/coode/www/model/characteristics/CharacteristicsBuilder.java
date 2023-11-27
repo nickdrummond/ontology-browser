@@ -2,7 +2,6 @@ package org.coode.www.model.characteristics;
 
 import com.google.common.collect.Streams;
 import org.coode.www.model.AxiomWithMetadata;
-import org.coode.www.model.characteristics.Characteristic;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 

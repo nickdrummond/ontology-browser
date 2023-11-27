@@ -3,17 +3,14 @@ package org.coode.www.service.impl;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.characteristics.Characteristic;
-import org.coode.www.model.characteristics.CharacteristicsFactory;
+import org.coode.www.model.characteristics.OntologyCharacteristicsBuilder;
 import org.coode.www.service.OWLOntologiesService;
 import org.semanticweb.owlapi.metrics.*;
 import org.semanticweb.owlapi.model.AxiomType;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static java.util.Arrays.asList;
 
 @Service
 public class OWLOntologiesServiceImpl implements OWLOntologiesService {
@@ -40,19 +37,7 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
     }
 
     @Override public List<Characteristic> getCharacteristics(final OWLOntology owlOntology, final OWLHTMLKit kit) {
-        Comparator<OWLObject> comparator = kit.getComparator();
-
-        CharacteristicsFactory fac = new CharacteristicsFactory();
-
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Optional<Characteristic> c : asList(
-                fac.getAnnotations(owlOntology, comparator),
-                fac.getImports(owlOntology, comparator),
-                fac.getGeneralClassAxioms(owlOntology, comparator)
-        )) {
-            c.ifPresent(characteristics::add);
-        }
-        return characteristics;
+        return new OntologyCharacteristicsBuilder(owlOntology, kit.getComparator()).getCharacteristics();
     }
 
     @Override
