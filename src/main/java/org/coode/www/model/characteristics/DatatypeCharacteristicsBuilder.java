@@ -41,7 +41,7 @@ public class DatatypeCharacteristicsBuilder extends CharacteristicsBuilder<OWLDa
 
         @Override
         public AxiomWithMetadata visit(OWLDatatypeDefinitionAxiom axiom) {
-            return doIt(DEFINITION, axiom,
+            return wrap(DEFINITION, axiom,
                     axiom.getDatatype().equals(target),
                     axiom::getDataRange);
         }

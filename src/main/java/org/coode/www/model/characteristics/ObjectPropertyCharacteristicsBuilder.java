@@ -1,7 +1,6 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
-import org.coode.www.model.characteristics.CharacteristicsBuilder;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.Comparator;
@@ -56,42 +55,42 @@ public class ObjectPropertyCharacteristicsBuilder extends CharacteristicsBuilder
 
         @Override
         public AxiomWithMetadata visit(OWLSubObjectPropertyOfAxiom axiom) {
-            return doIt(SUPERS, axiom,
+            return wrap(SUPERS, axiom,
                     axiom.getSubProperty().equals(target),
                     axiom::getSuperProperty);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLEquivalentObjectPropertiesAxiom axiom) {
-            return doIt(EQUIV, axiom,
+            return wrap(EQUIV, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLObjectPropertyDomainAxiom axiom) {
-            return doIt(DOMAIN, axiom,
+            return wrap(DOMAIN, axiom,
                     axiom.getProperty().equals(target),
                     axiom::getDomain);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLObjectPropertyRangeAxiom axiom) {
-            return doIt(RANGE, axiom,
+            return wrap(RANGE, axiom,
                     axiom.getProperty().equals(target),
                     axiom::getRange);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLInverseObjectPropertiesAxiom axiom) {
-            return doIt(INVERSES, axiom,
+            return wrap(INVERSES, axiom,
                     axiom.getFirstProperty().equals(target),
                     axiom::getSecondProperty);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLSubPropertyChainOfAxiom axiom) {
-            return doIt(PROPERTY_CHAIN, axiom,
+            return wrap(PROPERTY_CHAIN, axiom,
                     axiom.getSuperProperty().equals(target),
                     () -> axiom);
         }
@@ -133,13 +132,13 @@ public class ObjectPropertyCharacteristicsBuilder extends CharacteristicsBuilder
 
         @Override
         public AxiomWithMetadata visit(OWLDisjointObjectPropertiesAxiom axiom) {
-            return doIt(DISJOINTS, axiom,
+            return wrap(DISJOINTS, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }
 
         private AxiomWithMetadata characteristic(OWLObjectPropertyCharacteristicAxiom axiom) {
-            return doIt(CHARACTERISTICS, axiom,
+            return wrap(CHARACTERISTICS, axiom,
                     axiom.getProperty().equals(target),
                     () -> axiom);
         }

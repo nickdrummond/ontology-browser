@@ -52,7 +52,7 @@ public class IndividualCharacteristicsBuilder extends CharacteristicsBuilder<OWL
 
         @Override
         public AxiomWithMetadata visit(OWLClassAssertionAxiom axiom) {
-            return doIt(TYPES, axiom,
+            return wrap(TYPES, axiom,
                     axiom.getIndividual().equals(target),
                     axiom::getClassExpression);
         }
@@ -70,35 +70,35 @@ public class IndividualCharacteristicsBuilder extends CharacteristicsBuilder<OWL
 
         @Override
         public AxiomWithMetadata visit(OWLNegativeObjectPropertyAssertionAxiom axiom) {
-            return doIt(NEGATIVE_OBJECT_PROPERTY_ASSERTIONS, axiom,
+            return wrap(NEGATIVE_OBJECT_PROPERTY_ASSERTIONS, axiom,
                     axiom.getSubject().equals(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLDataPropertyAssertionAxiom axiom) {
-            return doIt(DATA_PROPERTY_ASSERTIONS, axiom,
+            return wrap(DATA_PROPERTY_ASSERTIONS, axiom,
                     axiom.getSubject().equals(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLNegativeDataPropertyAssertionAxiom axiom) {
-            return doIt(NEGATIVE_DATA_PROPERTY_ASSERTIONS, axiom,
+            return wrap(NEGATIVE_DATA_PROPERTY_ASSERTIONS, axiom,
                     axiom.getSubject().equals(target),
                     axiom::getObject);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLSameIndividualAxiom axiom) {
-            return doIt(SAME_AS, axiom,
+            return wrap(SAME_AS, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLDifferentIndividualsAxiom axiom) {
-            return doIt(DIFFERENT, axiom,
+            return wrap(DIFFERENT, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }

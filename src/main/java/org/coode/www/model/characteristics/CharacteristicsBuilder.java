@@ -17,24 +17,26 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
     public static final String USAGE = "Usage";
     public static final String ANNOTATIONS = "Annotations";
 
-    private final T target;
-
     private final List<Characteristic> characteristics;
 
     protected CharacteristicsBuilder(T target,
                                   Set<OWLOntology> activeOntologies,
                                   Comparator<OWLObject> comparator) {
-        this.target = target;
 
-        Stream<AxiomWithMetadata> axiomsWithMetadata = activeOntologies.stream()
-                .map(o -> createFilter(o, target))
-                .flatMap(this::annotate);
+        Stream<InterestingFilter> filters = activeOntologies.stream()
+                .map(o -> createFilter(o, target));
 
-        Map<String, List<AxiomWithMetadata>> grouped = axiomsWithMetadata
-                .sorted((a, b) -> comparator.compare(a.getOWLObject(), b.getOWLObject()))
+        Stream<AxiomWithMetadata> axiomsWithMetadata = filters
+                .flatMap(InterestingFilter::findAxioms);
+
+        Comparator<AxiomWithMetadata> compareByOWLObject = (a, b) ->
+                comparator.compare(a.getOWLObject(), b.getOWLObject());
+
+        Map<String, List<AxiomWithMetadata>> sortAndGroupByType = axiomsWithMetadata
+                .sorted(compareByOWLObject)
                 .collect(groupingBy(AxiomWithMetadata::getType));
 
-        characteristics = grouped.entrySet().stream()
+        characteristics = sortAndGroupByType.entrySet().stream()
                 .map(entry -> new Characteristic(target, entry.getKey(), entry.getValue()))
                 .sorted((a, b) -> getOrder().indexOf(a.getName()) - getOrder().indexOf(b.getName())) // Sort by "order"
                 .collect(Collectors.toList());
@@ -42,13 +44,6 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
 
     public List<Characteristic> getCharacteristics() {
         return characteristics;
-    }
-
-    private Stream<AxiomWithMetadata> annotate(InterestingFilter filter) {
-        return Streams.concat(
-                filter.getOntology().annotationAssertionAxioms(target.getIRI(), Imports.EXCLUDED),
-                filter.getOntology().referencingAxioms(target, Imports.EXCLUDED)
-        ).map(ax -> ax.accept(filter));
     }
 
     abstract InterestingFilter createFilter(OWLOntology ont, T target);
@@ -60,9 +55,16 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
         protected final OWLOntology ont;
         protected final T target;
 
-        public InterestingFilter(OWLOntology ont, T target) {
+        protected InterestingFilter(OWLOntology ont, T target) {
             this.ont = ont;
             this.target = target;
+        }
+
+        protected Stream<AxiomWithMetadata> findAxioms() {
+            return Streams.concat(
+                    ont.annotationAssertionAxioms(target.getIRI(), Imports.EXCLUDED),
+                    ont.referencingAxioms(target, Imports.EXCLUDED)
+            ).map(ax -> ax.accept(this));
         }
 
         @Override
@@ -73,7 +75,7 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
 
         @Override
         public AxiomWithMetadata visit(OWLAnnotationAssertionAxiom axiom) {
-            return doIt(ANNOTATIONS, axiom,
+            return wrap(ANNOTATIONS, axiom,
                     axiom.getSubject().equals(target.getIRI()),
                     axiom::getAnnotation);
         }
@@ -82,7 +84,7 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
             return ont;
         }
 
-        protected AxiomWithMetadata doIt(String name,
+        protected AxiomWithMetadata wrap(String name,
                                          OWLAxiom axiom,
                                          boolean condition,
                                          Supplier<OWLObject> getObject) {

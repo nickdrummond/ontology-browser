@@ -47,42 +47,42 @@ public class ClassCharacteristicsBuilder extends CharacteristicsBuilder<OWLClass
 
         @Override
         public AxiomWithMetadata visit(OWLSubClassOfAxiom axiom) {
-            return doIt(SUPERS, axiom,
+            return wrap(SUPERS, axiom,
                     axiom.getSubClass().equals(target),
                     axiom::getSuperClass);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLEquivalentClassesAxiom axiom) {
-            return doIt(EQUIV, axiom,
+            return wrap(EQUIV, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLHasKeyAxiom axiom) {
-            return doIt(HASKEY, axiom,
+            return wrap(HASKEY, axiom,
                     axiom.getClassExpression().containsEntityInSignature(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLClassAssertionAxiom axiom) {
-            return doIt(MEMBERS, axiom,
+            return wrap(MEMBERS, axiom,
                     axiom.getClassExpression().equals(target),
                     axiom::getIndividual);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLDisjointClassesAxiom axiom) {
-            return doIt(DISJOINTS, axiom,
+            return wrap(DISJOINTS, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLDisjointUnionAxiom axiom) {
-            return doIt(DISJOINTS, axiom,
+            return wrap(DISJOINTS, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }

@@ -45,21 +45,21 @@ public class AnnotationPropertyCharacteristicsBuilder extends CharacteristicsBui
 
         @Override
         public AxiomWithMetadata visit(OWLSubAnnotationPropertyOfAxiom axiom) {
-            return doIt(SUPERS, axiom,
+            return wrap(SUPERS, axiom,
                     axiom.getSubProperty().equals(target),
                     axiom::getSuperProperty);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLAnnotationPropertyDomainAxiom axiom) {
-            return doIt(DOMAIN, axiom,
+            return wrap(DOMAIN, axiom,
                     axiom.getProperty().equals(target),
                     axiom::getDomain);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLAnnotationPropertyRangeAxiom axiom) {
-            return doIt(RANGE, axiom,
+            return wrap(RANGE, axiom,
                     axiom.getProperty().equals(target),
                     axiom::getRange);
         }

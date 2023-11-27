@@ -51,42 +51,42 @@ public class DataPropertyCharacteristicsBuilder extends CharacteristicsBuilder<O
 
         @Override
         public AxiomWithMetadata visit(OWLSubDataPropertyOfAxiom axiom) {
-            return doIt(SUPERS, axiom,
+            return wrap(SUPERS, axiom,
                     axiom.getSubProperty().equals(target),
                     axiom::getSuperProperty);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLEquivalentDataPropertiesAxiom axiom) {
-            return doIt(EQUIV, axiom,
+            return wrap(EQUIV, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLDataPropertyDomainAxiom axiom) {
-            return doIt(DOMAIN, axiom,
+            return wrap(DOMAIN, axiom,
                     axiom.getProperty().equals(target),
                     axiom::getDomain);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLDataPropertyRangeAxiom axiom) {
-            return doIt(RANGE, axiom,
+            return wrap(RANGE, axiom,
                     axiom.getProperty().equals(target),
                     axiom::getRange);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLFunctionalDataPropertyAxiom axiom) {
-            return doIt(CHARACTERISTICS, axiom,
+            return wrap(CHARACTERISTICS, axiom,
                     axiom.getProperty().equals(target),
                     () -> axiom);
         }
 
         @Override
         public AxiomWithMetadata visit(OWLDisjointDataPropertiesAxiom axiom) {
-            return doIt(DISJOINTS, axiom,
+            return wrap(DISJOINTS, axiom,
                     axiom.containsEntityInSignature(target),
                     () -> axiom);
         }
