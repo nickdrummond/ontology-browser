@@ -1,8 +1,8 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.OntServerException;
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.OWLObjectWithOntology;
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.SearchResult;
 import org.coode.www.model.SearchResults;
 import org.coode.www.renderer.OWLHTMLRenderer;
@@ -62,7 +62,7 @@ public class OWLEntitiesController extends ApplicationController {
             throw new OntServerException("Unknown property: " + property);
         }
 
-        List<OWLObjectWithOntology> results = service.findByAnnotation(search, optAnnot.orElse(null), kit);
+        List<AxiomWithMetadata> results = service.findByAnnotation(search, optAnnot.orElse(null), kit);
 
         if (results.size() == 1) {
             OWLObject owlObject = results.get(0).getOWLObject();

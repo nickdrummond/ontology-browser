@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.model.Characteristic;
+import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.MediaRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
@@ -101,7 +101,7 @@ public class OWLIndividualsController extends ApplicationController {
             model.addAttribute("sound", owlIndividual.getIRI().toString());
         }
 
-        List<Characteristic> characteristics = service.getCharacteristics(owlIndividual, ontologies, kit.getComparator(), sfp);
+        List<Characteristic> characteristics = service.getCharacteristics(owlIndividual, ontologies, kit.getComparator());
 
         model.addAttribute("title", entityName + " (Individual)");
         model.addAttribute("type", "Individuals");

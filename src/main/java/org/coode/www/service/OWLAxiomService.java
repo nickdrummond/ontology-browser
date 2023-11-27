@@ -1,7 +1,7 @@
 package org.coode.www.service;
 
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.OWLObjectWithOntology;
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.AxiomWithMetadata;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -23,7 +23,7 @@ public class OWLAxiomService {
 
     public Characteristic getAxioms(Set<OWLOntology> onts) {
         // avoid generating search indices as not needed
-        List<OWLObjectWithOntology> results = onts.stream()
+        List<AxiomWithMetadata> results = onts.stream()
                 .flatMap(o -> wrappedWithOntology(o.axioms(Imports.EXCLUDED), o))
                 .collect(Collectors.toList());
         return new Characteristic(null, "Axioms", results);
@@ -41,7 +41,7 @@ public class OWLAxiomService {
                                                  final Set<OWLOntology> onts,
                                                  final ShortFormProvider sfp,
                                                  final Predicate<? super Map.Entry<OWLAxiom, String>> filter) {
-        List<OWLObjectWithOntology> results = onts.stream()
+        List<AxiomWithMetadata> results = onts.stream()
                 .flatMap(o -> wrappedWithOntology(filterAxioms(search, o, sfp, filter), o))
                 .collect(Collectors.toList());
         return new Characteristic(null, "Axioms containing \"" + search + "\"", results);
@@ -76,7 +76,7 @@ public class OWLAxiomService {
         return writer.toString();
     }
 
-    private Stream<OWLObjectWithOntology> wrappedWithOntology(Stream<OWLAxiom> axioms, OWLOntology ont) {
-        return axioms.map(a -> new OWLObjectWithOntology(a, ont));
+    private Stream<AxiomWithMetadata> wrappedWithOntology(Stream<OWLAxiom> axioms, OWLOntology ont) {
+        return axioms.map(a -> new AxiomWithMetadata("Axioms", a, a, ont));
     }
 }

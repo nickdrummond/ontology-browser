@@ -5,8 +5,8 @@ import org.coode.owl.mngr.impl.PropertyComparator;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.QueryTimeoutException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.OWLObjectWithOntology;
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.DLQuery;
 import org.coode.www.model.QueryType;
 import org.coode.www.renderer.OWLHTMLRenderer;
@@ -175,7 +175,7 @@ public class DLQueryController extends ApplicationController {
         return new Characteristic(null, name,
                 results.stream()
                         .sorted(comp)
-                        .map(e -> new OWLObjectWithOntology(e, getDeclarationOntology(e, kit)))
+                        .map(e -> new AxiomWithMetadata("result", e, null, getDeclarationOntology(e, kit)))
                         .collect(Collectors.toList()));
     }
 }

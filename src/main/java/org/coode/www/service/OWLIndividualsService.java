@@ -2,15 +2,13 @@ package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.CharacteristicsFactory;
-import org.coode.www.renderer.UsageVisibilityVisitor;
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.characteristics.IndividualCharacteristicsBuilder;
 import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -40,23 +38,9 @@ public class OWLIndividualsService {
 
     public List<Characteristic> getCharacteristics(final OWLNamedIndividual owlIndividual,
                                                    final Set<OWLOntology> activeOntologies,
-                                                   final Comparator<OWLObject> comparator,
-                                                   final ShortFormProvider shortFormProvider) {
+                                                   final Comparator<OWLObject> comparator) {
 
-        CharacteristicsFactory fac = new CharacteristicsFactory();
-
-        List<Characteristic> characteristics = fac.getAnnotationCharacteristics(owlIndividual, activeOntologies, comparator, shortFormProvider);
-
-        fac.getTypes(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-        fac.getObjectPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-        fac.getNegativeObjectPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-        fac.getDataPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-        fac.getNegativeDataPropertyAssertions(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-        fac.getUsage(owlIndividual, activeOntologies, comparator, new UsageVisibilityVisitor()).ifPresent(characteristics::add);
-        fac.getSameAs(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-        fac.getDifferentFrom(owlIndividual, activeOntologies, comparator).ifPresent(characteristics::add);
-
-        return characteristics;
+        return new IndividualCharacteristicsBuilder(owlIndividual, activeOntologies, comparator).getCharacteristics();
     }
 
     public OWLNamedIndividual getFirstIndividual(final OWLHTMLKit kit) throws NotFoundException {

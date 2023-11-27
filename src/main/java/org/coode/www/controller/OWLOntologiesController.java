@@ -4,7 +4,7 @@ import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.model.Characteristic;
+import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.ElementRenderer;
 import org.coode.www.renderer.Highlighter;

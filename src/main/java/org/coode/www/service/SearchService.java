@@ -1,7 +1,7 @@
 package org.coode.www.service;
 
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.OWLObjectWithOntology;
+import org.coode.www.model.AxiomWithMetadata;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -51,17 +51,17 @@ public class SearchService {
         return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).collect(Collectors.toList());
     }
 
-    public List<OWLObjectWithOntology> findByAnnotation(@Nonnull String value,
-                                                        OWLAnnotationProperty searchProp,
-                                                        @Nonnull OWLHTMLKit kit) {
+    public List<AxiomWithMetadata> findByAnnotation(@Nonnull String value,
+                                                    OWLAnnotationProperty searchProp,
+                                                    @Nonnull OWLHTMLKit kit) {
         Optional<OWLAnnotationProperty> prop = Optional.ofNullable(searchProp);
-        Set<OWLObjectWithOntology> results = new HashSet<>();
+        Set<AxiomWithMetadata> results = new HashSet<>();
         for (OWLOntology ont : kit.getOWLOntologyManager().getOntologies()) {
             for (OWLAnnotationAssertionAxiom ax : ont.getAxioms(AxiomType.ANNOTATION_ASSERTION)) {
                 if (prop.isEmpty() || prop.get().equals(ax.getProperty())) {
                     OWLAnnotationValue v = ax.getValue();
                     if (v.isLiteral() && v.asLiteral().isPresent() && v.asLiteral().get().getLiteral().contains(value)) {
-                        results.add(new OWLObjectWithOntology(ax, ont));
+                        results.add(new AxiomWithMetadata("results", ax, ax, ont));
                     }
                 }
             }

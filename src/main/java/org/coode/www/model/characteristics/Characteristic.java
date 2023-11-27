@@ -1,5 +1,6 @@
-package org.coode.www.model;
+package org.coode.www.model.characteristics;
 
+import org.coode.www.model.AxiomWithMetadata;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import java.util.List;
@@ -10,12 +11,12 @@ public class Characteristic {
 
     private String name;
 
-    private List<OWLObjectWithOntology> objects;
+    private List<AxiomWithMetadata> objects;
 
     public Characteristic() {
     }
 
-    public Characteristic(OWLObject subject, String name, List<OWLObjectWithOntology> objects) {
+    public Characteristic(OWLObject subject, String name, List<AxiomWithMetadata> objects) {
         this.subject = subject;
         this.name = name;
         this.objects = objects;
@@ -37,11 +38,11 @@ public class Characteristic {
         this.name = name;
     }
 
-    public List<OWLObjectWithOntology> getObjects() {
+    public List<AxiomWithMetadata> getObjects() {
         return objects;
     }
 
-    public void setObjects(List<OWLObjectWithOntology> objects) {
+    public void setObjects(List<AxiomWithMetadata> objects) {
         this.objects = objects;
     }
 }

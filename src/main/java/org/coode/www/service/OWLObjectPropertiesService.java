@@ -2,18 +2,14 @@ package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.CharacteristicsFactory;
-import org.coode.www.renderer.UsageVisibilityVisitor;
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.characteristics.ObjectPropertyCharacteristicsBuilder;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static java.util.Arrays.asList;
 
 @Service
 public class OWLObjectPropertiesService {
@@ -45,28 +41,7 @@ public class OWLObjectPropertiesService {
         return String.valueOf(owlObjectProperty.getIRI().hashCode());
     }
 
-    public List<Characteristic> getCharacteristics(final OWLObjectProperty owlObjectProperty, final OWLHTMLKit kit) {
-
-        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getComparator();
-
-        CharacteristicsFactory fac = new CharacteristicsFactory();
-
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Optional<Characteristic> c : asList(
-                fac.getAnnotations(owlObjectProperty, activeOntologies, comparator),
-                fac.getPropertyCharacteristics(owlObjectProperty, activeOntologies, comparator),
-                fac.getDomains(owlObjectProperty, activeOntologies, comparator),
-                fac.getRanges(owlObjectProperty, activeOntologies, comparator),
-                fac.getInverses(owlObjectProperty, activeOntologies, comparator),
-                fac.getEquivalents(owlObjectProperty, activeOntologies, comparator),
-                fac.getSupers(owlObjectProperty, activeOntologies, comparator),
-                fac.getDisjoints(owlObjectProperty, activeOntologies, comparator),
-                fac.getUsage(owlObjectProperty, activeOntologies, comparator, new UsageVisibilityVisitor())
-        )) {
-            c.ifPresent(characteristics::add);
-        }
-
-        return characteristics;
+    public List<Characteristic> getCharacteristics(final OWLObjectProperty property, final OWLHTMLKit kit) {
+        return new ObjectPropertyCharacteristicsBuilder(property, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
     }
 }

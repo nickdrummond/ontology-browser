@@ -1,5 +1,7 @@
-package org.coode.www.model;
+package org.coode.www.model.characteristics;
 
+import org.coode.www.model.AxiomWithMetadata;
+import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -185,13 +187,13 @@ public class CharacteristicsFactory {
                                                              final Comparator<OWLObject> comp,
                                                              final ShortFormProvider sfp) {
 
-        final Map<OWLAnnotationProperty, List<OWLObjectWithOntology>> assertedProps = new HashMap<>();
+        final Map<OWLAnnotationProperty, List<AxiomWithMetadata>> assertedProps = new HashMap<>();
 
         for (OWLOntology ont : onts){
             for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(ind.getIRI())) {
                 OWLAnnotationProperty p = ax.getProperty();
-                List<OWLObjectWithOntology> objects = assertedProps.computeIfAbsent(p, k -> new ArrayList<>());
-                objects.add(new OWLObjectWithOntology(ax.getAnnotation().getValue(), ont));
+                List<AxiomWithMetadata> objects = assertedProps.computeIfAbsent(p, k -> new ArrayList<>());
+                objects.add(new AxiomWithMetadata("annot", ax.getAnnotation().getValue(), ax, ont));
             }
         }
 
@@ -204,23 +206,23 @@ public class CharacteristicsFactory {
     /* All ontology queries return collections of OWLObjects - we want to wrap these with the ontology the assertions
      * are in
      */
-    private List<OWLObjectWithOntology> wrap(final Set<OWLOntology> onts,
+    private List<AxiomWithMetadata> wrap(final Set<OWLOntology> onts,
                                              final Comparator<OWLObject> c,
                                              final Function<OWLOntology, Stream<? extends OWLObject>> f) {
         return onts.stream()
-                .flatMap(o -> f.apply(o).map(ax -> new OWLObjectWithOntology(ax, o)))
+                .flatMap(o -> f.apply(o).map(ax -> new AxiomWithMetadata("s", ax, null, o)))
                 .sorted((o1, o2) -> c.compare(o1.getOWLObject(), o2.getOWLObject()))
                 .collect(Collectors.toList());
     }
 
-    private List<OWLObjectWithOntology> wrapWithOntology(Set<? extends OWLObject> objs, OWLOntology ont, Comparator<OWLObject> c) {
+    private List<AxiomWithMetadata> wrapWithOntology(Set<? extends OWLObject> objs, OWLOntology ont, Comparator<OWLObject> c) {
         return objs.stream()
                 .sorted(c)
-                .map(o -> new OWLObjectWithOntology(o, ont))
+                .map(o -> new AxiomWithMetadata("s", o, null,  ont))
                 .collect(Collectors.toList());
     }
 
-    private Optional<Characteristic> asCharacteristicNew(String name, OWLObject owlObject, List<OWLObjectWithOntology> results) {
+    private Optional<Characteristic> asCharacteristicNew(String name, OWLObject owlObject, List<AxiomWithMetadata> results) {
         return results.isEmpty() ? Optional.empty() : Optional.of(new Characteristic(owlObject, name, results));
     }
 }

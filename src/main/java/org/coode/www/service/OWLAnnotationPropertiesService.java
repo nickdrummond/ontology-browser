@@ -3,18 +3,14 @@ package org.coode.www.service;
 import com.google.common.collect.Sets;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.CharacteristicsFactory;
-import org.coode.www.renderer.UsageVisibilityVisitor;
+import org.coode.www.model.characteristics.AnnotationPropertyCharacteristicsBuilder;
+import org.coode.www.model.characteristics.Characteristic;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
 
 @Service
 public class OWLAnnotationPropertiesService {
@@ -34,24 +30,8 @@ public class OWLAnnotationPropertiesService {
         return String.valueOf(owlAnnotationProperty.getIRI().hashCode());
     }
 
-    public List<Characteristic> getCharacteristics(final OWLAnnotationProperty owlAnnotationProperty, final OWLHTMLKit kit) {
-        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getComparator();
-
-        CharacteristicsFactory fac = new CharacteristicsFactory();
-
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Optional<Characteristic> c : asList(
-                fac.getAnnotations(owlAnnotationProperty, activeOntologies, comparator),
-                fac.getDomains(owlAnnotationProperty, activeOntologies, comparator),
-                fac.getRanges(owlAnnotationProperty, activeOntologies, comparator),
-                fac.getSupers(owlAnnotationProperty, activeOntologies, comparator),
-                fac.getUsage(owlAnnotationProperty, activeOntologies, comparator, new UsageVisibilityVisitor())
-        )) {
-            c.ifPresent(characteristics::add);
-        }
-
-        return characteristics;
+    public List<Characteristic> getCharacteristics(final OWLAnnotationProperty property, final OWLHTMLKit kit) {
+        return new AnnotationPropertyCharacteristicsBuilder(property, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
     }
 
     public List<OWLAnnotationProperty> getAnnotationProperties(final OWLOntology activeOntology,

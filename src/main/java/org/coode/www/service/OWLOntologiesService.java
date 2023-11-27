@@ -2,7 +2,7 @@ package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.Characteristic;
+import org.coode.www.model.characteristics.Characteristic;
 import org.semanticweb.owlapi.metrics.OWLMetric;
 import org.semanticweb.owlapi.model.OWLOntology;
 

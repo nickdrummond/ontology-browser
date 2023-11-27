@@ -2,8 +2,8 @@ package org.coode.www.service.impl;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.CharacteristicsFactory;
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.characteristics.CharacteristicsFactory;
 import org.coode.www.service.OWLOntologiesService;
 import org.semanticweb.owlapi.metrics.*;
 import org.semanticweb.owlapi.model.AxiomType;

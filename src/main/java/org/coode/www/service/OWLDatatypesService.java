@@ -2,8 +2,9 @@ package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.CharacteristicsFactory;
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.characteristics.CharacteristicsFactory;
+import org.coode.www.model.characteristics.DatatypeCharacteristicsBuilder;
 import org.coode.www.renderer.UsageVisibilityVisitor;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
@@ -41,19 +42,6 @@ public class OWLDatatypesService {
     }
 
     public List<Characteristic> getCharacteristics(OWLDatatype owlDatatype, OWLHTMLKit kit) {
-        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getComparator();
-
-        CharacteristicsFactory fac = new CharacteristicsFactory();
-
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Optional<Characteristic> c : asList(
-                fac.getAnnotations(owlDatatype, activeOntologies, comparator),
-                fac.getDatatypeDefinitions(owlDatatype, activeOntologies, comparator),
-                fac.getUsage(owlDatatype, activeOntologies, comparator, new UsageVisibilityVisitor())
-        )) {
-            c.ifPresent(characteristics::add);
-        }
-        return characteristics;
+        return new DatatypeCharacteristicsBuilder(owlDatatype, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
     }
 }

@@ -6,7 +6,7 @@ import org.coode.html.url.RelationPropertyURLScheme;
 import org.coode.html.url.RelationsURLScheme;
 import org.coode.html.url.URLScheme;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.model.Characteristic;
+import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLAnnotationPropertiesService;
@@ -194,7 +194,7 @@ public class OWLRelationsController extends ApplicationController {
                 .withActiveObjects(ImmutableSet.of(property, individual))
                 .withURLScheme(new AnnotationRelationsURLScheme(kit, relationsHierarchyService).withQuery(request.getQueryString()));
 
-        List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ontologies, kit.getComparator(), sfp);
+        List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ontologies, kit.getComparator());
 
         model.addAttribute("title", sfp.getShortForm(individual) + " (Individual)");
         model.addAttribute("type", "Relations on");
@@ -246,7 +246,7 @@ public class OWLRelationsController extends ApplicationController {
                 .withActiveObjects(ImmutableSet.of(property, individual))
                 .withURLScheme(new RelationsURLScheme(kit, relationsHierarchyService).withQuery(request.getQueryString()));
 
-        List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ontologies, kit.getComparator(), sfp);
+        List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ontologies, kit.getComparator());
 
         model.addAttribute("title", sfp.getShortForm(individual) + " (Individual)");
         model.addAttribute("type", "Relations on");

@@ -2,17 +2,13 @@ package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.Characteristic;
-import org.coode.www.model.CharacteristicsFactory;
-import org.coode.www.renderer.UsageVisibilityVisitor;
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.characteristics.ClassCharacteristicsBuilder;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static java.util.Arrays.asList;
 
 @Service
 public class OWLClassesService {
@@ -43,23 +39,6 @@ public class OWLClassesService {
 
     public List<Characteristic> getCharacteristics(final OWLClass owlClass, final OWLHTMLKit kit) {
 
-        Set<OWLOntology> activeOntologies = kit.getActiveOntologies();
-        Comparator<OWLObject> comparator = kit.getComparator();
-
-        CharacteristicsFactory fac = new CharacteristicsFactory();
-
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Optional<Characteristic> c : asList(
-                fac.getAnnotations(owlClass, activeOntologies, comparator),
-                fac.getEquivalents(owlClass, activeOntologies, comparator),
-                fac.getSuperclasses(owlClass, activeOntologies, comparator),
-                fac.getMembers(owlClass, activeOntologies, comparator),
-                fac.getUsage(owlClass, activeOntologies, comparator, new UsageVisibilityVisitor()),
-                fac.getDisjoints(owlClass, activeOntologies, comparator)
-        )) {
-            c.ifPresent(characteristics::add);
-        }
-
-        return characteristics;
+        return new ClassCharacteristicsBuilder(owlClass, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
     }
 }

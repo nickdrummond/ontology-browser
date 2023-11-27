@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 
 public class OWLHTMLVisitor implements OWLObjectVisitor {
 
+    private static final boolean WRITE_AXIOM_ANNOTATION = false;
+
     // These should match the css class names
     private static final String CSS_ACTIVE_ENTITY = "active-entity";
     private static final String CSS_KEYWORD = "keyword";
@@ -958,8 +960,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private void writeAnnotations(OWLAxiom axiom) {
-        final Set<OWLAnnotation> annotations = axiom.getAnnotations();
-        if (!annotations.isEmpty()){
+        if (WRITE_AXIOM_ANNOTATION && axiom.isAnnotated()){
+            final Set<OWLAnnotation> annotations = axiom.getAnnotations();
             write("<ul>");
             for (OWLAnnotation annot : annotations){
                 write("<li>");
