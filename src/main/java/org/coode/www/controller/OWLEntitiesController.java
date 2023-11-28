@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +28,7 @@ public class OWLEntitiesController extends ApplicationController {
     @Autowired
     private NameService nameService;
 
-    @RequestMapping(value="/", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value="/", produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody SearchResults find(
             @RequestParam final String name) {
 
@@ -48,7 +45,7 @@ public class OWLEntitiesController extends ApplicationController {
         return results;
     }
 
-    @RequestMapping(value="annotation", method=RequestMethod.GET)
+    @GetMapping(value="annotation")
     public String findAnnotation(
             @RequestParam final String search,
             @RequestParam(required = false) final String property,

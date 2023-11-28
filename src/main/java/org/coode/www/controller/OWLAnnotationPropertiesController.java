@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,7 +22,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     @Autowired
     private OWLAnnotationPropertiesService service;
 
-    @RequestMapping(value="/", method=RequestMethod.GET)
+    @GetMapping(value="/")
     public String getOWLAnnotationProperties()
             throws NotFoundException {
 
@@ -43,7 +44,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
+    @GetMapping(value="/{propertyId}")
     public String getOWLAnnotationProperty(@PathVariable final String propertyId,
                               final Model model) throws NotFoundException {
 

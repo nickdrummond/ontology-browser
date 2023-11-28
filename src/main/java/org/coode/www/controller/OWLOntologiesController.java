@@ -19,10 +19,7 @@ import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
@@ -42,7 +39,7 @@ public class OWLOntologiesController extends ApplicationController {
     @Autowired
     private OntologyIRIShortFormProvider sfp;
 
-    @RequestMapping(method=RequestMethod.GET)
+    @GetMapping("/")
     public String getOntologies() {
 
         OWLOntology rootOntology = kit.getRootOntology();
@@ -53,7 +50,7 @@ public class OWLOntologiesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{ontId}", method=RequestMethod.GET)
+    @GetMapping(value="/{ontId}")
     public String getOntology(@PathVariable final String ontId,
                               final Model model) throws NotFoundException {
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
@@ -82,7 +79,7 @@ public class OWLOntologiesController extends ApplicationController {
         return "owlentity";
     }
 
-    @RequestMapping(value="/{ontId}", method=RequestMethod.GET, produces="application/rdf+xml")
+    @GetMapping(value="/{ontId}", produces="application/rdf+xml")
     public void exportOntology(@PathVariable final String ontId,
                                final HttpServletResponse response,
                                final Writer writer) throws NotFoundException {
@@ -101,7 +98,7 @@ public class OWLOntologiesController extends ApplicationController {
     }
 
 
-    @RequestMapping(value = "/{ontId}/axioms/")
+    @GetMapping(value = "/{ontId}/axioms/")
     public String axioms(final Model model,
                          @PathVariable final String ontId,
                          @RequestParam(required = false) String search,

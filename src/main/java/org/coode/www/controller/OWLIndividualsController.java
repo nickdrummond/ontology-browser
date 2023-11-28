@@ -15,10 +15,7 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
@@ -45,7 +42,7 @@ public class OWLIndividualsController extends ApplicationController {
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
 
-    @RequestMapping(value="/", method=RequestMethod.GET)
+    @GetMapping(value="/")
     public String getOWLIndividuals() throws NotFoundException {
 
         OWLNamedIndividual firstIndividual = service.getFirstIndividual(kit);
@@ -57,7 +54,7 @@ public class OWLIndividualsController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value= "/{individualId}", method=RequestMethod.GET)
+    @GetMapping(value= "/{individualId}")
     public String getOWLIndividual(@PathVariable final String individualId,
                                    @RequestParam(required=false) final String ontId,
                                    final HttpServletRequest request,

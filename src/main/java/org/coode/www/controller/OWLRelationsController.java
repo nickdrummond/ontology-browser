@@ -60,6 +60,17 @@ public class OWLRelationsController extends ApplicationController {
         return "redirect:/relations/onproperty/" + id;
     }
 
+    @GetMapping(value = "/onannotationproperty/")
+    public String getRelationsForAnnotationProperty() throws NotFoundException {
+        Set<OWLAnnotationProperty> props = kit.getActiveOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED);
+        if (props.isEmpty()) {
+            throw new NotFoundException("Annotation Property");
+        }
+        // Start with random
+        String id = annotationPropertiesService.getIdFor(props.iterator().next());
+        return "redirect:/relations/onannotationproperty/" + id;
+    }
+
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/onproperty/{propertyId}")
     public String getRelationsForProperty(@PathVariable final String propertyId,
@@ -102,18 +113,6 @@ public class OWLRelationsController extends ApplicationController {
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
-    }
-
-
-    @GetMapping(value = "/onannotationproperty/")
-    public String getRelationsForAnnotationProperty() throws NotFoundException {
-        Set<OWLAnnotationProperty> props = kit.getActiveOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED);
-        if (props.isEmpty()) {
-            throw new NotFoundException("Annotation Property");
-        }
-        // Start with random
-        String id = annotationPropertiesService.getIdFor(props.iterator().next());
-        return "redirect:/relations/onannotationproperty/" + id;
     }
 
     @SuppressWarnings("SameReturnValue")

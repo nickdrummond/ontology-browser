@@ -14,9 +14,9 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Comparator;
 
@@ -33,7 +33,7 @@ public class OWLClassesController extends ApplicationController {
     @Autowired
     private OWLIndividualsService individualsService;
 
-    @RequestMapping(value="/", method=RequestMethod.GET)
+    @GetMapping(value="/")
     public String getOWLClasses() {
 
         OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
@@ -44,7 +44,7 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{classId}", method=RequestMethod.GET)
+    @GetMapping(value="/{classId}")
     public String getOWLClass(@PathVariable final String classId,
                               final Model model) throws NotFoundException {
 
@@ -72,7 +72,7 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{classId}/children", method=RequestMethod.GET)
+    @GetMapping(value="/{classId}/children")
     public String getChildren(@PathVariable final String classId,
                               final Model model) throws NotFoundException {
 
@@ -95,7 +95,7 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{classId}/instances", method=RequestMethod.GET)
+    @GetMapping(value="/{classId}/instances")
     public String getInstances(@PathVariable final String classId,
                                final Model model) throws NotFoundException {
 

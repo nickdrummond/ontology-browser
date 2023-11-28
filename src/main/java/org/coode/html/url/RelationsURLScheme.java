@@ -4,9 +4,11 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.service.hierarchy.RelationsHierarchyService;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 
-public class RelationsURLScheme extends RelationPropertyURLScheme {
+public class RelationsURLScheme extends RestURLScheme {
 
+    public static final String ROOT_PATH = "/relations";
     private final RelationsHierarchyService service;
     private String query = "";
 
@@ -22,6 +24,11 @@ public class RelationsURLScheme extends RelationPropertyURLScheme {
                     + "/onproperty/" + getIdForEntity(service.getProperty())
                     + "/withindividual/" + getIdForEntity((OWLNamedIndividual) owlObject)
                     + "/" + query;
+        }
+        else if (owlObject instanceof OWLObjectProperty) {
+            return ROOT_PATH
+                    + "/onproperty/" + getIdForEntity((OWLObjectProperty) owlObject)
+                    + "/";
         }
         return super.getURLForOWLObject(owlObject);
     }

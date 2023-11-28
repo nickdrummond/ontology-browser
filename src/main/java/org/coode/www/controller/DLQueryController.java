@@ -21,10 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import uk.co.nickdrummond.parsejs.ParseException;
 
 import java.util.*;
@@ -42,7 +39,7 @@ public class DLQueryController extends ApplicationController {
     private ReasonerService reasonerService;
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(method=RequestMethod.GET)
+    @GetMapping
     public String dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
             @RequestParam(required = false, defaultValue = "") final String minus,
@@ -78,7 +75,7 @@ public class DLQueryController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="results",method=RequestMethod.GET)
+    @GetMapping(value="results")
     public String getResults(
             @RequestParam final String expression,
             @RequestParam(required = false) final String minus,
@@ -133,7 +130,7 @@ public class DLQueryController extends ApplicationController {
         }
     }
 
-    @RequestMapping(value = "/ac", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "/ac", produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String autocompleteOWLClassExpression(
             @RequestParam String expression) {
 
@@ -146,7 +143,7 @@ public class DLQueryController extends ApplicationController {
     }
 
     // TODO return the actual ParseResult or an XML rendering of the parse exception
-    @RequestMapping(value = "/parse", method=RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "/parse", produces = MediaType.APPLICATION_XML_VALUE)
     public @ResponseBody String parseOWLClassExpression(
             @RequestParam String expression) {
 

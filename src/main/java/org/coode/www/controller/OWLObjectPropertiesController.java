@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,7 +30,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
 
-    @RequestMapping(value="/", method=RequestMethod.GET)
+    @GetMapping(value="/")
     public String getOWLObjectProperties() {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
@@ -43,7 +44,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{propertyId}", method=RequestMethod.GET)
+    @GetMapping(value="/{propertyId}")
     public String getOWLObjectProperty(@PathVariable final String propertyId,
                                        final Model model) throws NotFoundException {
 
@@ -73,7 +74,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @RequestMapping(value="/{propertyId}/children", method=RequestMethod.GET)
+    @GetMapping(value="/{propertyId}/children")
     public String getChildren(@PathVariable final String propertyId,
                               final Model model) throws NotFoundException {
 

@@ -2,11 +2,9 @@ package org.coode.html.url;
 
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.service.hierarchy.AnnotationsHierarchyService;
-import org.coode.www.service.hierarchy.RelationsHierarchyService;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 public class AnnotationRelationsURLScheme extends RestURLScheme {
 

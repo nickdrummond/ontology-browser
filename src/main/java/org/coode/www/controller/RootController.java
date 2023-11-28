@@ -12,6 +12,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,7 +26,7 @@ import java.util.function.Consumer;
 public class RootController extends ApplicationController {
 
     // Entry point
-    @RequestMapping("/")
+    @GetMapping("/")
     public String index(final Model model,
                         @RequestParam(required=false) final String redirect,
                         final HttpServletRequest request) {
@@ -55,7 +56,7 @@ public class RootController extends ApplicationController {
         }
     }
 
-    @RequestMapping(value = "/sitemap.xml")
+    @GetMapping(value = "/sitemap.xml")
     @ResponseBody
     public XmlUrlSet sitemap() {
         final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();

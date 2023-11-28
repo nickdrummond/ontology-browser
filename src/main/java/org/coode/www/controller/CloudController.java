@@ -8,10 +8,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -23,7 +20,7 @@ import java.util.Set;
 @SessionAttributes("kit")
 public class CloudController extends ApplicationController {
 
-    @RequestMapping(value = "/classes")
+    @GetMapping(value = "/classes")
     public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                   @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                   @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
@@ -35,7 +32,7 @@ public class CloudController extends ApplicationController {
         return cloud(kit, model, "Classes Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
-    @RequestMapping(value = "/individuals")
+    @GetMapping(value = "/individuals")
     public String getIndividualsCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                       @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                       @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
@@ -47,7 +44,7 @@ public class CloudController extends ApplicationController {
         return cloud(kit, model, "Individuals Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
-    @RequestMapping(value = "/objectproperties")
+    @GetMapping(value = "/objectproperties")
     public String getObjectPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                            @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                            @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
@@ -59,7 +56,7 @@ public class CloudController extends ApplicationController {
         return cloud(kit, model, "Object Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
-    @RequestMapping(value = "/dataproperties")
+    @GetMapping(value = "/dataproperties")
     public String getDataPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                          @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                          @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
@@ -71,7 +68,7 @@ public class CloudController extends ApplicationController {
         return cloud(kit, model, "Data Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
-    @RequestMapping(value = "/annotationproperties")
+    @GetMapping(value = "/annotationproperties")
     public String getAnnotationPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                                @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                                @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
@@ -83,7 +80,7 @@ public class CloudController extends ApplicationController {
         return cloud(kit, model, "Annotation Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
-    @RequestMapping(value = "/datatypes")
+    @GetMapping(value = "/datatypes")
     public String getDatatypesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
                                     @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
                                     @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
