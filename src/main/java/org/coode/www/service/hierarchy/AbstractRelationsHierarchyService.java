@@ -8,13 +8,14 @@ import java.util.Comparator;
 public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> extends AbstractOWLHierarchyService<OWLNamedIndividual> {
 
     protected T property;
+
     protected boolean inverse;
 
     protected OWLOntology ont;
 
     protected OWLNamedIndividual root;
 
-    public AbstractRelationsHierarchyService(Comparator<? super Tree<OWLNamedIndividual>> comparator) {
+    protected AbstractRelationsHierarchyService(Comparator<? super Tree<OWLNamedIndividual>> comparator) {
         super(comparator);
     }
 
@@ -30,4 +31,11 @@ public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> e
         return this;
     }
 
+    public boolean isInverse() {
+        return inverse;
+    }
+
+    public T getProperty() {
+        return property;
+    }
 }
