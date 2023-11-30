@@ -18,11 +18,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
  * serverbase/<type>/<hash-of-object-uri>/
  *
  */
-public class RestURLScheme extends AbstractURLScheme {
-
-    public RestURLScheme(OWLHTMLKit kit) {
-        super(kit);
-    }
+public class RestURLScheme implements URLScheme {
 
     public String getURLForOWLObject(OWLObject owlObject) {
         if (owlObject == null){

@@ -1,9 +1,6 @@
 package org.coode.html.url;
 
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.service.hierarchy.AbstractOWLHierarchyService;
-import org.coode.www.service.hierarchy.AnnotationsHierarchyService;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -16,11 +13,9 @@ public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLSchem
     private final Class<? extends OWLEntity> propertyJavaClass;
     private String query = "";
 
-    public CommonRelationsURLScheme(OWLHTMLKit kit,
-                                    AbstractOWLHierarchyService<OWLNamedIndividual> service,
+    public CommonRelationsURLScheme(AbstractOWLHierarchyService<OWLNamedIndividual> service,
                                     String rootPath,
                                     T property) {
-        super(kit);
         this.service = service;
         this.rootPath = rootPath;
         this.propertyJavaClass = property.getClass();

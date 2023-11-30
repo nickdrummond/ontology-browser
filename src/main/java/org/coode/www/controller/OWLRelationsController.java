@@ -155,7 +155,7 @@ public class OWLRelationsController extends ApplicationController {
                 Comparator.comparing(o -> o.value.iterator().next()));
 
         model.addAttribute("t", hierarchyService.getChildren(property));
-        model.addAttribute("mos", new OWLHTMLRenderer(kit).withURLScheme(new RelationPropertyURLScheme(kit)));
+        model.addAttribute("mos", new OWLHTMLRenderer(kit).withURLScheme(new RelationPropertyURLScheme()));
 
         return "base :: tree";
     }
@@ -180,7 +180,7 @@ public class OWLRelationsController extends ApplicationController {
         AbstractRelationsHierarchyService<OWLObjectProperty> relHierarchy =
                 new RelationsHierarchyService(comparator).withProperties(property, ont, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>(kit, relHierarchy,
+        URLScheme urlScheme = new CommonRelationsURLScheme<>(relHierarchy,
                 "/relations/onproperty", property).withQuery(request.getQueryString());
 
         model.addAttribute("t", relHierarchy.getChildren(individual));
@@ -225,7 +225,7 @@ public class OWLRelationsController extends ApplicationController {
                 .getRelationsHierarchy(comparator)
                 .withProperties(property, ont, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>(kit, relationsHierarchyService,
+        URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
                 "/relations/" + path, property).withQuery(request.getQueryString());
 
         model.addAttribute("type", "Relations on");

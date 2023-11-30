@@ -55,7 +55,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     @Override
     public URLScheme getURLScheme() {
         if (urlScheme == null){
-            urlScheme = new RestURLScheme(this);
+            urlScheme = new RestURLScheme();
         }
         return urlScheme;
     }
