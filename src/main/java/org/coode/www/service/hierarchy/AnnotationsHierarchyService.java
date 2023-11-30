@@ -9,15 +9,7 @@ import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AnnotationsHierarchyService extends AbstractOWLHierarchyService<OWLNamedIndividual> {
-
-    private final OWLAnnotationProperty property;
-
-    private final boolean inverse;
-
-    private final OWLOntology ont;
-
-    private final OWLNamedIndividual root;
+public class AnnotationsHierarchyService extends AbstractRelationsHierarchyService<OWLAnnotationProperty> {
 
     private List<OWLNamedIndividual> roots;
 
@@ -27,17 +19,8 @@ public class AnnotationsHierarchyService extends AbstractOWLHierarchyService<OWL
 
     private LinkedHashMap<OWLNamedIndividual, List<OWLNamedIndividual>> reverseNodes = new LinkedHashMap<>();
 
-    public AnnotationsHierarchyService(final OWLAnnotationProperty property,
-                                       final OWLOntology ont,
-                                       final boolean inverse,
-                                       final Comparator<? super Tree<OWLNamedIndividual>> comparator) {
+    public AnnotationsHierarchyService(final Comparator<? super Tree<OWLNamedIndividual>> comparator) {
         super(comparator);
-        this.property = property;
-        this.ont = ont;
-        this.inverse = inverse;
-
-        // dummy root - pun the property to avoid the generic tree
-        this.root = ont.getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(property.getIRI());
     }
 
     public OWLAnnotationProperty getProperty() {

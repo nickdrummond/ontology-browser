@@ -78,6 +78,10 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
         return nodes;
     }
 
+    public boolean treeContains(T entity) {
+        return true;
+    }
+
     protected abstract Node<T> topNode();
 
     protected abstract Set<Node<T>> subs(T entity);

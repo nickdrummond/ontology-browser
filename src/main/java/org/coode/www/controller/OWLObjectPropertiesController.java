@@ -16,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Comparator;
 
@@ -48,7 +47,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
     public String getOWLObjectProperty(@PathVariable final String propertyId,
                                        final Model model) throws NotFoundException {
 
-        OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);
+        OWLObjectProperty property = service.getPropertyFor(propertyId, kit);
 
         Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
@@ -78,7 +77,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
     public String getChildren(@PathVariable final String propertyId,
                               final Model model) throws NotFoundException {
 
-        OWLObjectProperty property = service.getOWLObjectPropertyFor(propertyId, kit);
+        OWLObjectProperty property = service.getPropertyFor(propertyId, kit);
 
         Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 

@@ -1,23 +1,13 @@
 package org.coode.www.controller;
 
-import com.google.common.collect.ImmutableSet;
-import org.coode.html.url.AnnotationRelationsURLScheme;
-import org.coode.html.url.RelationPropertyURLScheme;
-import org.coode.html.url.RelationsURLScheme;
-import org.coode.html.url.URLScheme;
+import org.coode.html.url.*;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.www.service.OWLAnnotationPropertiesService;
-import org.coode.www.service.OWLIndividualsService;
-import org.coode.www.service.OWLObjectPropertiesService;
-import org.coode.www.service.ReasonerFactoryService;
+import org.coode.www.service.*;
 import org.coode.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,10 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
-
-// TODO remove massive duplication
 
 @Controller
 @RequestMapping(value = "/relations")
@@ -78,39 +66,16 @@ public class OWLRelationsController extends ApplicationController {
                                           @RequestParam final @Nullable String orderBy,
                                           final Model model,
                                           HttpServletRequest request) throws NotFoundException {
+        PropertiesService<OWLObjectProperty> service = propertiesService;
+        OWLObjectProperty property = service.getPropertyFor(propertyId, kit);
 
-        OWLObjectProperty property = propertiesService.getOWLObjectPropertyFor(propertyId, kit);
+        renderEntity(property, model);
 
-        OWLOntology ont = kit.getActiveOntology();
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
+        AbstractOWLHierarchyService<OWLNamedIndividual> relationsHierarchyService = buildCommon(
+                "onproperty", property, null, service, orderBy, inverse,
+                model, request);
 
-        // property tree
-        OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(r,
-                Comparator.comparing(o -> o.value.iterator().next()));
-        Tree<OWLObjectPropertyExpression> propertyTree = hierarchyService.getPrunedTree(property);
-
-        Comparator<Tree<OWLNamedIndividual>> comparator = (orderBy == null) ?
-                Comparator.comparing(o -> o.value.iterator().next()) :
-                new PropComparator(propertiesService.getOWLObjectPropertyFor(orderBy, kit), ont);
-
-        // relations tree
-        RelationsHierarchyService relationsHierarchyService = new RelationsHierarchyService(property, ont, inverse, comparator);
-        Tree<OWLNamedIndividual> relationsTree = relationsHierarchyService.getTree();
-
-        String entityName = kit.getShortFormProvider().getShortForm(property);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit)
-                .withActiveObject(property)
-                .withURLScheme(new RelationsURLScheme(kit, relationsHierarchyService).withQuery(request.getQueryString()));
-
-        model.addAttribute("title", entityName + " (Object Property)");
-        model.addAttribute("type", "Relations on");
-        model.addAttribute("iri", property.getIRI());
-        model.addAttribute("hierarchy", propertyTree);
-        model.addAttribute("hierarchy2", relationsTree);
-        model.addAttribute("type2", entityName);
-        model.addAttribute("inverse", inverse);
-        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("hierarchy2", relationsHierarchyService.getTree());
 
         return "owlentity";
     }
@@ -122,39 +87,16 @@ public class OWLRelationsController extends ApplicationController {
                                                     @RequestParam final @Nullable String orderBy,
                                                     final Model model,
                                                     HttpServletRequest request) throws NotFoundException {
+        PropertiesService<OWLAnnotationProperty> service = annotationPropertiesService;
+        OWLAnnotationProperty property = service.getPropertyFor(propertyId, kit);
 
-        OWLAnnotationProperty property = annotationPropertiesService.getOWLAnnotationPropertyFor(propertyId, kit);
+        renderEntity(property, model);
 
-        OWLOntology ont = kit.getActiveOntology();
+        AbstractOWLHierarchyService<OWLNamedIndividual> relationsHierarchyService = buildCommon(
+                "onannotationproperty", property, null, service, orderBy, inverse,
+                model, request);
 
-        // property tree
-        OWLAnnotationPropertyHierarchyService hierarchyService = new OWLAnnotationPropertyHierarchyService(
-                ont,
-                Comparator.comparing(o -> o.value.iterator().next()));
-        Tree<OWLAnnotationProperty> propertyTree = hierarchyService.getPrunedTree(property);
-
-        Comparator<Tree<OWLNamedIndividual>> comparator =// (orderBy == null) ?
-                Comparator.comparing(o -> o.value.iterator().next());// :
-//                new PropComparator(annotationPropertiesService.getOWLAnnotationPropertyFor(orderBy, kit), ont);
-
-        // relations tree
-        AnnotationsHierarchyService relationsHierarchyService = new AnnotationsHierarchyService(property, ont, inverse, comparator);
-        Tree<OWLNamedIndividual> relationsTree = relationsHierarchyService.getTree();
-
-        String entityName = kit.getShortFormProvider().getShortForm(property);
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit)
-                .withActiveObject(property)
-                .withURLScheme(new AnnotationRelationsURLScheme(kit, relationsHierarchyService).withQuery(request.getQueryString()));
-
-        model.addAttribute("title", entityName + " (Object Property)");
-        model.addAttribute("type", "Relations on");
-        model.addAttribute("iri", property.getIRI());
-        model.addAttribute("hierarchy", propertyTree);
-        model.addAttribute("hierarchy2", relationsTree);
-        model.addAttribute("type2", entityName);
-        model.addAttribute("inverse", inverse);
-        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("hierarchy2", relationsHierarchyService.getTree());
 
         return "owlentity";
     }
@@ -166,46 +108,15 @@ public class OWLRelationsController extends ApplicationController {
                                                     @RequestParam final @Nullable String orderBy,
                                                     final Model model,
                                                     HttpServletRequest request) throws NotFoundException {
+        PropertiesService<OWLAnnotationProperty> service = annotationPropertiesService;
+        OWLAnnotationProperty property = service.getPropertyFor(propertyId, kit);
 
-        OWLAnnotationProperty property = annotationPropertiesService.getOWLAnnotationPropertyFor(propertyId, kit);
-        Set<OWLOntology> ontologies = kit.getOntologies();
-        OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, ontologies);
+        OWLNamedIndividual individual = renderIndividual(individualId, model);
 
-        OWLOntology ont = kit.getActiveOntology();
+        AbstractOWLHierarchyService<OWLNamedIndividual> relationsHierarchyService = buildCommon(
+                "onannotationproperty", property, individual, service, orderBy, inverse, model, request);
 
-        // property tree
-        OWLAnnotationPropertyHierarchyService hierarchyService = new OWLAnnotationPropertyHierarchyService(
-                ont,
-                Comparator.comparing(o -> o.value.iterator().next()));
-        Tree<OWLAnnotationProperty> propertyTree = hierarchyService.getPrunedTree(property);
-
-        Comparator<Tree<OWLNamedIndividual>> comparator =// (orderBy == null) ?
-                Comparator.comparing(o -> o.value.iterator().next());// :
-//                new PropComparator(annotationPropertiesService.getOWLAnnotationPropertyFor(orderBy, kit), ont);
-
-        // relations tree
-        AnnotationsHierarchyService relationsHierarchyService = new AnnotationsHierarchyService(property, ont, inverse, comparator);
-        Tree<OWLNamedIndividual> relationsTree = relationsHierarchyService.getPrunedTree(individual);
-
-        ShortFormProvider sfp = kit.getShortFormProvider();
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit)
-                .withActiveObjects(ImmutableSet.of(property, individual))
-                .withURLScheme(new AnnotationRelationsURLScheme(kit, relationsHierarchyService).withQuery(request.getQueryString()));
-
-        List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ontologies, kit.getComparator());
-
-        model.addAttribute("title", sfp.getShortForm(individual) + " (Individual)");
-        model.addAttribute("type", "Relations on");
-        model.addAttribute("iri", individual.getIRI());
-        model.addAttribute("hierarchy", propertyTree);
-
-        model.addAttribute("hierarchy2", relationsTree);
-        model.addAttribute("type2", sfp.getShortForm(property));
-        model.addAttribute("inverse", inverse);
-
-        model.addAttribute("characteristics", characteristics);
-        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("hierarchy2", relationsHierarchyService.getPrunedTree(individual));
 
         return "owlentity";
     }
@@ -217,57 +128,27 @@ public class OWLRelationsController extends ApplicationController {
                                           @RequestParam final @Nullable String orderBy,
                                           final Model model,
                                           HttpServletRequest request) throws NotFoundException {
+        PropertiesService<OWLObjectProperty> service = propertiesService;
+        OWLObjectProperty property = service.getPropertyFor(propertyId, kit);
 
-        OWLObjectProperty property = propertiesService.getOWLObjectPropertyFor(propertyId, kit);
-        Set<OWLOntology> ontologies = kit.getOntologies();
-        OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, ontologies);
+        OWLNamedIndividual individual = renderIndividual(individualId, model);
 
-        OWLOntology ont = kit.getActiveOntology();
+        AbstractOWLHierarchyService<OWLNamedIndividual> relationsHierarchyService = buildCommon(
+                "onproperty", property, individual, service, orderBy, inverse,
+                model, request);
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-
-        // property tree
-        OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(r,
-                Comparator.comparing(o -> o.value.iterator().next()));
-        Tree<OWLObjectPropertyExpression> propertyTree = hierarchyService.getPrunedTree(property);
-
-        Comparator<Tree<OWLNamedIndividual>> comparator = (orderBy == null) ?
-                Comparator.comparing(o -> o.value.iterator().next()) :
-                new PropComparator(propertiesService.getOWLObjectPropertyFor(orderBy, kit), ont);
-
-        // relations tree
-        RelationsHierarchyService relationsHierarchyService = new RelationsHierarchyService(property, ont, inverse, comparator);
-        Tree<OWLNamedIndividual> relationsTree = relationsHierarchyService.getPrunedTree(individual);
-
-        ShortFormProvider sfp = kit.getShortFormProvider();
-
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit)
-                .withActiveObjects(ImmutableSet.of(property, individual))
-                .withURLScheme(new RelationsURLScheme(kit, relationsHierarchyService).withQuery(request.getQueryString()));
-
-        List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ontologies, kit.getComparator());
-
-        model.addAttribute("title", sfp.getShortForm(individual) + " (Individual)");
-        model.addAttribute("type", "Relations on");
-        model.addAttribute("iri", individual.getIRI());
-        model.addAttribute("hierarchy", propertyTree);
-
-        model.addAttribute("hierarchy2", relationsTree);
-        model.addAttribute("type2", sfp.getShortForm(property));
-        model.addAttribute("inverse", inverse);
-
-        model.addAttribute("characteristics", characteristics);
-        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("hierarchy2", relationsHierarchyService.getPrunedTree(individual));
 
         return "owlentity";
     }
+
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/onproperty/{propertyId}/children")
     public String getChildren(@PathVariable final String propertyId,
                               final Model model) throws NotFoundException {
 
-        OWLObjectProperty property = propertiesService.getOWLObjectPropertyFor(propertyId, kit);
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit);
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
                 reasonerFactoryService.getToldReasoner(kit.getActiveOntology()),
@@ -287,22 +168,81 @@ public class OWLRelationsController extends ApplicationController {
                               final Model model,
                               HttpServletRequest request) throws NotFoundException {
 
-        OWLObjectProperty property = propertiesService.getOWLObjectPropertyFor(propertyId, kit);
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit);
         OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, kit.getOntologies());
 
         OWLOntology ont = kit.getActiveOntology();
 
         Comparator<Tree<OWLNamedIndividual>> comparator = (orderBy == null) ?
                 Comparator.comparing(o -> o.value.iterator().next()) :
-                new PropComparator(propertiesService.getOWLObjectPropertyFor(orderBy, kit), ont);
+                new PropComparator(propertiesService.getPropertyFor(orderBy, kit), ont);
 
-        RelationsHierarchyService relHierarchy = new RelationsHierarchyService(property, ont, inverse, comparator);
+        AbstractRelationsHierarchyService<OWLObjectProperty> relHierarchy =
+                new RelationsHierarchyService(comparator).withProperties(property, ont, inverse);
 
-        URLScheme urlScheme = new RelationsURLScheme(kit, relHierarchy).withQuery(request.getQueryString());
+        URLScheme urlScheme = new CommonRelationsURLScheme<>(kit, relHierarchy,
+                "/relations/onproperty", property).withQuery(request.getQueryString());
 
         model.addAttribute("t", relHierarchy.getChildren(individual));
         model.addAttribute("mos", new OWLHTMLRenderer(kit).withURLScheme(urlScheme));
 
         return "base :: tree";
+    }
+
+    private void renderEntity(OWLEntity entity, Model model) {
+        String shortForm = kit.getShortFormProvider().getShortForm(entity);
+        String type = entity.getEntityType().getPrintName();
+        model.addAttribute("title", shortForm + " (" + type + ")");
+        model.addAttribute("iri", entity.getIRI());
+    }
+
+    private OWLNamedIndividual renderIndividual(@PathVariable String individualId, Model model) throws NotFoundException {
+        Set<OWLOntology> ontologies = kit.getOntologies();
+        OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, ontologies);
+        renderEntity(individual, model);
+        model.addAttribute("characteristics", individualsService.getCharacteristics(individual, ontologies, kit.getComparator()));
+        return individual;
+    }
+
+    private <T extends OWLProperty> AbstractRelationsHierarchyService<T> buildCommon(
+            String path,
+            T property,
+            @Nullable OWLNamedIndividual individual,
+            PropertiesService<T> propertyService,
+            @Nullable String orderBy,
+            boolean inverse,
+            Model model,
+            HttpServletRequest request) throws NotFoundException {
+
+        OWLOntology ont = kit.getActiveOntology();
+
+        T orderByProperty = (orderBy != null) ? propertyService.getPropertyFor(orderBy, kit) : null;
+
+        Comparator<Tree<OWLNamedIndividual>> comparator = propertyService.getComparator(orderByProperty, ont);
+
+        // relations tree
+        AbstractRelationsHierarchyService<T> relationsHierarchyService = propertyService
+                .getRelationsHierarchy(comparator)
+                .withProperties(property, ont, inverse);
+
+        URLScheme urlScheme = new CommonRelationsURLScheme<>(kit, relationsHierarchyService,
+                "/relations/" + path, property).withQuery(request.getQueryString());
+
+        model.addAttribute("type", "Relations on");
+        model.addAttribute("hierarchy", propertyService.getPropTree(property, ont));
+        model.addAttribute("type2", kit.getShortFormProvider().getShortForm(property));
+        model.addAttribute("inverse", inverse);
+
+        Set<OWLObject> activeObjects = new HashSet<>();
+        activeObjects.add(property);
+        if (individual != null) {
+            activeObjects.add(individual);
+        }
+
+        model.addAttribute("mos", new OWLHTMLRenderer(kit)
+                .withActiveObjects(activeObjects)
+                .withURLScheme(urlScheme));
+
+        return relationsHierarchyService;
     }
 }

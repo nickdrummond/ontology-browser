@@ -2,19 +2,25 @@ package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.Tree;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.ObjectPropertyCharacteristicsBuilder;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.coode.www.service.hierarchy.*;
+import org.semanticweb.owlapi.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-public class OWLObjectPropertiesService {
+public class OWLObjectPropertiesService implements PropertiesService<OWLObjectProperty>{
 
-    public OWLObjectProperty getOWLObjectPropertyFor(String propertyId, OWLHTMLKit kit) throws NotFoundException {
+    @Autowired
+    private ReasonerFactoryService reasonerFactoryService;
+
+    @Override
+    public OWLObjectProperty getPropertyFor(String propertyId, OWLHTMLKit kit) throws NotFoundException {
+        //TODO this should be cached
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
         OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
@@ -26,7 +32,6 @@ public class OWLObjectPropertiesService {
         if (getIdFor(owlBottomObjectProperty).equals(propertyId)) {
             return owlBottomObjectProperty;
         }
-
         for (OWLOntology ont : kit.getActiveOntologies()){
             for (OWLObjectProperty owlObjectProperty: ont.getObjectPropertiesInSignature()) {
                 if (getIdFor(owlObjectProperty).equals(propertyId)){
@@ -37,11 +42,33 @@ public class OWLObjectPropertiesService {
         throw new NotFoundException("OWLObjectProperty", propertyId);
     }
 
+    @Override
     public String getIdFor(final OWLObjectProperty owlObjectProperty) {
         return String.valueOf(owlObjectProperty.getIRI().hashCode());
     }
 
+    @Override
     public List<Characteristic> getCharacteristics(final OWLObjectProperty property, final OWLHTMLKit kit) {
         return new ObjectPropertyCharacteristicsBuilder(property, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
+    }
+
+    @Override
+    public Comparator<Tree<OWLNamedIndividual>> getComparator(OWLObjectProperty orderByProperty, OWLOntology ont) {
+        if (orderByProperty != null) {
+            return new PropComparator(orderByProperty, ont);
+        }
+        return Comparator.comparing(o -> o.value.iterator().next());
+    }
+
+    @Override
+    public Tree<? extends OWLObject> getPropTree(OWLObjectProperty property, OWLOntology ont) {
+        OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
+                reasonerFactoryService.getToldReasoner(ont),
+                Comparator.comparing(o -> o.value.iterator().next()));
+        return hierarchyService.getPrunedTree(property);
+    }
+
+    public AbstractRelationsHierarchyService<OWLObjectProperty> getRelationsHierarchy (Comparator<Tree<OWLNamedIndividual>> comparator) {
+        return new RelationsHierarchyService(comparator);
     }
 }

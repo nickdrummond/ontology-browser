@@ -1,25 +1,15 @@
 package org.coode.www.service.hierarchy;
 
 import org.coode.www.model.Tree;
-import org.coode.www.util.PairwiseOrdering;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RelationsHierarchyService extends AbstractOWLHierarchyService<OWLNamedIndividual> {
-
-    private final OWLObjectProperty property;
-
-    private final boolean inverse;
-
-    private final OWLOntology ont;
-
-    private final OWLNamedIndividual root;
+public class RelationsHierarchyService extends AbstractRelationsHierarchyService<OWLObjectProperty> {
 
     private List<OWLNamedIndividual> roots;
 
@@ -29,17 +19,8 @@ public class RelationsHierarchyService extends AbstractOWLHierarchyService<OWLNa
 
     private LinkedHashMap<OWLNamedIndividual, List<OWLNamedIndividual>> reverseNodes = new LinkedHashMap<>();
 
-    public RelationsHierarchyService(final OWLObjectProperty property,
-                                     final OWLOntology ont,
-                                     final boolean inverse,
-                                     final Comparator<? super Tree<OWLNamedIndividual>> comparator) {
+    public RelationsHierarchyService(final Comparator<? super Tree<OWLNamedIndividual>> comparator) {
         super(comparator);
-        this.property = property;
-        this.ont = ont;
-        this.inverse = inverse;
-
-        // dummy root - pun the property to avoid the generic tree
-        this.root = ont.getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(property.getIRI());
     }
 
     public OWLObjectProperty getProperty() {
