@@ -34,7 +34,7 @@ public class ParserService {
     // Apostrophes are not parsed correctly without escaping
     // May cause problems for error message offsets?
     private String makeSafe(String expression) {
-        return expression.replaceAll("'", "\\\\'");
+        return expression.replace("'", "\\\\'");
     }
 
     /**
@@ -114,22 +114,22 @@ public class ParserService {
                 }
 
                 if (e.isClassNameExpected()){
-                    addResults(expected, OWLClass.class, finder.getOWLClasses(search), sfp);
+                    addResults(expected, EntityType.CLASS, finder.getOWLClasses(search), sfp);
                 }
                 if (e.isObjectPropertyNameExpected()){
-                    addResults(expected, OWLObjectProperty.class, finder.getOWLObjectProperties(search), sfp);
+                    addResults(expected, EntityType.OBJECT_PROPERTY, finder.getOWLObjectProperties(search), sfp);
                 }
                 if (e.isDataPropertyNameExpected()){
-                    addResults(expected, OWLDataProperty.class, finder.getOWLDataProperties(search), sfp);
+                    addResults(expected, EntityType.DATA_PROPERTY, finder.getOWLDataProperties(search), sfp);
                 }
                 if (e.isDatatypeNameExpected()){
-                    addResults(expected, OWLDatatype.class, finder.getOWLDatatypes(search), sfp);
+                    addResults(expected, EntityType.DATATYPE, finder.getOWLDatatypes(search), sfp);
                 }
                 if (e.isAnnotationPropertyNameExpected()){
-                    addResults(expected, OWLAnnotationProperty.class, finder.getOWLAnnotationProperties(search), sfp);
+                    addResults(expected, EntityType.ANNOTATION_PROPERTY, finder.getOWLAnnotationProperties(search), sfp);
                 }
                 if (e.isIndividualNameExpected()){
-                    addResults(expected, OWLNamedIndividual.class, finder.getOWLIndividuals(search), sfp);
+                    addResults(expected, EntityType.NAMED_INDIVIDUAL, finder.getOWLIndividuals(search), sfp);
                 }
             }
             else{
@@ -138,12 +138,12 @@ public class ParserService {
         }
         else{
             addKeywords(expected, lastToken);
-            addResults(expected, OWLClass.class, finder.getOWLClasses(search), sfp);
-            addResults(expected, OWLObjectProperty.class, finder.getOWLObjectProperties(search), sfp);
-            addResults(expected, OWLDataProperty.class, finder.getOWLDataProperties(search), sfp);
-            addResults(expected, OWLDatatype.class, finder.getOWLDatatypes(search), sfp);
-            addResults(expected, OWLAnnotationProperty.class, finder.getOWLAnnotationProperties(search), sfp);
-            addResults(expected, OWLNamedIndividual.class, finder.getOWLIndividuals(search), sfp);
+            addResults(expected, EntityType.CLASS, finder.getOWLClasses(search), sfp);
+            addResults(expected, EntityType.OBJECT_PROPERTY, finder.getOWLObjectProperties(search), sfp);
+            addResults(expected, EntityType.DATA_PROPERTY, finder.getOWLDataProperties(search), sfp);
+            addResults(expected, EntityType.DATATYPE, finder.getOWLDatatypes(search), sfp);
+            addResults(expected, EntityType.ANNOTATION_PROPERTY, finder.getOWLAnnotationProperties(search), sfp);
+            addResults(expected, EntityType.NAMED_INDIVIDUAL, finder.getOWLIndividuals(search), sfp);
         }
 
         return new AutocompleteResult(expression, pos, lastToken, expected);
@@ -164,19 +164,19 @@ public class ParserService {
         List<String> names = new ArrayList<>();
 
         for (ManchesterOWLSyntax keyword : ManchesterOWLSyntax.values()){
-            if (keyword.isClassExpressionConnectiveKeyword() ||
-                    keyword.isClassExpressionQuantiferKeyword()){
-                if (keyword.toString().startsWith(token)){
+            if ((keyword.isClassExpressionConnectiveKeyword() ||
+                    keyword.isClassExpressionQuantiferKeyword()) &&
+                            (keyword.toString().startsWith(token))){
                     names.add(keyword.toString());
-                }
+
             }
         }
         map.put("keyword", names);
     }
 
-    private void addResults(final Map<String, List<String>> map,
-                            final Class<? extends OWLEntity> cls,
-                            final Collection<OWLEntity> matches,
+    private <T extends OWLEntity> void addResults(final Map<String, List<String>> map,
+                            final EntityType<T> cls,
+                            final Collection<T> matches,
                             final ShortFormProvider sfp) {
         List<String> names = new ArrayList<>();
         for (OWLEntity match : matches){
@@ -186,7 +186,7 @@ public class ParserService {
             }
             names.add(name);
         }
-        map.put(cls.getSimpleName(), names);
+        map.put(cls.getName(), names);
     }
 
 

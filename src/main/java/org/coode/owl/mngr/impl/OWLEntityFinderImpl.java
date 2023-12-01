@@ -2,18 +2,17 @@ package org.coode.owl.mngr.impl;
 
 import com.google.common.collect.Sets;
 import org.coode.owl.mngr.ActiveOntologyProvider;
-import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of finder that takes a partial string and does a regexp search based on the renderings
@@ -26,40 +25,40 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
 
     private final BidirectionalShortFormProvider cache;
 
-    private final OWLDataFactory owlDataFactory;
+    private final OWLDataFactory df;
 
     private final ActiveOntologyProvider activeOntologyProvider;
 
     public OWLEntityFinderImpl(BidirectionalShortFormProvider cache,
-                               OWLDataFactory owlDataFactory,
+                               OWLDataFactory df,
                                ActiveOntologyProvider activeOntologyProvider) {
         this.cache = cache;
-        this.owlDataFactory = owlDataFactory;
+        this.df = df;
         this.activeOntologyProvider = activeOntologyProvider;
     }
 
-    public Set<OWLEntity> getOWLClasses (String str){
-        return getMatches(str, NamedObjectType.classes);
+    public Set<OWLClass> getOWLClasses (String str){
+        return getMatches(str, EntityType.CLASS);
     }
 
-    public Set<OWLEntity> getOWLObjectProperties(String str) {
-        return getMatches(str, NamedObjectType.objectproperties);
+    public Set<OWLObjectProperty> getOWLObjectProperties(String str) {
+        return getMatches(str, EntityType.OBJECT_PROPERTY);
     }
 
-    public Set<OWLEntity> getOWLDataProperties(String str) {
-        return getMatches(str, NamedObjectType.dataproperties);
+    public Set<OWLDataProperty> getOWLDataProperties(String str) {
+        return getMatches(str, EntityType.DATA_PROPERTY);
     }
 
-    public Set<OWLEntity> getOWLAnnotationProperties(String str) {
-        return getMatches(str, NamedObjectType.annotationproperties);
+    public Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str) {
+        return getMatches(str, EntityType.ANNOTATION_PROPERTY);
     }
 
-    public Set<OWLEntity> getOWLIndividuals(String str) {
-        return getMatches(str, NamedObjectType.individuals);
+    public Set<OWLNamedIndividual> getOWLIndividuals(String str) {
+        return getMatches(str, EntityType.NAMED_INDIVIDUAL);
     }
 
-    public Set<OWLEntity> getOWLDatatypes(String str) {
-        return getMatches(str, NamedObjectType.datatypes);
+    public Set<OWLDatatype> getOWLDatatypes(String str) {
+        return getMatches(str, EntityType.DATATYPE);
     }
 
     public Set<OWLEntity> getOWLProperties(String str) {
@@ -70,98 +69,93 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
     }
 
     public Set<OWLEntity> getOWLEntities(String str) {
-        Set<OWLEntity> results = Sets.newHashSet();
-        for (NamedObjectType subType : NamedObjectType.entitySubtypes()){
-            results.addAll(getMatches(str, subType));
-        }
-        return results;
+        Pattern pattern = Pattern.compile(str.toLowerCase());
+
+        // not very efficient looking at all entity types
+        return cache.getShortForms().stream()
+                .filter(sf -> pattern.matcher(sf.toLowerCase()).matches())
+                .map(cache::getEntities)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
-    public Set<OWLEntity> getOWLEntities(String str, NamedObjectType type) {
+    public <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type) {
         return getMatches(str, type);
     }
 
-    public Set<OWLEntity> getOWLEntities(String str, NamedObjectType type, OWLOntology ont) {
-        final Set<OWLEntity> results = getOWLEntities(str, type);
+    public <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont) {
+        final Set<T> results = getOWLEntities(str, type);
         if (ont != null){
             results.removeIf(result -> !ont.containsEntityInSignature(result.getIRI()));
         }
         return results;
     }
 
-    public Set<OWLEntity> getOWLEntities(IRI iri, NamedObjectType type) {
-        if (!iri.isAbsolute()){
-            throw new IllegalArgumentException("URI must be absolute");
-        }
-
-        switch(type){
-            case entities:
-                Set<OWLEntity> results = Sets.newHashSet();
-                for (NamedObjectType subType : NamedObjectType.entitySubtypes()){
-                    OWLEntity entity = subType.getOWLEntity(iri, owlDataFactory);
-                    for (OWLOntology ont : getActiveOntologies()){
-                        if (ont.containsEntityInSignature(entity)){
-                            results.add(entity);
-                        }
-                    }
-                }
-                return results;
-            case ontologies:
-                throw new RuntimeException("Cannot get entities of type ontology");
-            default:
-                OWLEntity entity = type.getOWLEntity(iri, owlDataFactory);
-                for (OWLOntology ont : getActiveOntologies()){
-                    if (ont.containsEntityInSignature(entity)){
-                        return Collections.singleton(entity);
-                    }
-                }
-        }
-
-        return Collections.emptySet();
+    public Set<OWLEntity> getOWLEntities(IRI iri) {
+        OWLOntology ont = activeOntologyProvider.getActiveOntology();
+        return getOWLEntities(iri, ont, Imports.INCLUDED);
     }
 
-    public Set<OWLEntity> getOWLEntities(IRI iri, NamedObjectType type, OWLOntology ont) {
-        final Set<OWLEntity> results = getOWLEntities(iri, type);
-        if (ont != null){
-            results.removeIf(result -> !ont.containsEntityInSignature(result));
+    public Set<OWLEntity> getOWLEntities(IRI iri, OWLOntology ont, Imports imports) {
+        Set<OWLEntity> results = Sets.newHashSet();
+        if (ont.containsClassInSignature(iri, imports)) {
+            results.add(df.getOWLClass(iri));
+        }
+        if (ont.containsObjectPropertyInSignature(iri, imports)) {
+            results.add(df.getOWLObjectProperty(iri));
+        }
+        if (ont.containsDataPropertyInSignature(iri, imports)) {
+            results.add(df.getOWLDataProperty(iri));
+        }
+        if (ont.containsAnnotationPropertyInSignature(iri, imports)) {
+            results.add(df.getOWLAnnotationProperty(iri));
+        }
+        if (ont.containsIndividualInSignature(iri, imports)) {
+            results.add(df.getOWLNamedIndividual(iri));
+        }
+        if (ont.containsDatatypeInSignature(iri, imports)) {
+            results.add(df.getOWLDatatype(iri));
         }
         return results;
+    }
+
+    public <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type) {
+        return getOWLEntity(iri, type, activeOntologyProvider.getActiveOntology(), Imports.INCLUDED);
+    }
+
+    public <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type, OWLOntology ont) {
+        return getOWLEntity(iri, type, ont, Imports.INCLUDED); // INCLUDED OR NOT?
+    }
+
+    public <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type, OWLOntology ont, Imports imports) {
+        boolean found =
+                (type.equals(EntityType.CLASS) && (ont.containsClassInSignature(iri, imports))) ||
+                (type.equals(EntityType.OBJECT_PROPERTY) && (ont.containsObjectPropertyInSignature(iri, imports))) ||
+                (type.equals(EntityType.DATA_PROPERTY) && (ont.containsDataPropertyInSignature(iri, imports))) ||
+                (type.equals(EntityType.ANNOTATION_PROPERTY) && (ont.containsAnnotationPropertyInSignature(iri, imports))) ||
+                (type.equals(EntityType.NAMED_INDIVIDUAL) && (ont.containsIndividualInSignature(iri, imports))) ||
+                (type.equals(EntityType.DATATYPE) && (ont.containsDatatypeInSignature(iri, imports)));
+
+        return found ? Optional.of(type.buildEntity(iri, df)) : Optional.empty();
     }
 
     public void dispose() {
         cache.dispose();
     }
 
-    private Set<OWLEntity> getMatches(@Nonnull String str,
-                                      @Nonnull NamedObjectType type){
-
-        HashSet<OWLEntity> results = Sets.newHashSet();
-
-        try{
-            Pattern pattern = Pattern.compile(str.toLowerCase());
-
-            Class<? extends OWLObject> typeClass = type.getCls();
-
-            // not very efficient looking at all entity types
-            for (String rendering : cache.getShortForms()) {
-                Matcher m = pattern.matcher(rendering.toLowerCase());
-                if (m.matches()) {
-                    for (OWLEntity entity : cache.getEntities(rendering)){
-                        if (typeClass.isAssignableFrom(entity.getClass())){
-                            results.add(entity);
-                        }
-                    }
-                }
-            }
-        }
-        catch(PatternSyntaxException e){
-            e.printStackTrace();
-        }
-
-        return results;
+    private <T extends OWLEntity> Set<T> getMatches(
+            @Nonnull String str,
+            @Nonnull EntityType<T> type){
+        return getOWLEntities(str).stream()
+                .filter(e -> type.equals(e.getEntityType()))
+                .map(e -> correctType(e, type))
+                .collect(Collectors.toSet());
     }
 
-    private Iterable<? extends OWLOntology> getActiveOntologies() {
-        return activeOntologyProvider.getActiveOntology().getImportsClosure();
+    private <T extends OWLEntity> T correctType(OWLEntity e, EntityType<T> type) {
+        if (!e.getEntityType().equals(type)) {
+            throw new RuntimeException(e + " is not of type " + type);
+        }
+        return type.buildEntity(e.getIRI(), df);
     }
 }

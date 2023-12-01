@@ -1,7 +1,5 @@
 package org.coode.www.renderer;
 
-
-import org.coode.owl.mngr.NamedObjectType;
 import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.service.MediaService;
@@ -20,7 +18,6 @@ public class MediaRenderer extends OWLHTMLRenderer {
 
     private final OWLEntityFinder entityFinder;
 
-    // TODO inject
     private final MediaService mediaService;
 
     public MediaRenderer(OWLHTMLKit kit) {
@@ -60,7 +57,7 @@ public class MediaRenderer extends OWLHTMLRenderer {
 
     // if an annotation value is an IRI with matching entities, write the entity links instead
     private String handleIRI(IRI value) {
-        Set<? extends OWLEntity> entities = entityFinder.getOWLEntities(value, NamedObjectType.entities);
+        Set<? extends OWLEntity> entities = entityFinder.getOWLEntities(value);
         if (entities.isEmpty()){
             return super.render(value);
         }
@@ -79,7 +76,7 @@ public class MediaRenderer extends OWLHTMLRenderer {
                 }
                 sb.append(super.render(entity));
                 sb.append(" (");
-                sb.append(NamedObjectType.getType(entity).getPluralRendering());
+                sb.append(entity.getEntityType().getPluralPrintName());
                 sb.append(" )");
             }
             return sb.toString();

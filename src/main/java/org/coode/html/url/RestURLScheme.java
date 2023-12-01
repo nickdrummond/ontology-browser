@@ -1,10 +1,6 @@
 package org.coode.html.url;
 
-import org.coode.owl.mngr.NamedObjectType;
-import org.coode.www.kit.OWLHTMLKit;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
 
 /**
  * A URL scheme for dynamic server-side resolution
@@ -20,6 +16,38 @@ import org.semanticweb.owlapi.model.OWLOntology;
  */
 public class RestURLScheme implements URLScheme {
 
+    private OWLEntityVisitorEx<String> typeVisitor = new OWLEntityVisitorEx<>() {
+        @Override
+        public String visit(OWLClass ce) {
+            return "classes";
+        }
+
+        @Override
+        public String visit(OWLDatatype node) {
+            return "datatypes";
+        }
+
+        @Override
+        public String visit(OWLNamedIndividual individual) {
+            return "individuals";
+        }
+
+        @Override
+        public String visit(OWLObjectProperty property) {
+            return "objectproperties";
+        }
+
+        @Override
+        public String visit(OWLDataProperty property) {
+            return "dataproperties";
+        }
+
+        @Override
+        public String visit(OWLAnnotationProperty property) {
+            return "annotationproperties";
+        }
+    };
+
     public String getURLForOWLObject(OWLObject owlObject) {
         if (owlObject == null){
             throw new NullPointerException("OWLObject may not be null");
@@ -30,11 +58,12 @@ public class RestURLScheme implements URLScheme {
         StringBuilder sb = new StringBuilder("/"); // relative URLs
 
         if (owlObject instanceof OWLEntity){
-            type = NamedObjectType.getType(owlObject).toString();
-            code = getIdForEntity((OWLEntity) owlObject);
+            OWLEntity owlEntity = (OWLEntity) owlObject;
+            type = getTypeForEntity(owlEntity);
+            code = getIdForEntity(owlEntity);
         }
-        else if (owlObject instanceof OWLOntology){
-            type = NamedObjectType.getType(owlObject).toString();
+        else if (owlObject.isOntology()){
+            type = "ontologies";
             code = String.valueOf(((OWLOntology)owlObject).getOntologyID().hashCode());
         }
         else{
@@ -48,6 +77,10 @@ public class RestURLScheme implements URLScheme {
         sb.append("/");
 
         return sb.toString();
+    }
+
+    private String getTypeForEntity(OWLEntity owlEntity) {
+        return owlEntity.accept(typeVisitor);
     }
 
     protected String getIdForEntity(OWLEntity entity) {
