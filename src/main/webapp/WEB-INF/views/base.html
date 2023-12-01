@@ -111,7 +111,7 @@
                title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
             </span>
             <span class="source-ont" th:utext="${mos.render(object.getOWLOntology())}">pizza.owl</span>
-            <ul th:if="${!object.getOWLAxiom().getAnnotations().isEmpty()}"
+            <ul th:if="${object.getOWLAxiom() != null and !object.getOWLAxiom().getAnnotations().isEmpty()}"
                 th:remove="all-but-first" class="axiom-annotations">
                 <li class="axiom-annotation" th:each="annot : ${object.getOWLAxiom().getAnnotations()}">
                     <span th:utext="${mos.render(annot)}"></span>
