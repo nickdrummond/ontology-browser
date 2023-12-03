@@ -3,6 +3,10 @@ var HIDDEN = "hidden.";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+$.fn.exists = function () {
+    return this.length !== 0;
+}
+
 $(document).ready(function(){
 
     openFullscreen();
@@ -94,10 +98,12 @@ function hideCharacteristics() {
 }
 
 function createTreeListeners(){
-    // add a single listener for unexpandable tree nodes
+    // add a single listener for expandable tree nodes
     $(".minihierarchy").click(function(e){
         var t = $(e.target).closest('span.expandable');
-        handleExpand(t.parent());
+        if (t.exists()) {
+            handleExpand(t.parent());
+        }
     });
 }
 

@@ -341,7 +341,11 @@ ul.minihierarchy {
     white-space: nowrap;
 }
 
-.minihierarchy .expandable{
+.minihierarchy .node{
+    font-family: monospace;
+}
+
+.minihierarchy .node.expandable{
     cursor: pointer;
 }
 

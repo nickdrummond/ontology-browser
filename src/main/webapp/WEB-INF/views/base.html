@@ -168,11 +168,14 @@
        autostart="true" style="display:none"></EMBED>
 
 <li th:fragment="tree (t)" th:if="${t != null}">
-    <span class='expandable'>+</span>
+    <span th:if='${t.childCount != 0}' class="node expandable">+</span>
+    <span th:if='${t.childCount == 0}' class="node">-</span>
     <span th:each="synonym,iteratorStatus : ${t.value}" th:remove="tag">
         <span th:if="${iteratorStatus.index != 0}" class="keyword">&equiv;</span>
         <span th:utext="${mos.render(synonym)}" th:remove="tag">a thing</span>
     </span>
+
+    <span class='child-count' th:if="${t.childCount != 0}" th:utext='${"(" + t.childCount + ")"}'>(0)</span>
 
     <ul th:if="${!t.children.isEmpty()}">
         <div class="removeme" th:each="child : ${t.children}" th:remove="tag">

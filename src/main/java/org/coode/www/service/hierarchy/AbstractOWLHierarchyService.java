@@ -3,7 +3,6 @@ package org.coode.www.service.hierarchy;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
 
@@ -35,13 +34,14 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
         List<Tree<T>> subs = Lists.newArrayList();
         for (Node<T> subNode : subs(base)) {
             if (!subNode.isBottomNode()) {
-                subs.add(new Tree<>(subNode));
+                subs.add(new Tree<>(subNode, getChildCount(subNode)));
             }
         }
         subs.sort(comparator);
         return new Tree<>(equivs(base), subs);
     }
 
+    // TODO cache
     private Tree<T> buildTree(final Node<T> current, final Set<Node<T>> ancestors) {
         List<Tree<T>> subs = Lists.newArrayList();
         for (Node<T> subNode : subs(current.getRepresentativeElement())) {
@@ -51,11 +51,19 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
             } else if (ancestors.contains(subNode)) { // recurse
                 subs.add(buildTree(subNode, without(ancestors, subNode)));
             } else {
-                subs.add(new Tree<>(subNode));
+                subs.add(new Tree<>(subNode, getChildCount(subNode))); // just the size
             }
         }
         subs.sort(comparator);
         return new Tree<>(current, subs);
+    }
+
+    private int getChildCount(Node<T> subNode) {
+        Set<Node<T>> subs = subs(subNode.getRepresentativeElement());
+        if (subs.size() == 1 && subs.iterator().next().isBottomNode()) {
+            return 0;
+        }
+        return subs.size();
     }
 
     private Tree<T> buildTree(final Node<T> current) {

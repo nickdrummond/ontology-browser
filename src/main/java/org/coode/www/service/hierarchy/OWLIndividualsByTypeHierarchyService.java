@@ -42,10 +42,9 @@ public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService
 
     @Override
     public Tree<OWLEntity> getChildren(OWLEntity base) {
-        List<Tree<OWLEntity>> emptyTree = Collections.emptyList();
         List<Tree<OWLEntity>> instanceTrees = Lists.newArrayList();
         for (Node<OWLNamedIndividual> instance : reasoner.getInstances(base.asOWLClass(), true)) {
-            instanceTrees.add(new Tree<>(entities(instance), emptyTree));
+            instanceTrees.add(new Tree<>(entities(instance), 0));
         }
         instanceTrees.sort(comparator);
         return new Tree<>(entities(reasoner.getEquivalentClasses(base.asOWLClass())), instanceTrees);
@@ -53,32 +52,34 @@ public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService
 
     public List<Tree<OWLEntity>> buildTree(NodeSet<OWLClass> expandedClasses) {
         Set<OWLNamedIndividual> inds = reasoner.getRootOntology().getIndividualsInSignature(Imports.INCLUDED);
-        List<Tree<OWLEntity>> emptyTree = Collections.emptyList();
+        // TODO build cache
         Map<Node<OWLClass>, Tree<OWLEntity>> types = Maps.newHashMap();
         for (OWLNamedIndividual ind : inds) {
             NodeSet<OWLClass> types1 = reasoner.getTypes(ind, true);
             for (Node<OWLClass> type : types1) {
 
+                // TODO FIX Not adding top instances in
                 // JFact seems to give back empty NodeSets in results, hence checking if empty
                 if (!type.isTopNode() && !type.getEntities().isEmpty() && !types.containsKey(type)) {
-                    List<Tree<OWLEntity>> instanceTrees;
+                    NodeSet<OWLNamedIndividual> instances = reasoner.getInstances(type.getRepresentativeElement(), true);
                     if (expandedClasses.containsEntity(type.getRepresentativeElement())) {
-                        instanceTrees = Lists.newArrayList();
-                        for (Node<OWLNamedIndividual> instance : reasoner.getInstances(type.getRepresentativeElement(), true)) {
-                            instanceTrees.add(new Tree<>(entities(instance), emptyTree));
+                        List<Tree<OWLEntity>> instanceTrees = Lists.newArrayList();
+                        for (Node<OWLNamedIndividual> instance : instances) {
+                            instanceTrees.add(new Tree<>(entities(instance), 0));
                         }
                         instanceTrees.sort(comparator);
+                        types.put(type, new Tree<>(entities(type), instanceTrees));
                     } else {
-                        instanceTrees = emptyTree;
+                        types.put(type, new Tree<>(entities(type), instances.getNodes().size()));
                     }
-                    types.put(type, new Tree<>(entities(type), instanceTrees));
                 }
             }
         }
         List<Tree<OWLEntity>> sorted = Lists.newArrayList(types.values());
 
+        // Unspecified type
         for (Node<OWLNamedIndividual> instance : reasoner.getInstances(reasoner.getTopClassNode().getRepresentativeElement(), true)) {
-            sorted.add(new Tree<>(entities(instance), emptyTree));
+            sorted.add(new Tree<>(entities(instance), 0));
         }
 
         sorted.sort(comparator);
