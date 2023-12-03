@@ -1,17 +1,19 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
+import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.MediaRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.*;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +24,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping(value="/individuals")
 public class OWLIndividualsController extends ApplicationController {
+
+    private static final Logger logger = LoggerFactory.getLogger(OWLIndividualsController.class);
 
     @Autowired
     private OWLIndividualsService service;
@@ -42,6 +48,9 @@ public class OWLIndividualsController extends ApplicationController {
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
 
+    @Autowired
+    private ReasonerService reasonerService;
+
     @GetMapping(value="/")
     public String getOWLIndividuals() throws NotFoundException {
 
@@ -57,14 +66,13 @@ public class OWLIndividualsController extends ApplicationController {
     @GetMapping(value= "/{individualId}")
     public String getOWLIndividual(@PathVariable final String individualId,
                                    @RequestParam(required=false) final String ontId,
+                                   @RequestParam(required=false) final boolean inferred,
                                    final HttpServletRequest request,
                                    final Model model) throws NotFoundException {
 
-        OWLOntology activeOntology = kit.getActiveOntology();
-
-        if (ontId != null) {
-            activeOntology = ontService.getOntologyFor(ontId, kit);
-        }
+        final OWLOntology activeOntology = (ontId != null) ?
+                ontService.getOntologyFor(ontId, kit) :
+                kit.getActiveOntology();
 
         Set<OWLOntology> ontologies = activeOntology.getImportsClosure();
 
@@ -99,6 +107,11 @@ public class OWLIndividualsController extends ApplicationController {
         }
 
         List<Characteristic> characteristics = service.getCharacteristics(owlIndividual, ontologies, kit.getComparator());
+
+        if (inferred) {
+            characteristics.addAll(service.getInferredCharacteristics(
+                    owlIndividual, activeOntology, kit.getOWLOntologyManager(), reasonerService.getReasoner()));
+        }
 
         model.addAttribute("title", entityName + " (Individual)");
         model.addAttribute("type", "Individuals");
