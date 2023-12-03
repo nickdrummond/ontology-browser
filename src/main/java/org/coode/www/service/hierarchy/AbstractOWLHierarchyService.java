@@ -5,12 +5,16 @@ import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractOWLHierarchyService<T extends OWLObject> implements OWLHierarchyService<T> {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Comparator<? super Tree<T>> comparator;
 
@@ -26,7 +30,7 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
     }
 
     public Tree<T> getTree() {
-        return buildTree(topNode());
+        return buildAllTree(topNode(), new HashSet<>());
     }
 
     @Override
@@ -66,14 +70,18 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
         return subs.size();
     }
 
-    private Tree<T> buildTree(final Node<T> current) {
+    private Tree<T> buildAllTree(final Node<T> current, final Set<Node<T>> alreadyVisited) {
         List<Tree<T>> subs = Lists.newArrayList();
         for (Node<T> subNode : subs(current.getRepresentativeElement())) {
             //noinspection StatementWithEmptyBody
             if (subNode.isBottomNode()) {
                 // ignore Nothing
+            } else if (alreadyVisited.contains(subNode)) {
+                logger.info("Found loop: " + subNode.getRepresentativeElement());
+                subs.add(new Tree<>(subNode, getChildCount(subNode))); // just the size
             } else {
-                subs.add(buildTree(subNode));
+                alreadyVisited.add(subNode);
+                subs.add(buildTree(subNode, alreadyVisited));
             }
         }
         subs.sort(comparator);
