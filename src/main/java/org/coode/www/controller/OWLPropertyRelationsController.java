@@ -78,7 +78,7 @@ public class OWLPropertyRelationsController {
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
         String id = propertiesService.getIdFor(owlTopObjectProperty);
-        return "redirect:/relations/" + PATH + "/" + id;
+        return "redirect:/relations/" + PATH + "/" + id + "/";
     }
 
     @SuppressWarnings("SameReturnValue")

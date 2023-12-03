@@ -67,7 +67,7 @@ public class OWLAnnotationRelationsController {
         }
         // Start with random
         String id = propertiesService.getIdFor(props.iterator().next());
-        return "redirect:/relations/" + PATH + "/" + id;
+        return "redirect:/relations/" + PATH + "/" + id + "/";
     }
 
 
