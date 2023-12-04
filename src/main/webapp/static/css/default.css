@@ -16,7 +16,7 @@ html {
 }
 
 body {
-    font-size: 9pt;
+    font-size: 12pt;
     margin: 0;
     padding: 0;
 }
@@ -38,13 +38,13 @@ h2 {
 }
 
 h3 {
-    font-size: 10pt;
+    font-size: 14pt;
     color: #444444;
     margin: 6px 12px 12px 12px;
 }
 
 h4 {
-    font-size: 10pt;
+    font-size: 12pt;
     line-height: 9pt;
     display: inline;
     margin: 0;
@@ -152,7 +152,7 @@ a.burger, a.burger:hover, a.burger:active {
 }
 
 .characteristic h3 {
-    font-size: 10pt;
+    font-size: 12pt;
     font-weight: bold;
     margin: 0 0 5px 0;
 }
@@ -285,9 +285,9 @@ td.key{
 
 /* Let the cloud spans determine the color */
 .cloud a.Class,
-.cloud a.Object.Property,
-.cloud a.Data.Property,
-.cloud a.Annotation.Property,
+.cloud a.Object.property,
+.cloud a.Data.property,
+.cloud a.Annotation.property,
 .cloud a.Named.individual,
 .cloud a.Datatype{
     color: inherit;
@@ -359,7 +359,7 @@ ul.minihierarchy {
 p.footer {
     display: flex;
     justify-content: space-around;
-    font-size: 7pt;
+    font-size: 10pt;
     margin: 5px;
     width: 100%;
 }
@@ -577,7 +577,7 @@ img.thumb{
 @media screen and (max-width: 450px), (max-height: 450px) {
 
     body, input, select {
-        font-size: 11pt;
+        font-size: 12pt;
     }
 
     h2 {
