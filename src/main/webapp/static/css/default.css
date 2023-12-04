@@ -180,10 +180,10 @@ a.burger, a.burger:hover, a.burger:active {
     float: right;
 }
 
-.characteristic.object_property_assertions .Individual.active-entity,
-.characteristic.negative_object_property_assertions .Individual.active-entity,
-.characteristic.data_property_assertions .Individual.active-entity,
-.characteristic.negative_data_property_assertions .Individual.active-entity{
+.characteristic.object_property_assertions .Named.individual.active-entity,
+.characteristic.negative_object_property_assertions .Named.individual.active-entity,
+.characteristic.data_property_assertions .Named.individual.active-entity,
+.characteristic.negative_data_property_assertions .Named.individual.active-entity{
     display: none;
 }
 
@@ -288,7 +288,7 @@ td.key{
 .cloud a.Object.Property,
 .cloud a.Data.Property,
 .cloud a.Annotation.Property,
-.cloud a.Individual,
+.cloud a.Named.individual,
 .cloud a.Datatype{
     color: inherit;
 }

@@ -78,12 +78,12 @@ a.Annotation.Property:hover{
     font-style: italic;
 }
 
-.Individual{
+.Named.individual{
     color: #000000;
     font-style: italic;
 }
 
-a.Individual:hover{
+a.Named.individual:hover{
     color: #002;
     font-style: italic;
 }
