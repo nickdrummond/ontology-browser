@@ -21,82 +21,81 @@ public class Highlighter {
 
     public String highlight(String source) {
         if (containsMarkup(source))
-            return highlightMarkup(source, 0);
+            return highlightMarkup(source);
         else
             return highlightSimple(source);
     }
 
     // pos is how far through a match we currently are
-    private String highlightMarkup(String source, int pos) {
+    private String highlightMarkup(String remains) {
 
-        if (source.isEmpty()) {
+        if (remains.isEmpty()) {
             return "";
         }
 
         // shortcut when we can't find a match
-        if (pos == 0 && source.length() < highlight.length()) {
-            return source;
+        if (remains.length() < highlight.length()) {
+            return remains;
         }
 
-        int nextTagStart = source.indexOf("<");
+        int pos = 0;
+        StringBuilder result = new StringBuilder();
 
-        // if we start with a tag, skip it
-        if (nextTagStart == 0) {
-            int endOfTag = source.indexOf(">") + 1; //assuming we didn't start in the middle of a tag - TODO TEST
-            String tagText = source.substring(0, endOfTag);
-            return tagText + highlightMarkup(source.substring(endOfTag), pos);
-        }
+        while (!remains.isEmpty()) {
+            int nextTagStart = remains.indexOf("<");
 
-        if (pos == 0) { // not started matching yet
-            // otherwise, see if the highlight text exists in the stripped out text
-            String stripped = stripMarkup(source);
-            int startOfHighlight = stripped.indexOf(highlight);
-            if (startOfHighlight == -1) {
-                return source;
+            // if we start with a tag, skip it
+            if (nextTagStart == 0) {
+                int endOfTag = remains.indexOf(">") + 1; //assuming we didn't start in the middle of a tag - TODO TEST
+                String tagText = remains.substring(0, endOfTag);
+                result.append(tagText);
+                remains = remains.substring(endOfTag);
             }
-
-            if (nextTagStart == -1) { // no more tags and the highlight must exist
-                return source.substring(0, startOfHighlight) + START + highlight + END + source.substring(startOfHighlight + highlight.length());
-            }
-
-            // is the beginning of the highlight in this text before the next tag?
-            int posInHighlight = nextTagStart - startOfHighlight;
-            if (posInHighlight > 0) {
-                if (posInHighlight >= highlight.length()) {
-                    return source.substring(0, startOfHighlight) +
-                            START +
-                            highlight +
-                            END +
-                            highlightMarkup(source.substring(startOfHighlight+highlight.length()), 0);
+            else if (pos == 0) { // not started matching yet
+                // otherwise, see if the highlight text exists in the stripped out text
+                String stripped = stripMarkup(remains);
+                int startOfHighlight = stripped.indexOf(highlight);
+                if (startOfHighlight == -1) {
+                    result.append(remains);
+                    remains = "";
+                }
+                else if (nextTagStart == -1) { // no more tags and the highlight must exist
+                    result.append(remains.substring(0, startOfHighlight) + START + highlight + END + remains.substring(startOfHighlight + highlight.length()));
+                    remains = "";
                 }
                 else {
-                    return source.substring(0, startOfHighlight) +
-                            START +
-                            highlight.substring(0, posInHighlight) +
-                            END +
-                            highlightMarkup(source.substring(nextTagStart), posInHighlight);
+                    // is the beginning of the highlight in this text before the next tag?
+                    int posInHighlight = nextTagStart - startOfHighlight;
+                    if (posInHighlight > 0) {
+                        if (posInHighlight >= highlight.length()) {
+                            result.append(remains.substring(0, startOfHighlight) + START + highlight + END);
+                            remains = remains.substring(startOfHighlight + highlight.length());
+                        } else {
+                            result.append(remains.substring(0, startOfHighlight) + START + highlight.substring(0, posInHighlight) + END);
+                            remains = remains.substring(nextTagStart);
+                            pos = posInHighlight;
+                        }
+                    } else {
+                        // bad because the next call has to find the match all over again (can we have a negative pos?)
+                        result.append(remains.substring(0, nextTagStart));
+                        remains = remains.substring(nextTagStart);
+                    }
+                }
+            } else {
+                int remainingLen = highlight.length() - pos;
+                if (nextTagStart == -1 || nextTagStart >= remainingLen) {
+                    result.append(START + highlight.substring(pos) + END);
+                    remains = remains.substring(remainingLen);
+                    pos = 0;
+                } else { // another tag
+                    result.append(START + highlight.substring(pos, pos + nextTagStart) + END);
+                    remains = remains.substring(nextTagStart);
+                    pos = pos + nextTagStart;
                 }
             }
-            else {
-                // bad because the next call has to find the match all over again (can we have a negative pos?)
-                return source.substring(0, nextTagStart) + highlightMarkup(source.substring(nextTagStart), 0);
-            }
         }
-        else {
-            int remainingLen = highlight.length() - pos;
-            if (nextTagStart == -1 || nextTagStart >= remainingLen) {
-                return START +
-                        highlight.substring(pos) +
-                        END +
-                        highlightMarkup(source.substring(remainingLen), 0);
-            }
-            else { // another tag
-                return START +
-                        highlight.substring(pos, pos+nextTagStart) +
-                        END +
-                        highlightMarkup(source.substring(nextTagStart), pos+nextTagStart);
-            }
-        }
+
+        return result.toString();
     }
 
     private String stripMarkup(String source) {

@@ -2,7 +2,12 @@ package org.coode.www.renderer;
 
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Scanner;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class HighlighterTest {
 
@@ -124,6 +129,7 @@ public class HighlighterTest {
         String result = new Highlighter("abc").highlight("<a>preamble</a>a<a>bc<em>def</em>ghiabc</a>");
         assertEquals("<a>preamble</a><span class=\"highlight\">a</span><a><span class=\"highlight\">bc</span><em>def</em>ghi<span class=\"highlight\">abc</span></a>", result);
     }
+
     @Test
     public void shouldHighlightMatchingTextIgnoringMarkup() {
         // Infiltrating_the_First_Order: included some (
@@ -137,5 +143,17 @@ public class HighlighterTest {
         String result = h.highlight(source);
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldHighlightLongMarkup() throws IOException {
+        String highlight = "offa";
+        URL testContent = getClass().getClassLoader().getResource("highlight-test.txt");
+        Scanner s = new Scanner(testContent.openStream()).useDelimiter("\\A");
+        String source = s.hasNext() ? s.next() : "";
+        Highlighter h = new Highlighter(highlight);
+        String result = h.highlight(source);
+
+        assertTrue(result.contains("<span class=\"highlight\">offa</span>"));
     }
 }
