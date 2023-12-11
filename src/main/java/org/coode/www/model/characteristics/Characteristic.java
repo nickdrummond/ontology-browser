@@ -1,48 +1,49 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
+import org.coode.www.util.PageData;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import java.util.List;
 
 public class Characteristic {
 
-    private OWLObject subject;
+    private final OWLObject subject;
 
-    private String name;
+    private final String name;
 
-    private List<AxiomWithMetadata> objects;
+    private final List<AxiomWithMetadata> objects;
 
-    public Characteristic() {
-    }
+    private final PageData pageData;
 
     public Characteristic(OWLObject subject, String name, List<AxiomWithMetadata> objects) {
+        this(subject, name, objects, new PageData(1, objects.size(), objects.size()));
+    }
+
+    public Characteristic(
+            final OWLObject subject,
+            final String name,
+            final List<AxiomWithMetadata> objects,
+            final PageData pageData) {
         this.subject = subject;
         this.name = name;
         this.objects = objects;
+        this.pageData = pageData;
     }
 
     public OWLObject getSubject() {
         return subject;
     }
 
-    public void setSubject(OWLObject subject) {
-        this.subject = subject;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public List<AxiomWithMetadata> getObjects() {
         return objects;
     }
 
-    public void setObjects(List<AxiomWithMetadata> objects) {
-        this.objects = objects;
+    public PageData getPageData() {
+        return pageData;
     }
 }

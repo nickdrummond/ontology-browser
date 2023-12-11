@@ -1,8 +1,15 @@
 package org.coode.www.renderer;
 
+import org.coode.www.kit.OWLHTMLKit;
+import org.semanticweb.owlapi.model.OWLObject;
+
 public class HighlightingHTMLRenderer<O> implements ElementRenderer<O> {
     private final Highlighter highlighter;
     private final ElementRenderer<O> delegate;
+
+    public static ElementRenderer<OWLObject> getHighlightRenderer(String s, OWLHTMLKit kit){
+        return new HighlightingHTMLRenderer<>(new Highlighter(s), new OWLHTMLRenderer(kit));
+    }
 
     public HighlightingHTMLRenderer(Highlighter highlighter, ElementRenderer<O> delegate) {
         this.highlighter = highlighter;

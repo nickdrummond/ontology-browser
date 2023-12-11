@@ -11,21 +11,27 @@
     <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>
 
-    <link rel='icon'       type='image/x-icon' href='../../static/images/favicon.ico' th:href='@{/static/images/favicon.ico}'/>
-    <link rel='apple-touch-icon-precomposed'   href='../../static/images/splat-152-211412.png' th:href='@{/static/images/splat-152-211412.png}'/>
+    <link rel='icon' type='image/x-icon' href='../../static/images/favicon.ico'
+          th:href='@{/static/images/favicon.ico}'/>
+    <link rel='apple-touch-icon-precomposed' href='../../static/images/splat-152-211412.png'
+          th:href='@{/static/images/splat-152-211412.png}'/>
 
-    <link rel='stylesheet' type='text/css'     href='../../static/css/autosuggest_inquisitor.css' th:href='@{/static/css/autosuggest_inquisitor.css}'/>
-    <link rel='stylesheet' type='text/css'     href='../../static/css/gaphu-0.0.9.css' th:href='@{/static/css/gaphu-0.0.9.css}'/>
-    <link rel='stylesheet' type='text/css'     href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
+    <link rel='stylesheet' type='text/css' href='../../static/css/autosuggest_inquisitor.css'
+          th:href='@{/static/css/autosuggest_inquisitor.css}'/>
+    <link rel='stylesheet' type='text/css' href='../../static/css/gaphu-0.0.9.css'
+          th:href='@{/static/css/gaphu-0.0.9.css}'/>
+    <link rel='stylesheet' type='text/css' href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
 
     <script type='text/javascript' th:inline='javascript'>
         // TODO Thymeleaf inlining http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html#script-inlining-javascript-and-dart
-        baseUrl=/*[[@{/}]]*/ '/';
+        baseUrl =/*[[@{/}]]*/ '/';
         // document.getElementById("uri-spec").focus();
     </script>
-    <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js' th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
+    <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
+            th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
     <script type='text/javascript' src='../../static/js/default.js' th:src='@{/static/js/default.js}'></script>
-    <script type='text/javascript' src='../../static/js/bsn.AutoSuggest_2.1_multiword.js' th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
+    <script type='text/javascript' src='../../static/js/bsn.AutoSuggest_2.1_multiword.js'
+            th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
     <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js' th:src='@{/static/js/gaphu-0.0.9.js}'></script>
     <script type='text/javascript' src='../../static/js/dlquery.js' th:src='@{/static/js/dlquery.js}'></script>
 
@@ -43,15 +49,15 @@
         </form>
 
         <script type='text/javascript'>
-                var options = {
-                    script: baseUrl + 'entities/?',
-                    varname: 'name',
-                    cache: false,
-                    callback: function (obj){
-                        window.location = obj.id;
-                    }
-                };
-                var as = new AutoSuggest("find", options);
+            var options = {
+                script: baseUrl + 'entities/?',
+                varname: 'name',
+                cache: false,
+                callback: function (obj) {
+                    window.location = obj.id;
+                }
+            };
+            var as = new AutoSuggest("find", options);
         </script>
     </div>
 </div>
@@ -86,16 +92,39 @@
 </ul> <!-- tabs -->
 
 
-
 <div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
 
 <div class="results" th:fragment="results" th:replace="::characteristic (${results})">
 </div>
 
+<!-- paging -->
+<span th:fragment="paged (data)" th:switch="${(data.start == 1) and (data.pageSize == data.total)}">
+    <span th:case="${true}" th:text='${"(" + data.total + ")"}'>(2)</span>
+    <span th:case="${false}"
+          th:with='base=${(#httpServletRequest.getParameter("search") != null) ? "&amp;search=" + #httpServletRequest.getParameter("search") : ""}'>
+
+        <span th:switch="${data.start gt 1}">
+            <a th:case="${true}"
+               th:with="start=${data.start-data.pageSize gt 1 ? data.start-data.pageSize : 1}"
+               th:href='${"?start=" + start + "&amp;pageSize=" + data.pageSize + base}'>&lt; prev</a>
+            <span th:case="${false}">&lt; prev</span>
+        </span>
+
+        <span th:text='${"(" + data.start + "-" + (data.start+data.pageSize-1) + " of " + data.total + ")"}'>(1-20 of 100)</span>
+
+        <span th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
+            <a th:case="${true}"
+               th:href='${"?start=" + start + "&amp;pageSize=" + data.pageSize + base}'>next &gt;</a>
+            <span th:case="${false}">next &gt;</span>
+        </span>
+    </span>
+</span>
+
+
 <div th:class='${"characteristic " + ch.name.replaceAll(" ", "_").toLowerCase()}' th:fragment="characteristic (ch)">
 
     <h4 th:text='${ch.name}'>Some Characteristic</h4>
-    <span th:text='${"(" + ch.objects.size() + ")"}'>(2)</span>
+    <span th:replace="base::paged (${ch.getPageData()})">(2)</span>
     <ul th:remove="all-but-first">
         <li class="asserted" th:each="object : ${ch.objects}">
             <span class="owlobject" th:utext="${mos.render(object.getOWLObject())}">
@@ -139,14 +168,20 @@
 <div id="metrics" th:fragment="metrics (metrics)" th:if="${metrics != null}">
     <h4>Metrics</h4>
     <table>
-        <thead><tr><td></td><td></td><td th:if="${showImportMetrics}">with imports</td></tr></thead>
+        <thead>
+        <tr>
+            <td></td>
+            <td></td>
+            <td th:if="${showImportMetrics}">with imports</td>
+        </tr>
+        </thead>
         <tbody>
-            <tr th:each="metric : ${metrics}">
-                <td class="metric" th:utext="${metric.getName()}"></td>
-                <td class="mvalue" th:utext="${metric.getValue()}"></td>
-                <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
-                <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"></td>
-            </tr>
+        <tr th:each="metric : ${metrics}">
+            <td class="metric" th:utext="${metric.getName()}"></td>
+            <td class="mvalue" th:utext="${metric.getValue()}"></td>
+            <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
+            <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"></td>
+        </tr>
         </tbody>
     </table>
 </div>
@@ -164,7 +199,7 @@
 
 <EMBED th:fragment="sound (url)"
        th:if="${sound != null}"
-       th:src="${url}"  src="/notfound.mp3"
+       th:src="${url}" src="/notfound.mp3"
        autostart="true" style="display:none"></EMBED>
 
 <li th:fragment="tree (t)" th:if="${t != null}">
