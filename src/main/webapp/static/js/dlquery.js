@@ -31,10 +31,12 @@ function sendQuery(){
     var minus = getValueOfElementByID("dlQuery2");
     var order = getValueOfElementByID("order");
     var query = getQueryFromForm();
+    var start = getParameter("start");
+    var pageSize = getParameter("pageSize");
 
     if ((expression != "") && (query != "")){
         var syntax = getValueOfElementByID("dlQuerySyntax");
-        sendSubQuery(expression, minus, order, syntax, query, 1);
+        sendSubQuery(expression, minus, order, syntax, query, start, pageSize, 1);
     }
 }
 
@@ -47,7 +49,7 @@ function getQueryFromForm() {
     }
 }
 
-function sendSubQuery(expression, minus, order, syntax, queryType, retry){
+function sendSubQuery(expression, minus, order, syntax, queryType, start, pageSize, retry){
 
     var xmlHttpReq = getXmlHttpObject();
 
@@ -63,6 +65,12 @@ function sendSubQuery(expression, minus, order, syntax, queryType, retry){
         }
         if (order) {
             req = req + "&" + PARAM_ORDER + "=" + order;
+        }
+        if (start) {
+            req = req + "&start=" + start;
+        }
+        if (pageSize) {
+            req = req + "&pageSize=" + pageSize;
         }
 
         xmlHttpReq.open("GET", req, true);

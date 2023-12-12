@@ -12,6 +12,7 @@ import org.coode.www.model.QueryType;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.ParserService;
 import org.coode.www.service.ReasonerService;
+import org.coode.www.util.PageData;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
@@ -22,15 +23,22 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.nickdrummond.parsejs.ParseException;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping(value="/dlquery")
+@RequestMapping(value= DLQueryController.PATH)
 public class DLQueryController extends ApplicationController {
+
+    public static final String DEFAULT_PAGE_SIZE = "50";
+    public static final String PATH = "/dlquery";
 
     @Autowired
     private ParserService parserService;
@@ -45,6 +53,8 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "") final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(required = false, defaultValue = "instances", name = "query") final QueryType queryType,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
+            @RequestParam(required = false, defaultValue = "1") int start,
             final Model model) {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
@@ -81,6 +91,9 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = false) final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(name="query") final QueryType queryType,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
+            @RequestParam(required = false, defaultValue = "1") int start,
+            HttpServletRequest request,
             final Model model) throws OntServerException, QueryTimeoutException, ParserException {
 
         try {
@@ -115,10 +128,14 @@ public class DLQueryController extends ApplicationController {
                 resultsCopy.removeAll(minusResults);
                 results = resultsCopy;
             }
-            Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c);
+            Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c, start, pageSize);
 
             OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
+            // Target links to parent page for fragment
+            UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequest().replacePath(PATH);
+
+            model.addAttribute("urlBuilder", uriBuilder);
             model.addAttribute("results", resultsCharacteristic);
             model.addAttribute("mos", owlRenderer);
 
@@ -168,11 +185,18 @@ public class DLQueryController extends ApplicationController {
         return rActiveOnt;
     }
 
-    private Characteristic buildCharacteristic(String name, Set<OWLEntity> results, Comparator<OWLObject> comp) {
+    private Characteristic buildCharacteristic(
+            final String name,
+            final Set<OWLEntity> results,
+            final Comparator<OWLObject> comp,
+            final int start,
+            final int pageSize) {
         return new Characteristic(null, name,
                 results.stream()
                         .sorted(comp)
                         .map(e -> new AxiomWithMetadata("result", e, null, getDeclarationOntology(e, kit)))
-                        .collect(Collectors.toList()));
+                        .skip(start).limit(pageSize)
+                        .toList(),
+                new PageData(start, pageSize, results.size()));
     }
 }

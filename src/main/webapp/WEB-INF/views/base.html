@@ -101,12 +101,12 @@
 <span th:fragment="paged (data)" th:switch="${(data.start == 1) and (data.pageSize == data.total)}">
     <span th:case="${true}" th:text='${"(" + data.total + ")"}'>(2)</span>
     <span th:case="${false}"
-          th:with='base=${(#httpServletRequest.getParameter("search") != null) ? "&amp;search=" + #httpServletRequest.getParameter("search") : ""}'>
+          th:with="urlBuilder=${(urlBuilder != null) ? urlBuilder : T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
 
         <span th:switch="${data.start gt 1}">
             <a th:case="${true}"
                th:with="start=${data.start-data.pageSize gt 1 ? data.start-data.pageSize : 1}"
-               th:href='${"?start=" + start + "&amp;pageSize=" + data.pageSize + base}'>&lt; prev</a>
+               th:href='${urlBuilder.replaceQueryParam("start", start).replaceQueryParam("pageSize", data.pageSize).toUriString()}'>&lt; prev</a>
             <span th:case="${false}">&lt; prev</span>
         </span>
 
@@ -114,7 +114,7 @@
 
         <span th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
             <a th:case="${true}"
-               th:href='${"?start=" + start + "&amp;pageSize=" + data.pageSize + base}'>next &gt;</a>
+               th:href='${urlBuilder.replaceQueryParam("start", start).replaceQueryParam("pageSize", data.pageSize).toUriString()}'>next &gt;</a>
             <span th:case="${false}">next &gt;</span>
         </span>
     </span>
