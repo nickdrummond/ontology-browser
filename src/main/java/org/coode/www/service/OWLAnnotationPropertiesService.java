@@ -1,6 +1,7 @@
 package org.coode.www.service;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.NotImplementedException;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
@@ -56,6 +57,11 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
     @Override
     public AbstractRelationsHierarchyService<OWLAnnotationProperty> getRelationsHierarchy(Comparator<Tree<OWLNamedIndividual>> comparator) {
         return new AnnotationsHierarchyService(comparator);
+    }
+
+    @Override
+    public boolean isEquivalentOrSubproperty(OWLObjectPropertyExpression property, OWLObjectProperty superProperty, OWLOntology ont) {
+        throw new NotImplementedException("Not used");
     }
 
     public List<OWLAnnotationProperty> getAnnotationProperties(final OWLOntology activeOntology,

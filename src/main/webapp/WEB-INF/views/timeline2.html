@@ -1,0 +1,489 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text='${projectInfo.name + ": " + title}'>Project Name: Page Name</title>
+
+    <meta charset='UTF-8'/>
+    <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>
+
+    <link rel='icon' type='image/x-icon' href='../../static/images/favicon.ico'
+          th:href='@{/static/images/favicon.ico}'/>
+    <link rel='apple-touch-icon-precomposed' href='../../static/images/splat-152-211412.png'
+          th:href='@{/static/images/splat-152-211412.png}'/>
+
+    <link rel='stylesheet' type='text/css' href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
+
+    <script type='text/javascript' src='../../static/js/timeline.js' th:src='@{/static/js/timeline.js}'></script>
+
+    <style>
+
+        .timeline {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .prop {
+            margin-top: 1rem;
+            height: 2px;
+            border-top: 2px solid #111;
+            min-width: 2rem;
+            flex-grow: 1;
+        }
+
+        .prop.dashed {
+            border-top: dashed;
+        }
+
+        .dot {
+            height: 2rem;
+            width: 2rem;
+            border: 2px solid #111;
+            border-radius: 50%;
+        }
+
+        .parent {
+            position: relative;
+            top: -6px;
+            border: 1px solid #111;
+            border-radius: 5px;
+            padding: 5px 0;
+        }
+
+        .event-label {
+            font-size: 0.5rem;
+            border-radius: 2rem;
+            position: relative;
+            top: 2rem;
+        }
+
+        .diverge {
+            display: flex;
+            flex-direction: column;
+            gap: 2.4rem;
+            border-left: 2px solid #111;
+            margin-bottom: 1.2rem;
+        }
+
+        .converge {
+            display: flex;
+            flex-direction: column;
+            gap: 2.4rem;
+            border-right: 2px solid #111;
+            margin-bottom: 1.2rem;
+        }
+
+    </style>
+</head>
+
+<body class="wrapper">
+
+<div th:replace='base :: title'></div>
+
+<div th:replace='base :: menu'></div>
+
+<div id="main">
+
+    <div id="content">
+
+        <h2 th:text="${title}">Title</h2>
+
+        <ul>
+            <li>TODO lack of containment is messing up flow of next elements</li>
+            <li>Dotted lines (sometimeAfter)</li>
+            <li>Parallel events (eg after Palpatines_broadcast)</li>
+            <li>bug in wrong place -> Rey_meets_Luke after Battle_of_Starkiller_Base</li>
+            <li>group by after</li>
+            <li>show orphan events</li>
+            <li>link for events (to another pane)</li>
+            <li>order by after</li>
+            <li>sometime after</li>
+            <li>year (layout algorithm needed)</li>
+            <li>participants</li>
+        </ul>
+
+        <div id="timeline">
+
+            <h2>Child</h2>
+
+            <div class="timeline">
+                <div class="prop dashed"></div>
+                <div class="event dot">
+                    <span class="event-label">Child</span>
+                </div>
+                <div class="prop"></div>
+            </div>
+
+            <br/><br/><br/>
+
+            <h2>Parent &amp; Child</h2>
+
+            <div class="timeline">
+                <div class="prop"></div>
+                <div class="event parent">
+                    <div class="timeline">
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child</span>
+                        </div>
+                        <div class="prop"></div>
+                    </div>
+                    <span class="event-label">Parent</span>
+                </div>
+                <div class="prop"></div>
+            </div>
+
+            <br/><br/><br/>
+
+            <h2>Linear</h2>
+
+            <div class="timeline">
+                <div class="prop"></div>
+                <div class="event parent">
+                    <div class="timeline">
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 1</span>
+                        </div>
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 2</span>
+                        </div>
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 3</span>
+                        </div>
+                        <div class="prop"></div>
+                    </div>
+                    <span class="event-label">Parent</span>
+                </div>
+                <div class="prop"></div>
+            </div>
+
+            <br/><br/><br/>
+
+            <h2>SometimeAfter (Dashed) </h2>
+
+            <div class="timeline">
+                <div class="prop dashed"></div>
+                <div class="event parent">
+                    <div class="timeline">
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 1</span>
+                        </div>
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 2</span>
+                        </div>
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 3</span>
+                        </div>
+                        <div class="prop"></div>
+                    </div>
+                    <span class="event-label">Parent</span>
+                </div>
+                <div class="prop"></div>
+            </div>
+
+            <br/><br/><br/>
+
+            <h2>Nested</h2>
+
+            <div class="timeline">
+                <div class="prop"></div>
+                <div class="event parent">
+                    <div class="timeline">
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 1</span>
+                        </div>
+                        <div class="prop"></div>
+
+                        <div class="event parent">
+                            <div class="timeline">
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Child 2.1</span>
+                                </div>
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Child 2.2</span>
+                                </div>
+                                <div class="prop"></div>
+                                <div class="event parent">
+                                    <div class="timeline">
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">Child 2.3.1</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">Child 2.3.2</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">Child 2.3.3</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                    </div>
+                                    <span class="event-label">Child 2.3</span>
+                                </div>
+                                <div class="prop"></div>
+                            </div>
+
+                            <span class="event-label">Child 2</span>
+                        </div>
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 3</span>
+                        </div>
+                        <div class="prop"></div>
+                    </div>
+                    <span class="event-label">Parent</span>
+                </div>
+                <div class="prop"></div>
+            </div>
+
+            <br/><br/><br/>
+
+
+            <h2>Diverge</h2>
+
+            <div class="timeline">
+                <div class="prop"></div>
+                <div class="event parent">
+                    <div class="timeline">
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 1</span>
+                        </div>
+                        <div class="prop"></div>
+
+                        <div class="diverge">
+
+                            <div class="timeline">
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Child 2</span>
+                                </div>
+                                <div class="prop"></div>
+                            </div>
+
+                            <div class="timeline">
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Path 1.1</span>
+                                </div>
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Path 1.1</span>
+                                </div>
+                                <div class="prop dashed"></div>
+                            </div>
+
+                            <div class="timeline">
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">P 2.1</span>
+                                </div>
+                                <div class="prop"></div>
+
+                                <div class="event parent">
+                                    <div class="timeline">
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">P 2.2.1</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">P 2.2.1</span>
+                                        </div>
+                                        <div class="prop dashed"></div>
+                                    </div>
+                                    <span class="event-label">P 2.2</span>
+                                </div>
+                                <div class="prop"></div>
+                            </div>
+
+                        </div>
+
+                        <div class="prop"></div>
+
+                        <div class="event dot">
+                            <span class="event-label">Child 3</span>
+                        </div>
+                        <div class="prop"></div>
+                    </div>
+                    <span class="event-label">Parent</span>
+                </div>
+                <div class="prop"></div>
+            </div>
+
+            <br/><br/><br/>
+
+
+            <h2>Converge</h2>
+
+            <div class="timeline">
+                <div class="prop"></div>
+                <div class="event parent">
+                    <div class="timeline">
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 1</span>
+                        </div>
+                        <div class="prop"></div>
+
+                        <div class="converge">
+
+                            <div class="timeline">
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Child 2</span>
+                                </div>
+                                <div class="prop"></div>
+                            </div>
+
+
+                            <div class="timeline">
+
+                                <div class="prop dashed"></div>
+                                <div class="event dot">
+                                    <span class="event-label">P 2.1</span>
+                                </div>
+                                <div class="prop"></div>
+
+                                <div class="event parent">
+                                    <div class="timeline">
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">P 2.2.1</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">P 2.2.1</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                    </div>
+                                    <span class="event-label">P 2.2</span>
+                                </div>
+                                <div class="prop"></div>
+                            </div>
+
+                            <div class="timeline">
+                                <div class="prop dashed"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Path 1.1</span>
+                                </div>
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Path 1.1</span>
+                                </div>
+                                <div class="prop"></div>
+                            </div>
+
+                        </div>
+
+                        <div class="prop"></div>
+
+                        <div class="event dot">
+                            <span class="event-label">Child 3</span>
+                        </div>
+                        <div class="prop"></div>
+                    </div>
+                    <span class="event-label">Parent</span>
+                </div>
+                <div class="prop"></div>
+            </div>
+
+
+            <br/><br/><br/>
+
+
+            <h2>Parallel</h2>
+
+            <div class="timeline">
+                <div class="prop"></div>
+                <div class="event parent">
+                    <div class="timeline">
+                        <div class="prop"></div>
+                        <div class="event dot">
+                            <span class="event-label">Child 1</span>
+                        </div>
+                        <div class="prop"></div>
+
+                        <div class="diverge converge">
+
+                            <div class="timeline">
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">Child 2</span>
+                                </div>
+                                <div class="prop"></div>
+                            </div>
+
+                            <div class="timeline">
+
+                                <div class="converge">
+
+                                    <div class="timeline">
+
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">P 2.1</span>
+                                        </div>
+                                        <div class="prop"></div>
+
+                                        <div class="event dot">
+                                            <span class="event-label">P 2.2</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                    </div>
+
+                                    <div class="timeline">
+                                        <div class="prop dashed"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">Path 1.1</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                        <div class="event dot">
+                                            <span class="event-label">Path 1.1</span>
+                                        </div>
+                                        <div class="prop"></div>
+                                    </div>
+
+                                </div>
+
+                                <div class="prop"></div>
+                                <div class="event dot">
+                                    <span class="event-label">P 2.3</span>
+                                </div>
+                                <div class="prop"></div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="prop"></div>
+
+                        <div class="event dot">
+                            <span class="event-label">Child 3</span>
+                        </div>
+                        <div class="prop"></div>
+                    </div>
+                    <span class="event-label">Parent</span>
+                </div>
+                <div class="prop"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace='base :: footer'></div>
+</div>
+</body>
+</html>

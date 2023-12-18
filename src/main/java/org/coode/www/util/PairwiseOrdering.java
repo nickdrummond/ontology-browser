@@ -4,6 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/*
+ * (d, e) = (d, e)
+ * (b, c) = (d, e), (b, c)
+ * (c, d) = (b, c, d, e) ?? place after entry where key = value, then move any other kv where v = k
+ * must move in pairs
+ * what about forks?
+ * (k, d) = (b, c), (c, d), (k, d), (d, e)
+ *
+ */
 public class PairwiseOrdering<T> {
 
     LinkedList<LinkedList<T>> lists = new LinkedList<>();

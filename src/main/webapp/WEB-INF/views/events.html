@@ -1,0 +1,37 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<!--suppress HtmlUnknownTag, GrazieInspection, XmlDuplicatedId, CheckTagEmptyBody, HtmlExtraClosingTag -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div class="event-outer" th:fragment="event(e)">
+    <p class="event-label" th:text="${e.label}">Event</p>
+
+    <div class="event" th:classappend="${e.children.isEmpty()} ? dot : parent">
+<!--    <div class="event-data">-->
+<!--        <p class="event-label" th:text="${e.label}">Event</p>-->
+<!--        <block th:if="${e.year.isPresent()}">-->
+<!--            <p class="event-year" th:text='${"Year: " + e.year.get()}'>Year</p>-->
+<!--        </block>-->
+<!--        <block th:if="${e.start.isPresent()}">-->
+<!--            <p class="event-start" th:text='${"Start: " + e.start.get()}'>Start</p>-->
+<!--        </block>-->
+<!--        <ol>-->
+<!--        <block th:each="previous : ${e.after}">-->
+<!--            <li class="event-after" th:text='${"After: " + previous.label}'>After</li>-->
+<!--        </block>-->
+<!--        </ol>-->
+<!--        <ol>-->
+<!--            <th:block th:each="participant : ${e.participants}">-->
+<!--                <li th:text="${participant}">Participant</li>-->
+<!--            </th:block>-->
+<!--        </ol>-->
+<!--    </div>-->
+    <div class="event-children">
+        <th:block th:each="child : ${e.children}">
+            <div th:replace="events::event(${child})">Child</div>
+        </th:block>
+    </div>
+</div>
+</div>
+
+</html>

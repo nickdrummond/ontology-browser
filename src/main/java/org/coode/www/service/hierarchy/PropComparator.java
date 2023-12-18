@@ -9,16 +9,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-/*
- * (d, e) = (d, e)
- * (b, c) = (d, e), (b, c)
- * (c, d) = (b, c, d, e) ?? place after entry where key = value, then move any other kv where v = k
- * must move in pairs
- * what about forks?
- * (k, d) = (b, c), (c, d), (k, d), (d, e)
- *
- * TODO extract this into a testable thing
- */
 public class PropComparator implements Comparator<Tree<OWLNamedIndividual>> {
 
     private List<OWLIndividual> order = null;

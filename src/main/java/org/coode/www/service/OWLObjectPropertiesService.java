@@ -7,6 +7,7 @@ import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.ObjectPropertyCharacteristicsBuilder;
 import org.coode.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,5 +71,13 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
 
     public AbstractRelationsHierarchyService<OWLObjectProperty> getRelationsHierarchy (Comparator<Tree<OWLNamedIndividual>> comparator) {
         return new RelationsHierarchyService(comparator);
+    }
+
+    @Override
+    public boolean isEquivalentOrSubproperty(OWLObjectPropertyExpression property, OWLObjectProperty superProperty, OWLOntology ont) {
+        OWLReasoner toldReasoner = reasonerFactoryService.getToldReasoner(ont);
+        return property.equals(superProperty) ||
+                toldReasoner.getEquivalentObjectProperties(superProperty).contains(property) ||
+                toldReasoner.getSubObjectProperties(superProperty).containsEntity(property);
     }
 }

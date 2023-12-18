@@ -23,4 +23,6 @@ public interface PropertiesService<T extends OWLProperty> {
      Tree<? extends OWLObject> getPropTree(T property, OWLOntology ont);
 
      AbstractRelationsHierarchyService<T> getRelationsHierarchy (Comparator<Tree<OWLNamedIndividual>> comparator);
+
+    boolean isEquivalentOrSubproperty(OWLObjectPropertyExpression property, OWLObjectProperty superProperty, OWLOntology ont);
 }
