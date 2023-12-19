@@ -19,71 +19,82 @@
     <script type='text/javascript' src='../../static/js/timeline.js' th:src='@{/static/js/timeline.js}'></script>
 
     <style>
-        h2 {
-            margin-top: 3rem;
-        }
 
-        .event-outer.parent {
-            min-height: 6rem;
-            min-width: 120px;
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        /* nested - do not add a top margin */
-        .event-outer.parent .event-outer.parent {
-            border-top: none;
-
-        }
-
-        .parent .event-label {
-            position: relative;
-            top: -3rem;
-            display: inline;
-            padding: 2em 1em;
-        }
-
-        .dot .event-label {
-            top: 0;
-            display: inline;
-            padding: 0;
-        }
-
-        .event {
-            display: flex; /* Allows event parents to follow each other */
-
-        }
-
-        .event-children {
-            border-bottom: 2px solid #111;
-            height: 3rem;
+        .timeline {
             display: flex;
-            justify-content: space-evenly;
-            gap: 2rem;
+            align-items: flex-start;
         }
 
-        .partial {
-            border-bottom: 2px dashed #111;
+        .prop {
+            margin-top: 1rem;
+            height: 0;
+            border-top: 2px solid #111;
+            min-width: 2rem;
+            flex-grow: 1;
         }
 
-        .dot .event {
-            margin-top: 2rem;
+        .prop.dashed {
+            border-top: dashed;
+        }
+
+        .dot {
             height: 2rem;
             width: 2rem;
-            background-color: #111;
+            border: 2px solid #111;
             border-radius: 50%;
         }
 
-        .event-split {
+        .parent {
+            position: relative;
+            top: -6px;
+            border: 1px solid #111;
+            border-radius: 5px;
+            padding: 5px 0;
+        }
+
+        .event-label {
+            font-size: 0.5rem;
+            border-radius: 2rem;
+            position: relative;
+            top: 2rem;
+        }
+
+        .parallel {
             display: flex;
             flex-direction: column;
+            gap: 2.4rem;
+            margin-bottom: 1.2rem;
         }
 
-        .event-children.alt {
+        .diverge>.prop:first-child {
+            position: relative;
+            border-color: red;
+        }
+
+        .converge>.prop:last-child {
+            position: relative;
+            border-color: red;
+        }
+
+        .diverge>.prop:first-child::before {
+            content: '';
+            position: absolute;
+            height: 4.78rem;
+            bottom: 0;
             border-left: 2px solid #111;
-            padding-top: 3em;
-            padding-left: 2em;
+            border-color: red;
         }
 
+        .converge>.prop:last-child::after {
+            content: '';
+            position: absolute;
+            height: 4.78rem;
+            right: 0;
+            bottom: 0;
+            border-right: 2px solid #111;
+            width: 2px;
+            border-color: red;
+        }
     </style>
 </head>
 
@@ -99,351 +110,12 @@
 
         <h2 th:text="${title}">Title</h2>
 
-        <ul>
-            <li>TODO lack of containment is messing up flow of next elements</li>
-            <li>Dotted lines (sometimeAfter)</li>
-            <li>Parallel events (eg after Palpatines_broadcast)</li>
-            <li>bug in wrong place -> Rey_meets_Luke after Battle_of_Starkiller_Base</li>
-            <li>group by after</li>
-            <li>show orphan events</li>
-            <li>link for events (to another pane)</li>
-            <li>order by after</li>
-            <li>sometime after</li>
-            <li>year (layout algorithm needed)</li>
-            <li>participants</li>
-        </ul>
+        <div th:replace="events::timeline(${root})"></div>
 
-        <div id="timeline">
+        <br/><br/><br/>
 
-            <h2>Child</h2>
+        <div th:replace="events::timeline(${root2})"></div>
 
-            <div class="event-outer dot">
-                <div class="event">
-                </div>
-                <span class="event-label">Child</span>
-            </div>
-
-            <br/><br/><br/>
-
-            <h2>Parent &amp; Child</h2>
-
-            <div class="event-outer parent">
-
-                <div class="event">
-                    <div class="event-children">
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child</span>
-                        </div>
-                    </div>
-                    <span class="event-label">Parent</span>
-
-                </div>
-            </div>
-
-            <br/><br/><br/>
-
-            <h2>Linear</h2>
-
-            <div class="event-outer parent">
-                <div class="event">
-                    <div class="event-children">
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 1</span>
-                        </div>
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 2</span>
-                        </div>
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 3</span>
-                        </div>
-                    </div>
-
-                    <span class="event-label">Parent</span>
-
-                </div>
-            </div>
-
-            <br/><br/><br/>
-
-            <h2>SometimeAfter (Dashed) </h2>
-
-            <div class="event-outer parent">
-                <div class="event">
-                    <div class="event-children partial">
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 1</span>
-                        </div>
-                    </div>
-
-                    <div class="event-children">
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 2</span>
-                        </div>
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 3</span>
-                        </div>
-                    </div>
-
-                    <span class="event-label">Parent</span>
-
-                </div>
-            </div>
-
-            <br/><br/><br/>
-
-            <h2>Nested</h2>
-
-            <div class="event-outer parent">
-                <div class="event ">
-                    <div class="event-children">
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 1</span>
-                        </div>
-
-                        <div class="event-outer parent">
-                            <div class="event">
-                                <div class="event-children">
-
-                                    <div class="event-outer dot">
-                                        <div class="event">
-                                        </div>
-                                        <span class="event-label">Child 2.1</span>
-                                    </div>
-
-                                    <div class="event-outer dot">
-                                        <div class="event">
-                                        </div>
-                                        <span class="event-label">Child 2.2</span>
-                                    </div>
-
-                                    <div class="event-outer parent">
-                                        <div class="event">
-                                            <div class="event-children">
-
-                                                <div class="event-outer dot">
-                                                    <div class="event">
-                                                    </div>
-                                                    <span class="event-label">Child 2.3.1</span>
-                                                </div>
-
-                                                <div class="event-outer dot">
-                                                    <div class="event">
-                                                    </div>
-                                                    <span class="event-label">Child 2.3.2</span>
-                                                </div>
-
-                                                <div class="event-outer dot">
-                                                    <div class="event">
-                                                    </div>
-                                                    <span class="event-label">Child 2.3.3</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <span class="event-label">Child 2.3</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="event-label">Child 2</span>
-
-                        </div>
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 3 - variable</span>
-                        </div>
-                    </div>
-                </div>
-                <span class="event-label">Parent</span>
-
-            </div>
-
-
-            <h2>Split</h2>
-
-            <div class="event-outer parent">
-                <div class="event">
-                    <div class="event-children">
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 1</span>
-                        </div>
-
-                        <div class="event-split">
-
-                            <div class="event-children">
-                                <div class="event-outer dot">
-                                    <div class="event">
-                                    </div>
-                                    <span class="event-label">Child 2</span>
-                                </div>
-
-                            </div>
-
-                            <div class="event-children alt">
-                                <div class="event-outer dot">
-                                    <div class="event">
-                                    </div>
-                                    <span class="event-label">Path 1.1</span>
-                                </div>
-
-                                <div class="event-outer dot">
-                                    <div class="event">
-                                    </div>
-                                    <span class="event-label">Path 1.2</span>
-                                </div>
-                            </div>
-
-
-                            <div class="event-children alt">
-
-                                <div class="event-outer dot">
-                                    <div class="event">
-                                    </div>
-                                    <span class="event-label">Path 2.1</span>
-                                </div>
-
-                                <div class="event-outer parent">
-                                    <div class="event">
-                                        <div class="event-children">
-                                            <div class="event-outer dot">
-                                                <div class="event">
-                                                </div>
-                                                <span class="event-label">Path 2.2.1</span>
-                                            </div>
-
-                                            <div class="event-outer dot">
-                                                <div class="event">
-                                                </div>
-                                                <span class="event-label">Path 2.2.2</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="event-label">Path 2.2</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 3</span>
-                        </div>
-                    </div>
-
-                    <span class="event-label">Event</span>
-
-                </div>
-            </div>
-
-
-            <br/><br/><br/>
-            <br/><br/><br/>
-            <br/><br/><br/>
-
-            <h2>Rejoin</h2>
-
-            <div class="event-outer parent">
-                <div class="event">
-                    <div class="event-children">
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 1</span>
-                        </div>
-
-                        <div class="event-split">
-
-                            <div class="event-children">
-                                <div class="event-outer dot">
-                                    <div class="event">
-                                    </div>
-                                    <span class="event-label">Child 2</span>
-                                </div>
-
-                            </div>
-
-                            <div class="event-children alt">
-                                <div class="event-outer dot">
-                                    <div class="event">
-                                    </div>
-                                    <span class="event-label">Path 1.1</span>
-                                </div>
-
-                                <div class="event-outer dot">
-                                    <div class="event">
-                                    </div>
-                                    <span class="event-label">Path 1.2</span>
-                                </div>
-                            </div>
-
-
-                            <div class="event-children alt">
-
-                                <div class="event-outer dot">
-                                    <div class="event">
-                                    </div>
-                                    <span class="event-label">Path 2.1</span>
-                                </div>
-
-                                <div class="event-outer parent">
-                                    <div class="event">
-                                        <div class="event-children">
-                                            <div class="event-outer dot">
-                                                <div class="event">
-                                                </div>
-                                                <span class="event-label">Path 2.2.1</span>
-                                            </div>
-
-                                            <div class="event-outer dot">
-                                                <div class="event">
-                                                </div>
-                                                <span class="event-label">Path 2.2.2</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span class="event-label">Path 2.2</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="event-outer dot">
-                            <div class="event">
-                            </div>
-                            <span class="event-label">Child 3</span>
-                        </div>
-                    </div>
-
-                    <span class="event-label">Event</span>
-
-                </div>
-            </div>
-
-        </div>
     </div>
 
     <div th:replace='base :: footer'></div>

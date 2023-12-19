@@ -27,7 +27,7 @@
 
         .prop {
             margin-top: 1rem;
-            height: 2px;
+            height: 0;
             border-top: 2px solid #111;
             min-width: 2rem;
             flex-grow: 1;
@@ -59,20 +59,41 @@
             top: 2rem;
         }
 
-        .diverge {
+        .parallel {
             display: flex;
             flex-direction: column;
             gap: 2.4rem;
-            border-left: 2px solid #111;
             margin-bottom: 1.2rem;
         }
 
-        .converge {
-            display: flex;
-            flex-direction: column;
-            gap: 2.4rem;
+        .diverge>.prop:first-child {
+            position: relative;
+            border-color: red;
+        }
+
+        .converge>.prop:last-child {
+            position: relative;
+            border-color: red;
+        }
+
+        .diverge>.prop:first-child::before {
+            content: '';
+            position: absolute;
+            height: 4.78rem;
+            bottom: 0;
+            border-left: 2px solid #111;
+            border-color: red;
+        }
+
+        .converge>.prop:last-child::after {
+            content: '';
+            position: absolute;
+            height: 4.78rem;
+            right: 0;
+            bottom: 0;
             border-right: 2px solid #111;
-            margin-bottom: 1.2rem;
+            width: 2px;
+            border-color: red;
         }
 
     </style>
@@ -91,17 +112,8 @@
         <h2 th:text="${title}">Title</h2>
 
         <ul>
-            <li>TODO lack of containment is messing up flow of next elements</li>
-            <li>Dotted lines (sometimeAfter)</li>
-            <li>Parallel events (eg after Palpatines_broadcast)</li>
-            <li>bug in wrong place -> Rey_meets_Luke after Battle_of_Starkiller_Base</li>
-            <li>group by after</li>
-            <li>show orphan events</li>
-            <li>link for events (to another pane)</li>
-            <li>order by after</li>
-            <li>sometime after</li>
-            <li>year (layout algorithm needed)</li>
-            <li>participants</li>
+            <li>Can we use ::before ::after psuedo elements for connections? https://thecodeplayer.com/walkthrough/css3-family-tree </li>
+
         </ul>
 
         <div id="timeline">
@@ -263,7 +275,7 @@
                         </div>
                         <div class="prop"></div>
 
-                        <div class="diverge">
+                            <div class="parallel">
 
                             <div class="timeline">
                                 <div class="prop"></div>
@@ -273,7 +285,7 @@
                                 <div class="prop"></div>
                             </div>
 
-                            <div class="timeline">
+                            <div class="timeline diverge">
                                 <div class="prop"></div>
                                 <div class="event dot">
                                     <span class="event-label">Path 1.1</span>
@@ -285,8 +297,8 @@
                                 <div class="prop dashed"></div>
                             </div>
 
-                            <div class="timeline">
-                                <div class="prop"></div>
+                            <div class="timeline diverge">
+                                <div class="prop "></div>
                                 <div class="event dot">
                                     <span class="event-label">P 2.1</span>
                                 </div>
@@ -302,15 +314,13 @@
                                         <div class="event dot">
                                             <span class="event-label">P 2.2.1</span>
                                         </div>
-                                        <div class="prop dashed"></div>
+                                        <div class="prop"></div>
                                     </div>
                                     <span class="event-label">P 2.2</span>
                                 </div>
-                                <div class="prop"></div>
+                                <div class="prop dashed"></div>
                             </div>
-
                         </div>
-
                         <div class="prop"></div>
 
                         <div class="event dot">
@@ -338,7 +348,7 @@
                         </div>
                         <div class="prop"></div>
 
-                        <div class="converge">
+                        <div class="parallel">
 
                             <div class="timeline">
                                 <div class="prop"></div>
@@ -348,9 +358,7 @@
                                 <div class="prop"></div>
                             </div>
 
-
-                            <div class="timeline">
-
+                            <div class="timeline converge">
                                 <div class="prop dashed"></div>
                                 <div class="event dot">
                                     <span class="event-label">P 2.1</span>
@@ -374,7 +382,7 @@
                                 <div class="prop"></div>
                             </div>
 
-                            <div class="timeline">
+                            <div class="timeline converge">
                                 <div class="prop dashed"></div>
                                 <div class="event dot">
                                     <span class="event-label">Path 1.1</span>
@@ -411,12 +419,13 @@
                 <div class="event parent">
                     <div class="timeline">
                         <div class="prop"></div>
+
                         <div class="event dot">
                             <span class="event-label">Child 1</span>
                         </div>
                         <div class="prop"></div>
 
-                        <div class="diverge converge">
+                        <div class="parallel">
 
                             <div class="timeline">
                                 <div class="prop"></div>
@@ -426,12 +435,11 @@
                                 <div class="prop"></div>
                             </div>
 
-                            <div class="timeline">
+                            <div class="timeline converge">
 
-                                <div class="converge">
+                                <div class="parallel">
 
-                                    <div class="timeline">
-
+                                    <div class="timeline diverge">
                                         <div class="prop"></div>
                                         <div class="event dot">
                                             <span class="event-label">P 2.1</span>
@@ -444,7 +452,7 @@
                                         <div class="prop"></div>
                                     </div>
 
-                                    <div class="timeline">
+                                    <div class="timeline converge">
                                         <div class="prop dashed"></div>
                                         <div class="event dot">
                                             <span class="event-label">Path 1.1</span>
@@ -465,15 +473,14 @@
                                 <div class="prop"></div>
                             </div>
 
-
                         </div>
-
                         <div class="prop"></div>
 
                         <div class="event dot">
                             <span class="event-label">Child 3</span>
                         </div>
                         <div class="prop"></div>
+
                     </div>
                     <span class="event-label">Parent</span>
                 </div>

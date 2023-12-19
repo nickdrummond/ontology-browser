@@ -3,21 +3,50 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<div class="event-outer" th:fragment="event(e)">
-    <p class="event-label" th:text="${e.label}">Event</p>
+<div class="timeline"
+     th:fragment="timeline(t)"
+     th:classappend='${(t.diverge ? "diverge" : "") + (t.converge ? " converge" : "")}' >
+    <div th:replace="events::prop(${t.startProp})"></div>
+    <th:block th:each="conn : ${t.events}">
+        <div th:replace="events::node(${conn.node})">Node</div>
+        <div th:replace="events::prop(${conn.prop})"></div>
+    </th:block>
+</div>
 
-    <div class="event" th:classappend="${e.children.isEmpty()} ? dot : parent">
-<!--    <div class="event-data">-->
-<!--        <p class="event-label" th:text="${e.label}">Event</p>-->
+<div class="prop" th:fragment="prop(p)" th:classappend="${p.type}"></div>
+
+<th:block th:fragment="node(n)" th:switch="${n.getClass().getSimpleName()}">
+    <div th:case="TEvent" class="event dot">
+        <span class="event-label" th:text="${n.label}">Event</span>
+    </div>
+    <div th:case="TParent" class="event parent">
+        <div th:replace="events::timeline(${n.children})"></div>
+        <span class="event-label" th:text="${n.label}">Event</span>
+    </div>
+    <div th:case="TParallel" class="parallel" >
+        <th:block th:each="timeline : ${n.timelines}">
+            <div th:replace="events::timeline(${timeline})">Timeline</div>
+        </th:block>
+    </div>
+</th:block>
+
+
+
+<!--<div class="node-outer" th:fragment="node(e)">-->
+<!--    <p class="node-label" th:text="${e.label}">Event</p>-->
+
+<!--    <div class="node" th:classappend="${e.children.isEmpty()} ? dot : parent">-->
+<!--    <div class="node-data">-->
+<!--        <p class="node-label" th:text="${e.label}">Event</p>-->
 <!--        <block th:if="${e.year.isPresent()}">-->
-<!--            <p class="event-year" th:text='${"Year: " + e.year.get()}'>Year</p>-->
+<!--            <p class="node-year" th:text='${"Year: " + e.year.get()}'>Year</p>-->
 <!--        </block>-->
 <!--        <block th:if="${e.start.isPresent()}">-->
-<!--            <p class="event-start" th:text='${"Start: " + e.start.get()}'>Start</p>-->
+<!--            <p class="node-start" th:text='${"Start: " + e.start.get()}'>Start</p>-->
 <!--        </block>-->
 <!--        <ol>-->
 <!--        <block th:each="previous : ${e.after}">-->
-<!--            <li class="event-after" th:text='${"After: " + previous.label}'>After</li>-->
+<!--            <li class="node-after" th:text='${"After: " + previous.label}'>After</li>-->
 <!--        </block>-->
 <!--        </ol>-->
 <!--        <ol>-->
@@ -26,12 +55,12 @@
 <!--            </th:block>-->
 <!--        </ol>-->
 <!--    </div>-->
-    <div class="event-children">
-        <th:block th:each="child : ${e.children}">
-            <div th:replace="events::event(${child})">Child</div>
-        </th:block>
-    </div>
-</div>
-</div>
+<!--    <div class="node-children">-->
+<!--        <th:block th:each="child : ${e.children}">-->
+<!--            <div th:replace="events::node(${child})">Child</div>-->
+<!--        </th:block>-->
+<!--    </div>-->
+<!--</div>-->
+<!--</div>-->
 
 </html>
