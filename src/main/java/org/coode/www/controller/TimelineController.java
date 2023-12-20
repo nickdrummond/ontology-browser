@@ -31,55 +31,54 @@ public class TimelineController extends ApplicationController {
 
         model.addAttribute("title", "Timeline");
 
-        TProp before = new TProp("before");
-        TProp dashed = new TProp("dashed");
+        TProp after = new TProp("after");
+        TProp sometimeAfter = new TProp("sometimeAfter");
 
         model.addAttribute("root", new Timeline(
-                before,
+                after,
                 List.of(
-                        new TConn("Event before", before),
-                        new TConn(new TParent("Parent", new Timeline(before,
+                        new TConn(new TParent("Parent", new Timeline(after,
                                         List.of(
-                                                new TConn("Child A", before),
-                                                new TConn("Child B", before),
-                                                new TConn("Child C", before)
-                                        ), false, false)
-                        ), before),
-                        new TConn("Event after", before)
-                ),
-                false, false));
-
-
-        model.addAttribute("root2", new Timeline(
-                before,
-                List.of(
-                        new TConn(new TParent("Parent", new Timeline(before,
-                                        List.of(
-                                                new TConn("Child A", before),
+                                                new TConn("Child A", after),
                                                 new TConn(List.of(
-                                                        new Timeline(before, List.of(
-                                                                new TConn("Child B", before)
+                                                        new Timeline(after, List.of(
+                                                                new TConn("Child B", after)
                                                                 ), false, false),
-                                                        new Timeline(before,
+                                                        new Timeline(after,
                                                                 List.of(
-                                                                        new TConn("P A", before),
-                                                                        new TConn("P B", dashed)
+                                                                        new TConn("P A", after),
+                                                                        new TConn("P B", sometimeAfter)
                                                                 ), true, false),
-                                                        new Timeline(before,
+                                                        new Timeline(after,
                                                                 List.of(
-                                                                        new TConn("P2 A", before),
+                                                                        new TConn("P2 A", after),
                                                                         new TConn(new TParent("P2 B",
-                                                                                new Timeline(before, List.of(
-                                                                                        new TConn("P2 B1", before),
-                                                                                        new TConn("P2 B2", before)
-                                                                                ), false, false)), dashed)
+                                                                                new Timeline(after, List.of(
+                                                                                        new TConn("P2 B1", after),
+                                                                                        new TConn("P2 B2", after)
+                                                                                ), false, false)), sometimeAfter)
                                                                 ), true, false)
-                                                ), before),
-                                                new TConn("Child C", before)
+                                                ), after),
+                                                new TConn("Child C", after)
                                         ), false, false)
-                        ), before)
+                        ), after)
                 ),
                 false, false));
+
+//        model.addAttribute("root", new Timeline(
+//                after,
+//                List.of(
+//                        new TConn("Event before", after),
+//                        new TConn(new TParent("Parent", new Timeline(after,
+//                                List.of(
+//                                        new TConn("Child A", after),
+//                                        new TConn("Child B", after),
+//                                        new TConn("Child C", after)
+//                                ), false, false)
+//                        ), after),
+//                        new TConn("Event after", after)
+//                ),
+//                false, false));
 
         return "timeline";
     }
@@ -90,14 +89,13 @@ public class TimelineController extends ApplicationController {
             final @RequestParam(defaultValue = "" + Integer.MAX_VALUE) int depth,
             final Model model) {
 
-        EventFactory fac = new EventFactory(kit, propertiesService);
-
         OWLNamedIndividual target = kit.getFinder().getOWLIndividuals(event).iterator().next();
 
-        final TParent root = fac.buildEvent(target, depth);
+        EventFactory fac = new EventFactory(kit, propertiesService);
+
 
         model.addAttribute("title", "Timeline");
-        model.addAttribute("root", root);
+        model.addAttribute("root", fac.buildTimeline(target, depth));
 
         return "timeline";
     }

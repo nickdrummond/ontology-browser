@@ -1,5 +1,6 @@
 package org.coode.www.service.hierarchy;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -26,6 +27,11 @@ public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntol
     @Override
     public Tree<OWLOntology> getChildren(OWLOntology base) {
         throw new RuntimeException("Ouch");
+    }
+
+    @Override
+    public Tree<OWLOntology> getSubtree(OWLOntology root) {
+        throw new NotImplementedException("Not yet");
     }
 
     private Tree<OWLOntology> getTree(OWLOntology ont) {

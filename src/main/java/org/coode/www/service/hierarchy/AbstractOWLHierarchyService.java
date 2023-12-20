@@ -30,7 +30,7 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
     }
 
     public Tree<T> getTree() {
-        return buildAllTree(topNode(), new HashSet<>());
+        return buildTreeFrom(topNode(), new HashSet<>());
     }
 
     @Override
@@ -43,6 +43,11 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
         }
         subs.sort(comparator);
         return new Tree<>(equivs(base), subs);
+    }
+
+    @Override
+    public Tree<T> getSubtree(T root) {
+        return buildTreeFrom(root, new HashSet<>());
     }
 
     // TODO cache
@@ -70,9 +75,13 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
         return subs.size();
     }
 
-    private Tree<T> buildAllTree(final Node<T> current, final Set<Node<T>> alreadyVisited) {
+    private Tree<T> buildTreeFrom(final Node<T> current, final Set<Node<T>> alreadyVisited) {
+        return buildTreeFrom(current.getRepresentativeElement(), alreadyVisited);
+    }
+
+    private Tree<T> buildTreeFrom(final T current, final Set<Node<T>> alreadyVisited) {
         List<Tree<T>> subs = Lists.newArrayList();
-        for (Node<T> subNode : subs(current.getRepresentativeElement())) {
+        for (Node<T> subNode : subs(current)) {
             //noinspection StatementWithEmptyBody
             if (subNode.isBottomNode()) {
                 // ignore Nothing

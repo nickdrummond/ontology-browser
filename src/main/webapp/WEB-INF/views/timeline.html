@@ -33,7 +33,7 @@
             flex-grow: 1;
         }
 
-        .prop.dashed {
+        .prop.sometimeAfter {
             border-top: dashed;
         }
 
@@ -66,26 +66,23 @@
             margin-bottom: 1.2rem;
         }
 
-        .diverge>.prop:first-child {
+        .diverge:not(:first-child)>.prop:first-child {
             position: relative;
-            border-color: red;
         }
 
-        .converge>.prop:last-child {
-            position: relative;
-            border-color: red;
-        }
-
-        .diverge>.prop:first-child::before {
+        .diverge:not(:first-child)>.prop:first-child::before {
             content: '';
             position: absolute;
             height: 4.78rem;
             bottom: 0;
             border-left: 2px solid #111;
-            border-color: red;
         }
 
-        .converge>.prop:last-child::after {
+        .converge:not(:first-child)>.prop:last-child {
+            position: relative;
+        }
+
+        .converge:not(:first-child)>.prop:last-child::after {
             content: '';
             position: absolute;
             height: 4.78rem;
@@ -93,7 +90,6 @@
             bottom: 0;
             border-right: 2px solid #111;
             width: 2px;
-            border-color: red;
         }
     </style>
 </head>
@@ -112,13 +108,9 @@
 
         <div th:replace="events::timeline(${root})"></div>
 
-        <br/><br/><br/>
-
-        <div th:replace="events::timeline(${root2})"></div>
-
     </div>
-
-    <div th:replace='base :: footer'></div>
 </div>
+<div th:replace='base :: footer'></div>
+
 </body>
 </html>
