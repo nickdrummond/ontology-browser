@@ -15,83 +15,9 @@
           th:href='@{/static/images/splat-152-211412.png}'/>
 
     <link rel='stylesheet' type='text/css' href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
+    <link rel='stylesheet' type='text/css' href="../../static/css/events.css" th:href='@{/static/css/events.css}'/>
 
     <script type='text/javascript' src='../../static/js/timeline.js' th:src='@{/static/js/timeline.js}'></script>
-
-    <style>
-
-        .timeline {
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .prop {
-            margin-top: 1rem;
-            height: 0;
-            border-top: 2px solid #111;
-            min-width: 2rem;
-            flex-grow: 1;
-        }
-
-        .prop.sometimeAfter {
-            border-top: dashed;
-        }
-
-        .dot {
-            height: 2rem;
-            width: 2rem;
-            border: 2px solid #111;
-            border-radius: 50%;
-        }
-
-        .parent {
-            position: relative;
-            top: -6px;
-            border: 1px solid #111;
-            border-radius: 5px;
-            padding: 5px 0;
-        }
-
-        .event-label {
-            font-size: 0.5rem;
-            border-radius: 2rem;
-            position: relative;
-            top: 2rem;
-        }
-
-        .parallel {
-            display: flex;
-            flex-direction: column;
-            gap: 2.4rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .diverge:not(:first-child)>.prop:first-child {
-            position: relative;
-        }
-
-        .diverge:not(:first-child)>.prop:first-child::before {
-            content: '';
-            position: absolute;
-            height: 4.78rem;
-            bottom: 0;
-            border-left: 2px solid #111;
-        }
-
-        .converge:not(:first-child)>.prop:last-child {
-            position: relative;
-        }
-
-        .converge:not(:first-child)>.prop:last-child::after {
-            content: '';
-            position: absolute;
-            height: 4.78rem;
-            right: 0;
-            bottom: 0;
-            border-right: 2px solid #111;
-            width: 2px;
-        }
-    </style>
 </head>
 
 <body class="wrapper">
@@ -105,6 +31,15 @@
     <div id="content">
 
         <h2 th:text="${title}">Title</h2>
+
+
+        <ul>
+            <li>Dotted lines (sometimeAfter)</li>
+            <li>show orphan events</li>
+            <li>link for events (to another pane or drill down)</li>
+            <li>year (layout algorithm needed)</li>
+            <li>participants</li>
+        </ul>
 
         <div th:replace="events::timeline(${root})"></div>
 

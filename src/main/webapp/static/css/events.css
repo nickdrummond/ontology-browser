@@ -1,0 +1,86 @@
+
+.timeline {
+    display: flex;
+    align-items: flex-start;
+}
+
+.prop {
+    margin-top: 1rem;
+    height: 0;
+    border-top: 2px solid #111;
+    min-width: 2rem;
+    flex-grow: 1;
+}
+
+.prop.sometimeAfter {
+    border-top: dashed;
+}
+
+.dot {
+    height: 2rem;
+    width: 2rem;
+    border: 2px solid #111;
+    border-radius: 50%;
+    position: relative;
+}
+
+.parent {
+    position: relative;
+    top: -6px;
+    border: 1px solid #111;
+    border-radius: 5px;
+    padding: 5px 0;
+}
+
+.event-label {
+    font-size: 0.7rem;
+    background-color: white;
+    position: absolute;
+    top: 1rem;
+    left: -1rem;
+    transform: rotate(45deg);
+    transform-origin: top left;
+    white-space: nowrap;
+}
+
+.parent>.event-label {
+    font-size: 1rem;
+    font-weight: bold;
+    top: -1.8rem;
+    left: 0.8rem;
+    rotate: none;
+    transform: none;
+}
+
+.parallel {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    margin-bottom: 1.2rem;
+}
+
+.diverge:not(:first-child)>.prop:first-child {
+    position: relative;
+}
+
+.diverge:not(:first-child)>.prop:first-child::before {
+    content: '';
+    position: absolute;
+    height: 4.78rem;
+    bottom: 0;
+    border-left: 2px solid #111;
+}
+
+.converge:not(:first-child)>.prop:last-child {
+    position: relative;
+}
+
+.converge:not(:first-child)>.prop:last-child::after {
+    content: '';
+    position: absolute;
+    height: 4.78rem;
+    right: 0;
+    bottom: 0;
+    border-right: 2px solid #111;
+    width: 2px;
+}

@@ -20,8 +20,8 @@
         <span class="event-label" th:text="${n.label}">Event</span>
     </div>
     <div th:case="TParent" class="event parent">
-        <div th:replace="events::timeline(${n.children})"></div>
         <span class="event-label" th:text="${n.label}">Event</span>
+        <div th:replace="events::timeline(${n.children})"></div>
     </div>
     <div th:case="TParallel" class="parallel" >
         <th:block th:each="timeline : ${n.timelines}">

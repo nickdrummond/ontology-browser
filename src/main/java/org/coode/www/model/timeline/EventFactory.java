@@ -130,7 +130,7 @@ public class EventFactory {
             boolean diverge,
             boolean converge) {
         List<TConn> chain = getChain(new ArrayList<>(), current, event2Tree, depth);
-        return new Timeline(SOMETIME_AFTER, chain, diverge, converge);
+        return new Timeline(diverge ? AFTER : SOMETIME_AFTER, chain, diverge, converge);
     }
 
     // TODO sometime...
@@ -168,6 +168,7 @@ public class EventFactory {
         chain.add(new TConn(divergentTimelines, AFTER));
 
         // TODO any convergence has to be detected on the timelines
+        // see Battle_of_Yavin
 
         return chain;
     }
