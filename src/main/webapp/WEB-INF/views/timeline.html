@@ -32,17 +32,18 @@
 
         <h2 th:text="${title}">Title</h2>
 
-
         <ul>
             <li>Dotted lines (sometimeAfter)</li>
+            <li>Converge</li>
             <li>show orphan events</li>
             <li>link for events (to another pane or drill down)</li>
             <li>year (layout algorithm needed)</li>
             <li>participants</li>
         </ul>
 
-        <div th:replace="events::timeline(${root})"></div>
-
+        <div id="timeline">
+            <div th:replace="events::timeline(${root})"></div>
+        </div>
     </div>
 </div>
 <div th:replace='base :: footer'></div>

@@ -38,8 +38,20 @@ public class Tree<T extends OWLObject> {
 
     @Override
     public String toString() {
-        String node = "node: [" + StringUtils.join(value, ", ") + "]";
-        String subs = "\nchildren: [" + StringUtils.join(children, ",\n\t\t") + "]";
-        return "{" + node + "(" + childCount + ")," + subs + "}";
+        return "Tree:\n" + indented(this, 0);
+    }
+
+    private String indented(Tree<T> t, int indent) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(StringUtils.repeat("\t", indent));
+        sb.append("[");
+        sb.append(StringUtils.join(t.value, ", "));
+        sb.append("]");
+        sb.append("(" + t.childCount + ")");
+        sb.append("\n");
+        for (Tree<T> child: t.children ) {
+            sb.append(indented(child, indent+1));
+        }
+        return sb.toString();
     }
 }

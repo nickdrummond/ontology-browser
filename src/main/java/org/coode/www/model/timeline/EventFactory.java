@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EventFactory {
 
@@ -24,29 +23,27 @@ public class EventFactory {
 
     private final AbstractRelationsHierarchyService<OWLObjectProperty> duringTree;
     private final AbstractRelationsHierarchyService<OWLObjectProperty> afterTree;
-
-    // TODO
 //    private final AbstractRelationsHierarchyService<OWLObjectProperty> sometimeAfterTree;
 
-    private final OWLDataProperty startProp;
-    private final OWLDataProperty yearProp;
+//    private final OWLDataProperty startProp;
+//    private final OWLDataProperty yearProp;
     private final OWLObjectProperty duringProp;
     private final OWLObjectProperty afterProp;
     private final OWLObjectProperty sometimeAfterProp;
-    private final OWLObjectProperty participantProp;
+//    private final OWLObjectProperty participantProp;
 
 //    private final Map<OWLNamedIndividual, TNode> cache = new HashMap<>();
-    private final OWLObjectPropertiesService propertiesService;
+//    private final OWLObjectPropertiesService propertiesService;
 
     public EventFactory(final OWLHTMLKit kit, OWLObjectPropertiesService propertiesService) {
         this.kit = kit;
-        this.propertiesService = propertiesService;
         this.duringProp = kit.getFinder().getOWLObjectProperties("during").iterator().next();
         this.afterProp = kit.getFinder().getOWLObjectProperties("after").iterator().next();
-        this.startProp = kit.getFinder().getOWLDataProperties("starting").iterator().next();
-        this.yearProp = kit.getFinder().getOWLDataProperties("year").iterator().next();
         this.sometimeAfterProp = kit.getFinder().getOWLObjectProperties("sometimeAfter").iterator().next();
-        this.participantProp = kit.getFinder().getOWLObjectProperties("participant").iterator().next();
+//        this.propertiesService = propertiesService;
+//        this.startProp = kit.getFinder().getOWLDataProperties("starting").iterator().next();
+//        this.yearProp = kit.getFinder().getOWLDataProperties("year").iterator().next();
+//        this.participantProp = kit.getFinder().getOWLObjectProperties("participant").iterator().next();
 
         // TODO revisit if this comparator useful??
         Comparator<Tree<OWLNamedIndividual>> comparator = new PropComparator(afterProp, kit.getActiveOntology());
@@ -60,23 +57,20 @@ public class EventFactory {
                 .withProperties(afterProp, kit.getActiveOntology(), true);
     }
 
-//
-//    public Timeline buildTimeline(
-//            OWLNamedIndividual event,
-//            int depth) {
-//
-//        Tree<OWLNamedIndividual> followingEvents = afterTree.getSubtree(event);
-//        afterTree.
-//
-//        return getTimelineFrom(event, followingEvents, depth, false, false);
-//    }
-
     public Timeline buildTimeline(
             OWLNamedIndividual event,
             int depth) {
+        return buildTimelineFor(afterTree.getSubtree(event), depth, false, false);
+    }
 
-        TNode node = buildNode(event, depth);
-        return new Timeline(AFTER, List.of(new TConn(node, AFTER)), false, false);
+    public Timeline buildTimelineFor(
+            Tree<OWLNamedIndividual> eventTree,
+            int depth,
+            boolean diverge,
+            boolean converge) {
+        logger.info("Tree {}", eventTree);
+        List<TConn> chain = buildChainFrom(new ArrayList<>(), eventTree, depth);
+        return new Timeline(SOMETIME_AFTER, chain, diverge, converge);
     }
 
     private TNode buildNode(OWLNamedIndividual event, int depth) {
@@ -115,7 +109,7 @@ public class EventFactory {
 
             logger.info("Single root found {}", root);
 
-            return getTimelineFrom(root, event2Tree, depth, false, false);
+            return buildTimelineFrom(root, event2Tree, depth, false, false);
         }
 
         logger.info("Multiple roots found {}", roots.size());
@@ -123,19 +117,19 @@ public class EventFactory {
         return new Timeline(SOMETIME_AFTER, List.of(new TConn(buildParallel(roots, event2Tree, depth), AFTER)), false, false);
     }
 
-    private Timeline getTimelineFrom(
+    private Timeline buildTimelineFrom(
             OWLNamedIndividual current,
             Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree,
             int depth,
             boolean diverge,
             boolean converge) {
-        List<TConn> chain = getChain(new ArrayList<>(), current, event2Tree, depth);
+        List<TConn> chain = buildChainFrom(new ArrayList<>(), current, event2Tree, depth);
         return new Timeline(diverge ? AFTER : SOMETIME_AFTER, chain, diverge, converge);
     }
 
     // TODO sometime...
     // TODO detect cycles?
-    private List<TConn> getChain(
+    private List<TConn> buildChainFrom(
             List<TConn> chain,
             OWLNamedIndividual current,
             Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree,
@@ -157,18 +151,45 @@ public class EventFactory {
 
         if (treeNode.childCount == 1) {
             logger.info("Single path in chain: {}", current);
-            return getChain(chain, treeNode.children.get(0).value.get(0), event2Tree, depth);
+            return buildChainFrom(chain, treeNode.children.get(0).value.get(0), event2Tree, depth);
         }
 
+        // TODO any convergence has to be detected on the timelines
+        // see Battle_of_Yavin
         logger.info("Divergent path in chain: {}", current);
         List<Timeline> divergentTimelines  = treeNode.children.stream()
-                .map(t -> getTimelineFrom(t.value.get(0), event2Tree, depth, true, false))
+                .map(t -> buildTimelineFrom(t.value.get(0), event2Tree, depth, true, false))
                 .toList();
 
         chain.add(new TConn(divergentTimelines, AFTER));
 
+        return chain;
+    }
+
+    private List<TConn> buildChainFrom(ArrayList<TConn> chain, Tree<OWLNamedIndividual> treeNode, int depth) {
+
+        OWLNamedIndividual current = treeNode.value.get(0);
+
+        chain.add(new TConn(buildNode(current, depth), AFTER));
+
+        if (treeNode.children.size() == 0) {
+            logger.info("Last node in chain: {}", current);
+            return chain;
+        }
+
+        if (treeNode.children.size() == 1) {
+            logger.info("Single path in chain: {}", current);
+            return buildChainFrom(chain, treeNode.children.get(0), depth);
+        }
+
         // TODO any convergence has to be detected on the timelines
         // see Battle_of_Yavin
+        logger.info("Divergent path in chain: {}", current);
+        List<Timeline> divergentTimelines  = treeNode.children.stream()
+                .map(t -> buildTimelineFor(t, depth, true, false))
+                .toList();
+
+        chain.add(new TConn(divergentTimelines, AFTER));
 
         return chain;
     }
@@ -179,7 +200,7 @@ public class EventFactory {
             Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree,
             int depth) {
         // TODO convergence detection
-        return roots.stream().map(root -> getTimelineFrom(root, event2Tree, depth, false, false)).toList();
+        return roots.stream().map(root -> buildTimelineFrom(root, event2Tree, depth, false, false)).toList();
     }
 
     private Set<OWLNamedIndividual> getRoots(Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree) {
@@ -200,6 +221,10 @@ public class EventFactory {
         return false;
     }
 
+    private String getLabel(OWLNamedIndividual event) {
+        return kit.getShortFormProvider().getShortForm(event);
+    }
+
 //        Optional<Integer> year = getInteger(event, yearProp);
 //        Optional<Integer> start = getInteger(event, startProp);
 //        List<TParent> after = getRelationship(event, afterProp, depth);
@@ -210,9 +235,6 @@ public class EventFactory {
 //        cache.put(event, e);
 //    }
 
-    private String getLabel(OWLNamedIndividual event) {
-        return kit.getShortFormProvider().getShortForm(event);
-    }
 //
 //    private List<TParent> getRelationship(
 //            OWLNamedIndividual event,

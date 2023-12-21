@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractOWLHierarchyService<T extends OWLObject> implements OWLHierarchyService<T> {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final Comparator<? super Tree<T>> comparator;
 
@@ -86,11 +86,11 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
             if (subNode.isBottomNode()) {
                 // ignore Nothing
             } else if (alreadyVisited.contains(subNode)) {
-                logger.info("Found loop: " + subNode.getRepresentativeElement());
+                logger.info("Found loop: {}", subNode.getRepresentativeElement());
                 subs.add(new Tree<>(subNode, getChildCount(subNode))); // just the size
             } else {
                 alreadyVisited.add(subNode);
-                subs.add(buildTree(subNode, alreadyVisited));
+                subs.add(buildTreeFrom(subNode.getRepresentativeElement(), alreadyVisited));
             }
         }
         subs.sort(comparator);

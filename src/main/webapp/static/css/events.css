@@ -1,3 +1,6 @@
+#timeline ul {
+    margin-left: 20rem;
+}
 
 .timeline {
     display: flex;
@@ -46,10 +49,9 @@
 .parent>.event-label {
     font-size: 1rem;
     font-weight: bold;
-    top: -1.8rem;
-    left: 0.8rem;
-    rotate: none;
-    transform: none;
+    top: -1rem;
+    left: -4rem;
+    transform-origin: bottom right;
 }
 
 .parallel {
