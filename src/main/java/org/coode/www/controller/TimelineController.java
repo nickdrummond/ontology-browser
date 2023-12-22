@@ -1,7 +1,14 @@
 package org.coode.www.controller;
 
+import org.coode.owl.mngr.OWLEntityFinder;
+import org.coode.www.exception.NotFoundException;
+import org.coode.www.model.Tree;
 import org.coode.www.model.timeline.*;
 import org.coode.www.service.OWLObjectPropertiesService;
+import org.coode.www.service.OWLOntologiesService;
+import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
+import org.coode.www.service.hierarchy.PropComparator;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,11 +26,14 @@ public class TimelineController extends ApplicationController {
     static final String PATH = "/timeline";
 
     private final OWLObjectPropertiesService propertiesService;
+    private final OWLOntologiesService ontologiesService;
 
     public TimelineController(
-            @Autowired OWLObjectPropertiesService propertiesService
-    ) {
+            @Autowired OWLObjectPropertiesService propertiesService,
+            @Autowired OWLOntologiesService ontologiesService
+            ) {
         this.propertiesService = propertiesService;
+        this.ontologiesService = ontologiesService;
     }
 
     @GetMapping
@@ -86,13 +96,39 @@ public class TimelineController extends ApplicationController {
     @GetMapping(path = "/starwars")
     public String starwarsTimeline(
             final @RequestParam(defaultValue = "A_long_time_ago") String event,
+            final @RequestParam() String ontId,
             final @RequestParam(defaultValue = "" + Integer.MAX_VALUE) int depth,
-            final Model model) {
+            final Model model) throws NotFoundException {
 
-        OWLNamedIndividual target = kit.getFinder().getOWLIndividuals(event).iterator().next();
+        OWLEntityChecker checker = kit.getOWLEntityChecker();
 
-        EventFactory fac = new EventFactory(kit, propertiesService);
+        OWLNamedIndividual target = checker.getOWLIndividual(event);
 
+        OWLOntology ont = (ontId != null) ? ontologiesService.getOntologyFor(ontId, kit) : kit.getActiveOntology();
+
+        OWLObjectProperty duringProp = checker.getOWLObjectProperty("during");
+        OWLObjectProperty afterProp = checker.getOWLObjectProperty("after");
+//        OWLObjectProperty sometimeAfterProp = checker.getOWLObjectProperty("sometimeAfter");
+
+        // TODO revisit if this comparator useful??
+        Comparator<Tree<OWLNamedIndividual>> comparator = new PropComparator(afterProp, ont);
+
+        AbstractRelationsHierarchyService<OWLObjectProperty> duringTree = propertiesService
+                .getRelationsHierarchy(comparator)
+                .withProperties(duringProp, ont, true);
+
+        AbstractRelationsHierarchyService<OWLObjectProperty> afterTree = propertiesService
+                .getRelationsHierarchy(comparator)
+                .withProperties(afterProp, ont, true);
+
+        EventFactory fac = new EventFactory(duringTree, afterTree, kit.getShortFormProvider());
+//
+//        if (filter != null) {
+//            OWLNamedIndividual ind = kit.getOWLEntityChecker().getOWLIndividual(filter);
+//            if (ind != null) {
+//                fac.withParti
+//            }
+//        }
 
         model.addAttribute("title", "Timeline");
         model.addAttribute("root", fac.buildTimeline(target, depth));

@@ -44,13 +44,17 @@
     transform: rotate(45deg);
     transform-origin: top left;
     white-space: nowrap;
+    z-index: 100;
 }
 
 .parent>.event-label {
     font-size: 1rem;
     font-weight: bold;
-    top: -1rem;
-    left: -4rem;
+    background: none;
+    top: 1rem;
+    left: -20rem;
+    width: 20rem;
+    text-align: right;
     transform-origin: bottom right;
 }
 

@@ -1,12 +1,14 @@
 package org.coode.www.model.timeline;
 
 import com.google.common.collect.Streams;
+import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.service.OWLObjectPropertiesService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.coode.www.service.hierarchy.PropComparator;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,42 +21,18 @@ public class EventFactory {
 
     public static final TProp AFTER = new TProp("after");
     public static final TProp SOMETIME_AFTER = new TProp("sometimeAfter");
-    private final OWLHTMLKit kit;
 
+    private final ShortFormProvider sfp;
     private final AbstractRelationsHierarchyService<OWLObjectProperty> duringTree;
     private final AbstractRelationsHierarchyService<OWLObjectProperty> afterTree;
-//    private final AbstractRelationsHierarchyService<OWLObjectProperty> sometimeAfterTree;
 
-//    private final OWLDataProperty startProp;
-//    private final OWLDataProperty yearProp;
-    private final OWLObjectProperty duringProp;
-    private final OWLObjectProperty afterProp;
-    private final OWLObjectProperty sometimeAfterProp;
-//    private final OWLObjectProperty participantProp;
-
-//    private final Map<OWLNamedIndividual, TNode> cache = new HashMap<>();
-//    private final OWLObjectPropertiesService propertiesService;
-
-    public EventFactory(final OWLHTMLKit kit, OWLObjectPropertiesService propertiesService) {
-        this.kit = kit;
-        this.duringProp = kit.getFinder().getOWLObjectProperties("during").iterator().next();
-        this.afterProp = kit.getFinder().getOWLObjectProperties("after").iterator().next();
-        this.sometimeAfterProp = kit.getFinder().getOWLObjectProperties("sometimeAfter").iterator().next();
-//        this.propertiesService = propertiesService;
-//        this.startProp = kit.getFinder().getOWLDataProperties("starting").iterator().next();
-//        this.yearProp = kit.getFinder().getOWLDataProperties("year").iterator().next();
-//        this.participantProp = kit.getFinder().getOWLObjectProperties("participant").iterator().next();
-
-        // TODO revisit if this comparator useful??
-        Comparator<Tree<OWLNamedIndividual>> comparator = new PropComparator(afterProp, kit.getActiveOntology());
-
-        this.duringTree = propertiesService
-                .getRelationsHierarchy(comparator)
-                .withProperties(duringProp, kit.getActiveOntology(), true);
-
-        this.afterTree = propertiesService
-                .getRelationsHierarchy(comparator)
-                .withProperties(afterProp, kit.getActiveOntology(), true);
+    public EventFactory(
+            AbstractRelationsHierarchyService<OWLObjectProperty> duringTree,
+            AbstractRelationsHierarchyService<OWLObjectProperty> afterTree,
+            ShortFormProvider sfp) {
+        this.duringTree = duringTree;
+        this.afterTree = afterTree;
+        this.sfp = sfp;
     }
 
     public Timeline buildTimeline(
@@ -222,7 +200,7 @@ public class EventFactory {
     }
 
     private String getLabel(OWLNamedIndividual event) {
-        return kit.getShortFormProvider().getShortForm(event);
+        return sfp.getShortForm(event);
     }
 
 //        Optional<Integer> year = getInteger(event, yearProp);
