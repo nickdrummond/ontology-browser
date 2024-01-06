@@ -19,6 +19,10 @@ public class RelationsHierarchyService extends AbstractRelationsHierarchyService
 
     private LinkedHashMap<OWLNamedIndividual, List<OWLNamedIndividual>> reverseNodes = new LinkedHashMap<>();
 
+    public RelationsHierarchyService() {
+        super();
+    }
+
     public RelationsHierarchyService(final Comparator<? super Tree<OWLNamedIndividual>> comparator) {
         super(comparator);
     }

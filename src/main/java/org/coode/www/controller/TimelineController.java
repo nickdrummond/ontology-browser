@@ -8,8 +8,11 @@ import org.coode.www.service.OWLObjectPropertiesService;
 import org.coode.www.service.OWLOntologiesService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.coode.www.service.hierarchy.PropComparator;
+import org.coode.www.service.hierarchy.RelationsHierarchyService;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.SimpleShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +39,105 @@ public class TimelineController extends ApplicationController {
         this.ontologiesService = ontologiesService;
     }
 
+
+    // TODO highlight events with a given participant
+    // TODO YEAR!
+    @GetMapping(path = "/starwars")
+    public String starwarsTimeline(
+            final @RequestParam(defaultValue = "A_long_time_ago") String event,
+            final @RequestParam(required = false) String ontId,
+            final @RequestParam(defaultValue = "" + Integer.MAX_VALUE) int depth,
+            final Model model) throws NotFoundException {
+
+        OWLEntityChecker checker = kit.getOWLEntityChecker();
+
+        OWLNamedIndividual target = checker.getOWLIndividual(event);
+
+        OWLOntology ont = (ontId != null) ? ontologiesService.getOntologyFor(ontId, kit) : kit.getActiveOntology();
+
+        OWLObjectProperty duringProp = checker.getOWLObjectProperty("during");
+        OWLObjectProperty afterProp = checker.getOWLObjectProperty("after");
+// TODO        OWLObjectProperty sometimeAfterProp = checker.getOWLObjectProperty("sometimeAfter");
+
+        // TODO revisit if this comparator useful??
+        Comparator<Tree<OWLNamedIndividual>> comparator = new PropComparator(afterProp, ont);
+
+        AbstractRelationsHierarchyService<OWLObjectProperty> duringTree = propertiesService
+                .getRelationsHierarchy(comparator)
+                .withProperties(duringProp, ont, true);
+
+        AbstractRelationsHierarchyService<OWLObjectProperty> afterTree = propertiesService
+                .getRelationsHierarchy(comparator)
+                .withProperties(afterProp, ont, true);
+
+        EventFactory fac = new EventFactory(duringTree, afterTree, kit.getShortFormProvider());
+
+        model.addAttribute("title", "Timeline");
+        model.addAttribute("root", fac.buildTimeline(target, depth));
+
+        return "timeline";
+    }
+
+    @GetMapping(path = "/tests")
+    public String testTimelines(final Model model) throws OWLOntologyCreationException {
+
+        OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
+        OWLDataFactory df = mngr.getOWLDataFactory();
+
+        OWLOntology ont = mngr.createOntology();
+
+        OWLObjectProperty during = df.getOWLObjectProperty("during");
+        OWLObjectProperty after = df.getOWLObjectProperty("after");
+
+        AbstractRelationsHierarchyService<OWLObjectProperty> duringTree = new RelationsHierarchyService()
+                .withProperties(during, ont, true);
+
+        AbstractRelationsHierarchyService<OWLObjectProperty> afterTree = new RelationsHierarchyService()
+                .withProperties(after, ont, true);
+
+        EventFactory eventFactory = new EventFactory(duringTree, afterTree, new SimpleShortFormProvider());
+
+        OWLNamedIndividual parent = df.getOWLNamedIndividual("Parent");
+        OWLNamedIndividual child1 = df.getOWLNamedIndividual("Child1");
+        OWLNamedIndividual child2 = df.getOWLNamedIndividual("Child2");
+        OWLNamedIndividual child3 = df.getOWLNamedIndividual("Child3");
+        OWLNamedIndividual p2_1 = df.getOWLNamedIndividual("p2_1");
+        OWLNamedIndividual p2_2 = df.getOWLNamedIndividual("p2_2");
+        OWLNamedIndividual p2_3 = df.getOWLNamedIndividual("p2_3");
+        OWLNamedIndividual p3_1 = df.getOWLNamedIndividual("p3_1");
+        OWLNamedIndividual p3_2 = df.getOWLNamedIndividual("p3_2");
+
+        // During
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, child1, parent));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, child2, parent));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, child3, parent));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, p2_1, parent));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, p2_2, parent));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, p2_3, parent));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, p3_1, parent));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, p3_2, parent));
+
+        // After
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, child2, child1));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, child3, child2));
+
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p2_1, child1));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p2_2, p2_1));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p2_3, p2_2));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, child3, p2_3));
+
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p3_1, child1));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p3_2, p3_1));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p2_3, p3_2));
+
+        Timeline timeline = eventFactory.buildTimeline(parent, Integer.MAX_VALUE);
+
+        model.addAttribute("title", "Timeline");
+        model.addAttribute("root", timeline);
+
+        return "timeline";
+    }
+
     @GetMapping
     public String timeline(final Model model) {
 
@@ -48,29 +150,29 @@ public class TimelineController extends ApplicationController {
                 after,
                 List.of(
                         new TConn(new TParent("Parent", new Timeline(after,
-                                        List.of(
-                                                new TConn("Child A", after),
-                                                new TConn(List.of(
-                                                        new Timeline(after, List.of(
-                                                                new TConn("Child B", after)
-                                                                ), false, false),
-                                                        new Timeline(after,
-                                                                List.of(
-                                                                        new TConn("P A", after),
-                                                                        new TConn("P B", sometimeAfter)
-                                                                ), true, false),
-                                                        new Timeline(after,
-                                                                List.of(
-                                                                        new TConn("P2 A", after),
-                                                                        new TConn(new TParent("P2 B",
-                                                                                new Timeline(after, List.of(
-                                                                                        new TConn("P2 B1", after),
-                                                                                        new TConn("P2 B2", after)
-                                                                                ), false, false)), sometimeAfter)
-                                                                ), true, false)
-                                                ), after),
-                                                new TConn("Child C", after)
-                                        ), false, false)
+                                List.of(
+                                        new TConn("Child A", after),
+                                        new TConn(List.of(
+                                                new Timeline(after, List.of(
+                                                        new TConn("Child B", after)
+                                                ), false, false),
+                                                new Timeline(after,
+                                                        List.of(
+                                                                new TConn("P A", after),
+                                                                new TConn("P B", sometimeAfter)
+                                                        ), true, false),
+                                                new Timeline(after,
+                                                        List.of(
+                                                                new TConn("P2 A", after),
+                                                                new TConn(new TParent("P2 B",
+                                                                        new Timeline(after, List.of(
+                                                                                new TConn("P2 B1", after),
+                                                                                new TConn("P2 B2", after)
+                                                                        ), false, false)), sometimeAfter)
+                                                        ), true, false)
+                                        ), after),
+                                        new TConn("Child C", after)
+                                ), false, false)
                         ), after)
                 ),
                 false, false));
@@ -89,49 +191,6 @@ public class TimelineController extends ApplicationController {
 //                        new TConn("Event after", after)
 //                ),
 //                false, false));
-
-        return "timeline";
-    }
-
-    @GetMapping(path = "/starwars")
-    public String starwarsTimeline(
-            final @RequestParam(defaultValue = "A_long_time_ago") String event,
-            final @RequestParam() String ontId,
-            final @RequestParam(defaultValue = "" + Integer.MAX_VALUE) int depth,
-            final Model model) throws NotFoundException {
-
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-
-        OWLNamedIndividual target = checker.getOWLIndividual(event);
-
-        OWLOntology ont = (ontId != null) ? ontologiesService.getOntologyFor(ontId, kit) : kit.getActiveOntology();
-
-        OWLObjectProperty duringProp = checker.getOWLObjectProperty("during");
-        OWLObjectProperty afterProp = checker.getOWLObjectProperty("after");
-//        OWLObjectProperty sometimeAfterProp = checker.getOWLObjectProperty("sometimeAfter");
-
-        // TODO revisit if this comparator useful??
-        Comparator<Tree<OWLNamedIndividual>> comparator = new PropComparator(afterProp, ont);
-
-        AbstractRelationsHierarchyService<OWLObjectProperty> duringTree = propertiesService
-                .getRelationsHierarchy(comparator)
-                .withProperties(duringProp, ont, true);
-
-        AbstractRelationsHierarchyService<OWLObjectProperty> afterTree = propertiesService
-                .getRelationsHierarchy(comparator)
-                .withProperties(afterProp, ont, true);
-
-        EventFactory fac = new EventFactory(duringTree, afterTree, kit.getShortFormProvider());
-//
-//        if (filter != null) {
-//            OWLNamedIndividual ind = kit.getOWLEntityChecker().getOWLIndividual(filter);
-//            if (ind != null) {
-//                fac.withParti
-//            }
-//        }
-
-        model.addAttribute("title", "Timeline");
-        model.addAttribute("root", fac.buildTimeline(target, depth));
 
         return "timeline";
     }

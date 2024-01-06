@@ -15,6 +15,10 @@ public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> e
 
     protected OWLNamedIndividual root;
 
+    protected AbstractRelationsHierarchyService() {
+        super();
+    }
+
     protected AbstractRelationsHierarchyService(Comparator<? super Tree<OWLNamedIndividual>> comparator) {
         super(comparator);
     }

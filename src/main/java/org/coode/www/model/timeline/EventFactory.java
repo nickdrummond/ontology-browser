@@ -1,12 +1,8 @@
 package org.coode.www.model.timeline;
 
 import com.google.common.collect.Streams;
-import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
-import org.coode.www.service.OWLObjectPropertiesService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
-import org.coode.www.service.hierarchy.PropComparator;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
@@ -15,12 +11,11 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.coode.www.model.timeline.EventUtils.*;
+
 public class EventFactory {
 
     public final Logger logger = LoggerFactory.getLogger(EventFactory.class);
-
-    public static final TProp AFTER = new TProp("after");
-    public static final TProp SOMETIME_AFTER = new TProp("sometimeAfter");
 
     private final ShortFormProvider sfp;
     private final AbstractRelationsHierarchyService<OWLObjectProperty> duringTree;
@@ -53,6 +48,7 @@ public class EventFactory {
 
     private TNode buildNode(OWLNamedIndividual event, int depth) {
         String label = getLabel(event);
+
         if (depth <= 1) { // don't go any further
             return new TEvent(label);
         }
@@ -67,7 +63,7 @@ public class EventFactory {
                 .map(t -> t.value)
                 .flatMap(Streams::stream).toList();
 
-        return new TParent(label, buildTimeline(subevents, depth-1));
+        return new TParent(label, buildTimeline(subevents, depth - 1));
     }
 
     private Timeline buildTimeline(List<OWLNamedIndividual> events, int depth) {
@@ -81,8 +77,7 @@ public class EventFactory {
 
         if (roots.isEmpty()) {
             logger.error("No roots found");
-        }
-        else if (roots.size() == 1) {
+        } else if (roots.size() == 1) {
             OWLNamedIndividual root = roots.iterator().next();
 
             logger.info("Single root found {}", root);
@@ -101,13 +96,13 @@ public class EventFactory {
             int depth,
             boolean diverge,
             boolean converge) {
-        List<TConn> chain = buildChainFrom(new ArrayList<>(), current, event2Tree, depth);
+        List<TConn> chain = buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), current, event2Tree, depth);
         return new Timeline(diverge ? AFTER : SOMETIME_AFTER, chain, diverge, converge);
     }
 
     // TODO sometime...
     // TODO detect cycles?
-    private List<TConn> buildChainFrom(
+    private List<TConn> buildChainOnlyUsingGivenEventsFrom(
             List<TConn> chain,
             OWLNamedIndividual current,
             Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree,
@@ -129,28 +124,33 @@ public class EventFactory {
 
         if (treeNode.childCount == 1) {
             logger.info("Single path in chain: {}", current);
-            return buildChainFrom(chain, treeNode.children.get(0).value.get(0), event2Tree, depth);
+            return buildChainOnlyUsingGivenEventsFrom(chain, treeNode.children.get(0).value.get(0), event2Tree, depth);
         }
 
-        // TODO any convergence has to be detected on the timelines
-        // see Battle_of_Yavin
         logger.info("Divergent path in chain: {}", current);
-        List<Timeline> divergentTimelines  = treeNode.children.stream()
-                .map(t -> buildTimelineFrom(t.value.get(0), event2Tree, depth, true, false))
+        return buildParallel(chain, treeNode, event2Tree, depth);
+    }
+
+    // TODO any convergence has to be detected on the timelines
+    // see Battle_of_Yavin
+    public List<TConn> buildParallel(List<TConn> chain, Tree<OWLNamedIndividual> treeNode, Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree, int depth) {
+
+        // TODO make chain immutable - return copy
+        List<List<TConn>> divergentChains = treeNode.children.stream()
+                .map(t -> buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), t.value.get(0), event2Tree, depth))
                 .toList();
 
-        chain.add(new TConn(divergentTimelines, AFTER));
-
+            buildConverging(chain, divergentChains);
         return chain;
     }
 
-    private List<TConn> buildChainFrom(ArrayList<TConn> chain, Tree<OWLNamedIndividual> treeNode, int depth) {
+    private List<TConn> buildChainFrom(List<TConn> chain, Tree<OWLNamedIndividual> treeNode, int depth) {
 
         OWLNamedIndividual current = treeNode.value.get(0);
 
         chain.add(new TConn(buildNode(current, depth), AFTER));
 
-        if (treeNode.children.size() == 0) {
+        if (treeNode.children.isEmpty()) {
             logger.info("Last node in chain: {}", current);
             return chain;
         }
@@ -163,7 +163,7 @@ public class EventFactory {
         // TODO any convergence has to be detected on the timelines
         // see Battle_of_Yavin
         logger.info("Divergent path in chain: {}", current);
-        List<Timeline> divergentTimelines  = treeNode.children.stream()
+        List<Timeline> divergentTimelines = treeNode.children.stream()
                 .map(t -> buildTimelineFor(t, depth, true, false))
                 .toList();
 
@@ -171,7 +171,6 @@ public class EventFactory {
 
         return chain;
     }
-
 
     private List<Timeline> buildParallel(
             Set<OWLNamedIndividual> roots,
@@ -189,8 +188,8 @@ public class EventFactory {
     }
 
     private boolean isChildIn(OWLNamedIndividual event, Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree) {
-        for (Tree<OWLNamedIndividual> parent: event2Tree.values()) {
-            for (Tree<OWLNamedIndividual> child: parent.children) {
+        for (Tree<OWLNamedIndividual> parent : event2Tree.values()) {
+            for (Tree<OWLNamedIndividual> child : parent.children) {
                 if (child.value.contains(event)) {
                     return true;
                 }
@@ -202,67 +201,4 @@ public class EventFactory {
     private String getLabel(OWLNamedIndividual event) {
         return sfp.getShortForm(event);
     }
-
-//        Optional<Integer> year = getInteger(event, yearProp);
-//        Optional<Integer> start = getInteger(event, startProp);
-//        List<TParent> after = getRelationship(event, afterProp, depth);
-//        List<String> participants = getParticipants(event, participantProp);
-
-////        List<TParent> children = depth > 0 ? getChildren(event, depth - 1) : Collections.emptyList();
-//        TParent e = null;//new TParent(label, new Timeline(null, children);//, start, year, after, participants, children);
-//        cache.put(event, e);
-//    }
-
-//
-//    private List<TParent> getRelationship(
-//            OWLNamedIndividual event,
-//            OWLObjectProperty prop,
-//            int depth) {
-//        return getRelationships(event, prop)
-//                .map(obj -> buildEvent(obj, depth))
-//                .toList();
-//    }
-//
-//    private List<String> getParticipants(
-//            OWLNamedIndividual event,
-//            OWLObjectProperty prop) {
-//        return getRelationships(event, prop)
-//                .map(this::getLabel)
-//                .toList();
-//    }
-//
-//    private Stream<OWLNamedIndividual> getRelationships(
-//            OWLNamedIndividual event,
-//            OWLObjectProperty prop) {
-//        return kit.getActiveOntology().axioms(event, Imports.INCLUDED)
-//                .filter(OWLObjectPropertyAssertionAxiom.class::isInstance)
-//                .map(OWLObjectPropertyAssertionAxiom.class::cast)
-//                .filter(ax -> propertiesService.isEquivalentOrSubproperty(ax.getProperty(), prop, kit.getActiveOntology()))
-//                .filter(ax -> ax.getSubject().equals(event))
-//                .map(HasObject::getObject)
-//                .filter(OWLNamedIndividual.class::isInstance)
-//                .map(OWLNamedIndividual.class::cast);
-//    }
-//
-//    private List<TParent> getChildren(
-//            OWLNamedIndividual event,
-//            int depth) {
-//        // TODO group by chains of "after"
-//        return duringTree.getChildren(event).children.stream()
-//                .map(child -> buildEvent(child.value.iterator().next(), depth))
-////                .sorted(Comparator.comparing(e -> e.year().orElse(e.start().orElse(Integer.MAX_VALUE))))
-//                .toList();
-//    }
-//
-//    private Optional<Integer> getInteger(
-//            OWLNamedIndividual event,
-//            OWLDataProperty prop) {
-//        return kit.getActiveOntology().importsClosure()
-//                .flatMap(ont -> ont.dataPropertyAssertionAxioms(event))
-//                .filter(ax -> ax.getProperty().equals(prop))
-//                .map(OWLPropertyAssertionAxiom::getObject)
-//                .filter(OWLLiteral::isInteger)
-//                .map(lit -> Integer.parseInt(lit.getLiteral()))
-//                .findFirst();
-//    }
 }

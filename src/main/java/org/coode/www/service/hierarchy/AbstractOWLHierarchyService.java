@@ -18,6 +18,10 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
 
     private final Comparator<? super Tree<T>> comparator;
 
+    public AbstractOWLHierarchyService() {
+        this.comparator = null;
+    }
+
     public AbstractOWLHierarchyService(final Comparator<? super Tree<T>> comparator) {
         this.comparator = comparator;
     }
@@ -41,7 +45,9 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
                 subs.add(new Tree<>(subNode, getChildCount(subNode)));
             }
         }
-        subs.sort(comparator);
+        if(comparator != null) {
+            subs.sort(comparator);
+        }
         return new Tree<>(equivs(base), subs);
     }
 
@@ -63,7 +69,9 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
                 subs.add(new Tree<>(subNode, getChildCount(subNode))); // just the size
             }
         }
-        subs.sort(comparator);
+        if(comparator != null) {
+            subs.sort(comparator);
+        }
         return new Tree<>(current, subs);
     }
 
@@ -93,7 +101,9 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
                 subs.add(buildTreeFrom(subNode.getRepresentativeElement(), alreadyVisited));
             }
         }
-        subs.sort(comparator);
+        if(comparator != null) {
+            subs.sort(comparator);
+        }
         return new Tree<>(current, subs);
     }
 
