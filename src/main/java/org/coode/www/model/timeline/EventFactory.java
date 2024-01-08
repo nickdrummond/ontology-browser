@@ -174,7 +174,13 @@ public class EventFactory {
             Set<OWLNamedIndividual> roots,
             Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree,
             int depth) {
-        return roots.stream().map(root -> buildTimelineFrom(root, event2Tree, depth, false, false)).toList();
+
+        // TODO sort by longest first
+
+        return roots.stream()
+                .map(root -> buildTimelineFrom(root, event2Tree, depth, false, false))
+                .sorted(Comparator.comparing(timeline -> -timeline.events().size()))
+                .toList();
     }
 
     private Set<OWLNamedIndividual> getRoots(Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree) {
