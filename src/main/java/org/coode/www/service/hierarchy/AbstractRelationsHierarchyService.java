@@ -3,11 +3,16 @@ package org.coode.www.service.hierarchy;
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> extends AbstractOWLHierarchyService<OWLNamedIndividual> {
 
     protected T property;
+
+    protected List<T> properties;
 
     protected boolean inverse;
 
@@ -27,11 +32,18 @@ public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> e
                                final OWLOntology ont,
                                final boolean inverse) {
         this.property = property;
+        this.properties = new ArrayList<>();
+        this.properties.add(property);
         this.ont = ont;
         this.inverse = inverse;
         // dummy root - pun the property to avoid the generic tree
         this.root = ont.getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(property.getIRI());
 
+        return this;
+    }
+
+    public AbstractRelationsHierarchyService<T> withMoreProperties(final T... properties) {
+        this.properties.addAll(Arrays.stream(properties).toList());
         return this;
     }
 

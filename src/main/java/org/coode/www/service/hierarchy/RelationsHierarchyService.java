@@ -78,17 +78,19 @@ public class RelationsHierarchyService extends AbstractRelationsHierarchyService
 
     public void buildIfNecessary() {
         if (roots == null) {
-            for (OWLAxiom ax : ont.getReferencingAxioms(property, Imports.INCLUDED)) {
-                ax.accept(new OWLAxiomVisitor() {
-                    @Override
-                    public void visit(OWLObjectPropertyAssertionAxiom axiom) {
-                        if (inverse) {
-                            insert(axiom.getObject().asOWLNamedIndividual(), axiom.getSubject().asOWLNamedIndividual());
-                        } else {
-                            insert(axiom.getSubject().asOWLNamedIndividual(), axiom.getObject().asOWLNamedIndividual());
+            for (OWLObjectProperty p : properties) {
+                for (OWLAxiom ax : ont.getReferencingAxioms(p, Imports.INCLUDED)) {
+                    ax.accept(new OWLAxiomVisitor() {
+                        @Override
+                        public void visit(OWLObjectPropertyAssertionAxiom axiom) {
+                            if (inverse) {
+                                insert(axiom.getObject().asOWLNamedIndividual(), axiom.getSubject().asOWLNamedIndividual());
+                            } else {
+                                insert(axiom.getSubject().asOWLNamedIndividual(), axiom.getObject().asOWLNamedIndividual());
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
 
             roots = new ArrayList<>(nodes.keySet());

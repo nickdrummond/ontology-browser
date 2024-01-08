@@ -1,10 +1,10 @@
 package org.coode.www.model.timeline;
 
+import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class EventUtils {
 
@@ -143,15 +143,17 @@ public class EventUtils {
 //                .toList();
 //    }
 //
-//    private Optional<Integer> getInteger(
-//            OWLNamedIndividual event,
-//            OWLDataProperty prop) {
-//        return kit.getActiveOntology().importsClosure()
-//                .flatMap(ont -> ont.dataPropertyAssertionAxioms(event))
-//                .filter(ax -> ax.getProperty().equals(prop))
-//                .map(OWLPropertyAssertionAxiom::getObject)
-//                .filter(OWLLiteral::isInteger)
-//                .map(lit -> Integer.parseInt(lit.getLiteral()))
-//                .findFirst();
-//    }
+
+    public static Optional<Integer> getInteger(
+            OWLNamedIndividual event,
+            OWLDataProperty prop,
+            OWLOntology ont) {
+        return ont.importsClosure()
+                .flatMap(o -> o.dataPropertyAssertionAxioms(event))
+                .filter(ax -> ax.getProperty().equals(prop))
+                .map(OWLPropertyAssertionAxiom::getObject)
+                .filter(OWLLiteral::isInteger)
+                .map(lit -> Integer.parseInt(lit.getLiteral()))
+                .findFirst();
+    }
 }

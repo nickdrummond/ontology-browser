@@ -131,8 +131,6 @@ public class EventFactory {
         return buildParallel(chain, treeNode, event2Tree, depth);
     }
 
-    // TODO any convergence has to be detected on the timelines
-    // see Battle_of_Yavin
     public List<TConn> buildParallel(List<TConn> chain, Tree<OWLNamedIndividual> treeNode, Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree, int depth) {
 
         // TODO make chain immutable - return copy
@@ -176,7 +174,6 @@ public class EventFactory {
             Set<OWLNamedIndividual> roots,
             Map<OWLNamedIndividual, Tree<OWLNamedIndividual>> event2Tree,
             int depth) {
-        // TODO convergence detection
         return roots.stream().map(root -> buildTimelineFrom(root, event2Tree, depth, false, false)).toList();
     }
 

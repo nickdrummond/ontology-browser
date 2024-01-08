@@ -1,17 +1,15 @@
 package org.coode.www.controller;
 
-import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.model.Tree;
 import org.coode.www.model.timeline.*;
 import org.coode.www.service.OWLObjectPropertiesService;
 import org.coode.www.service.OWLOntologiesService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
-import org.coode.www.service.hierarchy.PropComparator;
 import org.coode.www.service.hierarchy.RelationsHierarchyService;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.util.SimpleShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -57,20 +56,30 @@ public class TimelineController extends ApplicationController {
 
         OWLObjectProperty duringProp = checker.getOWLObjectProperty("during");
         OWLObjectProperty afterProp = checker.getOWLObjectProperty("after");
-// TODO        OWLObjectProperty sometimeAfterProp = checker.getOWLObjectProperty("sometimeAfter");
-
-        // TODO revisit if this comparator useful??
-        Comparator<Tree<OWLNamedIndividual>> comparator = new PropComparator(afterProp, ont);
+        OWLObjectProperty sometimeAfterProp = checker.getOWLObjectProperty("sometimeAfter");
+        OWLDataProperty year = checker.getOWLDataProperty("year");
 
         AbstractRelationsHierarchyService<OWLObjectProperty> duringTree = propertiesService
-                .getRelationsHierarchy(comparator)
+                .getRelationsHierarchy(null)
                 .withProperties(duringProp, ont, true);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> afterTree = propertiesService
-                .getRelationsHierarchy(comparator)
-                .withProperties(afterProp, ont, true);
+                .getRelationsHierarchy(null)
+                .withProperties(afterProp, ont, true)
+                .withMoreProperties(sometimeAfterProp);
 
-        EventFactory fac = new EventFactory(duringTree, afterTree, kit.getShortFormProvider());
+        ShortFormProvider sfp = entity -> {
+            String s = kit.getShortFormProvider().getShortForm(entity);
+            if (entity instanceof OWLNamedIndividual ind) {
+                Optional<Integer> yearVal = EventUtils.getInteger(ind, year, ont);
+                if (yearVal.isPresent()) {
+                    s = s + " (" + yearVal.get() + ")";
+                }
+            }
+            return s;
+        };
+
+        EventFactory fac = new EventFactory(duringTree, afterTree, sfp);
 
         model.addAttribute("title", "Timeline");
         model.addAttribute("root", fac.buildTimeline(target, depth));
