@@ -19,22 +19,27 @@ public class OWLDataPropertyHierarchyService extends AbstractOWLHierarchyService
     }
 
     @Override
-    protected Node<OWLDataProperty> topNode() {
-        return reasoner.getTopDataPropertyNode();
+    protected boolean isBottomNode(Set<OWLDataProperty> subNode) {
+        return false;
     }
 
     @Override
-    protected Set<Node<OWLDataProperty>> subs(OWLDataProperty prop) {
-        return reasoner.getSubDataProperties(prop, true).getNodes();
+    protected Set<OWLDataProperty> topNode() {
+        return reasoner.getTopDataPropertyNode().getEntities();
     }
 
     @Override
-    protected Set<Node<OWLDataProperty>> ancestors(OWLDataProperty prop) {
-        return reasoner.getSuperDataProperties(prop, false).getNodes();
+    protected Set<Set<OWLDataProperty>> subs(OWLDataProperty prop) {
+        return nodesToSet(reasoner.getSubDataProperties(prop, true).getNodes());
     }
 
     @Override
-    protected Node<OWLDataProperty> equivs(OWLDataProperty prop) {
-        return reasoner.getEquivalentDataProperties(prop);
+    protected Set<Set<OWLDataProperty>> ancestors(OWLDataProperty prop) {
+        return nodesToSet(reasoner.getSuperDataProperties(prop, false).getNodes());
+    }
+
+    @Override
+    protected Set<OWLDataProperty> equivs(OWLDataProperty prop) {
+        return reasoner.getEquivalentDataProperties(prop).getEntities();
     }
 }

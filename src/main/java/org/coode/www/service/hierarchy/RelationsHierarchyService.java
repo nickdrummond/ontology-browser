@@ -3,8 +3,6 @@ package org.coode.www.service.hierarchy;
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.semanticweb.owlapi.reasoner.Node;
-import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,67 +11,76 @@ public class RelationsHierarchyService extends AbstractRelationsHierarchyService
 
     private List<OWLNamedIndividual> roots;
 
-    private List<OWLNamedIndividual> nonRoots = new ArrayList<>();
+    private final List<OWLNamedIndividual> nonRoots = new ArrayList<>();
 
-    private LinkedHashMap<OWLNamedIndividual, List<OWLNamedIndividual>> nodes = new LinkedHashMap<>();
+    private final LinkedHashMap<OWLNamedIndividual, List<Relation<OWLObjectProperty>>> nodes = new LinkedHashMap<>();
 
-    private LinkedHashMap<OWLNamedIndividual, List<OWLNamedIndividual>> reverseNodes = new LinkedHashMap<>();
+    private final LinkedHashMap<OWLNamedIndividual, List<Relation<OWLObjectProperty>>> reverseNodes = new LinkedHashMap<>();
 
     public RelationsHierarchyService() {
         super();
     }
 
-    public RelationsHierarchyService(final Comparator<? super Tree<OWLNamedIndividual>> comparator) {
+    public RelationsHierarchyService(final Comparator<? super Tree<Relation<OWLObjectProperty>>> comparator) {
         super(comparator);
     }
 
-    public OWLObjectProperty getProperty() {
-        return property;
-    }
-
-    public boolean isInverse() {
-        return inverse;
+    @Override
+    protected Set<Relation<OWLObjectProperty>> topNode() {
+        return Set.of(new Relation<>(property, root));
     }
 
     @Override
-    protected Node<OWLNamedIndividual> topNode() {
-        return new OWLNamedIndividualNode(root);
-    }
-
-    @Override
-    protected Set<Node<OWLNamedIndividual>> subs(OWLNamedIndividual ind) {
+    protected Set<Set<Relation<OWLObjectProperty>>> subs(Relation<OWLObjectProperty> rel) {
         buildIfNecessary();
 
-        if (ind.equals(root)) return wrap(roots);
+        // fake roots
+        if (rel.individual().equals(root)) return wrap(rootsAsRelations());
 
-        return wrap(nodes.get(ind));
+        return wrap(nodes.get(rel.individual()));
+    }
+
+    // TODO should cache
+    private List<Relation<OWLObjectProperty>> rootsAsRelations() {
+        return roots.stream().map(r -> new Relation<>(property, r)).toList();
     }
 
     @Override
-    protected Set<Node<OWLNamedIndividual>> ancestors(OWLNamedIndividual ind) {
-        if (ind.equals(root)) return Collections.emptySet();
+    protected Set<Set<Relation<OWLObjectProperty>>> ancestors(Relation<OWLObjectProperty> rel) {
+        if (rel.individual().equals(root)) return Collections.emptySet();
 
         buildIfNecessary();
 
-        if (roots.contains(ind)) return Collections.singleton(new OWLNamedIndividualNode(root));
+        if (roots.contains(rel.individual())) return wrap(rootsAsRelations());
 
-        Set<Node<OWLNamedIndividual>> ancestors = new HashSet<>();
-        for (OWLNamedIndividual parent : reverseNodes.get(ind)) {
-            ancestors.add(new OWLNamedIndividualNode(parent));
+        Set<Set<Relation<OWLObjectProperty>>> ancestors = new HashSet<>();
+        for (Relation<OWLObjectProperty> parent : reverseNodes.get(rel.individual())) {
+            ancestors.add(Set.of(parent));
             ancestors.addAll(ancestors(parent));
         }
         return ancestors;
     }
 
     @Override
-    protected Node<OWLNamedIndividual> equivs(OWLNamedIndividual ind) {
+    protected Set<Relation<OWLObjectProperty>> equivs(Relation<OWLObjectProperty> ind) {
         buildIfNecessary();
-        return new OWLNamedIndividualNode(ind); // TODO
+        return Set.of(ind);
+        // TODO
     }
 
-    public boolean treeContains(OWLNamedIndividual ind) {
+    public boolean treeContains(Relation<OWLObjectProperty> rel) {
         buildIfNecessary();
-        return nodes.containsKey(ind) || reverseNodes.containsKey(ind);
+        return nodes.containsKey(rel.individual()) || reverseNodes.containsKey(rel.individual());
+    }
+
+    @Override
+    protected boolean isBottomNode(Set<Relation<OWLObjectProperty>> subNode) {
+        return getRepresentativeElement(subNode).individual().equals(root);
+    }
+
+    @Override
+    protected Relation<OWLObjectProperty> getRepresentativeElement(Set<Relation<OWLObjectProperty>> node) {
+        return node.iterator().next();
     }
 
     public void buildIfNecessary() {
@@ -84,9 +91,10 @@ public class RelationsHierarchyService extends AbstractRelationsHierarchyService
                         @Override
                         public void visit(OWLObjectPropertyAssertionAxiom axiom) {
                             if (inverse) {
-                                insert(axiom.getObject().asOWLNamedIndividual(), axiom.getSubject().asOWLNamedIndividual());
+                                // TODO should this be inv(p)?
+                                insert(p, axiom.getObject().asOWLNamedIndividual(), axiom.getSubject().asOWLNamedIndividual());
                             } else {
-                                insert(axiom.getSubject().asOWLNamedIndividual(), axiom.getObject().asOWLNamedIndividual());
+                                insert(p, axiom.getSubject().asOWLNamedIndividual(), axiom.getObject().asOWLNamedIndividual());
                             }
                         }
                     });
@@ -98,25 +106,21 @@ public class RelationsHierarchyService extends AbstractRelationsHierarchyService
         }
     }
 
-    private void insert(OWLNamedIndividual parent, OWLNamedIndividual child) {
-        insert(parent, child, nodes);
-        insert(child, parent, reverseNodes);
+    private void insert(OWLObjectProperty prop, OWLNamedIndividual parent, OWLNamedIndividual child) {
+        insert(prop, parent, child, nodes);
+        insert(prop, child, parent, reverseNodes);
         nonRoots.add(child); // so we can determine roots
     }
 
-    private void insert(OWLNamedIndividual parent, OWLNamedIndividual child, Map<OWLNamedIndividual, List<OWLNamedIndividual>> map) {
-        List<OWLNamedIndividual> children = map.get(parent);
-        if (children == null) {
-            children = new ArrayList<>();
-            map.put(parent, children);
-        }
-        children.add(child);
+    private void insert(OWLObjectProperty prop, OWLNamedIndividual parent, OWLNamedIndividual child, Map<OWLNamedIndividual, List<Relation<OWLObjectProperty>>> map) {
+        List<Relation<OWLObjectProperty>> children = map.computeIfAbsent(parent, k -> new ArrayList<>());
+        children.add(new Relation<>(prop, child));
     }
 
-    private Set<Node<OWLNamedIndividual>> wrap(List<OWLNamedIndividual> inds) {
-        if (inds == null) {
+    private Set<Set<Relation<OWLObjectProperty>>> wrap(List<Relation<OWLObjectProperty>> relations) {
+        if (relations == null) {
             return Collections.emptySet();
         }
-        return inds.stream().map(OWLNamedIndividualNode::new).collect(Collectors.toSet());
+        return relations.stream().map(Set::of).collect(Collectors.toSet());
     }
 }

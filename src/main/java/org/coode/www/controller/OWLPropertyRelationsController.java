@@ -12,6 +12,7 @@ import org.coode.www.service.OWLObjectPropertiesService;
 import org.coode.www.service.ReasonerFactoryService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.coode.www.service.hierarchy.OWLObjectPropertyHierarchyService;
+import org.coode.www.service.hierarchy.Relation;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -155,7 +156,7 @@ public class OWLPropertyRelationsController {
         URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
                 "/relations/" + PATH, property).withQuery(request.getQueryString());
 
-        model.addAttribute("t", relationsHierarchyService.getChildren(individual));
+        model.addAttribute("t", relationsHierarchyService.getChildren(new Relation<>(property, individual)));
         model.addAttribute("mos", new OWLHTMLRenderer(kit).withURLScheme(urlScheme));
 
         return BASE_TREE;

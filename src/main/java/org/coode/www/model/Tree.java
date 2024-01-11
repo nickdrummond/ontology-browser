@@ -1,15 +1,12 @@
 package org.coode.www.model;
 
 import com.google.common.collect.Lists;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class Tree<T extends OWLObject> {
+public class Tree<T> {
     public final List<T> value;
     public final int childCount;
     public final List<Tree<T>> children;
@@ -55,12 +52,5 @@ public class Tree<T extends OWLObject> {
             sb.append(indented(child, indent+1));
         }
         return sb.toString();
-    }
-
-    public Set<T> getConvergences() {
-        Set<T> visited = new HashSet<>();
-        Set<T> converging = new HashSet<>();
-
-        return null;
     }
 }

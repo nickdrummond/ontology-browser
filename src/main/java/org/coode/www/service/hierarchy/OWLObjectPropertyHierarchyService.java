@@ -5,7 +5,6 @@ import org.semanticweb.owlapi.model.IsAnonymous;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.impl.OWLObjectPropertyNode;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -22,12 +21,17 @@ public class OWLObjectPropertyHierarchyService extends AbstractOWLHierarchyServi
     }
 
     @Override
-    protected Node<OWLObjectPropertyExpression> topNode() {
-        return reasoner.getTopObjectPropertyNode();
+    protected boolean isBottomNode(Set<OWLObjectPropertyExpression> subNode) {
+        return reasoner.getBottomObjectPropertyNode().getEntities().equals(subNode);
     }
 
     @Override
-    protected Set<Node<OWLObjectPropertyExpression>> subs(OWLObjectPropertyExpression prop) {
+    protected Set<OWLObjectPropertyExpression> topNode() {
+        return reasoner.getTopObjectPropertyNode().getEntities();
+    }
+
+    @Override
+    protected Set<Set<OWLObjectPropertyExpression>> subs(OWLObjectPropertyExpression prop) {
         return reasoner.getSubObjectProperties(prop, true).nodes()
                 .filter(node -> node.entities().anyMatch(IsAnonymous::isNamed))
                 .map(this::stripNode)
@@ -35,19 +39,19 @@ public class OWLObjectPropertyHierarchyService extends AbstractOWLHierarchyServi
     }
 
     @Override
-    protected Set<Node<OWLObjectPropertyExpression>> ancestors(OWLObjectPropertyExpression prop) {
+    protected Set<Set<OWLObjectPropertyExpression>> ancestors(OWLObjectPropertyExpression prop) {
         return reasoner.getSuperObjectProperties(prop, false).nodes()
                 .map(this::stripNode)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    protected Node<OWLObjectPropertyExpression> equivs(OWLObjectPropertyExpression prop) {
+    protected Set<OWLObjectPropertyExpression> equivs(OWLObjectPropertyExpression prop) {
         return stripNode(reasoner.getEquivalentObjectProperties(prop));
     }
 
     // Remove inverseOf properties from equivalents
-    private OWLObjectPropertyNode stripNode(Node<OWLObjectPropertyExpression> n) {
-        return new OWLObjectPropertyNode(n.entities().filter(IsAnonymous::isNamed));
+    private Set<OWLObjectPropertyExpression> stripNode(Node<OWLObjectPropertyExpression> n) {
+        return n.entities().filter(IsAnonymous::isNamed).collect(Collectors.toSet());
     }
 }

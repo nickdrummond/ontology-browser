@@ -15,7 +15,7 @@ import java.util.Optional;
  * Cannot think of a use case for this ATM but it reflects the functionality
  * of PropComparator which does the same for ObjectProperty.
  */
-public class AnnotationPropComparator implements Comparator<Tree<OWLNamedIndividual>> {
+public class AnnotationPropComparator implements Comparator<Tree<Relation<OWLAnnotationProperty>>> {
 
     private final OWLOntology ont;
     private final List<OWLIndividual> order;
@@ -56,9 +56,9 @@ public class AnnotationPropComparator implements Comparator<Tree<OWLNamedIndivid
     }
 
     @Override
-    public int compare(Tree<OWLNamedIndividual> o1, Tree<OWLNamedIndividual> o2) {
-        int index1 = order.indexOf(o1.value.iterator().next());
-        int index2 = order.indexOf(o2.value.iterator().next());
+    public int compare(Tree<Relation<OWLAnnotationProperty>> o1, Tree<Relation<OWLAnnotationProperty>> o2) {
+        int index1 = order.indexOf(o1.value.iterator().next().individual());
+        int index2 = order.indexOf(o2.value.iterator().next().individual());
         if (index1 == index2) return 0;
         return (index1 < index2) ? -1 : 1;
     }

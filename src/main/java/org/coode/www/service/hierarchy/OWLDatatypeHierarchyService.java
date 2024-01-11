@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class OWLDatatypeHierarchyService extends AbstractOWLHierarchyService<OWLDatatype> {
+public class OWLDatatypeHierarchyService extends AbstractHierarchyService<OWLDatatype> {
 
     private final OWLDatatypeNode topNode;
     private final Set<OWLOntology> ontologies;
@@ -28,31 +28,41 @@ public class OWLDatatypeHierarchyService extends AbstractOWLHierarchyService<OWL
     }
 
     @Override
-    protected Node<OWLDatatype> topNode() {
-        return topNode;
+    protected boolean isBottomNode(Set<OWLDatatype> subNode) {
+        return false;
     }
 
     @Override
-    protected Set<Node<OWLDatatype>> subs(OWLDatatype cls) {
-        Set<Node<OWLDatatype>> subs = new HashSet<>();
+    protected OWLDatatype getRepresentativeElement(Set<OWLDatatype> node) {
+        return node.iterator().next();
+    }
+
+    @Override
+    protected Set<OWLDatatype> topNode() {
+        return topNode.getEntities();
+    }
+
+    @Override
+    protected Set<Set<OWLDatatype>> subs(OWLDatatype cls) {
+        Set<Set<OWLDatatype>> subs = new HashSet<>();
         if (topNode.contains(cls)){
             for (OWLOntology ont : ontologies){
-                subs.addAll(ont.getDatatypesInSignature().stream().map(OWLDatatypeNode::new).collect(Collectors.toSet()));
+                subs.addAll(ont.getDatatypesInSignature().stream().map(Set::of).collect(Collectors.toSet()));
             }
         }
         return subs;
     }
 
     @Override
-    protected Set<Node<OWLDatatype>> ancestors(OWLDatatype cls) {
+    protected Set<Set<OWLDatatype>> ancestors(OWLDatatype cls) {
         if (!topNode.contains(cls)){
-            return Sets.<Node<OWLDatatype>>newHashSet(topNode);
+            return Set.of(topNode.getEntities());
         }
         return Collections.emptySet();
     }
 
     @Override
-    protected Node<OWLDatatype> equivs(OWLDatatype cls) {
-        return new OWLDatatypeNode(cls);
+    protected Set<OWLDatatype> equivs(OWLDatatype cls) {
+        return Set.of(cls);
     }
 }

@@ -8,6 +8,7 @@ import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.*;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
+import org.coode.www.service.hierarchy.Relation;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,7 +62,7 @@ public class CommonRelations<T extends OWLProperty> {
 
         T orderByProperty = (orderBy != null) ? propertiesService.getPropertyFor(orderBy, kit) : null;
 
-        Comparator<Tree<OWLNamedIndividual>> comparator = propertiesService.getComparator(orderByProperty, ont);
+        Comparator<Tree<Relation<T>>> comparator = propertiesService.getComparator(orderByProperty, ont);
 
         return propertiesService
                 .getRelationsHierarchy(comparator)
@@ -87,8 +88,8 @@ public class CommonRelations<T extends OWLProperty> {
             activeObjects.add(individual);
         }
 
-        Tree<OWLNamedIndividual> relationsTree = (individual != null) ?
-                relationsHierarchyService.getPrunedTree(individual) :
+        Tree<Relation<T>> relationsTree = (individual != null) ?
+                relationsHierarchyService.getPrunedTree(new Relation<>(relationsHierarchyService.getProperty(), individual)) :
                 relationsHierarchyService.getTree();
 
         model.addAttribute("type", "Relations on");

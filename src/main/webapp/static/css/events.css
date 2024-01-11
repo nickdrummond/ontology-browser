@@ -28,6 +28,11 @@ div.events {
     border-top: 2px dashed #4189a0;
 }
 
+/** TODO remove when done **/
+.events .prop.wrong {
+    border-top: 2px dashed red;
+}
+
 .events .dot {
     height: 2rem;
     width: 2rem;

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public class PropComparator implements Comparator<Tree<OWLNamedIndividual>> {
+public class PropComparator implements Comparator<Tree<Relation<OWLObjectProperty>>> {
 
     private List<OWLIndividual> order = null;
 
@@ -30,9 +30,9 @@ public class PropComparator implements Comparator<Tree<OWLNamedIndividual>> {
     }
 
     @Override
-    public int compare(Tree<OWLNamedIndividual> o1, Tree<OWLNamedIndividual> o2) {
-        int index1 = order.indexOf(o1.value.iterator().next());
-        int index2 = order.indexOf(o2.value.iterator().next());
+    public int compare(Tree<Relation<OWLObjectProperty>> o1, Tree<Relation<OWLObjectProperty>> o2) {
+        int index1 = order.indexOf(o1.value.iterator().next().individual());
+        int index2 = order.indexOf(o2.value.iterator().next().individual());
         if (index1 == index2) return 0;
         return (index1 < index2) ? -1 : 1;
     }

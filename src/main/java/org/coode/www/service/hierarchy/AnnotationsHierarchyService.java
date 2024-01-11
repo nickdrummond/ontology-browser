@@ -3,8 +3,6 @@ package org.coode.www.service.hierarchy;
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.semanticweb.owlapi.reasoner.Node;
-import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,11 +13,15 @@ public class AnnotationsHierarchyService extends AbstractRelationsHierarchyServi
 
     private List<OWLNamedIndividual> nonRoots = new ArrayList<>();
 
-    private LinkedHashMap<OWLNamedIndividual, List<OWLNamedIndividual>> nodes = new LinkedHashMap<>();
+    private LinkedHashMap<OWLNamedIndividual, List<Relation<OWLAnnotationProperty>>> nodes = new LinkedHashMap<>();
 
-    private LinkedHashMap<OWLNamedIndividual, List<OWLNamedIndividual>> reverseNodes = new LinkedHashMap<>();
+    private LinkedHashMap<OWLNamedIndividual, List<Relation<OWLAnnotationProperty>>> reverseNodes = new LinkedHashMap<>();
 
-    public AnnotationsHierarchyService(final Comparator<? super Tree<OWLNamedIndividual>> comparator) {
+    public AnnotationsHierarchyService() {
+        super();
+    }
+
+    public AnnotationsHierarchyService(final Comparator<? super Tree<Relation<OWLAnnotationProperty>>> comparator) {
         super(comparator);
     }
 
@@ -32,44 +34,61 @@ public class AnnotationsHierarchyService extends AbstractRelationsHierarchyServi
     }
 
     @Override
-    protected Node<OWLNamedIndividual> topNode() {
-        return new OWLNamedIndividualNode(root);
+    protected Set<Relation<OWLAnnotationProperty>> topNode() {
+        return Set.of(new Relation<>(property, root));
     }
 
     @Override
-    protected Set<Node<OWLNamedIndividual>> subs(OWLNamedIndividual ind) {
+    protected Set<Set<Relation<OWLAnnotationProperty>>> subs(Relation<OWLAnnotationProperty> rel) {
         buildIfNecessary();
 
-        if (ind.equals(root)) return wrap(roots);
+        // fake roots
+        if (rel.individual().equals(root)) return wrap(rootsAsRelations());
 
-        return wrap(nodes.get(ind));
+        return wrap(nodes.get(rel.individual()));
+    }
+
+    // TODO should cache
+    private List<Relation<OWLAnnotationProperty>> rootsAsRelations() {
+        return roots.stream().map(r -> new Relation<>(property, r)).toList();
     }
 
     @Override
-    protected Set<Node<OWLNamedIndividual>> ancestors(OWLNamedIndividual ind) {
-        if (ind.equals(root)) return Collections.emptySet();
+    protected Set<Set<Relation<OWLAnnotationProperty>>> ancestors(Relation<OWLAnnotationProperty> rel) {
+        if (rel.individual().equals(root)) return Collections.emptySet();
 
         buildIfNecessary();
 
-        if (roots.contains(ind)) return Collections.singleton(new OWLNamedIndividualNode(root));
+        if (roots.contains(rel.individual())) return wrap(rootsAsRelations());
 
-        Set<Node<OWLNamedIndividual>> ancestors = new HashSet<>();
-        for (OWLNamedIndividual parent : reverseNodes.get(ind)) {
-            ancestors.add(new OWLNamedIndividualNode(parent));
+        Set<Set<Relation<OWLAnnotationProperty>>> ancestors = new HashSet<>();
+        for (Relation<OWLAnnotationProperty> parent : reverseNodes.get(rel.individual())) {
+            ancestors.add(Set.of(parent));
             ancestors.addAll(ancestors(parent));
         }
         return ancestors;
     }
 
     @Override
-    protected Node<OWLNamedIndividual> equivs(OWLNamedIndividual ind) {
+    protected Set<Relation<OWLAnnotationProperty>> equivs(Relation<OWLAnnotationProperty> ind) {
         buildIfNecessary();
-        return new OWLNamedIndividualNode(ind); // TODO
+        return Set.of(ind);
+        // TODO
     }
 
-    public boolean treeContains(OWLNamedIndividual ind) {
+    public boolean treeContains(Relation<OWLAnnotationProperty> rel) {
         buildIfNecessary();
-        return nodes.containsKey(ind) || reverseNodes.containsKey(ind);
+        return nodes.containsKey(rel.individual()) || reverseNodes.containsKey(rel.individual());
+    }
+
+    @Override
+    protected boolean isBottomNode(Set<Relation<OWLAnnotationProperty>> subNode) {
+        return getRepresentativeElement(subNode).individual().equals(root);
+    }
+
+    @Override
+    protected Relation<OWLAnnotationProperty> getRepresentativeElement(Set<Relation<OWLAnnotationProperty>> node) {
+        return node.iterator().next();
     }
 
     public void buildIfNecessary() {
@@ -82,10 +101,9 @@ public class AnnotationsHierarchyService extends AbstractRelationsHierarchyServi
                         Optional<OWLNamedIndividual> object = getIndividual(axiom.getValue());
                         if (subject.isPresent() && object.isPresent()){
                             if (inverse) {
-                                insert(object.get(), subject.get());
+                                insert(property, object.get(), subject.get());
                             } else {
-
-                                insert(subject.get(), object.get());
+                                insert(property, subject.get(), object.get());
                             }
                         }
                     }
@@ -110,25 +128,22 @@ public class AnnotationsHierarchyService extends AbstractRelationsHierarchyServi
         return ont.containsIndividualInSignature(iri) ? df.getOWLNamedIndividual(iri) : null;
     }
 
-    private void insert(OWLNamedIndividual parent, OWLNamedIndividual child) {
-        insert(parent, child, nodes);
-        insert(child, parent, reverseNodes);
+    private void insert(OWLAnnotationProperty prop, OWLNamedIndividual parent, OWLNamedIndividual child) {
+        insert(prop, parent, child, nodes);
+        insert(prop, child, parent, reverseNodes);
         nonRoots.add(child); // so we can determine roots
     }
 
-    private void insert(OWLNamedIndividual parent, OWLNamedIndividual child, Map<OWLNamedIndividual, List<OWLNamedIndividual>> map) {
-        List<OWLNamedIndividual> children = map.get(parent);
-        if (children == null) {
-            children = new ArrayList<>();
-            map.put(parent, children);
-        }
-        children.add(child);
+    private void insert(OWLAnnotationProperty prop, OWLNamedIndividual parent,
+                        OWLNamedIndividual child, Map<OWLNamedIndividual, List<Relation<OWLAnnotationProperty>>> map) {
+        List<Relation<OWLAnnotationProperty>> children = map.computeIfAbsent(parent, k -> new ArrayList<>());
+        children.add(new Relation<>(prop, child));
     }
 
-    private Set<Node<OWLNamedIndividual>> wrap(List<OWLNamedIndividual> inds) {
-        if (inds == null) {
+    private Set<Set<Relation<OWLAnnotationProperty>>> wrap(List<Relation<OWLAnnotationProperty>> relations) {
+        if (relations == null) {
             return Collections.emptySet();
         }
-        return inds.stream().map(OWLNamedIndividualNode::new).collect(Collectors.toSet());
+        return relations.stream().map(Set::of).collect(Collectors.toSet());
     }
 }

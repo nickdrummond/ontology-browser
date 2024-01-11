@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> extends AbstractOWLHierarchyService<OWLNamedIndividual> {
+public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> extends AbstractHierarchyService<Relation<T>> {
 
     protected T property;
 
@@ -24,7 +24,7 @@ public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> e
         super();
     }
 
-    protected AbstractRelationsHierarchyService(Comparator<? super Tree<OWLNamedIndividual>> comparator) {
+    protected AbstractRelationsHierarchyService(Comparator<? super Tree<Relation<T>>> comparator) {
         super(comparator);
     }
 
@@ -53,5 +53,9 @@ public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> e
 
     public T getProperty() {
         return property;
+    }
+
+    public List<T> getProperties() {
+        return properties;
     }
 }

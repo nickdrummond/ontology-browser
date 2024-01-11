@@ -15,7 +15,7 @@ import org.semanticweb.owlapi.reasoner.impl.OWLClassNodeSet;
 
 import java.util.*;
 
-public class OWLIndividualsByTypeHierarchyService implements OWLHierarchyService<OWLEntity> {
+public class OWLIndividualsByTypeHierarchyService implements HierarchyService<OWLEntity> {
 
     private final OWLReasoner reasoner;
     private final Comparator<? super Tree<OWLEntity>> comparator;

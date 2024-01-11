@@ -2,7 +2,6 @@ package org.coode.www.service.hierarchy;
 
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import java.util.Comparator;
@@ -19,22 +18,28 @@ public class OWLClassHierarchyService extends AbstractOWLHierarchyService<OWLCla
     }
 
     @Override
-    protected Node<OWLClass> topNode() {
-        return reasoner.getTopClassNode();
+    protected boolean isBottomNode(Set<OWLClass> subNode) {
+        return reasoner.getBottomClassNode().getEntities().equals(subNode);
     }
 
     @Override
-    protected Set<Node<OWLClass>> subs(OWLClass cls) {
-        return reasoner.getSubClasses(cls, true).getNodes();
+    protected Set<OWLClass> topNode() {
+        return reasoner.getTopClassNode().getEntities();
     }
 
     @Override
-    protected Set<Node<OWLClass>> ancestors(OWLClass cls) {
-        return reasoner.getSuperClasses(cls, false).getNodes();
+    protected Set<Set<OWLClass>> subs(OWLClass cls) {
+        return nodesToSet(reasoner.getSubClasses(cls, true).getNodes());
     }
 
     @Override
-    protected Node<OWLClass> equivs(OWLClass cls) {
-        return reasoner.getEquivalentClasses(cls);
+    protected Set<Set<OWLClass>> ancestors(OWLClass cls) {
+        return nodesToSet(reasoner.getSuperClasses(cls, false).getNodes());
     }
+
+    @Override
+    protected Set<OWLClass> equivs(OWLClass cls) {
+        return reasoner.getEquivalentClasses(cls).getEntities();
+    }
+
 }

@@ -54,11 +54,11 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
     }
 
     @Override
-    public Comparator<Tree<OWLNamedIndividual>> getComparator(OWLObjectProperty orderByProperty, OWLOntology ont) {
+    public Comparator<Tree<Relation<OWLObjectProperty>>> getComparator(OWLObjectProperty orderByProperty, OWLOntology ont) {
         if (orderByProperty != null) {
             return new PropComparator(orderByProperty, ont);
         }
-        return Comparator.comparing(o -> o.value.iterator().next());
+        return Comparator.comparing(o -> o.value.iterator().next().individual());
     }
 
     @Override
@@ -69,7 +69,7 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
         return hierarchyService.getPrunedTree(property);
     }
 
-    public AbstractRelationsHierarchyService<OWLObjectProperty> getRelationsHierarchy (Comparator<Tree<OWLNamedIndividual>> comparator) {
+    public AbstractRelationsHierarchyService<OWLObjectProperty> getRelationsHierarchy (Comparator<Tree<Relation<OWLObjectProperty>>> comparator) {
         return new RelationsHierarchyService(comparator);
     }
 

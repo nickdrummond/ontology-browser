@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntology> {
+public class OWLOntologyHierarchyService implements HierarchyService<OWLOntology> {
 
     private final OWLOntology rootOntology;
     private final Comparator<Tree<OWLOntology>> comparator;

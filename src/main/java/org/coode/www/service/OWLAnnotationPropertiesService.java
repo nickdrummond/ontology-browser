@@ -7,10 +7,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.model.characteristics.AnnotationPropertyCharacteristicsBuilder;
 import org.coode.www.model.characteristics.Characteristic;
-import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
-import org.coode.www.service.hierarchy.AnnotationPropComparator;
-import org.coode.www.service.hierarchy.AnnotationsHierarchyService;
-import org.coode.www.service.hierarchy.OWLAnnotationPropertyHierarchyService;
+import org.coode.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
 
@@ -40,11 +37,11 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
     }
 
     @Override
-    public Comparator<Tree<OWLNamedIndividual>> getComparator(OWLAnnotationProperty orderByProperty, OWLOntology ont) {
+    public Comparator<Tree<Relation<OWLAnnotationProperty>>> getComparator(OWLAnnotationProperty orderByProperty, OWLOntology ont) {
         if (orderByProperty != null) {
             return new AnnotationPropComparator(orderByProperty, ont);
         }
-        return Comparator.comparing(o -> o.value.iterator().next());
+        return Comparator.comparing(o -> o.value.iterator().next().individual());
     }
 
     @Override
@@ -55,7 +52,7 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
     }
 
     @Override
-    public AbstractRelationsHierarchyService<OWLAnnotationProperty> getRelationsHierarchy(Comparator<Tree<OWLNamedIndividual>> comparator) {
+    public AbstractRelationsHierarchyService<OWLAnnotationProperty> getRelationsHierarchy(Comparator<Tree<Relation<OWLAnnotationProperty>>> comparator) {
         return new AnnotationsHierarchyService(comparator);
     }
 
