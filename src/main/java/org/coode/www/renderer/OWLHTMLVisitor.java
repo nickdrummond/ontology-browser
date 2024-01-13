@@ -64,6 +64,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private PrintWriter out;
 
     private int indent = 0;
+    private boolean breakOnUnderScore = true;
 
     public OWLHTMLVisitor(
             ShortFormProvider sfProvider,
@@ -79,6 +80,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         this.activeOntology = activeOntology;
         this.finder = finder;
     }
+
+    public void setBreakOnUnderscore(boolean breakOnUnderScore) {
+        this.breakOnUnderScore = breakOnUnderScore;
+    }
+
     public void setURLScheme(URLScheme urlScheme) {
         this.urlScheme = urlScheme;
     }
@@ -820,7 +826,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     // Make names line breakable on underscore
     private String renderBreakableName(OWLEntity entity){
-        return sfProvider.getShortForm(entity).replaceAll("_(?=[^_])", "_<wbr>");
+        String name = sfProvider.getShortForm(entity);
+        return breakOnUnderScore ? name.replaceAll("_(?=[^_])", "_<wbr>") : name;
     }
 
     // Make string line breakable on /

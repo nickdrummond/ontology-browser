@@ -24,6 +24,11 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
                 kit.getFinder());
     }
 
+    public OWLHTMLRenderer withBreakOnUnderscore(boolean doBreak) {
+        rendererVisitor.setBreakOnUnderscore(doBreak);
+        return this;
+    }
+
     public OWLHTMLRenderer withActiveObject(final OWLObject activeObject) {
         rendererVisitor.setActiveObjects(Collections.singleton(activeObject));
         return this;

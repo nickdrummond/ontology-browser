@@ -30,66 +30,66 @@ public class EventFactory {
 
     public final Logger logger = LoggerFactory.getLogger(EventFactory.class);
 
-    private final ShortFormProvider sfp;
     private final AbstractRelationsHierarchyService<OWLObjectProperty> duringTree;
     private final AbstractRelationsHierarchyService<OWLObjectProperty> afterTree;
-    private final HashMap<OWLObjectProperty, TProp> props;
+    private final HashMap<OWLObjectProperty, TProp<OWLObjectProperty>> props;
 
     public EventFactory(
             AbstractRelationsHierarchyService<OWLObjectProperty> duringTree,
-            AbstractRelationsHierarchyService<OWLObjectProperty> afterTree,
-            ShortFormProvider sfp) {
+            AbstractRelationsHierarchyService<OWLObjectProperty> afterTree) {
         this.duringTree = duringTree;
         this.afterTree = afterTree;
         this.props = new HashMap<>();
-        afterTree.getProperties().forEach(p -> this.props.put(p, new TProp(sfp.getShortForm(p))));
-        duringTree.getProperties().forEach(p -> this.props.put(p, new TProp(sfp.getShortForm(p))));
-        this.sfp = sfp;
+        afterTree.getProperties().forEach(p -> this.props.put(p, new TProp<>(p)));
+        duringTree.getProperties().forEach(p -> this.props.put(p, new TProp<>(p)));
     }
 
-    public Timeline buildTimeline(
+    public Timeline<OWLNamedIndividual, OWLObjectProperty> buildTimeline(
             OWLNamedIndividual event,
             int depth) {
         // TODO Should be able to ask for the subtree without the property
-        return buildTimelineFor(afterTree.getSubtree(new Relation<>(afterTree.getProperty(), event)), depth, false, false);
+        return buildTimelineFor(
+                afterTree.getSubtree(new Relation<>(afterTree.getProperty(), event)),
+                depth,
+                false,
+                false);
     }
 
-    public Timeline buildTimelineFor(
+    public Timeline<OWLNamedIndividual, OWLObjectProperty> buildTimelineFor(
             Tree<Relation<OWLObjectProperty>> eventTree,
             int depth,
             boolean diverge,
             boolean converge) {
         logger.info("buildTimelineFor: {}", eventTree);
-        List<TConn> chain = buildChainFrom(new ArrayList<>(), eventTree, depth);
-        return new Timeline(chain, SOMETIME_AFTER_REMOVE, diverge, converge);
+        List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain = buildChainFrom(new ArrayList<>(), eventTree, depth);
+        return new Timeline<>(chain, SOMETIME_AFTER_REMOVE, diverge, converge);
     }
 
     private TNode buildFaintNode(Relation<OWLObjectProperty> event) {
-        String label = getLabel(event.individual());
-        return new TEvent(label, "faint");
+        return new TEvent<>(event.individual(), "faint");
     }
 
     private TNode buildNode(Relation<OWLObjectProperty> event, int depth) {
-        String label = getLabel(event.individual());
 
         if (depth <= 1) { // don't go any further
-            return new TEvent(label);
+            return new TEvent<>(event.individual());
         }
 
         Tree<Relation<OWLObjectProperty>> children = duringTree.getChildren(event);
 
         if (children.childCount == 0) { // simple
-            return new TEvent(label);
+            return new TEvent<>(event.individual());
         }
 
         List<Relation<OWLObjectProperty>> subevents = children.children.stream()
                 .map(t -> t.value)
                 .flatMap(Streams::stream).toList();
 
-        return new TParent(label, buildTimelineFromEvents(subevents, depth - 1));
+        return new TParent<>(event.individual(), buildTimelineFromEvents(subevents, depth - 1));
     }
 
-    private Timeline buildTimelineFromEvents(List<Relation<OWLObjectProperty>> events, int depth) {
+    private Timeline<OWLNamedIndividual, OWLObjectProperty> buildTimelineFromEvents(
+            List<Relation<OWLObjectProperty>> events, int depth) {
 
         Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree =
                 events.stream().collect(Collectors.toMap(ev -> ev, afterTree::getChildren));
@@ -110,22 +110,25 @@ public class EventFactory {
 
         logger.info("Multiple roots found {}", roots.size());
 
-        return new Timeline(List.of(new TConn(REMOVE_ME, buildParallel(roots, event2Tree, depth))), SOMETIME_AFTER_REMOVE, false, false);
+        return new Timeline<>(List.of(
+                new TConn<>(REMOVE_ME, buildParallel(roots, event2Tree, depth))),
+                SOMETIME_AFTER_REMOVE, false, false);
     }
 
-    private Timeline buildTimelineFrom(
+    private Timeline<OWLNamedIndividual, OWLObjectProperty> buildTimelineFrom(
             Relation<OWLObjectProperty> current,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
             int depth,
             boolean diverge,
             boolean converge) {
-        List<TConn> chain = buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), current, event2Tree, depth);
-        return new Timeline(chain, converge ? REMOVE_ME : SOMETIME_AFTER_REMOVE, diverge, converge);
+        List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain =
+                buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), current, event2Tree, depth);
+        return new Timeline<>(chain, converge ? REMOVE_ME : SOMETIME_AFTER_REMOVE, diverge, converge);
     }
 
     // TODO detect cycles?
-    private List<TConn> buildChainOnlyUsingGivenEventsFrom(
-            List<TConn> chain,
+    private List<TConn<OWLNamedIndividual, OWLObjectProperty>> buildChainOnlyUsingGivenEventsFrom(
+            List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain,
             Relation<OWLObjectProperty> current,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
             int depth) {
@@ -134,12 +137,14 @@ public class EventFactory {
 
         if (treeNode.isEmpty()) {
             logger.info("Not found in parent: {}. Rendering as faint", current);
-            chain.add(new TConn(prop(current).withMeta("faint"), buildFaintNode(current)));
+            chain.add(new TConn<OWLNamedIndividual, OWLObjectProperty>(
+                    prop(current).withMeta("faint"),
+                    buildFaintNode(current)));
             // TODO stop the chain here?
             return chain;
         }
         else {
-            chain.add(new TConn(prop(current), buildNode(current, depth)));
+            chain.add(new TConn<>(prop(current), buildNode(current, depth)));
 
             Tree<Relation<OWLObjectProperty>> relationTree = treeNode.get();
 
@@ -158,18 +163,18 @@ public class EventFactory {
         }
     }
 
-    private TProp prop(Relation<OWLObjectProperty> current) {
+    private TProp<OWLObjectProperty> prop(Relation<OWLObjectProperty> current) {
         return props.get(current.property());
     }
 
-    public List<TConn> buildParallel(
-            List<TConn> chain,
+    public List<TConn<OWLNamedIndividual, OWLObjectProperty>> buildParallel(
+            List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain,
             Tree<Relation<OWLObjectProperty>> treeNode,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
             int depth) {
 
         // TODO make chain immutable - return copy
-        List<List<TConn>> divergentChains = treeNode.children.stream()
+        List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> divergentChains = treeNode.children.stream()
                 .map(t -> buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), t.value.get(0), event2Tree, depth))
                 .toList();
 
@@ -177,11 +182,14 @@ public class EventFactory {
         return chain;
     }
 
-    private List<TConn> buildChainFrom(List<TConn> chain, Tree<Relation<OWLObjectProperty>> treeNode, int depth) {
+    private List<TConn<OWLNamedIndividual, OWLObjectProperty>> buildChainFrom(
+            List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain,
+            Tree<Relation<OWLObjectProperty>> treeNode,
+            int depth) {
 
         Relation<OWLObjectProperty> current = treeNode.value.get(0);
 
-        chain.add(new TConn(prop(current), buildNode(current, depth)));
+        chain.add(new TConn<>(prop(current), buildNode(current, depth)));
 
         if (treeNode.children.isEmpty()) {
             logger.info("Last node in chain: {}", current);
@@ -195,16 +203,16 @@ public class EventFactory {
 
         // TODO what if diverging timelines on different properties?
         logger.info("Divergent path in chain: {}", current);
-        List<Timeline> divergentTimelines = treeNode.children.stream()
+        List<Timeline<OWLNamedIndividual, OWLObjectProperty>> divergentTimelines = treeNode.children.stream()
                 .map(t -> buildTimelineFor(t, depth, true, false))
                 .toList();
 
-        chain.add(new TConn(REMOVE_ME, divergentTimelines));
+        chain.add(new TConn<>(REMOVE_ME, divergentTimelines));
 
         return chain;
     }
 
-    private List<Timeline> buildParallel(
+    private List<Timeline<OWLNamedIndividual, OWLObjectProperty>> buildParallel(
             Set<Relation<OWLObjectProperty>> roots,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
             int depth) {
@@ -242,9 +250,5 @@ public class EventFactory {
             }
         }
         return false;
-    }
-
-    private String getLabel(OWLNamedIndividual event) {
-        return sfp.getShortForm(event);
     }
 }

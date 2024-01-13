@@ -1,6 +1,6 @@
 package org.coode.www.model.timeline;
 
-public record TParent (
-        String label,
-        Timeline children
+public record TParent<T, P> (
+        T label,
+        Timeline<T, P> children
 ) implements TNode { }

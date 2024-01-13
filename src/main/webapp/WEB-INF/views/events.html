@@ -17,10 +17,10 @@
 
 <th:block th:fragment="node(n)" th:switch="${n.getClass().getSimpleName()}">
     <li th:case="TEvent" class="event dot" th:classappend="${n.meta}">
-        <span class="event-label" th:text="${n.label}">Event</span>
+        <span class="event-label" th:utext="${ren.render(n.label)}">Event</span>
     </li>
     <li th:case="TParent" class="event parent">
-        <span class="event-label" th:text="${n.label}">Event</span>
+        <span class="event-label" th:utext="${ren.render(n.label)}">Event</span>
         <ul th:replace="events::timeline(${n.children})"></ul>
     </li>
     <li th:case="TParallel" class="parallel" >

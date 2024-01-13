@@ -1,10 +1,10 @@
 package org.coode.www.model.timeline;
 
-public record TEvent (
-        String label,
+public record TEvent<T> (
+        T label,
         String meta
 ) implements TNode {
-    public TEvent(String label) {
+    public TEvent(T label) {
         this(label, "");
     }
 }

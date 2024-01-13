@@ -3,6 +3,8 @@ package org.coode.www.model.timeline;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
+import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyImpl;
 
 import java.util.*;
 
@@ -10,35 +12,37 @@ public class EventUtils {
 
     public static final Logger logger = LoggerFactory.getLogger(EventUtils.class);
 
-    public static final TProp REMOVE_ME = new TProp("wrong");
-    public static final TProp SOMETIME_AFTER_REMOVE = new TProp("sometimewrong");
+    public static final TProp<OWLObjectProperty> REMOVE_ME = new TProp<>(new OWLObjectPropertyImpl(IRI.create("wrong")));
+    public static final TProp<OWLObjectProperty> SOMETIME_AFTER_REMOVE = new TProp<>(new OWLObjectPropertyImpl(IRI.create("sometimewrong")));
 
-    public static List<TConn> buildConverging(List<TConn> chain, List<List<TConn>> divergentChains) {
+    public static List<TConn<OWLNamedIndividual, OWLObjectProperty>> buildConverging(
+            List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain,
+            List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> divergentChains) {
         return buildConverging(chain, divergentChains, false);
     }
 
-    public static List<TConn> buildConverging(
-            List<TConn> chain,
-            List<List<TConn>> divergentChains,
+    public static List<TConn<OWLNamedIndividual, OWLObjectProperty>> buildConverging(
+            List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain,
+            List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> divergentChains,
             boolean isConverging) {
 
         logger.info("Build Converging:");
         divergentChains.forEach(ch ->
                 logger.info("chain: ${}", ch)
         );
-        Set<TConn> lastElements = getLastElements(divergentChains);
+        Set<TConn<OWLNamedIndividual, OWLObjectProperty>> lastElements = getLastElements(divergentChains);
         int differentEndingsCount = lastElements.size();
 
         if (differentEndingsCount == divergentChains.size()) {
             logger.info("All different ending - end ({})", isConverging ? "converging" : "diverging");
             // default all different - finish - either converging or not
-            List<Timeline> timelines = divergentChains.stream()
-                    .map(c -> new Timeline(c, REMOVE_ME, true, isConverging)).toList();
-            chain.add(new TConn(REMOVE_ME, timelines));
+            List<Timeline<OWLNamedIndividual, OWLObjectProperty>> timelines = divergentChains.stream()
+                    .map(c -> new Timeline<>(c, REMOVE_ME, true, isConverging)).toList();
+            chain.add(new TConn<>(REMOVE_ME, timelines));
         }
         else if (differentEndingsCount == 1) { // all have the same ending
             logger.info("All same ending - pull out the common");
-            List<List<TConn>> trimmedLists = trim(divergentChains);
+            List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> trimmedLists = trim(divergentChains);
             chain.addAll(buildConverging(new ArrayList<>(), trimmedLists, true));
             chain.add(lastElements.iterator().next());
         }
@@ -46,103 +50,56 @@ public class EventUtils {
             logger.info("Resolve different endings");
             // multiple matching sets
             // Will need to group them - ie change the order of divergingChains
-            List<Timeline> timelines = new ArrayList<>();
-            List<Timeline> parallelTimelines = new ArrayList<>();
+            List<Timeline<OWLNamedIndividual, OWLObjectProperty>> timelines = new ArrayList<>();
+            List<Timeline<OWLNamedIndividual, OWLObjectProperty>> parallelTimelines = new ArrayList<>();
 
             lastElements.forEach(element -> {
-                List<List<TConn>> chains = getChainsMatchingLastElement(divergentChains, element);
+                List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> chains = getChainsMatchingLastElement(divergentChains, element);
                 if (chains.size() == 1) {
                     logger.info("ending {} - {}", element, chains.get(0));
-                    timelines.add(new Timeline(chains.get(0), REMOVE_ME, true, true));
+                    timelines.add(new Timeline<>(chains.get(0), REMOVE_ME, true, true));
                 }
                 else { // share a common end
-                    List<List<TConn>> trimmedChains = trim(chains);
+                    List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> trimmedChains = trim(chains);
                     logger.info("ending {} - ", element);
                     trimmedChains.forEach(ch ->
                             logger.info("     trimmed: ${}", ch)
                     );
 
-                    List<TConn> nested = buildConverging(new ArrayList<>(), trimmedChains, true);
+                    List<TConn<OWLNamedIndividual, OWLObjectProperty>> nested = buildConverging(new ArrayList<>(), trimmedChains, true);
                     nested.add(element);
-                    parallelTimelines.add(new Timeline(nested, REMOVE_ME, true, true));
+                    parallelTimelines.add(new Timeline<>(nested, REMOVE_ME, true, true));
                 }
             });
 
             // TODO Sort the single ones first
             timelines.addAll(parallelTimelines);
 
-            chain.add(new TConn(REMOVE_ME, timelines));
+            chain.add(new TConn<>(REMOVE_ME, timelines));
         }
         return chain;
     }
 
-    private static List<List<TConn>> trim(List<List<TConn>> chains) {
+    private static List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> trim(
+            List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> chains) {
         return chains.stream().map(c -> c.subList(0, c.size() - 1)).toList();
     }
 
-    private static List<List<TConn>> getChainsMatchingLastElement(List<List<TConn>> chains, TConn lastElement) {
+    private static List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> getChainsMatchingLastElement(
+            List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> chains,
+            TConn<OWLNamedIndividual, OWLObjectProperty> lastElement) {
         return chains.stream().filter(chain -> getLastElement(chain).equals(lastElement)).toList();
     }
 
-    public static Set<TConn> getLastElements(List<List<TConn>> chains) {
+    public static Set<TConn<OWLNamedIndividual, OWLObjectProperty>> getLastElements(
+            List<List<TConn<org.semanticweb.owlapi.model.OWLNamedIndividual, org.semanticweb.owlapi.model.OWLObjectProperty>>> chains) {
         return new LinkedHashSet<>(chains.stream().map(EventUtils::getLastElement).toList()); // predictable ordering
     }
 
-    public static TConn getLastElement(List<TConn> chain) {
+    public static TConn<OWLNamedIndividual, OWLObjectProperty> getLastElement(
+            List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain) {
         return chain.get(chain.size() - 1);
     }
-
-//        Optional<Integer> year = getInteger(event, yearProp);
-//        Optional<Integer> start = getInteger(event, endProp);
-//        List<TParent> after = getRelationship(event, afterProp, depth);
-//        List<String> participants = getParticipants(event, participantProp);
-
-////        List<TParent> children = depth > 0 ? getChildren(event, depth - 1) : Collections.emptyList();
-//        TParent e = null;//new TParent(label, new Timeline(null, children);//, start, year, after, participants, children);
-//        cache.put(event, e);
-//    }
-
-//
-//    private List<TParent> getRelationship(
-//            OWLNamedIndividual event,
-//            OWLObjectProperty prop,
-//            int depth) {
-//        return getRelationships(event, prop)
-//                .map(obj -> buildEvent(obj, depth))
-//                .toList();
-//    }
-//
-//    private List<String> getParticipants(
-//            OWLNamedIndividual event,
-//            OWLObjectProperty prop) {
-//        return getRelationships(event, prop)
-//                .map(this::getLabel)
-//                .toList();
-//    }
-//
-//    private Stream<OWLNamedIndividual> getRelationships(
-//            OWLNamedIndividual event,
-//            OWLObjectProperty prop) {
-//        return kit.getActiveOntology().axioms(event, Imports.INCLUDED)
-//                .filter(OWLObjectPropertyAssertionAxiom.class::isInstance)
-//                .map(OWLObjectPropertyAssertionAxiom.class::cast)
-//                .filter(ax -> propertiesService.isEquivalentOrSubproperty(ax.getProperty(), prop, kit.getActiveOntology()))
-//                .filter(ax -> ax.getSubject().equals(event))
-//                .map(HasObject::getObject)
-//                .filter(OWLNamedIndividual.class::isInstance)
-//                .map(OWLNamedIndividual.class::cast);
-//    }
-//
-//    private List<TParent> getChildren(
-//            OWLNamedIndividual event,
-//            int depth) {
-//        // TODO group by chains of "after"
-//        return duringTree.getChildren(event).children.stream()
-//                .map(child -> buildEvent(child.value.iterator().next(), depth))
-////                .sorted(Comparator.comparing(e -> e.year().orElse(e.start().orElse(Integer.MAX_VALUE))))
-//                .toList();
-//    }
-//
 
     public static Optional<Integer> getInteger(
             OWLNamedIndividual event,
