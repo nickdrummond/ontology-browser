@@ -4,8 +4,8 @@ import java.util.*;
 
 // TODO which way around to the props associate?
 public record Timeline (
-        TProp startProp,
         List<TConn> events,
+        TProp endProp,
         boolean diverge,
         boolean converge
 ){}

@@ -14,11 +14,11 @@ public class EventUtilsTest {
 
     @Test
     public void diverging() {
-        TConn a1 = new TConn("A1", REMOVE_ME);
-        TConn a2 = new TConn("A2", REMOVE_ME);
-        TConn b1 = new TConn("B1", REMOVE_ME);
-        TConn b2 = new TConn("B2", REMOVE_ME);
-        TConn c1 = new TConn("C1", REMOVE_ME);
+        TConn a1 = new TConn(REMOVE_ME, "A1");
+        TConn a2 = new TConn(REMOVE_ME, "A2");
+        TConn b1 = new TConn(REMOVE_ME, "B1");
+        TConn b2 = new TConn(REMOVE_ME, "B2");
+        TConn c1 = new TConn(REMOVE_ME, "C1");
         List<List<TConn>> divergentChains = List.of(
                 List.of(a1, a2),
                 List.of(b1, b2),
@@ -26,23 +26,23 @@ public class EventUtilsTest {
         );
         List<TConn> chain = buildConverging(new ArrayList<>(), divergentChains);
 
-        List<TConn> expected = List.of(new TConn(List.of(
-                new Timeline(REMOVE_ME, List.of(a1, a2), true, false),
-                new Timeline(REMOVE_ME, List.of(b1, b2), true, false),
-                new Timeline(REMOVE_ME, List.of(c1), true, false)
-        ), REMOVE_ME));
+        List<TConn> expected = List.of(new TConn(REMOVE_ME, List.of(
+                new Timeline(List.of(a1, a2), REMOVE_ME, true, false),
+                new Timeline(List.of(b1, b2), REMOVE_ME, true, false),
+                new Timeline(List.of(c1), REMOVE_ME, true, false)
+        )));
 
         assertEquals(expected, chain);
     }
 
     @Test
     public void convergingLastElement() {
-        TConn a1 = new TConn("A1", REMOVE_ME);
-        TConn a2 = new TConn("A2", REMOVE_ME);
-        TConn b1 = new TConn("B1", REMOVE_ME);
-        TConn b2 = new TConn("B2", REMOVE_ME);
-        TConn c1 = new TConn("C1", REMOVE_ME);
-        TConn common1 = new TConn("COMMON1", REMOVE_ME);
+        TConn a1 = new TConn(REMOVE_ME, "A1");
+        TConn a2 = new TConn(REMOVE_ME, "A2");
+        TConn b1 = new TConn(REMOVE_ME, "B1");
+        TConn b2 = new TConn(REMOVE_ME, "B2");
+        TConn c1 = new TConn(REMOVE_ME, "C1");
+        TConn common1 = new TConn(REMOVE_ME, "COMMON1");
         List<List<TConn>> divergentChains = List.of(
                 List.of(a1, a2, common1),
                 List.of(b1, b2, common1),
@@ -50,24 +50,24 @@ public class EventUtilsTest {
         );
         List<TConn> chain = buildConverging(new ArrayList<>(), divergentChains);
 
-        List<TConn> expected = List.of(new TConn(List.of(
-                new Timeline(REMOVE_ME, List.of(a1, a2), true, true),
-                new Timeline(REMOVE_ME, List.of(b1, b2), true, true),
-                new Timeline(REMOVE_ME, List.of(c1), true, true)
-        ), REMOVE_ME), common1);
+        List<TConn> expected = List.of(new TConn(REMOVE_ME, List.of(
+                new Timeline(List.of(a1, a2), REMOVE_ME, true, true),
+                new Timeline(List.of(b1, b2), REMOVE_ME, true, true),
+                new Timeline(List.of(c1), REMOVE_ME, true, true)
+        )), common1);
 
         assertEquals(expected, chain);
     }
 
     @Test
     public void convergingLast2Element() {
-        TConn a1 = new TConn("A1", REMOVE_ME);
-        TConn a2 = new TConn("A2", REMOVE_ME);
-        TConn b1 = new TConn("B1", REMOVE_ME);
-        TConn b2 = new TConn("B2", REMOVE_ME);
-        TConn c1 = new TConn("C1", REMOVE_ME);
-        TConn common1 = new TConn("COMMON1", REMOVE_ME);
-        TConn common2 = new TConn("COMMON2", REMOVE_ME);
+        TConn a1 = new TConn(REMOVE_ME, "A1");
+        TConn a2 = new TConn(REMOVE_ME, "A2");
+        TConn b1 = new TConn(REMOVE_ME, "B1");
+        TConn b2 = new TConn(REMOVE_ME, "B2");
+        TConn c1 = new TConn(REMOVE_ME, "C1");
+        TConn common1 = new TConn(REMOVE_ME, "COMMON1");
+        TConn common2 = new TConn(REMOVE_ME, "COMMON2");
         List<List<TConn>> divergentChains = List.of(
                 List.of(a1, a2, common1, common2),
                 List.of(b1, b2, common1, common2),
@@ -76,24 +76,24 @@ public class EventUtilsTest {
 
         List<TConn> chain = buildConverging(new ArrayList<>(), divergentChains);
 
-        List<TConn> expected = List.of(new TConn(List.of(
-                new Timeline(REMOVE_ME, List.of(a1, a2), true, true),
-                new Timeline(REMOVE_ME, List.of(b1, b2), true, true),
-                new Timeline(REMOVE_ME, List.of(c1), true, true)
-        ), REMOVE_ME), common1, common2);
+        List<TConn> expected = List.of(new TConn(REMOVE_ME, List.of(
+                new Timeline(List.of(a1, a2), REMOVE_ME, true, true),
+                new Timeline(List.of(b1, b2), REMOVE_ME, true, true),
+                new Timeline(List.of(c1), REMOVE_ME, true, true)
+        )), common1, common2);
 
         assertEquals(expected, chain);
     }
 
     @Test
     public void converging2Paths() {
-        TConn a1 = new TConn("A1", REMOVE_ME);
-        TConn a2 = new TConn("A2", REMOVE_ME);
-        TConn b1 = new TConn("B1", REMOVE_ME);
-        TConn b2 = new TConn("B2", REMOVE_ME);
-        TConn c1 = new TConn("C1", REMOVE_ME);
-        TConn common1 = new TConn("COMMON1", REMOVE_ME);
-        TConn common2 = new TConn("COMMON2", REMOVE_ME);
+        TConn a1 = new TConn(REMOVE_ME, "A1");
+        TConn a2 = new TConn(REMOVE_ME, "A2");
+        TConn b1 = new TConn(REMOVE_ME, "B1");
+        TConn b2 = new TConn(REMOVE_ME, "B2");
+        TConn c1 = new TConn(REMOVE_ME, "C1");
+        TConn common1 = new TConn(REMOVE_ME, "COMMON1");
+        TConn common2 = new TConn(REMOVE_ME, "COMMON2");
         List<List<TConn>> divergentChains = List.of(
                 List.of(a1, a2, common1, common2),
                 List.of(b1, b2, common1, common2)
@@ -101,23 +101,23 @@ public class EventUtilsTest {
 
         List<TConn> chain = buildConverging(new ArrayList<>(), divergentChains);
 
-        List<TConn> expected = List.of(new TConn(List.of(
-                new Timeline(REMOVE_ME, List.of(a1, a2), true, true),
-                new Timeline(REMOVE_ME, List.of(b1, b2), true, true)
-        ), REMOVE_ME), common1, common2);
+        List<TConn> expected = List.of(new TConn(REMOVE_ME, List.of(
+                new Timeline(List.of(a1, a2), REMOVE_ME, true, true),
+                new Timeline(List.of(b1, b2), REMOVE_ME, true, true)
+        )), common1, common2);
 
         assertEquals(expected, chain);
     }
 
     @Test
     public void converging2PathsConvergeEarlier() {
-        TConn a1 = new TConn("A1", REMOVE_ME);
-        TConn a2 = new TConn("A2", REMOVE_ME);
-        TConn b1 = new TConn("B1", REMOVE_ME);
-        TConn b2 = new TConn("B2", REMOVE_ME);
-        TConn c1 = new TConn("C1", REMOVE_ME);
-        TConn common1 = new TConn("COMMON1", REMOVE_ME);
-        TConn common2 = new TConn("COMMON2", REMOVE_ME);
+        TConn a1 = new TConn(REMOVE_ME, "A1");
+        TConn a2 = new TConn(REMOVE_ME, "A2");
+        TConn b1 = new TConn(REMOVE_ME, "B1");
+        TConn b2 = new TConn(REMOVE_ME, "B2");
+        TConn c1 = new TConn(REMOVE_ME, "C1");
+        TConn common1 = new TConn(REMOVE_ME, "COMMON1");
+        TConn common2 = new TConn(REMOVE_ME, "COMMON2");
         List<List<TConn>> divergentChains = List.of(
                 List.of(a1, a2, common1, common2),
                 List.of(b1, b2, common1, common2),
@@ -126,16 +126,16 @@ public class EventUtilsTest {
 
         List<TConn> chain = buildConverging(new ArrayList<>(), divergentChains);
 
-        Timeline aTimeline = new Timeline(REMOVE_ME, List.of(a1, a2), true, true);
-        Timeline bTimeline = new Timeline(REMOVE_ME, List.of(b1, b2), true, true);
-        Timeline cTimeline = new Timeline(REMOVE_ME, List.of(c1), true, true);
+        Timeline aTimeline = new Timeline(List.of(a1, a2), REMOVE_ME, true, true);
+        Timeline bTimeline = new Timeline(List.of(b1, b2), REMOVE_ME, true, true);
+        Timeline cTimeline = new Timeline(List.of(c1), REMOVE_ME, true, true);
 
-        Timeline p2 = new Timeline(REMOVE_ME, List.of(new TConn(List.of(
+        Timeline p2 = new Timeline(List.of(new TConn(REMOVE_ME, List.of(
                 aTimeline,
                 bTimeline
-        ), REMOVE_ME), common1), true, true);
+        )), common1), REMOVE_ME, true, true);
 
-        TConn p1 = new TConn(List.of(p2, cTimeline), REMOVE_ME);
+        TConn p1 = new TConn(REMOVE_ME, List.of(p2, cTimeline));
 
         List<TConn> expected = List.of(p1, common2);
 

@@ -6,17 +6,17 @@
 <ul class="timeline"
      th:fragment="timeline(t)"
      th:classappend='${(t.diverge ? "diverge" : "") + (t.converge ? " converge" : "")}' >
-    <li th:replace="events::prop(${t.startProp})"></li>
     <th:block th:each="conn : ${t.events}">
-        <li th:replace="events::node(${conn.node})">Node</li>
         <li th:replace="events::prop(${conn.prop})"></li>
+        <li th:replace="events::node(${conn.node})">Node</li>
     </th:block>
+    <li th:replace="events::prop(${t.endProp})"></li>
 </ul>
 
-<li class="prop" th:fragment="prop(p)" th:classappend="${p.type}"></li>
+<li class="prop" th:fragment="prop(p)" th:classappend="${p.type + ' ' + p.meta}"></li>
 
 <th:block th:fragment="node(n)" th:switch="${n.getClass().getSimpleName()}">
-    <li th:case="TEvent" class="event dot">
+    <li th:case="TEvent" class="event dot" th:classappend="${n.meta}">
         <span class="event-label" th:text="${n.label}">Event</span>
     </li>
     <li th:case="TParent" class="event parent">

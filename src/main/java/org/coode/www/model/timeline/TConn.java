@@ -2,11 +2,11 @@ package org.coode.www.model.timeline;
 
 import java.util.List;
 
-public record TConn(TNode node, TProp prop) {
-    public TConn(String eName, TProp prop) {
-        this(new TEvent(eName), prop);
+public record TConn(TProp prop, TNode node) {
+    public TConn(TProp prop, String eName) {
+        this(prop, new TEvent(eName));
     }
-    public TConn(List<Timeline> timelines, TProp prop) {
-        this(new TParallel(timelines), prop);
+    public TConn(TProp prop, List<Timeline> timelines) {
+        this(prop, new TParallel(timelines));
     }
 }

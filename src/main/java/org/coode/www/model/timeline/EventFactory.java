@@ -14,6 +14,18 @@ import java.util.stream.Collectors;
 
 import static org.coode.www.model.timeline.EventUtils.*;
 
+/**
+ * TODO
+ * - why is Freeing_of_Jyn a root? It is sometimeafter Capture_of_Galen - same as Great_Purge, Search_for_Ezra, Train_vs_Sandpeople
+ *      - why is Train_vs_Sandpeople a root? ah, its in new republic era - but sometime after events in galactic civil war - should render faint
+ *
+ * - Debriefing_on_the_siege shows up in Battle_of_Coruscant and Siege_of_Mandalore - is this ok? Probably but how "link"
+ * - Destroying_Armoury_Complex_Air_Defences - problems
+ * - Return of Luke gets a bit complicated
+ * - No converging paths anywhere - how do we detect them? eg Separatist_Crisis, Recon_of_Concord_Dawn on 2 paths
+ *
+ * - http://localhost:8080/timeline/starwars?event=Galactic_civil_war&depth=5 - crashes
+ */
 public class EventFactory {
 
     public final Logger logger = LoggerFactory.getLogger(EventFactory.class);
@@ -49,7 +61,12 @@ public class EventFactory {
             boolean converge) {
         logger.info("buildTimelineFor: {}", eventTree);
         List<TConn> chain = buildChainFrom(new ArrayList<>(), eventTree, depth);
-        return new Timeline(SOMETIME_AFTER_REMOVE, chain, diverge, converge);
+        return new Timeline(chain, SOMETIME_AFTER_REMOVE, diverge, converge);
+    }
+
+    private TNode buildFaintNode(Relation<OWLObjectProperty> event) {
+        String label = getLabel(event.individual());
+        return new TEvent(label, "faint");
     }
 
     private TNode buildNode(Relation<OWLObjectProperty> event, int depth) {
@@ -93,7 +110,7 @@ public class EventFactory {
 
         logger.info("Multiple roots found {}", roots.size());
 
-        return new Timeline(SOMETIME_AFTER_REMOVE, List.of(new TConn(buildParallel(roots, event2Tree, depth), REMOVE_ME)), false, false);
+        return new Timeline(List.of(new TConn(REMOVE_ME, buildParallel(roots, event2Tree, depth))), SOMETIME_AFTER_REMOVE, false, false);
     }
 
     private Timeline buildTimelineFrom(
@@ -103,10 +120,9 @@ public class EventFactory {
             boolean diverge,
             boolean converge) {
         List<TConn> chain = buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), current, event2Tree, depth);
-        return new Timeline(diverge ? REMOVE_ME : SOMETIME_AFTER_REMOVE, chain, diverge, converge);
+        return new Timeline(chain, converge ? REMOVE_ME : SOMETIME_AFTER_REMOVE, diverge, converge);
     }
 
-    // TODO sometime...
     // TODO detect cycles?
     private List<TConn> buildChainOnlyUsingGivenEventsFrom(
             List<TConn> chain,
@@ -114,15 +130,17 @@ public class EventFactory {
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
             int depth) {
 
-        chain.add(new TConn(buildNode(current, depth), prop(current)));
-
         Optional<Tree<Relation<OWLObjectProperty>>> treeNode = getSubtree(current.individual(), event2Tree);
 
         if (treeNode.isEmpty()) {
-            logger.error("Not found in parent: {}. Render as faint", current);
+            logger.info("Not found in parent: {}. Rendering as faint", current);
+            chain.add(new TConn(prop(current).withMeta("faint"), buildFaintNode(current)));
+            // TODO stop the chain here?
             return chain;
         }
         else {
+            chain.add(new TConn(prop(current), buildNode(current, depth)));
+
             Tree<Relation<OWLObjectProperty>> relationTree = treeNode.get();
 
             if (relationTree.childCount == 0) {
@@ -163,7 +181,7 @@ public class EventFactory {
 
         Relation<OWLObjectProperty> current = treeNode.value.get(0);
 
-        chain.add(new TConn(buildNode(current, depth), prop(current)));
+        chain.add(new TConn(prop(current), buildNode(current, depth)));
 
         if (treeNode.children.isEmpty()) {
             logger.info("Last node in chain: {}", current);
@@ -175,14 +193,13 @@ public class EventFactory {
             return buildChainFrom(chain, treeNode.children.get(0), depth);
         }
 
-        // TODO any convergence has to be detected on the timelines
-        // see Battle_of_Yavin
+        // TODO what if diverging timelines on different properties?
         logger.info("Divergent path in chain: {}", current);
         List<Timeline> divergentTimelines = treeNode.children.stream()
                 .map(t -> buildTimelineFor(t, depth, true, false))
                 .toList();
 
-        chain.add(new TConn(divergentTimelines, REMOVE_ME));
+        chain.add(new TConn(REMOVE_ME, divergentTimelines));
 
         return chain;
     }
@@ -206,7 +223,6 @@ public class EventFactory {
                 .filter(e -> !isChildIn(e.individual(), event2Tree))
                 .collect(Collectors.toSet());
     }
-
 
     private Optional<Tree<Relation<OWLObjectProperty>>> getSubtree(
             OWLNamedIndividual individual,

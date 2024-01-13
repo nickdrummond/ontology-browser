@@ -156,34 +156,33 @@ public class TimelineController extends ApplicationController {
         TProp sometimeAfter = new TProp("sometimeAfter");
 
         model.addAttribute("root", new Timeline(
-                after,
                 List.of(
-                        new TConn(new TParent("Parent", new Timeline(after,
+                        new TConn(after, new TParent("Parent", new Timeline(
                                 List.of(
-                                        new TConn("Child A", after),
-                                        new TConn(List.of(
-                                                new Timeline(after, List.of(
-                                                        new TConn("Child B", after)
-                                                ), false, false),
-                                                new Timeline(after,
+                                        new TConn(after, "Child A"),
+                                        new TConn(after, List.of(
+                                                new Timeline(List.of(
+                                                        new TConn(after, "Child B")
+                                                ), after, false, false),
+                                                new Timeline(
                                                         List.of(
-                                                                new TConn("P A", after),
-                                                                new TConn("P B", sometimeAfter)
-                                                        ), true, false),
-                                                new Timeline(after,
+                                                                new TConn(after, "P A"),
+                                                                new TConn(sometimeAfter, "P B")
+                                                        ), after,true, false),
+                                                new Timeline(
                                                         List.of(
-                                                                new TConn("P2 A", after),
-                                                                new TConn(new TParent("P2 B",
-                                                                        new Timeline(after, List.of(
-                                                                                new TConn("P2 B1", after),
-                                                                                new TConn("P2 B2", after)
-                                                                        ), false, false)), sometimeAfter)
-                                                        ), true, false)
-                                        ), after),
-                                        new TConn("Child C", after)
-                                ), false, false)
-                        ), after)
-                ),
+                                                                new TConn(after, "P2 A"),
+                                                                new TConn(sometimeAfter, new TParent("P2 B",
+                                                                        new Timeline(List.of(
+                                                                                new TConn(after, "P2 B1"),
+                                                                                new TConn(after, "P2 B2")
+                                                                        ), after, false, false)))
+                                                        ), after,true, false)
+                                        )),
+                                        new TConn(after, "Child C")
+                                ), after,false, false)
+                        ))
+                ), after,
                 false, false));
 
 //        model.addAttribute("root", new Timeline(

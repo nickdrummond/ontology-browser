@@ -11,7 +11,7 @@ public class EventUtils {
     public static final Logger logger = LoggerFactory.getLogger(EventUtils.class);
 
     public static final TProp REMOVE_ME = new TProp("wrong");
-    public static final TProp SOMETIME_AFTER_REMOVE = new TProp("wrong");
+    public static final TProp SOMETIME_AFTER_REMOVE = new TProp("sometimewrong");
 
     public static List<TConn> buildConverging(List<TConn> chain, List<List<TConn>> divergentChains) {
         return buildConverging(chain, divergentChains, false);
@@ -33,8 +33,8 @@ public class EventUtils {
             logger.info("All different ending - end ({})", isConverging ? "converging" : "diverging");
             // default all different - finish - either converging or not
             List<Timeline> timelines = divergentChains.stream()
-                    .map(c -> new Timeline(REMOVE_ME, c, true, isConverging)).toList();
-            chain.add(new TConn(timelines, REMOVE_ME));
+                    .map(c -> new Timeline(c, REMOVE_ME, true, isConverging)).toList();
+            chain.add(new TConn(REMOVE_ME, timelines));
         }
         else if (differentEndingsCount == 1) { // all have the same ending
             logger.info("All same ending - pull out the common");
@@ -53,7 +53,7 @@ public class EventUtils {
                 List<List<TConn>> chains = getChainsMatchingLastElement(divergentChains, element);
                 if (chains.size() == 1) {
                     logger.info("ending {} - {}", element, chains.get(0));
-                    timelines.add(new Timeline(REMOVE_ME, chains.get(0), true, true));
+                    timelines.add(new Timeline(chains.get(0), REMOVE_ME, true, true));
                 }
                 else { // share a common end
                     List<List<TConn>> trimmedChains = trim(chains);
@@ -64,14 +64,14 @@ public class EventUtils {
 
                     List<TConn> nested = buildConverging(new ArrayList<>(), trimmedChains, true);
                     nested.add(element);
-                    parallelTimelines.add(new Timeline(REMOVE_ME, nested, true, true));
+                    parallelTimelines.add(new Timeline(nested, REMOVE_ME, true, true));
                 }
             });
 
             // TODO Sort the single ones first
             timelines.addAll(parallelTimelines);
 
-            chain.add(new TConn(timelines, REMOVE_ME));
+            chain.add(new TConn(REMOVE_ME, timelines));
         }
         return chain;
     }
@@ -93,7 +93,7 @@ public class EventUtils {
     }
 
 //        Optional<Integer> year = getInteger(event, yearProp);
-//        Optional<Integer> start = getInteger(event, startProp);
+//        Optional<Integer> start = getInteger(event, endProp);
 //        List<TParent> after = getRelationship(event, afterProp, depth);
 //        List<String> participants = getParticipants(event, participantProp);
 

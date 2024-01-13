@@ -26,10 +26,16 @@ div.events {
 
 .events .prop.sometimeAfter {
     border-top: 2px dashed #4189a0;
+    min-width: 6rem;
 }
 
 /** TODO remove when done **/
 .events .prop.wrong {
+    border-top: 2px solid red;
+}
+
+/** TODO remove when done **/
+.events .prop.sometimewrong {
     border-top: 2px dashed red;
 }
 
@@ -39,6 +45,10 @@ div.events {
     border: 2px solid #4189a0;
     border-radius: 50%;
     position: relative;
+}
+
+.faint {
+    opacity: 0.4;
 }
 
 .events .parent {
