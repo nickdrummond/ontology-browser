@@ -38,7 +38,8 @@ public class OWLAnnotationPropertyHierarchyService extends AbstractOWLHierarchyS
     @Override
     protected Set<Set<OWLAnnotationProperty>> subs(OWLAnnotationProperty prop) {
         if (prop == dummyroot) {
-            return Set.of(ont.getAnnotationPropertiesInSignature(Imports.INCLUDED));
+            return ont.getAnnotationPropertiesInSignature(Imports.INCLUDED).stream()
+                    .map(Set::of).collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }

@@ -5,7 +5,6 @@ import org.coode.www.model.Tree;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.coode.www.service.hierarchy.Relation;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,18 +13,6 @@ import java.util.stream.Collectors;
 
 import static org.coode.www.model.timeline.EventUtils.*;
 
-/**
- * TODO
- * - why is Freeing_of_Jyn a root? It is sometimeafter Capture_of_Galen - same as Great_Purge, Search_for_Ezra, Train_vs_Sandpeople
- *      - why is Train_vs_Sandpeople a root? ah, its in new republic era - but sometime after events in galactic civil war - should render faint
- *
- * - Debriefing_on_the_siege shows up in Battle_of_Coruscant and Siege_of_Mandalore - is this ok? Probably but how "link"
- * - Destroying_Armoury_Complex_Air_Defences - problems
- * - Return of Luke gets a bit complicated
- * - No converging paths anywhere - how do we detect them? eg Separatist_Crisis, Recon_of_Concord_Dawn on 2 paths
- *
- * - http://localhost:8080/timeline/starwars?event=Galactic_civil_war&depth=5 - crashes
- */
 public class EventFactory {
 
     public final Logger logger = LoggerFactory.getLogger(EventFactory.class);
