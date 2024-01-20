@@ -11,18 +11,19 @@ public class EventUtils {
 
     public static final Logger logger = LoggerFactory.getLogger(EventUtils.class);
 
-    public static final TProp<OWLObjectProperty> REMOVE_ME = new TProp<>(new OWLObjectPropertyImpl(IRI.create("wrong")));
-    public static final TProp<OWLObjectProperty> SOMETIME_AFTER_REMOVE = new TProp<>(new OWLObjectPropertyImpl(IRI.create("sometimewrong")));
+    public static final TProp REMOVE_ME = new TProp("wrong");
+    public static final TProp SOMETIME_AFTER_REMOVE = new TProp("sometimewrong");
 
     public static List<TConn<OWLNamedIndividual, OWLObjectProperty>> buildConverging(
             List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain,
             List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> divergentChains) {
-        return buildConverging(chain, divergentChains, false);
+        return buildConverging(chain, divergentChains, true, false);
     }
 
     public static List<TConn<OWLNamedIndividual, OWLObjectProperty>> buildConverging(
             List<TConn<OWLNamedIndividual, OWLObjectProperty>> chain,
             List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> divergentChains,
+            boolean isDiverging,
             boolean isConverging) {
 
         logger.info("Build Converging:");
@@ -36,13 +37,13 @@ public class EventUtils {
             logger.info("All different ending - end ({})", isConverging ? "converging" : "diverging");
             // default all different - finish - either converging or not
             List<Timeline<OWLNamedIndividual, OWLObjectProperty>> timelines = divergentChains.stream()
-                    .map(c -> new Timeline<>(c, REMOVE_ME, true, isConverging)).toList();
+                    .map(c -> new Timeline<>(c, REMOVE_ME, isDiverging, isConverging)).toList();
             chain.add(new TConn<>(REMOVE_ME, timelines));
         }
         else if (differentEndingsCount == 1) { // all have the same ending
             logger.info("All same ending - pull out the common");
             List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> trimmedLists = trim(divergentChains);
-            chain.addAll(buildConverging(new ArrayList<>(), trimmedLists, true));
+            chain.addAll(buildConverging(new ArrayList<>(), trimmedLists, isDiverging, true));
             chain.add(lastElements.iterator().next());
         }
         else {
@@ -56,7 +57,7 @@ public class EventUtils {
                 List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> chains = getChainsMatchingLastElement(divergentChains, element);
                 if (chains.size() == 1) {
                     logger.info("ending {} - {}", element, chains.get(0));
-                    timelines.add(new Timeline<>(chains.get(0), REMOVE_ME, true, true));
+                    timelines.add(new Timeline<>(chains.get(0), REMOVE_ME, isDiverging, true));
                 }
                 else { // share a common end
                     List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> trimmedChains = trim(chains);
@@ -65,9 +66,9 @@ public class EventUtils {
                             logger.info("     trimmed: ${}", ch)
                     );
 
-                    List<TConn<OWLNamedIndividual, OWLObjectProperty>> nested = buildConverging(new ArrayList<>(), trimmedChains, true);
+                    List<TConn<OWLNamedIndividual, OWLObjectProperty>> nested = buildConverging(new ArrayList<>(), trimmedChains, isDiverging, true);
                     nested.add(element);
-                    parallelTimelines.add(new Timeline<>(nested, REMOVE_ME, true, true));
+                    parallelTimelines.add(new Timeline<>(nested, REMOVE_ME, isDiverging, true));
                 }
             });
 

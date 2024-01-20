@@ -1,14 +1,14 @@
 package org.coode.www.model.timeline;
 
-public record TProp<T>(
-        T type,
+public record TProp(
+        String type,
         String meta
 ) {
-    public TProp(T type) {
+    public TProp(String type) {
         this(type, "");
     }
 
-    public TProp<T> withMeta(String meta) {
-        return new TProp<>(type, meta);
+    public TProp withMeta(String meta) {
+        return new TProp(type, meta);
     }
 }

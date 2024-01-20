@@ -19,7 +19,7 @@ public class EventFactory {
 
     private final AbstractRelationsHierarchyService<OWLObjectProperty> duringTree;
     private final AbstractRelationsHierarchyService<OWLObjectProperty> afterTree;
-    private final HashMap<OWLObjectProperty, TProp<OWLObjectProperty>> props;
+    private final HashMap<OWLObjectProperty, TProp> props;
 
     public EventFactory(
             AbstractRelationsHierarchyService<OWLObjectProperty> duringTree,
@@ -27,8 +27,8 @@ public class EventFactory {
         this.duringTree = duringTree;
         this.afterTree = afterTree;
         this.props = new HashMap<>();
-        afterTree.getProperties().forEach(p -> this.props.put(p, new TProp<>(p)));
-        duringTree.getProperties().forEach(p -> this.props.put(p, new TProp<>(p)));
+        afterTree.getProperties().forEach(p -> this.props.put(p, new TProp(p.getIRI().getFragment())));
+        duringTree.getProperties().forEach(p -> this.props.put(p, new TProp(p.getIRI().getFragment())));
     }
 
     public Timeline<OWLNamedIndividual, OWLObjectProperty> buildTimeline(
@@ -124,7 +124,7 @@ public class EventFactory {
 
         if (treeNode.isEmpty()) {
             logger.info("Not found in parent: {}. Rendering as faint", current);
-            chain.add(new TConn<OWLNamedIndividual, OWLObjectProperty>(
+            chain.add(new TConn<>(
                     prop(current).withMeta("faint"),
                     buildFaintNode(current)));
             // TODO stop the chain here?
@@ -150,7 +150,7 @@ public class EventFactory {
         }
     }
 
-    private TProp<OWLObjectProperty> prop(Relation<OWLObjectProperty> current) {
+    private TProp prop(Relation<OWLObjectProperty> current) {
         return props.get(current.property());
     }
 
@@ -165,7 +165,7 @@ public class EventFactory {
                 .map(t -> buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), t.value.get(0), event2Tree, depth))
                 .toList();
 
-            buildConverging(chain, divergentChains);
+        buildConverging(chain, divergentChains);
         return chain;
     }
 
@@ -206,10 +206,15 @@ public class EventFactory {
 
         // TODO sort by longest first
 
-        return roots.stream()
-                .map(root -> buildTimelineFrom(root, event2Tree, depth, false, false))
-                .sorted(Comparator.comparing(timeline -> -timeline.events().size()))
+        List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> chains = roots.stream()
+                .map(root -> buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), root, event2Tree, depth))
+//                .sorted(Comparator.comparing(timeline -> -timeline.events().size()))
                 .toList();
+
+
+        // TODO some will converge, but still need a list of timelines as some won't
+        List<TConn<OWLNamedIndividual, OWLObjectProperty>> converging = buildConverging(new ArrayList<>(), chains, false, true);
+        return List.of(new Timeline<>(converging, REMOVE_ME, false, true));
     }
 
     private Set<Relation<OWLObjectProperty>> getRoots(Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree) {
