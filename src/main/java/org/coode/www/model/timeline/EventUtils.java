@@ -3,7 +3,6 @@ package org.coode.www.model.timeline;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.manchester.cs.owl.owlapi.OWLObjectPropertyImpl;
 
 import java.util.*;
 
@@ -112,5 +111,17 @@ public class EventUtils {
                 .filter(OWLLiteral::isInteger)
                 .map(lit -> Integer.parseInt(lit.getLiteral()))
                 .findFirst();
+    }
+
+    public static boolean filterByRelations(
+            OWLNamedIndividual event,
+            Set<OWLObjectPropertyExpression> relatedTo,
+            OWLNamedIndividual object,
+            OWLOntology ont) {
+        return ont.importsClosure()
+                .flatMap(o -> o.objectPropertyAssertionAxioms(event))
+                .filter(ax -> relatedTo.contains(ax.getProperty()))
+                .map(OWLPropertyAssertionAxiom::getObject)
+                .anyMatch(o -> o.equals(object));
     }
 }

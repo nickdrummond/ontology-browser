@@ -5,6 +5,7 @@ import org.coode.www.model.timeline.*;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLObjectPropertiesService;
 import org.coode.www.service.OWLOntologiesService;
+import org.coode.www.service.ReasonerService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.coode.www.service.hierarchy.RelationsHierarchyService;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
 
 @Controller
@@ -27,6 +30,9 @@ public class TimelineController extends ApplicationController {
 
     private final OWLObjectPropertiesService propertiesService;
     private final OWLOntologiesService ontologiesService;
+
+    @Autowired
+    private ReasonerService reasonerService;
 
     public TimelineController(
             @Autowired OWLObjectPropertiesService propertiesService,
@@ -43,12 +49,18 @@ public class TimelineController extends ApplicationController {
     public String starwarsTimeline(
             final @RequestParam(defaultValue = "A_long_time_ago") String event,
             final @RequestParam(required = false) String ontId,
+            final @RequestParam(required = false) String filterProp,
+            final @RequestParam(required = false) String filterObject,
             final @RequestParam(defaultValue = "" + Integer.MAX_VALUE) int depth,
             final Model model) throws NotFoundException {
 
         OWLEntityChecker checker = kit.getOWLEntityChecker();
 
         OWLNamedIndividual target = checker.getOWLIndividual(event);
+
+        if (target == null) {
+            throw new NotFoundException(event + " event is unknown");
+        }
 
         OWLOntology ont = (ontId != null) ? ontologiesService.getOntologyFor(ontId, kit) : kit.getActiveOntology();
 
@@ -65,26 +77,43 @@ public class TimelineController extends ApplicationController {
                 .withProperties(afterProp, ont, true)
                 .withMoreProperties(sometimeAfterProp);
 
-//        OWLDataProperty year = checker.getOWLDataProperty("year");
-//        ShortFormProvider sfp = entity -> {
-//            String s = kit.getShortFormProvider().getShortForm(entity);
-//            if (entity instanceof OWLNamedIndividual ind) {
-//                Optional<Integer> yearVal = EventUtils.getInteger(ind, year, ont);
-//                if (yearVal.isPresent()) {
-//                    s = s + " (" + yearVal.get() + ")";
-//                }
-//            }
-//            return s;
-//        };
+        OWLDataProperty year = checker.getOWLDataProperty("year");
+
+        Function<OWLNamedIndividual, String> yearProvider = (OWLNamedIndividual ind) ->
+                EventUtils.getInteger(ind, year, ont).map(Object::toString).orElse("");
+
+        if (filterProp != null) {
+            OWLObjectProperty fProp = checker.getOWLObjectProperty(filterProp);
+            if (fProp == null) {
+                throw new NotFoundException(fProp + " filter property is unknown");
+            }
+            Set<OWLObjectPropertyExpression> fProps = reasonerService.getReasoner().getSubObjectProperties(fProp, false).getFlattened();
+            fProps.add(fProp);
+            OWLNamedIndividual fInd = checker.getOWLIndividual(filterObject);
+            if (fInd == null) {
+                throw new NotFoundException(fInd + " filter object is unknown");
+            }
+
+            // Return additional classnames for ind
+            Function<OWLNamedIndividual, String> filter = (OWLNamedIndividual ind) ->
+                    EventUtils.filterByRelations(ind, fProps, fInd, ont) ? "filter1" : "";
+
+            model.addAttribute("filter", filter);
+        }
+        else {
+            model.addAttribute("filter", null);
+        }
 
         EventFactory fac = new EventFactory(duringTree, afterTree);
 
         model.addAttribute("title", "Timeline");
         model.addAttribute("root", fac.buildTimeline(target, depth));
 
+        // TODO link to the filtered timeline page?
         OWLHTMLRenderer ren = new OWLHTMLRenderer(kit).withBreakOnUnderscore(false);
 
         model.addAttribute("ren", ren);
+        model.addAttribute("getYear", yearProvider);
 
         return "timeline";
     }

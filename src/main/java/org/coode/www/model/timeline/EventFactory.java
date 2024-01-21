@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class EventFactory {
     }
 
     public Timeline<OWLNamedIndividual, OWLObjectProperty> buildTimeline(
-            OWLNamedIndividual event,
+            @Nonnull OWLNamedIndividual event,
             int depth) {
         // TODO Should be able to ask for the subtree without the property
         return buildTimelineFor(
@@ -205,7 +206,13 @@ public class EventFactory {
             int depth) {
 
         // TODO sort by longest first
+// TODO options 1: treat them as independent timelines - allows us to "stretch" parallels
+//        return roots.stream()
+//                .map(root -> buildTimelineFrom(root, event2Tree, depth, false, false))
+//                .sorted(Comparator.comparing(timeline -> -timeline.events().size()))
+//                .toList();
 
+// TODO  option 2 But this allows converging timelines - however, everything is a parallel so the "stretching" cannot be applied
         List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> chains = roots.stream()
                 .map(root -> buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), root, event2Tree, depth))
 //                .sorted(Comparator.comparing(timeline -> -timeline.events().size()))
@@ -215,6 +222,7 @@ public class EventFactory {
         // TODO some will converge, but still need a list of timelines as some won't
         List<TConn<OWLNamedIndividual, OWLObjectProperty>> converging = buildConverging(new ArrayList<>(), chains, false, true);
         return List.of(new Timeline<>(converging, REMOVE_ME, false, true));
+        // end of option 2
     }
 
     private Set<Relation<OWLObjectProperty>> getRoots(Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree) {

@@ -15,19 +15,29 @@
 
 <li class="prop" th:fragment="prop(p)" th:classappend="${p.type + ' ' + p.meta}"></li>
 
-<th:block th:fragment="node(n)" th:switch="${n.getClass().getSimpleName()}">
-    <li th:case="TEvent" class="event dot" th:classappend="${n.meta}">
+<th:block th:fragment="node(n)"
+          th:switch="${n.getClass().getSimpleName()}">
+
+    <li th:case="TEvent" class="event dot"
+        th:with="filterCls=${filter != null ? filter.apply(n.label) : ''}"
+        th:classappend="${n.meta + filterCls}">
+        <span class="event-year" th:utext="${getYear.apply(n.label)}">Year</span>
         <span class="event-label" th:utext="${ren.render(n.label)}">Event</span>
     </li>
-    <li th:case="TParent" class="event parent">
+
+    <li th:case="TParent" class="event parent"
+        th:with="filterCls=${filter != null ? filter.apply(n.label) : ''}"
+        th:classappend="${filterCls}">
         <span class="event-label" th:utext="${ren.render(n.label)}">Event</span>
         <ul th:replace="events::timeline(${n.children})"></ul>
     </li>
+
     <li th:case="TParallel" class="parallel" >
         <th:block th:each="timeline : ${n.timelines}">
             <ul th:replace="events::timeline(${timeline})">Timeline</ul>
         </th:block>
     </li>
+
 </th:block>
 
 </html>

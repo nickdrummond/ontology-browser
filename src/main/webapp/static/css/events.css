@@ -21,7 +21,6 @@ div.events {
     height: 0;
     border-top: 2px solid #4189a0;
     min-width: 2rem;
-    flex-grow: 1;
 }
 
 .events .prop.sometimeAfter {
@@ -45,10 +44,13 @@ div.events {
     border: 2px solid #4189a0;
     border-radius: 50%;
     position: relative;
+    text-align: center;
 }
 
-.faint {
-    opacity: 0.4;
+.events .dot .event-year {
+    color: #4189a0;
+    position: relative;
+    top: 0.35rem;
 }
 
 .events .parent {
@@ -57,6 +59,15 @@ div.events {
     border: 1px solid rgba(66, 155, 88, 0.45);
     border-radius: 5px;
     padding: 5px 0;
+}
+
+.events .filter1 {
+    border-color: #f58f06;
+    background-color: lightyellow;
+}
+
+.faint {
+    opacity: 0.4;
 }
 
 .events .event-label {
@@ -114,4 +125,8 @@ div.events {
     bottom: 0;
     border-right: 2px solid #4189a0;
     width: 2px;
+}
+
+.events .converge .prop, .events .diverge .prop {
+    flex-grow: 1;
 }
