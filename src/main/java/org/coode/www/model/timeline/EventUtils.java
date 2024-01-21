@@ -32,7 +32,7 @@ public class EventUtils {
         Set<TConn<OWLNamedIndividual, OWLObjectProperty>> lastElements = getLastElements(divergentChains);
         int differentEndingsCount = lastElements.size();
 
-        if (differentEndingsCount == divergentChains.size()) {
+        if (differentEndingsCount == divergentChains.size()) { // all have different endings
             logger.info("All different ending - end ({})", isConverging ? "converging" : "diverging");
             // default all different - finish - either converging or not
             List<Timeline<OWLNamedIndividual, OWLObjectProperty>> timelines = divergentChains.stream()
@@ -56,7 +56,7 @@ public class EventUtils {
                 List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> chains = getChainsMatchingLastElement(divergentChains, element);
                 if (chains.size() == 1) {
                     logger.info("ending {} - {}", element, chains.get(0));
-                    timelines.add(new Timeline<>(chains.get(0), REMOVE_ME, isDiverging, true));
+                    timelines.add(new Timeline<>(chains.get(0), REMOVE_ME, isDiverging, false));
                 }
                 else { // share a common end
                     List<List<TConn<OWLNamedIndividual, OWLObjectProperty>>> trimmedChains = trim(chains);

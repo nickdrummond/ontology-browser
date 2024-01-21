@@ -206,6 +206,7 @@ public class EventFactory {
             int depth) {
 
         // TODO sort by longest first
+
 // TODO options 1: treat them as independent timelines - allows us to "stretch" parallels
 //        return roots.stream()
 //                .map(root -> buildTimelineFrom(root, event2Tree, depth, false, false))
@@ -220,8 +221,8 @@ public class EventFactory {
 
 
         // TODO some will converge, but still need a list of timelines as some won't
-        List<TConn<OWLNamedIndividual, OWLObjectProperty>> converging = buildConverging(new ArrayList<>(), chains, false, true);
-        return List.of(new Timeline<>(converging, REMOVE_ME, false, true));
+        List<TConn<OWLNamedIndividual, OWLObjectProperty>> converging = buildConverging(new ArrayList<>(), chains, false, false);
+        return List.of(new Timeline<>(converging, REMOVE_ME, false, false));
         // end of option 2
     }
 

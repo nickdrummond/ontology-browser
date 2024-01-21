@@ -114,13 +114,13 @@ public class EventUtilsTest {
                 bTimeline
         )), common1), REMOVE_ME, true, true);
 
-        TConn<OWLNamedIndividual, OWLObjectProperty> p1 = new TConn<>(REMOVE_ME, List.of(p2, cTimeline));
+        TConn<OWLNamedIndividual, OWLObjectProperty> p1 = new TConn<>(REMOVE_ME, List.of(cTimeline, p2));
 
         List<TConn<OWLNamedIndividual, OWLObjectProperty>> expected = List.of(p1, common2);
 
         assertEquals(2, chain.size());
-        assertEquals(p2, ((TParallel)chain.get(0).node()).timelines().get(0));
-        assertEquals(cTimeline, ((TParallel)chain.get(0).node()).timelines().get(1)); // TODO should be cTimeline - but same as p2
+        assertEquals(p2, ((TParallel)chain.get(0).node()).timelines().get(1));
+        assertEquals(cTimeline, ((TParallel)chain.get(0).node()).timelines().get(0)); // TODO should be cTimeline - but same as p2
         assertEquals(p1, chain.get(0));
         assertEquals(expected, chain);
     }
