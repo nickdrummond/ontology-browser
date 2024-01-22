@@ -8,6 +8,8 @@ import org.coode.www.service.OWLOntologiesService;
 import org.coode.www.service.ReasonerService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.coode.www.service.hierarchy.RelationsHierarchyService;
+import org.coode.www.service.timeline.EventFactory;
+import org.coode.www.service.timeline.EventUtils;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
@@ -170,7 +172,7 @@ public class TimelineController extends ApplicationController {
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p3_2, p3_1));
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p2_3, p3_2));
 
-        Timeline<OWLNamedIndividual, OWLObjectProperty> timeline = eventFactory.buildTimeline(parent, Integer.MAX_VALUE);
+        Timeline timeline = eventFactory.buildTimeline(parent, Integer.MAX_VALUE);
 
         model.addAttribute("title", "Timeline");
         model.addAttribute("root", timeline);
@@ -188,49 +190,44 @@ public class TimelineController extends ApplicationController {
 
         model.addAttribute("root", new Timeline(
                 List.of(
-                        new TConn(after, new TParent("Parent", new Timeline(
+                        new TConn(after, new TParent(ind("Parent"), new Timeline(
                                 List.of(
-                                        new TConn(after, "Child A"),
+                                        new TConn(after, ind("ChildA")),
                                         new TConn(after, List.of(
                                                 new Timeline(List.of(
-                                                        new TConn(after, "Child B")
+                                                        new TConn(after, ind("ChildB"))
                                                 ), after, false, false),
                                                 new Timeline(
                                                         List.of(
-                                                                new TConn(after, "P A"),
-                                                                new TConn(sometimeAfter, "P B")
+                                                                new TConn(after, ind("PA")),
+                                                                new TConn(sometimeAfter, ind("PB"))
                                                         ), after,true, false),
                                                 new Timeline(
                                                         List.of(
-                                                                new TConn(after, "P2 A"),
-                                                                new TConn(sometimeAfter, new TParent("P2 B",
+                                                                new TConn(after, ind("P2A")),
+                                                                new TConn(sometimeAfter, new TParent(ind("P2B"),
                                                                         new Timeline(List.of(
-                                                                                new TConn(after, "P2 B1"),
-                                                                                new TConn(after, "P2 B2")
+                                                                                new TConn(after, ind("P2B1")),
+                                                                                new TConn(after, ind("P2B2"))
                                                                         ), after, false, false)))
                                                         ), after,true, false)
                                         )),
-                                        new TConn(after, "Child C")
+                                        new TConn(after, ind("ChildC"))
                                 ), after,false, false)
                         ))
                 ), after,
                 false, false));
 
-//        model.addAttribute("root", new Timeline(
-//                after,
-//                List.of(
-//                        new TConn("Event before", after),
-//                        new TConn(new TParent("Parent", new Timeline(after,
-//                                List.of(
-//                                        new TConn("Child A", after),
-//                                        new TConn("Child B", after),
-//                                        new TConn("Child C", after)
-//                                ), false, false)
-//                        ), after),
-//                        new TConn("Event after", after)
-//                ),
-//                false, false));
+        OWLHTMLRenderer ren = new OWLHTMLRenderer(kit).withBreakOnUnderscore(false);
+        model.addAttribute("ren", ren);
+
+        Function<OWLNamedIndividual, String> yearProvider = (OWLNamedIndividual ind) -> "";
+        model.addAttribute("getYear", yearProvider);
 
         return "timeline";
+    }
+
+    private OWLNamedIndividual ind(String label) {
+        return kit.getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(label);
     }
 }

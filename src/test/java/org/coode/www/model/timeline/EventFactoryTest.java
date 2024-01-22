@@ -3,11 +3,10 @@ package org.coode.www.model.timeline;
 import junit.framework.TestCase;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.coode.www.service.hierarchy.RelationsHierarchyService;
+import org.coode.www.service.timeline.EventFactory;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.semanticweb.owlapi.util.SimpleShortFormProvider;
 
 public class EventFactoryTest extends TestCase {
 

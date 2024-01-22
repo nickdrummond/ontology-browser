@@ -1,6 +1,8 @@
 package org.coode.www.model.timeline;
 
-public record TParent<T, P> (
-        T label,
-        Timeline<T, P> children
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+
+public record TParent (
+        OWLNamedIndividual label,
+        Timeline children
 ) implements TNode { }

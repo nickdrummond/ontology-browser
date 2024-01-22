@@ -1,10 +1,12 @@
 package org.coode.www.model.timeline;
 
-public record TEvent<T> (
-        T label,
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+
+public record TEvent (
+        OWLNamedIndividual label,
         String meta
 ) implements TNode {
-    public TEvent(T label) {
+    public TEvent(OWLNamedIndividual label) {
         this(label, "");
     }
 }

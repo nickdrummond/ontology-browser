@@ -101,6 +101,10 @@ div.events {
     margin-bottom: 1.2rem;
 }
 
+.events .parallel:hover {
+    background-color: rgba(120, 120, 200, 0.05);
+}
+
 .events .diverge:not(:first-child)>.prop:first-child {
     position: relative;
 }
