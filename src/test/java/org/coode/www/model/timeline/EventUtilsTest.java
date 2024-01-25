@@ -122,4 +122,29 @@ public class EventUtilsTest {
         assertEquals(p1, chain.get(0));
         assertEquals(expected, chain);
     }
+
+
+    @Test
+    public void convergingPartway() {
+        List<List<TConn>> divergentChains = List.of(
+                List.of(a1, a2, common1, common2),
+                List.of(b1, b2, common1)
+        );
+
+        List<TConn> chain = buildConverging(new ArrayList<>(), divergentChains);
+
+        Timeline aTimeline = new Timeline(List.of(a1, a2), REMOVE_ME, true, true);
+        Timeline bTimeline = new Timeline(List.of(b1, b2), REMOVE_ME, true, true);
+
+        Timeline p2 = new Timeline(List.of(new TConn(REMOVE_ME, List.of(
+                aTimeline,
+                bTimeline
+        )), common1, common2), REMOVE_ME, true, true);
+
+        assertEquals(1, chain.size());
+        assertEquals(aTimeline, ((TParallel)chain.get(0).node()).timelines().get(0));
+        assertEquals(bTimeline, ((TParallel)chain.get(0).node()).timelines().get(1));
+        assertEquals(p2, chain.get(0));
+//        assertEquals(expected, chain);
+    }
 }

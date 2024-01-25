@@ -33,6 +33,13 @@
         <h2 th:text="${title}">Title</h2>
 
         <ul>
+            <li>http://localhost:8080/timeline/starwars?event=Escape_from_Daiyu
+                <ul>
+                    <li>This works fine when it is all contained in a parent event - http://localhost:8080/timeline/starwars</li>
+                    <li>Should be a mini parallel after escape from Daiyu until Arrival_of_Vader</li>
+                    <li>And again, the rescue of Leia</li>
+                </ul>
+            </li>
             <li>Should parallels come directly out of previous node? rather than on property?</li>
             <li>why is Freeing_of_Jyn a root? It is sometimeafter Capture_of_Galen - same as Great_Purge, Search_for_Ezra, Train_vs_Sandpeople
                 *      - why is Train_vs_Sandpeople a root? ah, its in new republic era - but sometime after events in galactic civil war - should render faint

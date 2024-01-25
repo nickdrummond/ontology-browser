@@ -11,4 +11,9 @@ public record TProp(
     public TProp withMeta(String meta) {
         return new TProp(type, meta);
     }
+
+    @Override
+    public String toString() {
+        return type;
+    }
 }

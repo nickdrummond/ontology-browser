@@ -9,4 +9,9 @@ public record TEvent (
     public TEvent(OWLNamedIndividual label) {
         this(label, "");
     }
+
+    @Override
+    public String toString() {
+        return label.getIRI().getIRIString();
+    }
 }

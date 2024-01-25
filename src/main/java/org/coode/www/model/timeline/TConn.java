@@ -11,4 +11,12 @@ public record TConn(TProp prop, TNode node) {
     public TConn(TProp prop, List<Timeline> timelines) {
         this(prop, new TParallel(timelines));
     }
+
+    @Override
+    public String toString() {
+        return "(" +
+                prop +
+                "->" + node +
+                ')';
+    }
 }

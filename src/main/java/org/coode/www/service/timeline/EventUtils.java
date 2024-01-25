@@ -31,7 +31,7 @@ public class EventUtils {
 
         logger.info("Build Converging:");
         divergentChains.forEach(ch ->
-                logger.info("chain: ${}", ch)
+                logger.info("chain: {}", ch)
         );
         Set<TConn> lastElements = getLastElements(divergentChains);
         int differentEndingsCount = lastElements.size();
@@ -94,13 +94,11 @@ public class EventUtils {
         return chains.stream().filter(chain -> getLastElement(chain).equals(lastElement)).toList();
     }
 
-    public static Set<TConn> getLastElements(
-            List<List<TConn>> chains) {
+    public static Set<TConn> getLastElements(List<List<TConn>> chains) {
         return new LinkedHashSet<>(chains.stream().map(EventUtils::getLastElement).toList()); // predictable ordering
     }
 
-    public static TConn getLastElement(
-            List<TConn> chain) {
+    public static TConn getLastElement(List<TConn> chain) {
         return chain.get(chain.size() - 1);
     }
 

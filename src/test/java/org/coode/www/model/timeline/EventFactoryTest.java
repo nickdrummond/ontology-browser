@@ -66,7 +66,7 @@ public class EventFactoryTest extends TestCase {
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p3_1, child1));
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p3_2, p3_1));
 
-        Timeline timeline = eventFactory.buildTimeline(parent, Integer.MAX_VALUE);
+        Timeline timeline = eventFactory.buildTimelineFromEvent(parent, Integer.MAX_VALUE);
 
 
     }

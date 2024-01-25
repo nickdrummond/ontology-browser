@@ -11,4 +11,12 @@ public record Relation<P extends OWLProperty>(@Nonnull P property, @Nonnull OWLN
         Objects.requireNonNull(individual);
         Objects.requireNonNull(property);
     }
+
+    @Override
+    public String toString() {
+        return "R(" +
+                property.getIRI().getFragment() +
+                " -> " + individual.getIRI().getFragment() +
+                ')';
+    }
 }

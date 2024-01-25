@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import static org.coode.www.service.timeline.EventUtils.*;
 
-// TODO move to services
 public class EventFactory {
 
     public final Logger logger = LoggerFactory.getLogger(EventFactory.class);
@@ -34,51 +33,63 @@ public class EventFactory {
         duringTree.getProperties().forEach(p -> this.props.put(p, new TProp(p.getIRI().getFragment())));
     }
 
-    public Timeline buildTimeline(
+    // Entry point
+    public Timeline buildTimelineFromEvent(
             @Nonnull OWLNamedIndividual event,
             int depth) {
         // TODO Should be able to ask for the subtree without the property
-        return buildTimelineFor(
-                afterTree.getSubtree(new Relation<>(afterTree.getProperty(), event)),
+        Tree<Relation<OWLObjectProperty>> subtree = afterTree.getSubtree(new Relation<>(afterTree.getProperty(), event));
+        logger.info("buildTimelineFromEvent: {}", subtree);
+        return buildTimelineFromTreeNode(
+                subtree,
                 depth,
                 false,
                 false);
     }
 
-    public Timeline buildTimelineFor(
+    private Timeline buildTimelineFromTreeNode(
             Tree<Relation<OWLObjectProperty>> eventTree,
             int depth,
             boolean diverge,
             boolean converge) {
-        logger.info("buildTimelineFor: {}", eventTree);
-        List<TConn> chain = buildChainFrom(new ArrayList<>(), eventTree, depth);
+        logger.info("buildTimelineFromTreeNode: {}", eventTree.value);
+        List<TConn> chain = buildChainFromTreeNode(new ArrayList<>(), eventTree, depth);
         return new Timeline(chain, SOMETIME_AFTER_REMOVE, diverge, converge);
     }
 
-    private TNode buildFaintNode(Relation<OWLObjectProperty> event) {
-        return new TEvent(event.individual(), "faint");
-    }
+    private List<TConn> buildChainFromTreeNode(
+            List<TConn> chain,
+            Tree<Relation<OWLObjectProperty>> treeNode,
+            int depth) {
 
-    private TNode buildNode(Relation<OWLObjectProperty> event, int depth) {
+        Relation<OWLObjectProperty> current = treeNode.value.get(0);
 
-        if (depth <= 1) { // don't go any further
-            return new TEvent(event.individual());
+        chain.add(new TConn(prop(current), buildNode(current, depth)));
+
+        if (treeNode.children.isEmpty()) {
+            logger.info("Last node in chain: {}", current);
+            return chain;
         }
 
-        Tree<Relation<OWLObjectProperty>> children = duringTree.getChildren(event);
-
-        if (children.childCount == 0) { // simple
-            return new TEvent(event.individual());
+        if (treeNode.children.size() == 1) {
+            logger.info("Single path in chain: {}", current);
+            return buildChainFromTreeNode(chain, treeNode.children.get(0), depth);
         }
 
-        List<Relation<OWLObjectProperty>> subevents = children.children.stream()
-                .map(t -> t.value)
-                .flatMap(Streams::stream).toList();
+        // TODO what if diverging timelines on different properties?
 
-        return new TParent(event.individual(), buildTimelineFromEvents(subevents, depth - 1));
+        // TODO this just diverges - need to converge too
+        logger.info("Divergent path in chain: {}", current);
+        List<List<TConn>> divergentTimelines = treeNode.children.stream()
+                .map(t -> buildChainFromTreeNode(chain, t, depth))
+                .toList();
+
+//        chain.add(new TConn(REMOVE_ME, divergentTimelines));
+
+        return buildConverging(chain, divergentTimelines);
     }
 
-    private Timeline buildTimelineFromEvents(
+    private Timeline buildTimelineInParentEvent(
             List<Relation<OWLObjectProperty>> events, int depth) {
 
         Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree =
@@ -95,29 +106,29 @@ public class EventFactory {
 
             logger.info("Single root found {}", root);
 
-            return buildTimelineFrom(root, event2Tree, depth, false, false);
+            return buildSingleRootTimelineInParentEvent(root, event2Tree, depth, false, false);
         }
 
         logger.info("Multiple roots found {}", roots.size());
 
         return new Timeline(List.of(
-                new TConn(REMOVE_ME, buildParallel(roots, event2Tree, depth))),
+                new TConn(REMOVE_ME, buildParallelInParentEvent(roots, event2Tree, depth))),
                 SOMETIME_AFTER_REMOVE, false, false);
     }
 
-    private Timeline buildTimelineFrom(
+    private Timeline buildSingleRootTimelineInParentEvent(
             Relation<OWLObjectProperty> current,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
             int depth,
             boolean diverge,
             boolean converge) {
         List<TConn> chain =
-                buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), current, event2Tree, depth);
+                buildEventChainFromCurrentPositionInParentEvent(new ArrayList<>(), current, event2Tree, depth);
         return new Timeline(chain, converge ? REMOVE_ME : SOMETIME_AFTER_REMOVE, diverge, converge);
     }
 
     // TODO detect cycles?
-    private List<TConn> buildChainOnlyUsingGivenEventsFrom(
+    private List<TConn> buildEventChainFromCurrentPositionInParentEvent(
             List<TConn> chain,
             Relation<OWLObjectProperty> current,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
@@ -145,19 +156,15 @@ public class EventFactory {
 
             if (relationTree.childCount == 1) {
                 logger.info("Single path in chain: {}", current);
-                return buildChainOnlyUsingGivenEventsFrom(chain, relationTree.children.get(0).value.get(0), event2Tree, depth);
+                return buildEventChainFromCurrentPositionInParentEvent(chain, relationTree.children.get(0).value.get(0), event2Tree, depth);
             }
 
             logger.info("Divergent path in chain: {}", current);
-            return buildParallel(chain, relationTree, event2Tree, depth);
+            return buildParallelInParentEvent(chain, relationTree, event2Tree, depth);
         }
     }
 
-    private TProp prop(Relation<OWLObjectProperty> current) {
-        return props.get(current.property());
-    }
-
-    public List<TConn> buildParallel(
+    private List<TConn> buildParallelInParentEvent(
             List<TConn> chain,
             Tree<Relation<OWLObjectProperty>> treeNode,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
@@ -165,44 +172,15 @@ public class EventFactory {
 
         // TODO make chain immutable - return copy
         List<List<TConn>> divergentChains = treeNode.children.stream()
-                .map(t -> buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), t.value.get(0), event2Tree, depth))
+                .map(t -> buildEventChainFromCurrentPositionInParentEvent(new ArrayList<>(), t.value.get(0), event2Tree, depth))
                 .toList();
 
         buildConverging(chain, divergentChains);
         return chain;
     }
 
-    private List<TConn> buildChainFrom(
-            List<TConn> chain,
-            Tree<Relation<OWLObjectProperty>> treeNode,
-            int depth) {
 
-        Relation<OWLObjectProperty> current = treeNode.value.get(0);
-
-        chain.add(new TConn(prop(current), buildNode(current, depth)));
-
-        if (treeNode.children.isEmpty()) {
-            logger.info("Last node in chain: {}", current);
-            return chain;
-        }
-
-        if (treeNode.children.size() == 1) {
-            logger.info("Single path in chain: {}", current);
-            return buildChainFrom(chain, treeNode.children.get(0), depth);
-        }
-
-        // TODO what if diverging timelines on different properties?
-        logger.info("Divergent path in chain: {}", current);
-        List<Timeline> divergentTimelines = treeNode.children.stream()
-                .map(t -> buildTimelineFor(t, depth, true, false))
-                .toList();
-
-        chain.add(new TConn(REMOVE_ME, divergentTimelines));
-
-        return chain;
-    }
-
-    private List<Timeline> buildParallel(
+    private List<Timeline> buildParallelInParentEvent(
             Set<Relation<OWLObjectProperty>> roots,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
             int depth) {
@@ -217,7 +195,7 @@ public class EventFactory {
 
 // TODO  option 2 But this allows converging timelines - however, everything is a parallel so the "stretching" cannot be applied
         List<List<TConn>> chains = roots.stream()
-                .map(root -> buildChainOnlyUsingGivenEventsFrom(new ArrayList<>(), root, event2Tree, depth))
+                .map(root -> buildEventChainFromCurrentPositionInParentEvent(new ArrayList<>(), root, event2Tree, depth))
 //                .sorted(Comparator.comparing(timeline -> -timeline.events().size()))
                 .toList();
 
@@ -226,6 +204,32 @@ public class EventFactory {
         List<TConn> converging = buildConverging(new ArrayList<>(), chains, false, false);
         return List.of(new Timeline(converging, REMOVE_ME, false, false));
         // end of option 2
+    }
+
+    private TNode buildFaintNode(Relation<OWLObjectProperty> event) {
+        return new TEvent(event.individual(), "faint");
+    }
+
+    private TNode buildNode(Relation<OWLObjectProperty> event, int depth) {
+
+        if (depth <= 1) { // don't go any further
+            return new TEvent(event.individual());
+        }
+
+        Tree<Relation<OWLObjectProperty>> children = duringTree.getChildren(event);
+
+        if (children.childCount == 0) { // simple
+            return new TEvent(event.individual());
+        }
+
+        List<Relation<OWLObjectProperty>> subevents = children.children.stream()
+                .map(t -> t.value)
+                .flatMap(Streams::stream).toList();
+
+        return new TParent(event.individual(), buildTimelineInParentEvent(subevents, depth - 1));
+    }
+    private TProp prop(Relation<OWLObjectProperty> current) {
+        return props.get(current.property());
     }
 
     private Set<Relation<OWLObjectProperty>> getRoots(Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree) {

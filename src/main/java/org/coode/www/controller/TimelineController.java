@@ -109,7 +109,7 @@ public class TimelineController extends ApplicationController {
         EventFactory fac = new EventFactory(duringTree, afterTree);
 
         model.addAttribute("title", "Timeline");
-        model.addAttribute("root", fac.buildTimeline(target, depth));
+        model.addAttribute("root", fac.buildTimelineFromEvent(target, depth));
 
         // TODO link to the filtered timeline page?
         OWLHTMLRenderer ren = new OWLHTMLRenderer(kit).withBreakOnUnderscore(false);
@@ -148,8 +148,10 @@ public class TimelineController extends ApplicationController {
         OWLNamedIndividual p2_3 = df.getOWLNamedIndividual("p2_3");
         OWLNamedIndividual p3_1 = df.getOWLNamedIndividual("p3_1");
         OWLNamedIndividual p3_2 = df.getOWLNamedIndividual("p3_2");
+        OWLNamedIndividual converging = df.getOWLNamedIndividual("converging");
 
         // During
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, converging, parent));
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, child1, parent));
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, child2, parent));
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(during, child3, parent));
@@ -161,6 +163,7 @@ public class TimelineController extends ApplicationController {
 
         // After
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, child2, child1));
+        ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, child2, converging));
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, child3, child2));
 
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p2_1, child1));
@@ -172,10 +175,16 @@ public class TimelineController extends ApplicationController {
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p3_2, p3_1));
         ont.addAxiom(df.getOWLObjectPropertyAssertionAxiom(after, p2_3, p3_2));
 
-        Timeline timeline = eventFactory.buildTimeline(parent, Integer.MAX_VALUE);
+        Timeline timeline = eventFactory.buildTimelineFromEvent(parent, Integer.MAX_VALUE);
 
         model.addAttribute("title", "Timeline");
         model.addAttribute("root", timeline);
+
+        OWLHTMLRenderer ren = new OWLHTMLRenderer(kit).withBreakOnUnderscore(false);
+        model.addAttribute("ren", ren);
+
+        Function<OWLNamedIndividual, String> yearProvider = (OWLNamedIndividual ind) -> "";
+        model.addAttribute("getYear", yearProvider);
 
         return "timeline";
     }
@@ -196,12 +205,12 @@ public class TimelineController extends ApplicationController {
                                         new TConn(after, List.of(
                                                 new Timeline(List.of(
                                                         new TConn(after, ind("ChildB"))
-                                                ), after, false, false),
+                                                ), after, false, true),
                                                 new Timeline(
                                                         List.of(
                                                                 new TConn(after, ind("PA")),
                                                                 new TConn(sometimeAfter, ind("PB"))
-                                                        ), after,true, false),
+                                                        ), after,true, true),
                                                 new Timeline(
                                                         List.of(
                                                                 new TConn(after, ind("P2A")),
