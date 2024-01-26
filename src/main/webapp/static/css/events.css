@@ -85,13 +85,16 @@ div.events {
 .events .parent>.event-label {
     font-size: 1.2rem;
     font-weight: bold;
-    color: rgba(37, 78, 94, 0.49);
     background: none;
     top: -1rem;
     left: -20.5rem;
     width: 20rem;
     text-align: right;
     transform-origin: bottom right;
+}
+
+.events .parent>.event-label a {
+    color: rgba(37, 78, 94, 0.49) !important;
 }
 
 .events .parallel {
