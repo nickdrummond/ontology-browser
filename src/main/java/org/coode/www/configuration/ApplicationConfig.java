@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
-@ComponentScan({"org.coode.www.service", "org.coode.www.repository", "org.coode.www.controller"})
+@ComponentScan({"org.coode.www.service", "org.coode.www.controller"})
 public class ApplicationConfig {
 
     @Bean
