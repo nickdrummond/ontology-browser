@@ -1,6 +1,8 @@
 package org.coode.www.configuration;
 
 import org.apache.commons.collections4.map.LRUMap;
+import org.apache.lucene.store.ByteBuffersDirectory;
+import org.apache.lucene.store.Directory;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ProjectInfo;
 import org.coode.www.model.ReasonerMomento;
@@ -98,5 +100,10 @@ public class ApplicationConfig {
                                            OWLHTMLKit kit,
                                            ExecutorService reasonerThreadPool) {
         return new ReasonerService(kit, reasonerThreadPool, Collections.synchronizedMap(new LRUMap<>(cacheCount)), reasonerFactoryService);
+    }
+
+    @Bean
+    public Directory luceneDirectory() {
+        return new ByteBuffersDirectory();
     }
 }
