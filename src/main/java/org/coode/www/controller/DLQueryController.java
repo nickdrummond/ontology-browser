@@ -133,7 +133,9 @@ public class DLQueryController extends ApplicationController {
             OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
 
             // Target links to parent page for fragment
-            UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequest().replacePath(PATH);
+            UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .replacePath(PATH)
+                    .replaceQueryParam("expression", expression); // as it gets double encoded otherwise
 
             model.addAttribute("urlBuilder", uriBuilder);
             model.addAttribute("results", resultsCharacteristic);
