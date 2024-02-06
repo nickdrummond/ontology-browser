@@ -14,7 +14,11 @@
 
     <div id="content">
 
-        <h2 th:text="${title}">Title</h2>
+            <form class='axioms-form' method='get'>
+                <h2 th:text="${title}">Title</h2>
+                <input id='axioms-search' type='text' name='search' value='' placeholder='search...'/>
+                <input type='submit' value='>'/>
+            </form>
 
         <div th:replace="base :: characteristic (${axioms})">
             A characteristic
@@ -24,6 +28,15 @@
 </div>
 
 <div th:replace='base :: footer'></div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        const search = new URLSearchParams(window.location.search).get('search');
+        if (search) {
+            document.getElementById('axioms-search').setAttribute("value", search);
+        }
+    });
+</script>
 
 </body>
 </html>

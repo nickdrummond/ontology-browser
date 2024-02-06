@@ -476,12 +476,34 @@ img.thumb{
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;;
 }
 
-    /* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
-    .wrapper {
-      display: flex;
-      flex-flow: row wrap;
-    }
+/* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+.wrapper {
+  display: flex;
+  flex-flow: row wrap;
+}
 
+.axioms-form{
+    margin-left: 0.3em;
+    margin-bottom: 0.5em;
+    display: flex;
+    align-items: center;
+    align-content: center;
+}
+
+.axioms-form h2 {
+    margin-bottom: 0;
+}
+
+.axioms-form input[type="text"] {
+    font-size: 1.5em;
+    width: 50%;
+    padding-left: 10px;
+}
+
+.axioms-form input[type="submit"] {
+    background: none;
+    border: none;
+}
 
 @media screen and (max-width: 800px) and (max-height: 450px) {
 
