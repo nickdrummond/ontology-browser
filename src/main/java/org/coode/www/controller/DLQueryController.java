@@ -4,7 +4,6 @@ import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.owl.mngr.impl.PropertyComparator;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.QueryTimeoutException;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.DLQuery;
@@ -18,6 +17,8 @@ import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -28,14 +29,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.nickdrummond.parsejs.ParseException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
+
+import static org.coode.www.util.OWLUtils.getDeclaringOntology;
+import static org.coode.www.util.Utils.subtract;
 
 @Controller
 @RequestMapping(value= DLQueryController.PATH)
 public class DLQueryController extends ApplicationController {
+
+    private static final Logger log = LoggerFactory.getLogger(DLQueryController.class);
 
     public static final String DEFAULT_PAGE_SIZE = "50";
     public static final String PATH = "/dlquery";
@@ -103,8 +107,8 @@ public class DLQueryController extends ApplicationController {
             DLQuery query = new DLQuery(parserService.getOWLClassExpression(expression, df, checker), queryType);
             reasonerService.asyncQuery(query);
 
+            DLQuery minusQuery = new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType);
             if (minus != null && !minus.isEmpty()) {
-                DLQuery minusQuery = new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType);
                 reasonerService.asyncQuery(minusQuery);
             }
 
@@ -114,7 +118,7 @@ public class DLQueryController extends ApplicationController {
                 OWLReasoner r = reasonerService.getReasoner();
                 OWLDataProperty orderProperty = kit.getOWLEntityChecker().getOWLDataProperty(order);
                 if (orderProperty != null) {
-                    System.out.println("Sorting by: " + orderProperty);
+                    log.debug("Sorting by: {}", orderProperty);
                     c = new PropertyComparator(orderProperty, c, r);
                 }
             }
@@ -122,12 +126,9 @@ public class DLQueryController extends ApplicationController {
             Set<OWLEntity> results = reasonerService.getCachedResults(query);
 
             if (minus != null && !minus.isEmpty()) {
-                Set<OWLEntity> minusResults = reasonerService.getCachedResults(new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType));
-                // Wish there was a neater immutable version of this
-                Set<OWLEntity> resultsCopy = new HashSet<>(results);
-                resultsCopy.removeAll(minusResults);
-                results = resultsCopy;
+                results = subtract(reasonerService.getCachedResults(minusQuery), results);
             }
+
             Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c, start, pageSize);
 
             OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
@@ -176,29 +177,23 @@ public class DLQueryController extends ApplicationController {
         }
     }
 
-    private OWLOntology getDeclarationOntology(OWLEntity e, OWLHTMLKit kit) {
-        OWLDeclarationAxiom decl = kit.getOWLOntologyManager().getOWLDataFactory().getOWLDeclarationAxiom(e);
-        OWLOntology rActiveOnt = reasonerService.getReasoningActiveOnt();
-        for (OWLOntology o : rActiveOnt.getImportsClosure()) {
-            if (o.containsAxiom(decl)) {
-                return o;
-            }
-        }
-        return rActiveOnt;
-    }
-
     private Characteristic buildCharacteristic(
             final String name,
             final Set<OWLEntity> results,
             final Comparator<OWLObject> comp,
             final int start,
             final int pageSize) {
-        return new Characteristic(null, name,
-                results.stream()
-                        .sorted(comp)
-                        .map(e -> new AxiomWithMetadata("result", e, null, getDeclarationOntology(e, kit)))
-                        .skip(start).limit(pageSize)
-                        .toList(),
-                new PageData(start, pageSize, results.size()));
+
+        OWLOntology ont = reasonerService.getReasoningActiveOnt();
+
+        List<AxiomWithMetadata> result = results.stream()
+                .sorted(comp)
+                .map(e -> new AxiomWithMetadata("result", e, null, getDeclaringOntology(e, ont)))
+                .skip(start).limit(pageSize)
+                .toList();
+
+        PageData pageData = new PageData(start, pageSize, results.size());
+
+        return new Characteristic(null, name, result, pageData);
     }
 }
