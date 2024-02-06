@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@ComponentScan({"org.coode.www.formatter"})
+@ComponentScan({"org.coode.www.renderer"})
 @EnableWebMvc
 @PropertySource("classpath:application.properties")
 public class MvcConfig implements WebMvcConfigurer {
