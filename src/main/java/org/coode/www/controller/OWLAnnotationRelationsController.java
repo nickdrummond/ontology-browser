@@ -20,28 +20,15 @@ import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/relations/" + OWLAnnotationRelationsController.PATH)
-public class OWLAnnotationRelationsController {
+public class OWLAnnotationRelationsController extends ApplicationController {
 
     public static final String PATH = "onannotationproperty";
     public static final String OWLENTITY = "owlentity";
 
     private final OWLAnnotationPropertiesService propertiesService;
 
-    private final OWLHTMLKit kit;
-
-    private final ProjectInfo projectInfo;
-
     private final CommonRelations<OWLAnnotationProperty> common;
 
-    @ModelAttribute("projectInfo")
-    public ProjectInfo getProjectInfo() {
-        return projectInfo;
-    }
-
-    @ModelAttribute("kit")
-    public OWLHTMLKit getKit() {
-        return kit;
-    }
 
     public OWLAnnotationRelationsController(
             @Autowired OWLAnnotationPropertiesService propertiesService,
@@ -55,7 +42,8 @@ public class OWLAnnotationRelationsController {
                 PATH,
                 kit,
                 propertiesService,
-                individualsService
+                individualsService,
+                rendererFactory
         );
     }
 
@@ -79,7 +67,7 @@ public class OWLAnnotationRelationsController {
                                                     final Model model,
                                                     HttpServletRequest request) throws NotFoundException {
 
-        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, kit);
+        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
 
         AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, orderBy, inverse);
@@ -101,7 +89,7 @@ public class OWLAnnotationRelationsController {
 
         OWLNamedIndividual individual = common.renderIndividual(individualId, model);
 
-        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, kit);
+        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
 
         AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, orderBy, inverse);

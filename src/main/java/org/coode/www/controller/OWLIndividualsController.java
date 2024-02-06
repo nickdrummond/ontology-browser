@@ -6,6 +6,7 @@ import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.MediaRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
+import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.*;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
 import org.semanticweb.owlapi.model.*;
@@ -30,8 +31,6 @@ import java.util.stream.Stream;
 @Controller
 @RequestMapping(value="/individuals")
 public class OWLIndividualsController extends ApplicationController {
-
-    private static final Logger logger = LoggerFactory.getLogger(OWLIndividualsController.class);
 
     @Autowired
     private OWLIndividualsService service;
@@ -67,7 +66,6 @@ public class OWLIndividualsController extends ApplicationController {
     public String getOWLIndividual(@PathVariable final String individualId,
                                    @RequestParam(required=false) final String ontId,
                                    @RequestParam(required=false) final boolean inferred,
-                                   final HttpServletRequest request,
                                    final Model model) throws NotFoundException {
 
         final OWLOntology activeOntology = (ontId != null) ?
@@ -90,7 +88,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         String entityName = sfp.getShortForm(owlIndividual);
 
-        OWLHTMLRenderer owlRenderer = new MediaRenderer(kit).withActiveObject(owlIndividual);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(activeOntology).withActiveObject(owlIndividual);
 
         Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ontologies);
         if (maybeLoc.isPresent()) {

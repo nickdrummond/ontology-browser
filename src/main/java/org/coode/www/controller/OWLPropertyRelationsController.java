@@ -15,6 +15,7 @@ import org.coode.www.service.hierarchy.OWLObjectPropertyHierarchyService;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +27,7 @@ import java.util.Comparator;
 
 @Controller
 @RequestMapping(value = "/relations/" + OWLPropertyRelationsController.PATH)
-public class OWLPropertyRelationsController {
+public class OWLPropertyRelationsController extends ApplicationController{
 
     public static final String PATH = "onproperty";
     public static final String OWLENTITY = "owlentity";
@@ -38,38 +39,23 @@ public class OWLPropertyRelationsController {
 
     private final ReasonerFactoryService reasonerFactoryService;
 
-    private final OWLHTMLKit kit;
-
-    private final ProjectInfo projectInfo;
-
     private final CommonRelations<OWLObjectProperty> common;
 
-    @ModelAttribute("projectInfo")
-    public ProjectInfo getProjectInfo() {
-        return projectInfo;
-    }
-
-    @ModelAttribute("kit")
-    public OWLHTMLKit getKit() {
-        return kit;
-    }
 
     public OWLPropertyRelationsController(
             @Autowired OWLObjectPropertiesService propertiesService,
             @Autowired OWLIndividualsService individualsService,
-            @Autowired ReasonerFactoryService reasonerFactoryService,
-            @Autowired OWLHTMLKit kit,
-            @Autowired ProjectInfo projectInfo) {
+            @Autowired ReasonerFactoryService reasonerFactoryService) {
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.reasonerFactoryService = reasonerFactoryService;
-        this.kit = kit;
-        this.projectInfo = projectInfo;
+
         this.common = new CommonRelations<>(
                 PATH,
                 kit,
                 propertiesService,
-                individualsService
+                individualsService,
+                rendererFactory
         );
     }
 
@@ -89,7 +75,7 @@ public class OWLPropertyRelationsController {
                                           final Model model,
                                           HttpServletRequest request) throws NotFoundException {
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit);
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, orderBy, inverse);
@@ -111,7 +97,7 @@ public class OWLPropertyRelationsController {
 
         OWLNamedIndividual individual = common.renderIndividual(individualId, model);
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit);
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, orderBy, inverse);
@@ -126,14 +112,16 @@ public class OWLPropertyRelationsController {
     public String getChildren(@PathVariable final String propertyId,
                               final Model model) throws NotFoundException {
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit);
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
-                reasonerFactoryService.getToldReasoner(kit.getActiveOntology()),
+                reasonerFactoryService.getToldReasoner(ont),
                 Comparator.comparing(o -> o.value.iterator().next()));
 
         model.addAttribute("t", hierarchyService.getChildren(property));
-        model.addAttribute("mos", new OWLHTMLRenderer(kit).withURLScheme(new RelationPropertyURLScheme()));
+        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new RelationPropertyURLScheme()));
 
         return BASE_TREE;
     }
@@ -146,7 +134,8 @@ public class OWLPropertyRelationsController {
                               final Model model,
                               HttpServletRequest request) throws NotFoundException {
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit);
+        OWLOntology ont = kit.getActiveOntology();
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
         OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, kit.getOntologies());
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
@@ -156,7 +145,7 @@ public class OWLPropertyRelationsController {
                 "/relations/" + PATH, property).withQuery(request.getQueryString());
 
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
-        model.addAttribute("mos", new OWLHTMLRenderer(kit).withURLScheme(urlScheme));
+        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
 
         return BASE_TREE;
     }

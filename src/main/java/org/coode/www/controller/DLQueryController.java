@@ -9,6 +9,7 @@ import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.DLQuery;
 import org.coode.www.model.QueryType;
 import org.coode.www.renderer.OWLHTMLRenderer;
+import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.ParserService;
 import org.coode.www.service.ReasonerService;
 import org.coode.www.util.PageData;
@@ -28,7 +29,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.nickdrummond.parsejs.ParseException;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -73,7 +73,7 @@ public class DLQueryController extends ApplicationController {
             reasonerService.asyncQuery(new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType));
         }
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
 
         model.addAttribute("reasonerName", reasonerService.getReasoner().getReasonerName());
         model.addAttribute("reasoningOntology", reasonerService.getReasoningActiveOnt());
@@ -97,7 +97,6 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(name="query") final QueryType queryType,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
-            HttpServletRequest request,
             final Model model) throws OntServerException, QueryTimeoutException, ParserException {
 
         try {
@@ -131,7 +130,7 @@ public class DLQueryController extends ApplicationController {
 
             Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c, start, pageSize);
 
-            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+            OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
 
             // Target links to parent page for fragment
             UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequest()

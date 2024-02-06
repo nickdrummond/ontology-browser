@@ -12,11 +12,11 @@ import java.util.List;
 
 public interface PropertiesService<T extends OWLProperty> {
 
-     T getPropertyFor(String propertyId, OWLHTMLKit kit) throws NotFoundException;
+     T getPropertyFor(String propertyId, OWLOntology ont) throws NotFoundException;
 
      String getIdFor(final T property);
 
-     List<Characteristic> getCharacteristics(final T property, final OWLHTMLKit kit);
+     List<Characteristic> getCharacteristics(final T property, final OWLOntology ont, final Comparator<OWLObject> comparator);
 
      Comparator<Tree<OWLNamedIndividual>> getComparator(T orderByProperty, OWLOntology ont);
 

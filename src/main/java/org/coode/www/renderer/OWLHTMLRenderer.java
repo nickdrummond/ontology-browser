@@ -1,9 +1,13 @@
 package org.coode.www.renderer;
 
 import org.coode.html.url.URLScheme;
+import org.coode.owl.mngr.OWLEntityFinder;
 import org.coode.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,14 +18,18 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
 
     private final OWLHTMLVisitor rendererVisitor;
 
-    public OWLHTMLRenderer(final OWLHTMLKit kit) {
+    public OWLHTMLRenderer(final ShortFormProvider sfp,
+                           final OntologyIRIShortFormProvider ontSfp,
+                           final URLScheme urlScheme,
+                           final OWLOntology activeOntology,
+                           final OWLEntityFinder finder) {
         rendererVisitor = new OWLHTMLVisitor(
-                kit.getShortFormProvider(),
-                kit.getOntologyShortFormProvider(),
-                kit.getURLScheme(),
-                kit.getActiveOntologies(),
-                kit.getActiveOntology(),
-                kit.getFinder());
+                sfp,
+                ontSfp,
+                urlScheme,
+                activeOntology.getImportsClosure(),
+                activeOntology,
+                finder);
     }
 
     public OWLHTMLRenderer withActiveObject(final OWLObject activeObject) {

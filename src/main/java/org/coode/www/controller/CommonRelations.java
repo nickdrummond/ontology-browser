@@ -6,6 +6,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
+import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.*;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.semanticweb.owlapi.model.*;
@@ -25,16 +26,19 @@ public class CommonRelations<T extends OWLProperty> {
     private final PropertiesService<T> propertiesService;
 
     private final OWLIndividualsService individualsService;
+    private final RendererFactory rendererFactory;
 
     public CommonRelations(
             String path,
             OWLHTMLKit kit,
             PropertiesService<T> propertiesService,
-            OWLIndividualsService individualsService) {
+            OWLIndividualsService individualsService,
+            RendererFactory rendererFactory) {
         this.path = path;
         this.kit = kit;
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
+        this.rendererFactory = rendererFactory;
     }
 
     public void renderEntity(OWLEntity entity, Model model) {
@@ -59,7 +63,7 @@ public class CommonRelations<T extends OWLProperty> {
 
         OWLOntology ont = kit.getActiveOntology();
 
-        T orderByProperty = (orderBy != null) ? propertiesService.getPropertyFor(orderBy, kit) : null;
+        T orderByProperty = (orderBy != null) ? propertiesService.getPropertyFor(orderBy, ont) : null;
 
         Comparator<Tree<OWLNamedIndividual>> comparator = propertiesService.getComparator(orderByProperty, ont);
 
@@ -91,11 +95,13 @@ public class CommonRelations<T extends OWLProperty> {
                 relationsHierarchyService.getPrunedTree(individual) :
                 relationsHierarchyService.getTree();
 
+        OWLHTMLRenderer renderer = rendererFactory.getRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
+
         model.addAttribute("type", "Relations on");
         model.addAttribute("hierarchy", propertiesService.getPropTree(property, ont));
         model.addAttribute("type2", kit.getShortFormProvider().getShortForm(property));
         model.addAttribute("inverse", relationsHierarchyService.isInverse());
-        model.addAttribute("mos", new OWLHTMLRenderer(kit).withActiveObjects(activeObjects).withURLScheme(urlScheme));
+        model.addAttribute("mos", renderer);
         model.addAttribute("hierarchy2", relationsTree);
     }
 }

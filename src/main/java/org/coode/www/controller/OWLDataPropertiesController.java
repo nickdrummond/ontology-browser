@@ -8,6 +8,7 @@ import org.coode.www.service.ReasonerFactoryService;
 import org.coode.www.service.hierarchy.OWLDataPropertyHierarchyService;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,7 +51,9 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         Comparator<Tree<OWLDataProperty>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         OWLDataPropertyHierarchyService hierarchyService = new OWLDataPropertyHierarchyService(r, comparator);
 
@@ -58,7 +61,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDataProperty);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit).withActiveObject(owlDataProperty);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlDataProperty);
 
         model.addAttribute("title", entityName + " (Data Property)");
         model.addAttribute("type", "Data Properties");
@@ -79,13 +82,15 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         Comparator<Tree<OWLDataProperty>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         OWLDataPropertyHierarchyService hierarchyService = new OWLDataPropertyHierarchyService(r, comparator);
 
         Tree<OWLDataProperty> prunedTree = hierarchyService.getChildren(property);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

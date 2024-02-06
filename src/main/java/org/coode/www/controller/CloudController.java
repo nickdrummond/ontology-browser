@@ -106,12 +106,14 @@ public class CloudController extends ApplicationController {
         helper.setThreshold(threshold);
         helper.setNormalise(normalise);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         Set<OWLOntology> ontologies = kit.getOntologies();
 
         model.addAttribute("title", title);
-        model.addAttribute("activeOntology", kit.getActiveOntology());
+        model.addAttribute("activeOntology", ont);
         model.addAttribute("ontologies", ontologies);
         model.addAttribute("helper", helper);
         model.addAttribute("mos", owlRenderer);

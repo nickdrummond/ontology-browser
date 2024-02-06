@@ -51,22 +51,22 @@ public class RootController extends ApplicationController implements Application
             return "redirect:" + redirect;
         }
         else {
-            IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOntologies());
+            Set<OWLOntology> ontologies = kit.getOntologies();
+
+            IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(ontologies);
 
             CloudHelper<OWLNamedIndividual> helper = new CloudHelper<>(cloudModel);
             helper.setThreshold(14);
             helper.setZoom(4);
             helper.setNormalise(true);
 
-            OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+            OWLOntology ont = kit.getActiveOntology();
 
-            Set<OWLOntology> ontologies = kit.getOntologies();
-
-            model.addAttribute("activeOntology", kit.getActiveOntology());
+            model.addAttribute("activeOntology", ont);
             model.addAttribute("ontologies", ontologies);
             model.addAttribute("cloud", cloudModel);
             model.addAttribute("helper", helper);
-            model.addAttribute("mos", owlRenderer);
+            model.addAttribute("mos", rendererFactory.getRenderer(ont));
 
             return "index";
         }
