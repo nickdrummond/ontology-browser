@@ -112,7 +112,7 @@ public class TimelineController extends ApplicationController {
         model.addAttribute("root", fac.buildTimelineFromEvent(target, depth));
 
         // TODO link to the filtered timeline page?
-        OWLHTMLRenderer ren = new OWLHTMLRenderer(kit).withBreakOnUnderscore(false);
+        OWLHTMLRenderer ren = rendererFactory.getRenderer(ont).withBreakOnUnderscore(false);
 
         model.addAttribute("ren", ren);
         model.addAttribute("getYear", yearProvider);
@@ -180,7 +180,7 @@ public class TimelineController extends ApplicationController {
         model.addAttribute("title", "Timeline");
         model.addAttribute("root", timeline);
 
-        OWLHTMLRenderer ren = new OWLHTMLRenderer(kit).withBreakOnUnderscore(false);
+        OWLHTMLRenderer ren = rendererFactory.getRenderer(ont).withBreakOnUnderscore(false);
         model.addAttribute("ren", ren);
 
         Function<OWLNamedIndividual, String> yearProvider = (OWLNamedIndividual ind) -> "";
@@ -227,7 +227,7 @@ public class TimelineController extends ApplicationController {
                 ), after,
                 false, false));
 
-        OWLHTMLRenderer ren = new OWLHTMLRenderer(kit).withBreakOnUnderscore(false);
+        OWLHTMLRenderer ren = rendererFactory.getRenderer(kit.getActiveOntology()).withBreakOnUnderscore(false);
         model.addAttribute("ren", ren);
 
         Function<OWLNamedIndividual, String> yearProvider = (OWLNamedIndividual ind) -> "";
