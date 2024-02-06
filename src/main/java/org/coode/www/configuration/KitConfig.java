@@ -3,6 +3,7 @@ package org.coode.www.configuration;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLKitImpl;
 import org.coode.www.kit.impl.OntologyLoader;
+import org.coode.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -31,5 +32,13 @@ public class KitConfig {
         OWLHTMLKit kit = new OWLHTMLKitImpl(mngr, ont);
         kit.setLabelParams(labelURI, labelLang);
         return kit;
+    }
+
+    @Bean
+    public RendererFactory rendererFactory(OWLHTMLKit kit) {
+        return new RendererFactory(kit.getShortFormProvider(),
+                                   kit.getOntologyShortFormProvider(),
+                                   kit.getURLScheme(),
+                                   kit.getFinder());
     }
 }

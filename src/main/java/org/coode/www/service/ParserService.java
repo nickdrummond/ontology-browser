@@ -1,6 +1,6 @@
 package org.coode.www.service;
 
-import org.coode.owl.mngr.OWLEntityFinder;
+import org.coode.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;

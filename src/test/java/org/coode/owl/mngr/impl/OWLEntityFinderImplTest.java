@@ -1,6 +1,7 @@
 package org.coode.owl.mngr.impl;
 
-import org.coode.owl.mngr.ActiveOntologyProvider;
+import org.coode.www.kit.ActiveOntologyProvider;
+import org.coode.www.kit.impl.OWLEntityFinderImpl;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;

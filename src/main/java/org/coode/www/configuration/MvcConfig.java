@@ -1,6 +1,6 @@
 package org.coode.www.configuration;
 
-import org.coode.www.formatter.OntologyIdFormatter;
+import org.coode.www.renderer.OntologyIdFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

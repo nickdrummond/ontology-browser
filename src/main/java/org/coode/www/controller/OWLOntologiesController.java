@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Optional;
@@ -59,27 +60,28 @@ public class OWLOntologiesController extends ApplicationController {
     @GetMapping(value = "/{ontId}")
     public String getOntology(@PathVariable final String ontId,
                               final Model model) throws NotFoundException {
-        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
+
+        OWLOntology ont = service.getOntologyFor(ontId, kit);
 
         Comparator<Tree<OWLOntology>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
         OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), comparator);
 
-        Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(owlOntology);
+        Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(ont);
 
-        String title = sfp.getShortForm(owlOntology) + " (Ontology)";
+        String title = sfp.getShortForm(ont) + " (Ontology)";
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit).withActiveObject(owlOntology);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(ont);
 
-        final IRI iri = owlOntology.getOntologyID().getOntologyIRI().orElse(IRI.create("Anonymous"));
+        final IRI iri = ont.getOntologyID().getOntologyIRI().orElse(IRI.create("Anonymous"));
 
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", iri);
         model.addAttribute("hierarchy", ontologyTree);
-        model.addAttribute("characteristics", service.getCharacteristics(owlOntology, kit));
-        model.addAttribute("metrics", service.getMetrics(owlOntology));
-        model.addAttribute("showImportMetrics", !owlOntology.getImports().isEmpty());
+        model.addAttribute("characteristics", service.getCharacteristics(ont, kit));
+        model.addAttribute("metrics", service.getMetrics(ont));
+        model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
@@ -94,7 +96,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         try {
             OWLDocumentFormat format = new RDFXMLDocumentFormat();
-            OutputStream out = new WriterOutputStream(writer, Charsets.toCharset("UTF-8"));
+            OutputStream out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
             response.addHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
             kit.getOWLOntologyManager().saveOntology(owlOntology, format, out);
         } catch (OWLOntologyStorageException e) {
@@ -113,9 +115,9 @@ public class OWLOntologiesController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "1") int start
     ) throws NotFoundException {
 
-        OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
+        OWLOntology ont = service.getOntologyFor(ontId, kit);
 
-        Set<OWLOntology> onts = includeImports ? owlOntology.getImportsClosure() : Collections.singleton(owlOntology);
+        Set<OWLOntology> onts = includeImports ? ont.getImportsClosure() : Collections.singleton(ont);
 
         search.ifPresent(s -> {
             // Prevent injection attacks
@@ -125,8 +127,8 @@ public class OWLOntologiesController extends ApplicationController {
         });
 
         ElementRenderer<OWLObject> owlRenderer = search
-                .map(s -> getHighlightRenderer(s, kit))
-                .orElse(new OWLHTMLRenderer(kit));
+                .map(s -> getHighlightRenderer(s, rendererFactory.getRenderer(ont)))
+                .orElse(rendererFactory.getRenderer(ont));
 
         Characteristic axioms = search
                 .map(s -> axiomService.findAxioms(search.get(), onts, kit.getShortFormProvider(), start, pageSize))

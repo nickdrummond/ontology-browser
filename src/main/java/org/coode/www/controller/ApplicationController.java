@@ -2,6 +2,7 @@ package org.coode.www.controller;
 
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ProjectInfo;
+import org.coode.www.renderer.RendererFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public abstract class ApplicationController {
     @Autowired
     protected OWLHTMLKit kit;
 
+    @Autowired
+    protected RendererFactory rendererFactory;
+
     @ModelAttribute("projectInfo")
     public ProjectInfo getProjectInfo() {
         return projectInfo;
@@ -24,4 +28,5 @@ public abstract class ApplicationController {
 
     @ModelAttribute("kit")
     public OWLHTMLKit getKit() { return kit; }
+
 }

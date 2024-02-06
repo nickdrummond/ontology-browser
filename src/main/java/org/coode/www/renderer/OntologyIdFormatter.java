@@ -1,4 +1,4 @@
-package org.coode.www.formatter;
+package org.coode.www.renderer;
 
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;

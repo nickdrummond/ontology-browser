@@ -2,6 +2,8 @@ package org.coode.www;
 
 import org.coode.www.controller.OWLOntologiesController;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.renderer.RendererFactory;
+import org.coode.www.service.OWLAxiomService;
 import org.coode.www.service.OWLOntologiesService;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,6 +70,16 @@ public class OWLOntologiesControllerIntTest {
         @Bean
         public OWLOntologiesController ontologiesController() {
             return new OWLOntologiesController();
+        }
+
+        @Bean
+        public RendererFactory rendererFactory() {
+            return mock(RendererFactory.class);
+        }
+
+        @Bean
+        public OWLAxiomService axiomService() {
+            return mock(OWLAxiomService.class);
         }
     }
 

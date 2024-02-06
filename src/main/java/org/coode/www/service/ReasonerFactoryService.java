@@ -1,6 +1,6 @@
 package org.coode.www.service;
 
-import org.coode.owl.mngr.impl.SynchronizedOWLReasoner;
+import org.coode.www.reasoner.SynchronizedOWLReasoner;
 import org.coode.www.model.ReasonerMomento;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;

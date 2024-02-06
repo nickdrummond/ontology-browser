@@ -1,8 +1,6 @@
 package org.coode.www.kit;
 
-import org.coode.html.url.URLScheme;
-import org.coode.owl.mngr.ActiveOntologyProvider;
-import org.coode.owl.mngr.OWLEntityFinder;
+import org.coode.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;

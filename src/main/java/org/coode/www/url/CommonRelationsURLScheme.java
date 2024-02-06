@@ -1,4 +1,4 @@
-package org.coode.html.url;
+package org.coode.www.url;
 
 import org.coode.www.service.hierarchy.AbstractHierarchyService;
 import org.coode.www.service.hierarchy.Relation;

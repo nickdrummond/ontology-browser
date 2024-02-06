@@ -1,11 +1,13 @@
 package org.coode.www.renderer;
 
-import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.url.URLScheme;
+import org.coode.www.kit.OWLEntityFinder;
 import org.coode.www.service.MediaService;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.util.Set;
 
@@ -20,9 +22,13 @@ public class MediaRenderer extends OWLHTMLRenderer {
 
     private final MediaService mediaService;
 
-    public MediaRenderer(OWLHTMLKit kit) {
-        super(kit);
-        this.entityFinder = kit.getFinder();
+    public MediaRenderer(final ShortFormProvider sfp,
+                         final OntologyShortFormProvider ontSfp,
+                         final URLScheme urlScheme,
+                         final OWLOntology activeOntology,
+                         final OWLEntityFinder finder) {
+        super(sfp, ontSfp, urlScheme, activeOntology, finder);
+        this.entityFinder = finder;
         this.mediaService = new MediaService();
     }
 

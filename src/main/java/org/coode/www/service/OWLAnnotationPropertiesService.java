@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Service
 public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnnotationProperty> {
 
-    public OWLAnnotationProperty getPropertyFor(final String propertyId, final OWLHTMLKit kit) throws NotFoundException {
-        for (OWLOntology ont : kit.getActiveOntologies()){
-            for (OWLAnnotationProperty owlAnnotationProperty: ont.getAnnotationPropertiesInSignature()) {
+    public OWLAnnotationProperty getPropertyFor(final String propertyId, final OWLOntology ont) throws NotFoundException {
+        for (OWLOntology o : ont.getImportsClosure()){
+            for (OWLAnnotationProperty owlAnnotationProperty: o.getAnnotationPropertiesInSignature()) {
                 if (getIdFor(owlAnnotationProperty).equals(propertyId)){
                     return owlAnnotationProperty;
                 }
@@ -32,8 +32,11 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
         return String.valueOf(owlAnnotationProperty.getIRI().hashCode());
     }
 
-    public List<Characteristic> getCharacteristics(final OWLAnnotationProperty property, final OWLHTMLKit kit) {
-        return new AnnotationPropertyCharacteristicsBuilder(property, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
+    public List<Characteristic> getCharacteristics(
+            final OWLAnnotationProperty property,
+            final OWLOntology ont,
+            final Comparator<OWLObject> comparator) {
+        return new AnnotationPropertyCharacteristicsBuilder(property, ont.getImportsClosure(), comparator).getCharacteristics();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
-import org.coode.www.cloud.*;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.cloud.*;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;
@@ -106,12 +106,14 @@ public class CloudController extends ApplicationController {
         helper.setThreshold(threshold);
         helper.setNormalise(normalise);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         Set<OWLOntology> ontologies = kit.getOntologies();
 
         model.addAttribute("title", title);
-        model.addAttribute("activeOntology", kit.getActiveOntology());
+        model.addAttribute("activeOntology", ont);
         model.addAttribute("ontologies", ontologies);
         model.addAttribute("helper", helper);
         model.addAttribute("mos", owlRenderer);

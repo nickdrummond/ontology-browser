@@ -7,8 +7,8 @@ public class HighlightingHTMLRenderer<O> implements ElementRenderer<O> {
     private final Highlighter highlighter;
     private final ElementRenderer<O> delegate;
 
-    public static ElementRenderer<OWLObject> getHighlightRenderer(String s, OWLHTMLKit kit){
-        return new HighlightingHTMLRenderer<>(new Highlighter(s), new OWLHTMLRenderer(kit));
+    public static ElementRenderer<OWLObject> getHighlightRenderer(String s, OWLHTMLRenderer delegate){
+        return new HighlightingHTMLRenderer<>(new Highlighter(s), delegate);
     }
 
     public HighlightingHTMLRenderer(Highlighter highlighter, ElementRenderer<O> delegate) {

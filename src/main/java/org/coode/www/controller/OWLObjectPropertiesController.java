@@ -9,6 +9,7 @@ import org.coode.www.service.hierarchy.OWLObjectPropertyHierarchyService;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,11 +48,13 @@ public class OWLObjectPropertiesController extends ApplicationController {
     public String getOWLObjectProperty(@PathVariable final String propertyId,
                                        final Model model) throws NotFoundException {
 
-        OWLObjectProperty property = service.getPropertyFor(propertyId, kit);
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
 
         Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         OWLObjectPropertyHierarchyService hierarchyService =
                 new OWLObjectPropertyHierarchyService(r, comparator);
@@ -60,13 +63,13 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(property);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit).withActiveObject(property);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(property);
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Object Properties");
         model.addAttribute("iri", property.getIRI());
         model.addAttribute("hierarchy", prunedTree);
-        model.addAttribute("characteristics", service.getCharacteristics(property, kit));
+        model.addAttribute("characteristics", service.getCharacteristics(property, ont, kit.getComparator()));
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
@@ -77,17 +80,19 @@ public class OWLObjectPropertiesController extends ApplicationController {
     public String getChildren(@PathVariable final String propertyId,
                               final Model model) throws NotFoundException {
 
-        OWLObjectProperty property = service.getPropertyFor(propertyId, kit);
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
 
         Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(r, comparator);
 
         Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getChildren(property);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

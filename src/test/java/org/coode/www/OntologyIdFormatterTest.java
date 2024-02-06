@@ -1,6 +1,6 @@
 package org.coode.www;
 
-import org.coode.www.formatter.OntologyIdFormatter;
+import org.coode.www.renderer.OntologyIdFormatter;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 

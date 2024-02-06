@@ -1,4 +1,4 @@
-package org.coode.owl.mngr.impl;
+package org.coode.www.kit.impl;
 
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyIRIMapper;

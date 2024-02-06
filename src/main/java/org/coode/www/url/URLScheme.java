@@ -1,4 +1,4 @@
-package org.coode.html.url;
+package org.coode.www.url;
 
 /**
  * Interface describing the set of methods required to create unique URL references for ontology entities.

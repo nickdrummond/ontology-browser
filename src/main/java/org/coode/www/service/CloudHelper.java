@@ -1,6 +1,6 @@
 package org.coode.www.service;
 
-import org.coode.www.cloud.CloudModel;
+import org.coode.www.model.cloud.CloudModel;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.awt.*;

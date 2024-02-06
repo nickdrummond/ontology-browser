@@ -10,6 +10,7 @@ import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,12 +53,14 @@ public class OWLClassesController extends ApplicationController {
 
         Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
         OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
 
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit).withActiveObject(owlClass);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
 
         String entityName = kit.getShortFormProvider().getShortForm(owlClass);
 
@@ -80,13 +83,15 @@ public class OWLClassesController extends ApplicationController {
 
         Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
 
         Tree<OWLClass> prunedTree = hierarchyService.getChildren(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
@@ -103,13 +108,15 @@ public class OWLClassesController extends ApplicationController {
 
         Comparator<Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(kit.getActiveOntology());
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         OWLIndividualsByTypeHierarchyService hierarchyService = new OWLIndividualsByTypeHierarchyService(r, comparator);
 
         Tree<OWLEntity> prunedTree = hierarchyService.getChildren(owlClass);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

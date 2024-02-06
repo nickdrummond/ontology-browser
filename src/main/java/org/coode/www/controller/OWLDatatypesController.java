@@ -59,7 +59,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDatatype);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit).withActiveObject(owlDatatype);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology()).withActiveObject(owlDatatype);
 
         model.addAttribute("title", entityName + " (Datatype)");
         model.addAttribute("type", "Datatypes");
@@ -87,7 +87,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(property);
 
-        OWLHTMLRenderer owlRenderer = new OWLHTMLRenderer(kit);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

@@ -1,7 +1,6 @@
 package org.coode.www.kit.impl;
 
 import com.google.common.collect.Maps;
-import org.coode.owl.mngr.impl.BaseURIMapper;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
