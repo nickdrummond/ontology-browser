@@ -1,8 +1,8 @@
-package org.coode.owl.mngr.impl;
+package org.coode.www.kit.impl;
 
 import com.google.common.collect.Sets;
-import org.coode.owl.mngr.ActiveOntologyProvider;
-import org.coode.owl.mngr.OWLEntityFinder;
+import org.coode.www.kit.ActiveOntologyProvider;
+import org.coode.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;

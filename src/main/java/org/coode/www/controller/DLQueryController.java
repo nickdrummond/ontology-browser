@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
-import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.owl.mngr.impl.PropertyComparator;
+import org.coode.www.kit.OWLEntityFinder;
+import org.coode.www.util.PropertyComparator;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.QueryTimeoutException;
 import org.coode.www.model.characteristics.Characteristic;
@@ -9,7 +9,6 @@ import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.DLQuery;
 import org.coode.www.model.QueryType;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.ParserService;
 import org.coode.www.service.ReasonerService;
 import org.coode.www.util.PageData;

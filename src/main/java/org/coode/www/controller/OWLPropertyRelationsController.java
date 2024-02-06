@@ -1,12 +1,9 @@
 package org.coode.www.controller;
 
-import org.coode.html.url.CommonRelationsURLScheme;
-import org.coode.html.url.RelationPropertyURLScheme;
-import org.coode.html.url.URLScheme;
+import org.coode.www.url.CommonRelationsURLScheme;
+import org.coode.www.url.RelationPropertyURLScheme;
+import org.coode.www.url.URLScheme;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.kit.OWLHTMLKit;
-import org.coode.www.model.ProjectInfo;
-import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLIndividualsService;
 import org.coode.www.service.OWLObjectPropertiesService;
 import org.coode.www.service.ReasonerFactoryService;

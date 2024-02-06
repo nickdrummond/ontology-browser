@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
-import org.coode.html.url.CommonRelationsURLScheme;
-import org.coode.html.url.URLScheme;
+import org.coode.www.url.CommonRelationsURLScheme;
+import org.coode.www.url.URLScheme;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;

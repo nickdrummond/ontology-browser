@@ -1,7 +1,7 @@
 package org.coode.www.controller;
 
-import org.coode.www.cloud.*;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.cloud.*;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;

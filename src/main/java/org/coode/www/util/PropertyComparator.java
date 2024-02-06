@@ -1,4 +1,4 @@
-package org.coode.owl.mngr.impl;
+package org.coode.www.util;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;

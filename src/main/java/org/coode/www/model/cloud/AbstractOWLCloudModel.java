@@ -1,4 +1,4 @@
-package org.coode.www.cloud;
+package org.coode.www.model.cloud;
 
 import com.google.common.collect.ImmutableSet;
 import org.semanticweb.owlapi.model.OWLEntity;

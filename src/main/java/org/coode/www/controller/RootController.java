@@ -1,12 +1,10 @@
 package org.coode.www.controller;
 
-import org.coode.html.url.URLScheme;
-import org.coode.www.cloud.IndividualsByUsageCloud;
+import org.coode.www.url.URLScheme;
+import org.coode.www.model.cloud.IndividualsByUsageCloud;
 import org.coode.www.exception.NotAuthorisedException;
-import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.XmlUrl;
 import org.coode.www.model.XmlUrlSet;
-import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -18,17 +16,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;

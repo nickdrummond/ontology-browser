@@ -1,4 +1,4 @@
-package org.coode.www.cloud;
+package org.coode.www.model.cloud;
 
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;

@@ -1,10 +1,9 @@
 package org.coode.www.kit.impl;
 
-import org.coode.html.url.RestURLScheme;
-import org.coode.html.url.URLScheme;
-import org.coode.owl.mngr.OWLEntityFinder;
-import org.coode.owl.mngr.impl.OWLEntityFinderImpl;
-import org.coode.owl.mngr.impl.OWLObjectComparator;
+import org.coode.www.url.RestURLScheme;
+import org.coode.www.url.URLScheme;
+import org.coode.www.kit.OWLEntityFinder;
+import org.coode.www.util.OWLObjectComparator;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.renderer.*;
 import org.coode.www.util.VocabUtils;
