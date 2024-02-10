@@ -28,9 +28,9 @@ public class DataPropertyCharacteristicsBuilder extends CharacteristicsBuilder<O
     );
 
     public DataPropertyCharacteristicsBuilder(OWLDataProperty target,
-                                              Set<OWLOntology> activeOntologies,
+                                              OWLOntology ont,
                                               Comparator<OWLObject> comparator) {
-        super(target, activeOntologies, comparator);
+        super(target, ont, comparator);
     }
 
     @Override

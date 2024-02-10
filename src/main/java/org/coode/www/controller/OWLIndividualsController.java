@@ -68,17 +68,15 @@ public class OWLIndividualsController extends ApplicationController {
                                    @RequestParam(required=false) final boolean inferred,
                                    final Model model) throws NotFoundException {
 
-        final OWLOntology activeOntology = (ontId != null) ?
+        final OWLOntology ont = (ontId != null) ?
                 ontService.getOntologyFor(ontId, kit) :
                 kit.getActiveOntology();
 
-        Set<OWLOntology> ontologies = activeOntology.getImportsClosure();
-
-        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ontologies);
+        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ont);
 
         Comparator<Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(activeOntology);
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         OWLIndividualsByTypeHierarchyService hierarchyService = new OWLIndividualsByTypeHierarchyService(r, comparator);
 
@@ -88,9 +86,9 @@ public class OWLIndividualsController extends ApplicationController {
 
         String entityName = sfp.getShortForm(owlIndividual);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(activeOntology).withActiveObject(owlIndividual);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlIndividual);
 
-        Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ontologies);
+        Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ont);
         if (maybeLoc.isPresent()) {
             GeoService.Loc loc = maybeLoc.get();
             model.addAttribute("geo", loc);
@@ -104,11 +102,11 @@ public class OWLIndividualsController extends ApplicationController {
             model.addAttribute("sound", owlIndividual.getIRI().toString());
         }
 
-        List<Characteristic> characteristics = service.getCharacteristics(owlIndividual, ontologies, kit.getComparator());
+        List<Characteristic> characteristics = service.getCharacteristics(owlIndividual, ont, kit.getComparator());
 
         if (inferred) {
             characteristics.addAll(service.getInferredCharacteristics(
-                    owlIndividual, activeOntology, kit.getOWLOntologyManager(), reasonerService.getReasoner()));
+                    owlIndividual, ont, kit.getOWLOntologyManager(), reasonerService.getReasoner()));
         }
 
         model.addAttribute("title", entityName + " (Individual)");

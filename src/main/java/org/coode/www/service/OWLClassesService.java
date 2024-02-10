@@ -5,6 +5,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.ClassCharacteristicsBuilder;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,10 @@ public class OWLClassesService {
         return String.valueOf(owlClass.getIRI().hashCode());
     }
 
-    public List<Characteristic> getCharacteristics(final OWLClass owlClass, final OWLHTMLKit kit) {
-        return new ClassCharacteristicsBuilder(owlClass, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
+    public List<Characteristic> getCharacteristics(
+            final OWLClass owlClass,
+            final OWLOntology ont,
+            final Comparator<OWLObject> comparator) {
+        return new ClassCharacteristicsBuilder(owlClass, ont, comparator).getCharacteristics();
     }
 }

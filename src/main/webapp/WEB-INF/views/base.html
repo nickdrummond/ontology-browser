@@ -39,13 +39,14 @@
 
 <body>
 
-<div id='title' th:fragment='title'>
+<div id='title' th:fragment="title (search)">
     <h1><img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
         <a th:href='@{/}' th:text="${projectInfo.name}">Project Name</a></h1>
     <a style='display: none;' href='#content'>skip to content</a>
     <div id="entityfinder" th:fragment="entityfinder">
         <form id='findForm' method='get'>
-            <input id='find' class='autocomplete' type='text' name='input' placeholder='search...'/>
+            <input id='find' class='autocomplete' type='text' name='search' placeholder='search...'/>
+            <input th:if="${search}" class="search-icon" type='submit' value="" />
         </form>
 
         <script type='text/javascript'>

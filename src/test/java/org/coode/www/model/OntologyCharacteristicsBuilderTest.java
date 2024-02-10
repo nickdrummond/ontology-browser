@@ -41,10 +41,10 @@ public class OntologyCharacteristicsBuilderTest {
     public void getIndividualTypesReturnsCharacteristic() throws OWLOntologyCreationException {
         OWLAxiom clsAssertionAxiom = df.getOWLClassAssertionAxiom(cls, ind);
 
-        OWLOntology ontology = mngr.createOntology(Set.of(clsAssertionAxiom), ontologyIRI);
+        OWLOntology ont = mngr.createOntology(Set.of(clsAssertionAxiom), ontologyIRI);
 
         List<Characteristic> result = new IndividualCharacteristicsBuilder(
-                ind, Set.of(ontology), comparator).getCharacteristics();
+                ind, ont, comparator).getCharacteristics();
 
         // Types characteristic
         assertEquals(1, result.size());
@@ -54,6 +54,6 @@ public class OntologyCharacteristicsBuilderTest {
         AxiomWithMetadata axiomAndOnt = result.get(0).getObjects().get(0);
         assertEquals(cls, axiomAndOnt.getOWLObject());
         assertEquals(clsAssertionAxiom, axiomAndOnt.getOWLAxiom());
-        assertEquals(ontology, axiomAndOnt.getOWLOntology());
+        assertEquals(ont, axiomAndOnt.getOWLOntology());
     }
 }

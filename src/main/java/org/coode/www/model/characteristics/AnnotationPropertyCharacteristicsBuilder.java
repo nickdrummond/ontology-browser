@@ -22,9 +22,9 @@ public class AnnotationPropertyCharacteristicsBuilder extends CharacteristicsBui
     );
 
     public AnnotationPropertyCharacteristicsBuilder(OWLAnnotationProperty target,
-                                                    Set<OWLOntology> activeOntologies,
+                                                    OWLOntology ont,
                                                     Comparator<OWLObject> comparator) {
-        super(target, activeOntologies, comparator);
+        super(target, ont, comparator);
     }
 
     @Override

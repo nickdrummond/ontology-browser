@@ -2,6 +2,7 @@ package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.Tree;
+import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLDatatypesService;
 import org.coode.www.service.hierarchy.OWLDatatypeHierarchyService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -46,13 +48,12 @@ public class OWLDatatypesController extends ApplicationController {
 
         OWLDatatype owlDatatype = service.getOWLDatatypeFor(propertyId, kit);
 
-        Set<OWLOntology> ontologies = kit.getOntologies();
+        OWLOntology ont = kit.getActiveOntology();
 
         Comparator<Tree<OWLDatatype>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(
-                kit.getOWLOntologyManager().getOWLDataFactory(),
-                ontologies,
+                ont,
                 comparator);
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getPrunedTree(owlDatatype);
@@ -61,11 +62,13 @@ public class OWLDatatypesController extends ApplicationController {
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology()).withActiveObject(owlDatatype);
 
+        List<Characteristic> characteristics = service.getCharacteristics(owlDatatype, ont, kit.getComparator());
+
         model.addAttribute("title", entityName + " (Datatype)");
         model.addAttribute("type", "Datatypes");
         model.addAttribute("iri", owlDatatype.getIRI());
         model.addAttribute("hierarchy", prunedTree);
-        model.addAttribute("characteristics", service.getCharacteristics(owlDatatype, kit));
+        model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";
@@ -80,14 +83,15 @@ public class OWLDatatypesController extends ApplicationController {
 
         Comparator<Tree<OWLDatatype>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
+        OWLOntology ont = kit.getActiveOntology();
+
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(
-                kit.getOWLOntologyManager().getOWLDataFactory(),
-                kit.getActiveOntologies(),
+                ont,
                 comparator);
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(property);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

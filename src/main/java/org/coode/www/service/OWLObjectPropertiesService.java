@@ -52,7 +52,7 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
             final OWLObjectProperty property,
             final OWLOntology ont,
             final Comparator<OWLObject> comparator) {
-        return new ObjectPropertyCharacteristicsBuilder(property, ont.getImportsClosure(), comparator).getCharacteristics();
+        return new ObjectPropertyCharacteristicsBuilder(property, ont, comparator).getCharacteristics();
     }
 
     @Override

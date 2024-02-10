@@ -3,11 +3,13 @@ package org.coode.www.controller;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ProjectInfo;
+import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.OWLAnnotationPropertiesService;
 import org.coode.www.service.OWLIndividualsService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +28,6 @@ public class OWLAnnotationRelationsController extends ApplicationController {
     public static final String OWLENTITY = "owlentity";
 
     private final OWLAnnotationPropertiesService propertiesService;
-
     private final CommonRelations<OWLAnnotationProperty> common;
 
 
@@ -34,13 +35,14 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @Autowired OWLAnnotationPropertiesService propertiesService,
             @Autowired OWLIndividualsService individualsService,
             @Autowired OWLHTMLKit kit,
-            @Autowired ProjectInfo projectInfo) {
+            @Autowired ProjectInfo projectInfo,
+            @Autowired RendererFactory rendererFactory) {
         this.propertiesService = propertiesService;
-        this.kit = kit;
         this.projectInfo = projectInfo;
+        this.kit = kit;
         this.common = new CommonRelations<>(
                 PATH,
-                kit,
+                kit.getShortFormProvider(),
                 propertiesService,
                 individualsService,
                 rendererFactory
@@ -67,12 +69,14 @@ public class OWLAnnotationRelationsController extends ApplicationController {
                                                     final Model model,
                                                     HttpServletRequest request) throws NotFoundException {
 
-        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
         AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, orderBy, inverse);
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, null, model, request);
+        common.buildCommon(relationsHierarchyService, null, ont, model, request);
 
         common.renderEntity(property, model);
 
@@ -87,14 +91,16 @@ public class OWLAnnotationRelationsController extends ApplicationController {
                                                     final Model model,
                                                     HttpServletRequest request) throws NotFoundException {
 
-        OWLNamedIndividual individual = common.renderIndividual(individualId, model);
+        OWLOntology ont = kit.getActiveOntology();
 
-        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
+        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, model, kit.getComparator());
+
+        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
         AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, orderBy, inverse);
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, individual, model, request);
+        common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
         return OWLENTITY;
     }

@@ -41,7 +41,8 @@ public class OWLAxiomService {
             final ShortFormProvider sfp,
             int start,
             int pageSize) {
-        return resultsCharacteristic(search, onts, sfp, e -> e.getValue().contains(search), start, pageSize);
+        Predicate<Map.Entry<OWLAxiom, String>> containsIgnoreCase = e -> e.getValue().toLowerCase().contains(search.toLowerCase());
+        return resultsCharacteristic(search, onts, sfp, containsIgnoreCase, start, pageSize);
     }
 //
 //    public Characteristic regexAxioms(final String search, final Set<OWLOntology> onts, final ShortFormProvider sfp) {
@@ -81,7 +82,9 @@ public class OWLAxiomService {
     }
 
     private void ensureCache(OWLOntology ont, ShortFormProvider sfp) {
-        axiomsRenderingsByOntology.putIfAbsent(ont, ont.getAxioms(Imports.EXCLUDED).stream().collect(Collectors.toMap(ax -> ax, ax -> render(ax, sfp))));
+        axiomsRenderingsByOntology.putIfAbsent(ont,
+                ont.getAxioms(Imports.EXCLUDED).stream()
+                        .collect(Collectors.toMap(ax -> ax, ax -> render(ax, sfp))));
     }
 
     private String render(final OWLAxiom axiom, final ShortFormProvider sfp) {

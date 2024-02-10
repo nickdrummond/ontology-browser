@@ -6,6 +6,7 @@ import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.DatatypeCharacteristicsBuilder;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,10 @@ public class OWLDatatypesService {
         return String.valueOf(owlDatatype.getIRI().hashCode());
     }
 
-    public List<Characteristic> getCharacteristics(OWLDatatype owlDatatype, OWLHTMLKit kit) {
-        return new DatatypeCharacteristicsBuilder(owlDatatype, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
+    public List<Characteristic> getCharacteristics(
+            final OWLDatatype owlDatatype,
+            final OWLOntology ont,
+            final Comparator<OWLObject> comparator) {
+        return new DatatypeCharacteristicsBuilder(owlDatatype, ont, comparator).getCharacteristics();
     }
 }

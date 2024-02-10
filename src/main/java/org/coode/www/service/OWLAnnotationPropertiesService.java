@@ -38,7 +38,7 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
             final OWLAnnotationProperty property,
             final OWLOntology ont,
             final Comparator<OWLObject> comparator) {
-        return new AnnotationPropertyCharacteristicsBuilder(property, ont.getImportsClosure(), comparator).getCharacteristics();
+        return new AnnotationPropertyCharacteristicsBuilder(property, ont, comparator).getCharacteristics();
     }
 
     @Override

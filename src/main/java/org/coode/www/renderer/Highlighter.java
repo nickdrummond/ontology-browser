@@ -9,13 +9,9 @@ public class Highlighter {
     private static final String START = "<span class=\"highlight\">";
     private static final String END = "</span>";
 
-    private String highlight;
+    private final String highlight;
 
     public Highlighter(String highlight) {
-        this.highlight = highlight;
-    }
-
-    public void setHighlight(String highlight) {
         this.highlight = highlight;
     }
 
@@ -54,13 +50,15 @@ public class Highlighter {
             else if (pos == 0) { // not started matching yet
                 // otherwise, see if the highlight text exists in the stripped out text
                 String stripped = stripMarkup(remains);
-                int startOfHighlight = stripped.indexOf(highlight);
+                int startOfHighlight = stripped.toLowerCase().indexOf(highlight.toLowerCase());
+
                 if (startOfHighlight == -1) {
                     result.append(remains);
                     remains = "";
                 }
                 else if (nextTagStart == -1) { // no more tags and the highlight must exist
-                    result.append(remains.substring(0, startOfHighlight) + START + highlight + END + remains.substring(startOfHighlight + highlight.length()));
+                    String matchedText = remains.substring(startOfHighlight, startOfHighlight + highlight.length()); // in original case
+                    result.append(remains.substring(0, startOfHighlight) + START + matchedText + END + remains.substring(startOfHighlight + highlight.length()));
                     remains = "";
                 }
                 else {
@@ -68,10 +66,12 @@ public class Highlighter {
                     int posInHighlight = nextTagStart - startOfHighlight;
                     if (posInHighlight > 0) {
                         if (posInHighlight >= highlight.length()) {
-                            result.append(remains.substring(0, startOfHighlight) + START + highlight + END);
+                            String matchedText = remains.substring(startOfHighlight, startOfHighlight + highlight.length()); // in original case
+                            result.append(remains.substring(0, startOfHighlight) + START + matchedText + END);
                             remains = remains.substring(startOfHighlight + highlight.length());
                         } else {
-                            result.append(remains.substring(0, startOfHighlight) + START + highlight.substring(0, posInHighlight) + END);
+                            String matchedText = remains.substring(startOfHighlight, startOfHighlight + posInHighlight); // in original case
+                            result.append(remains.substring(0, startOfHighlight) + START + matchedText + END);
                             remains = remains.substring(nextTagStart);
                             pos = posInHighlight;
                         }
@@ -84,11 +84,11 @@ public class Highlighter {
             } else {
                 int remainingLen = highlight.length() - pos;
                 if (nextTagStart == -1 || nextTagStart >= remainingLen) {
-                    result.append(START + highlight.substring(pos) + END);
+                    result.append(START + remains.substring(0, remainingLen) + END);
                     remains = remains.substring(remainingLen);
                     pos = 0;
                 } else { // another tag
-                    result.append(START + highlight.substring(pos, pos + nextTagStart) + END);
+                    result.append(START + remains.substring(0, nextTagStart) + END);
                     remains = remains.substring(nextTagStart);
                     pos = pos + nextTagStart;
                 }
@@ -107,7 +107,7 @@ public class Highlighter {
     }
 
     private String highlightSimple(String source) {
-        int start = source.indexOf(highlight);
+        int start = source.toLowerCase().indexOf(highlight.toLowerCase());
         if (start == -1) {
             return source;
         }

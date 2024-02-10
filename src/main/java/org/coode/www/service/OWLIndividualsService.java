@@ -16,12 +16,10 @@ import java.util.stream.Collectors;
 @Service
 public class OWLIndividualsService {
 
-    public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final Set<OWLOntology> ontologies) throws NotFoundException {
-        for (OWLOntology ont : ontologies){
-            for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature()) {
-                if (getIdFor(owlIndividual).equals(propertyId)) {
-                    return owlIndividual;
-                }
+    public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final OWLOntology ont) throws NotFoundException {
+        for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature(Imports.INCLUDED)) {
+            if (getIdFor(owlIndividual).equals(propertyId)) {
+                return owlIndividual;
             }
         }
         throw new NotFoundException("OWLIndividual", propertyId);
@@ -37,10 +35,10 @@ public class OWLIndividualsService {
     }
 
     public List<Characteristic> getCharacteristics(final OWLNamedIndividual owlIndividual,
-                                                   final Set<OWLOntology> activeOntologies,
+                                                   final OWLOntology ont,
                                                    final Comparator<OWLObject> comparator) {
 
-        return new IndividualCharacteristicsBuilder(owlIndividual, activeOntologies, comparator).getCharacteristics();
+        return new IndividualCharacteristicsBuilder(owlIndividual, ont, comparator).getCharacteristics();
     }
 
     public OWLNamedIndividual getFirstIndividual(final OWLHTMLKit kit) throws NotFoundException {

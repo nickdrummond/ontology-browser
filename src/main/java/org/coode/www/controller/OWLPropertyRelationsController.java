@@ -1,5 +1,8 @@
 package org.coode.www.controller;
 
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.ProjectInfo;
+import org.coode.www.renderer.RendererFactory;
 import org.coode.www.url.CommonRelationsURLScheme;
 import org.coode.www.url.RelationPropertyURLScheme;
 import org.coode.www.url.URLScheme;
@@ -24,7 +27,7 @@ import java.util.Comparator;
 
 @Controller
 @RequestMapping(value = "/relations/" + OWLPropertyRelationsController.PATH)
-public class OWLPropertyRelationsController extends ApplicationController{
+public class OWLPropertyRelationsController extends ApplicationController {
 
     public static final String PATH = "onproperty";
     public static final String OWLENTITY = "owlentity";
@@ -38,18 +41,23 @@ public class OWLPropertyRelationsController extends ApplicationController{
 
     private final CommonRelations<OWLObjectProperty> common;
 
-
     public OWLPropertyRelationsController(
             @Autowired OWLObjectPropertiesService propertiesService,
             @Autowired OWLIndividualsService individualsService,
-            @Autowired ReasonerFactoryService reasonerFactoryService) {
+            @Autowired ReasonerFactoryService reasonerFactoryService,
+            @Autowired OWLHTMLKit kit,
+            @Autowired RendererFactory rendererFactory,
+            @Autowired ProjectInfo projectInfo) {
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.reasonerFactoryService = reasonerFactoryService;
+        this.rendererFactory = rendererFactory;
+        this.projectInfo = projectInfo;
+        this.kit = kit;
 
         this.common = new CommonRelations<>(
                 PATH,
-                kit,
+                kit.getShortFormProvider(),
                 propertiesService,
                 individualsService,
                 rendererFactory
@@ -72,12 +80,14 @@ public class OWLPropertyRelationsController extends ApplicationController{
                                           final Model model,
                                           HttpServletRequest request) throws NotFoundException {
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, orderBy, inverse);
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, null, model, request);
+        common.buildCommon(relationsHierarchyService, null, ont, model, request);
 
         common.renderEntity(property, model);
 
@@ -92,14 +102,16 @@ public class OWLPropertyRelationsController extends ApplicationController{
                                           final Model model,
                                           HttpServletRequest request) throws NotFoundException {
 
-        OWLNamedIndividual individual = common.renderIndividual(individualId, model);
+        OWLOntology ont = kit.getActiveOntology();
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
+        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, model, kit.getComparator());
+
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, orderBy, inverse);
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, individual, model, request);
+        common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
         return OWLENTITY;
     }
@@ -133,10 +145,10 @@ public class OWLPropertyRelationsController extends ApplicationController{
 
         OWLOntology ont = kit.getActiveOntology();
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
-        OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, kit.getOntologies());
+        OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, orderBy, inverse);
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
         URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
                 "/relations/" + PATH, property).withQuery(request.getQueryString());

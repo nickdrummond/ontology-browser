@@ -29,9 +29,9 @@ public class IndividualCharacteristicsBuilder extends CharacteristicsBuilder<OWL
     );
 
     public IndividualCharacteristicsBuilder(OWLNamedIndividual target,
-                                            Set<OWLOntology> activeOntologies,
+                                            OWLOntology ont,
                                             Comparator<OWLObject> comparator) {
-        super(target, activeOntologies, comparator);
+        super(target, ont, comparator);
     }
 
     @Override

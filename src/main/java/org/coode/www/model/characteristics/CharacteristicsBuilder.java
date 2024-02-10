@@ -20,10 +20,10 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
     private final List<Characteristic> characteristics;
 
     protected CharacteristicsBuilder(T target,
-                                  Set<OWLOntology> activeOntologies,
+                                  OWLOntology ont,
                                   Comparator<OWLObject> comparator) {
 
-        Stream<InterestingFilter> filters = activeOntologies.stream()
+        Stream<InterestingFilter> filters = ont.getImportsClosure().stream()
                 .map(o -> createFilter(o, target));
 
         Stream<AxiomWithMetadata> axiomsWithMetadata = filters
@@ -39,7 +39,7 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
         characteristics = sortAndGroupByType.entrySet().stream()
                 .map(entry -> new Characteristic(target, entry.getKey(), entry.getValue()))
                 .sorted((a, b) -> getOrder().indexOf(a.getName()) - getOrder().indexOf(b.getName())) // Sort by "order"
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<Characteristic> getCharacteristics() {

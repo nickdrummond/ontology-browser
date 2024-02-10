@@ -2,6 +2,7 @@ package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.Tree;
+import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLClassesService;
 import org.coode.www.service.OWLIndividualsService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Comparator;
+import java.util.List;
 
 @Controller
 @RequestMapping(value="/classes")
@@ -64,11 +66,13 @@ public class OWLClassesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlClass);
 
+        List<Characteristic> characteristics = service.getCharacteristics(owlClass, ont, kit.getComparator());
+
         model.addAttribute("title", entityName + " (Class)");
         model.addAttribute("type", "Classes");
         model.addAttribute("iri", owlClass.getIRI());
         model.addAttribute("hierarchy", prunedTree);
-        model.addAttribute("characteristics", service.getCharacteristics(owlClass, kit));
+        model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
 
         return "owlentity";

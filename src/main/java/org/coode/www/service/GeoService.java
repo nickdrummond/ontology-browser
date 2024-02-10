@@ -1,9 +1,11 @@
 package org.coode.www.service;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,37 +22,32 @@ public class GeoService {
     @Value("${geo.point}")
     private String pointr;
 
-    public Optional<Loc> getLocation(final OWLEntity owlEntity, final Set<OWLOntology> onts) {
-        if (onts == null || onts.isEmpty()){
-            throw new IllegalArgumentException("Ontologies cannot be empty");
-        }
+    public Optional<Loc> getLocation(final OWLEntity owlEntity, @Nonnull OWLOntology ont) {
 
-        if (owlEntity.isOWLNamedIndividual()){
+        if (owlEntity.isOWLNamedIndividual()) {
             OWLNamedIndividual owlNamedIndividual = owlEntity.asOWLNamedIndividual();
 
             Loc loc = new Loc();
-            for (OWLOntology ont : onts) {
-                for (OWLAnnotationAssertionAxiom axiom : ont.getAnnotationAssertionAxioms(owlNamedIndividual.getIRI())) {
-                    final IRI iri = axiom.getProperty().getIRI();
+            for (OWLAnnotationAssertionAxiom axiom : ont.getAnnotationAssertionAxioms(owlNamedIndividual.getIRI(), Imports.INCLUDED)) {
+                final IRI iri = axiom.getProperty().getIRI();
 
-                    if (iri.equals(IRI.create(pointr))) {
-                        Optional<OWLLiteral> maybeLiteral = axiom.getValue().asLiteral();
-                        if (maybeLiteral.isPresent()) {
-                            String[] latLong = maybeLiteral.get().getLiteral().trim().split("\\s+");
-                            if (latLong.length == 2) {
-                                loc.latitude = latLong[0];
-                                loc.longitude = latLong[1];
-                            }
+                if (iri.equals(IRI.create(pointr))) {
+                    Optional<OWLLiteral> maybeLiteral = axiom.getValue().asLiteral();
+                    if (maybeLiteral.isPresent()) {
+                        String[] latLong = maybeLiteral.get().getLiteral().trim().split("\\s+");
+                        if (latLong.length == 2) {
+                            loc.latitude = latLong[0];
+                            loc.longitude = latLong[1];
                         }
-                    } else if (iri.equals(IRI.create(latitude))) {
-                        axiom.getValue().asLiteral().ifPresent(owlLiteral -> loc.latitude = owlLiteral.getLiteral().trim());
-                    } else if (iri.equals(IRI.create(longitude))) {
-                        axiom.getValue().asLiteral().ifPresent(owlLiteral -> loc.longitude = owlLiteral.getLiteral().trim());
                     }
+                } else if (iri.equals(IRI.create(latitude))) {
+                    axiom.getValue().asLiteral().ifPresent(owlLiteral -> loc.latitude = owlLiteral.getLiteral().trim());
+                } else if (iri.equals(IRI.create(longitude))) {
+                    axiom.getValue().asLiteral().ifPresent(owlLiteral -> loc.longitude = owlLiteral.getLiteral().trim());
+                }
 
-                    if (loc.latitude != null && loc.longitude != null) {
-                        return Optional.of(loc);
-                    }
+                if (loc.latitude != null && loc.longitude != null) {
+                    return Optional.of(loc);
                 }
             }
         }
