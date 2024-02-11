@@ -105,8 +105,9 @@ public class DLQueryController extends ApplicationController {
             DLQuery query = new DLQuery(parserService.getOWLClassExpression(expression, df, checker), queryType);
             reasonerService.asyncQuery(query);
 
-            DLQuery minusQuery = new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType);
+            DLQuery minusQuery = null;
             if (minus != null && !minus.isEmpty()) {
+                minusQuery = new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType);
                 reasonerService.asyncQuery(minusQuery);
             }
 

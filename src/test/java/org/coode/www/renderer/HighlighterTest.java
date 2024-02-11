@@ -69,7 +69,6 @@ public class HighlighterTest {
         assertEquals(expected, result);
     }
 
-
     @Test
     public void shouldReturnEmptyWhenEmpty() {
         String result = new Highlighter("abc").highlight("");
@@ -144,7 +143,6 @@ public class HighlighterTest {
 
         assertEquals(expected, result);
     }
-
 
     @Test
     public void shouldHighlightIgnoringCase() {
