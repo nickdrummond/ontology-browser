@@ -386,7 +386,8 @@ form#load {
 }
 
 #queryPane {
-    flex: 2 2 auto;
+    flex: 1;
+    overflow: auto;
 }
 
 #dlQueryForm {

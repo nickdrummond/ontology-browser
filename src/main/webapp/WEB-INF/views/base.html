@@ -249,6 +249,40 @@
     </ul>
 </div>
 
+
+<div id='content' th:fragment="owlentity">
+    <h2 th:text="${title}">An OWLClass</h2>
+    <div class="iri">
+        <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
+    </div>
+
+    <div th:replace="base :: image (${image})">
+        Possibly an image
+    </div>
+
+    <div th:replace="base :: sound (${sound})">
+        Possibly a sound
+    </div>
+
+    <div th:replace="base :: map (${geo})">
+        Possibly a map
+    </div>
+
+    <div class="characteristics">
+        <div th:each="ch : ${characteristics}" th:remove="tag">
+            <div th:replace="base :: characteristic (${ch})">
+                A characteristic
+            </div>
+        </div>
+
+        <div th:replace="base :: metrics (${metrics})">
+            Possibly some metrics
+        </div>
+    </div>
+
+</div>
+
+
 <p class='footer' th:fragment='footer'>
     <a href="#" id="aurebesh" class="aurebesh">aurebesh</a>
     <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}">Project Link</a>

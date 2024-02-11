@@ -20,10 +20,20 @@ $(document).ready(function(){
     if(document.getElementById('dlQuery')) {
         sendQuery();
     }
+    if (getParameter("individual")) {
+        const individual = getParameter("individual");
+        loadEntity("individuals", individual);
+    }
 });
 
 function getParameter(key) {
     return new URLSearchParams(window.location.search).get(key);
+}
+
+function setParameter(key, value) {
+    let params = new URLSearchParams(window.location.search);
+    params.set(key, value);
+    window.history.pushState({}, '', window.location.pathname + '?' + params);
 }
 
 function sendQuery(){
@@ -82,7 +92,9 @@ function sendSubQuery(expression, minus, order, syntax, queryType, start, pageSi
             var status = xmlHttpReq.status;
 
             if (status==200) { // OK
-                resultsForm.innerHTML=response;
+                resultsForm.innerHTML = response;
+                rewriteLinks("Class", "classes");
+                rewriteLinks("individual", "individuals");
             }
             else{
                 resultWrite(queryType + ": error!", status + ":" + response);
@@ -112,7 +124,7 @@ function sendSubQuery(expression, minus, order, syntax, queryType, start, pageSi
 }
 
 function resultWrite(header, message) {
-    var resultsForm = document.getElementById("resultsForm");
+    const resultsForm = document.getElementById("resultsForm");
     resultsForm.innerHTML="<div class='characteristic'><h4>"
            + header + "</h4><p>" + message + "</p></div>";
 }
@@ -142,6 +154,51 @@ function getValueForElement(element){
 
 function focusComponent(id){
     document.getElementById(id).focus();
+}
+
+function rewriteLinks(type, pluralType) {
+    document.querySelectorAll(`#resultsForm a.${type}`).forEach(link => {
+        let entityId = link.getAttribute("href").split("/")[2];
+        link.setAttribute("href", `javascript:loadEntity('${type}', '${pluralType}', '${entityId}')`);
+    });
+}
+
+function loadEntity(type, pluralType, entityId){
+    if (entityId == null) {
+      return;
+    }
+
+    var xmlHttpReq = getXmlHttpObject();
+
+    if (xmlHttpReq==null) {
+        alert ("Browser does not support HTTP Request");
+    }
+    else{
+        var req = baseUrl + pluralType + "/fragment/" + entityId;
+
+        xmlHttpReq.open("GET", req, true);
+
+        xmlHttpReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+
+        xmlHttpReq.onload = function() {
+            const status = xmlHttpReq.status;
+            const response = xmlHttpReq.responseText;
+
+            if (status === 200) { // OK
+                const responseHolder = document.createElement('span');
+                responseHolder.innerHTML = response;
+                document.getElementById("content").replaceWith(responseHolder.firstChild);
+                setParameter(type, entityId);
+            }
+            else{
+                resultWrite(type + ": error!", status + ":" + response);
+            }
+        };
+
+        xmlHttpReq.send();
+
+        document.getElementById("content").innerHTML =  "<img src='" + BUSY_IMAGE + "' width='10px' height='10px' />";
+    }
 }
 
 /////////////////////////

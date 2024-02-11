@@ -1,32 +1,22 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
-import org.coode.www.renderer.MediaRenderer;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.*;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 @RequestMapping(value="/individuals")
@@ -60,7 +50,6 @@ public class OWLIndividualsController extends ApplicationController {
         return "redirect:/individuals/" + id;
     }
 
-
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/{individualId}")
     public String getOWLIndividual(@PathVariable final String individualId,
@@ -81,6 +70,27 @@ public class OWLIndividualsController extends ApplicationController {
         OWLIndividualsByTypeHierarchyService hierarchyService = new OWLIndividualsByTypeHierarchyService(r, comparator);
 
         Tree<OWLEntity> prunedTree = hierarchyService.getPrunedTree(owlIndividual);
+
+        model.addAttribute("hierarchy", prunedTree);
+
+        getOWLIndividualFragment(individualId, ontId, inferred, model);
+
+        return "owlentity";
+    }
+
+
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value= "/fragment/{individualId}")
+    public String getOWLIndividualFragment(@PathVariable final String individualId,
+                                   @RequestParam(required=false) final String ontId,
+                                   @RequestParam(required=false) final boolean inferred,
+                                   final Model model) throws NotFoundException {
+
+        final OWLOntology ont = (ontId != null) ?
+                ontService.getOntologyFor(ontId, kit) :
+                kit.getActiveOntology();
+
+        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ont);
 
         ShortFormProvider sfp = kit.getShortFormProvider();
 
@@ -112,10 +122,9 @@ public class OWLIndividualsController extends ApplicationController {
         model.addAttribute("title", entityName + " (Individual)");
         model.addAttribute("type", "Individuals");
         model.addAttribute("iri", owlIndividual.getIRI());
-        model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
 
-        return "owlentity";
+        return "owlentityfragment";
     }
 }

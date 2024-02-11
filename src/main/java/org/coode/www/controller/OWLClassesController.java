@@ -62,6 +62,23 @@ public class OWLClassesController extends ApplicationController {
 
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);
 
+        model.addAttribute("hierarchy", prunedTree);
+
+        getOWLClassFragment(classId, model);
+
+        return "owlentity";
+    }
+
+
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value="/fragment/{classId}")
+    public String getOWLClassFragment(@PathVariable final String classId,
+                              final Model model) throws NotFoundException {
+
+        OWLClass owlClass = service.getOWLClassFor(classId, kit);
+
+        OWLOntology ont = kit.getActiveOntology();
+
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
 
         String entityName = kit.getShortFormProvider().getShortForm(owlClass);
@@ -71,12 +88,12 @@ public class OWLClassesController extends ApplicationController {
         model.addAttribute("title", entityName + " (Class)");
         model.addAttribute("type", "Classes");
         model.addAttribute("iri", owlClass.getIRI());
-        model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
 
-        return "owlentity";
+        return "owlentityfragment";
     }
+
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{classId}/children")

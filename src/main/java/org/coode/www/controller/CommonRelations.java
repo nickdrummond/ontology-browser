@@ -3,7 +3,6 @@ package org.coode.www.controller;
 import org.coode.www.url.CommonRelationsURLScheme;
 import org.coode.www.url.URLScheme;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.renderer.RendererFactory;
@@ -12,7 +11,6 @@ import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

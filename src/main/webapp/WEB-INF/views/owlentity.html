@@ -24,36 +24,8 @@
         Another hierarchy
     </div>
 
-    <div id='content'>
-        <h2 th:text="${title}">An OWLClass</h2>
-        <div class="iri">
-            <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
-        </div>
-
-        <div th:replace="base :: image (${image})">
-            Possibly an image
-        </div>
-
-        <div th:replace="base :: sound (${sound})">
-            Possibly a sound
-        </div>
-
-        <div th:replace="base :: map (${geo})">
-            Possibly a map
-        </div>
-
-        <div class="characteristics">
-            <div th:each="ch : ${characteristics}" th:remove="tag">
-                <div th:replace="base :: characteristic (${ch})">
-                    A characteristic
-                </div>
-            </div>
-
-            <div th:replace="base :: metrics (${metrics})">
-                Possibly some metrics
-            </div>
-        </div>
-
+    <div th:replace="base :: owlentity">
+        An entity
     </div>
 </div>
 
