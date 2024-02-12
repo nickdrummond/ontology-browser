@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -112,7 +113,8 @@ public class OWLIndividualsController extends ApplicationController {
             model.addAttribute("sound", owlIndividual.getIRI().toString());
         }
 
-        List<Characteristic> characteristics = service.getCharacteristics(owlIndividual, ont, kit.getComparator());
+        List<Characteristic> characteristics = new ArrayList<>(
+                service.getCharacteristics(owlIndividual, ont, kit.getComparator()));
 
         if (inferred) {
             characteristics.addAll(service.getInferredCharacteristics(

@@ -69,7 +69,7 @@ public class OWLIndividualsService {
                             .map(obj -> df.getOWLObjectPropertyAssertionAxiom(p, owlIndividual, obj))
                             .filter(ax -> !activeOntology.containsAxiom(ax, true))
                             .map(ax -> new AxiomWithMetadata("Inferred Relations", ax, ax, ont)))
-                    .collect(Collectors.toList());
+                    .toList();
             return List.of(new Characteristic(owlIndividual, "Inferred Relations", inf));
         } catch (OWLOntologyCreationException e) {
             throw new RuntimeException(e);
