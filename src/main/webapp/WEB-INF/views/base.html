@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment='header (title)'>
+<head th:fragment='header (title, query, tree)'>
 
     <title th:text='${projectInfo.name + ": " + title}'>Project Name: Page Name</title>
 
@@ -20,20 +20,25 @@
           th:href='@{/static/css/autosuggest_inquisitor.css}'/>
     <link rel='stylesheet' type='text/css' href='../../static/css/gaphu-0.0.9.css'
           th:href='@{/static/css/gaphu-0.0.9.css}'/>
-    <link rel='stylesheet' type='text/css' href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
+    <link rel='stylesheet' type='text/css' href='../../static/css/default.css'
+          th:href='@{/static/css/default.css}'/>
 
     <script type='text/javascript' th:inline='javascript'>
-        // TODO Thymeleaf inlining http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html#script-inlining-javascript-and-dart
-        baseUrl =/*[[@{/}]]*/ '/';
-        // document.getElementById("uri-spec").focus();
+        const baseUrl = '/'; // TODO is this the right way to do this?
+        const isQuery = [[${query}]];
+        const isTree = [[${tree}]];
     </script>
     <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
             th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
-    <script type='text/javascript' src='../../static/js/default.js' th:src='@{/static/js/default.js}'></script>
+
+    <script type='module' src='../../static/js/app.js'
+            th:src='@{/static/js/app.js}'>
+    </script>
+
     <script type='text/javascript' src='../../static/js/bsn.AutoSuggest_2.1_multiword.js'
             th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
-    <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js' th:src='@{/static/js/gaphu-0.0.9.js}'></script>
-    <script type='text/javascript' src='../../static/js/dlquery.js' th:src='@{/static/js/dlquery.js}'></script>
+    <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js'
+            th:src='@{/static/js/gaphu-0.0.9.js}'></script>
 
 </head>
 

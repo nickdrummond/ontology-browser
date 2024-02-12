@@ -30,7 +30,7 @@ import java.util.Comparator;
 public class OWLPropertyRelationsController extends ApplicationController {
 
     public static final String PATH = "onproperty";
-    public static final String OWLENTITY = "owlentity";
+    public static final String RELATION_TEMPLATE = "relation";
     public static final String BASE_TREE = "base :: tree";
 
     private final OWLObjectPropertiesService propertiesService;
@@ -91,7 +91,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         common.renderEntity(property, model);
 
-        return OWLENTITY;
+        return RELATION_TEMPLATE;
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
@@ -113,7 +113,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
-        return OWLENTITY;
+        return RELATION_TEMPLATE;
     }
 
     @SuppressWarnings("SameReturnValue")

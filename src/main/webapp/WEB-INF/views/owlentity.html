@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace='base :: header (title=${title})'></head>
+<head th:replace='base :: header (title=${title}, query=${false}, tree=${true})'></head>
 
 <body class="wrapper">
 
@@ -18,10 +18,6 @@
 
     <div id='hierarchy'  th:replace="base :: hierarchy(${type}, ${hierarchy})">
         A hierarchy
-    </div>
-
-    <div id='hierarchy2'  th:replace="base :: secondaryhierarchy(${type2}, ${hierarchy2}, ${inverse})">
-        Another hierarchy
     </div>
 
     <div th:replace="base :: owlentity">

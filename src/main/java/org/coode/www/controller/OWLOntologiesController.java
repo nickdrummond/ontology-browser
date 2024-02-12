@@ -45,8 +45,9 @@ public class OWLOntologiesController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}")
-    public String getOntology(@PathVariable final String ontId,
-                              final Model model) throws NotFoundException {
+    public String getOntology(
+            @PathVariable final String ontId,
+            final Model model) throws NotFoundException {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -55,6 +56,22 @@ public class OWLOntologiesController extends ApplicationController {
         OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), comparator);
 
         Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(ont);
+
+        model.addAttribute("hierarchy", ontologyTree);
+
+        getOntologyFragment(ontId, model);
+
+        return "owlentity";
+    }
+
+
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value = "/fragment/{ontId}")
+    public String getOntologyFragment(
+            @PathVariable final String ontId,
+            final Model model) throws NotFoundException {
+
+        OWLOntology ont = service.getOntologyFor(ontId, kit);
 
         String title = sfp.getShortForm(ont) + " (Ontology)";
 
@@ -65,13 +82,12 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", iri);
-        model.addAttribute("hierarchy", ontologyTree);
         model.addAttribute("characteristics", service.getCharacteristics(ont, kit));
         model.addAttribute("metrics", service.getMetrics(ont));
         model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
 
-        return "owlentity";
+        return "owlentityfragment";
     }
 
     @GetMapping(value = "/{ontId}", produces = "application/rdf+xml")

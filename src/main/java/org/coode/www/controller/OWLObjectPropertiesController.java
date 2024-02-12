@@ -61,6 +61,23 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getPrunedTree(property);
 
+        model.addAttribute("hierarchy", prunedTree);
+
+        getOWLObjectPropertyFragment(propertyId, model);
+
+        return "owlentity";
+    }
+
+
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value="/fragment/{propertyId}")
+    public String getOWLObjectPropertyFragment(@PathVariable final String propertyId,
+                                       final Model model) throws NotFoundException {
+
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
+
         String entityName = kit.getShortFormProvider().getShortForm(property);
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(property);
@@ -68,11 +85,10 @@ public class OWLObjectPropertiesController extends ApplicationController {
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Object Properties");
         model.addAttribute("iri", property.getIRI());
-        model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", service.getCharacteristics(property, ont, kit.getComparator()));
         model.addAttribute("mos", owlRenderer);
 
-        return "owlentity";
+        return "owlentityfragment";
     }
 
     @SuppressWarnings("SameReturnValue")

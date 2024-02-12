@@ -52,12 +52,29 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         OWLOntology activeOntology = kit.getActiveOntology();
 
-        OWLAnnotationProperty owlAnnotationProperty = service.getPropertyFor(propertyId, activeOntology);
-
         Comparator<OWLObject> comparator = kit.getComparator();
 
         List<OWLAnnotationProperty> annotationProperties =
                 service.getAnnotationProperties(activeOntology, comparator);
+
+        model.addAttribute("entities", annotationProperties);
+
+        getOWLAnnotationPropertyFragment(propertyId, model);
+
+        return "owlentity";
+    }
+
+
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value="/fragment/{propertyId}")
+    public String getOWLAnnotationPropertyFragment(@PathVariable final String propertyId,
+                                           final Model model) throws NotFoundException {
+
+        OWLOntology activeOntology = kit.getActiveOntology();
+
+        OWLAnnotationProperty owlAnnotationProperty = service.getPropertyFor(propertyId, activeOntology);
+
+        Comparator<OWLObject> comparator = kit.getComparator();
 
         String entityName = kit.getShortFormProvider().getShortForm(owlAnnotationProperty);
 
@@ -68,10 +85,9 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         model.addAttribute("title", entityName + " (Annotation Property)");
         model.addAttribute("type", "Annotation Properties");
         model.addAttribute("iri", owlAnnotationProperty.getIRI());
-        model.addAttribute("entities", annotationProperties);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
 
-        return "owlentity";
+        return "owlentityfragment";
     }
 }

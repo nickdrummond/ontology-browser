@@ -12,16 +12,20 @@
 
 <div id="main">
 
-    <div id="content">
+    <div id='entities' th:replace="base :: list(${type}, ${entities})">
+        A list
+    </div>
 
-        <h2 th:text="${title}">Title</h2>
+    <div id='hierarchy'  th:replace="base :: hierarchy(${type}, ${hierarchy})">
+        A hierarchy
+    </div>
 
-        <div th:fragment="cloud" class="cloud">
-            <span class="entity" th:each="entity : ${helper.getOrderedEntities()}"
-               th:utext="${mos.render(entity)}"
-               th:styleappend="'font-size:' + ${helper.getFontSize(entity)} + 'pt; color:' + ${helper.getColor(entity)}">Entity</span>
-        </div>
+    <div id='hierarchy2'  th:replace="base :: secondaryhierarchy(${type2}, ${hierarchy2}, ${inverse})">
+        Another hierarchy
+    </div>
 
+    <div th:replace="base :: owlentity">
+        An entity
     </div>
 </div>
 

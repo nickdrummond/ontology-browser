@@ -130,6 +130,7 @@ public class DLQueryController extends ApplicationController {
 
             Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c, start, pageSize);
 
+            // TODO update scheme to render links with the entity as a param
             OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
 
             // Target links to parent page for fragment

@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace='base :: header (title=${"DL query: " + expression})'></head>
+<!-- TODO use insert - see https://www.thymeleaf.org/doc/articles/layouts.html -->
+<head th:replace='base :: header (title=${"DL query: " + expression}, query=${true}, tree=${false})'></head>
 
 <body class="wrapper">
 

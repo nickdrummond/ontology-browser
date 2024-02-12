@@ -17,6 +17,7 @@
 
 .active-entity {
     background-color: #ffffaa;
+    pointer-events: none;
 }
 
 .deprecated {

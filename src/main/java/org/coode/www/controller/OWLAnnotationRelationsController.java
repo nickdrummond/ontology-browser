@@ -25,7 +25,7 @@ import java.util.Set;
 public class OWLAnnotationRelationsController extends ApplicationController {
 
     public static final String PATH = "onannotationproperty";
-    public static final String OWLENTITY = "owlentity";
+    public static final String RELATION_TEMPLATE = "relation";
 
     private final OWLAnnotationPropertiesService propertiesService;
     private final CommonRelations<OWLAnnotationProperty> common;
@@ -80,7 +80,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
         common.renderEntity(property, model);
 
-        return OWLENTITY;
+        return RELATION_TEMPLATE;
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
@@ -102,6 +102,6 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
         common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
-        return OWLENTITY;
+        return RELATION_TEMPLATE;
     }
 }
