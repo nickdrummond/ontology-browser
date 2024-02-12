@@ -105,21 +105,22 @@
 </div>
 
 <!-- paging -->
-<span th:fragment="paged (data)" th:switch="${(data.start == 1) and (data.pageSize == data.total)}">
+<span class="paging" th:fragment="paged (data)" th:switch="${(data.start == 1) and (data.pageSize == data.total)}">
     <span th:case="${true}" th:text='${"(" + data.total + ")"}'>(2)</span>
     <span th:case="${false}"
           th:with="urlBuilder=${(urlBuilder != null) ? urlBuilder : T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
 
-        <span th:switch="${data.start gt 1}">
+        <span class="paging-arrow" th:switch="${data.start gt 1}">
             <a th:case="${true}"
                th:with="start=${data.start-data.pageSize gt 1 ? data.start-data.pageSize : 1}"
                th:href='${urlBuilder.replaceQueryParam("start", start).replaceQueryParam("pageSize", data.pageSize).toUriString()}'>&lt; prev</a>
             <span th:case="${false}">&lt; prev</span>
         </span>
 
-        <span th:text='${"(" + data.start + "-" + (data.start+data.pageSize-1) + " of " + data.total + ")"}'>(1-20 of 100)</span>
+        <span th:with="end=${T(java.lang.Math).min(data.total, data.start + data.pageSize-1)}"
+                th:text='${"(" + data.start + "-" + end + " of " + data.total + ")"}'>(1-20 of 100)</span>
 
-        <span th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
+        <span class="paging-arrow" th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
             <a th:case="${true}"
                th:href='${urlBuilder.replaceQueryParam("start", start).replaceQueryParam("pageSize", data.pageSize).toUriString()}'>next &gt;</a>
             <span th:case="${false}">next &gt;</span>

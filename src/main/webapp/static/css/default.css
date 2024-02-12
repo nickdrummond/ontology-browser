@@ -514,6 +514,19 @@ img.thumb{
     left: -3em;
 }
 
+.paging-arrow {
+    color: #aaa;
+}
+
+.paging-arrow a {
+    font-weight: bold;
+    color: #004e4f;
+}
+
+.paging-arrow a:hover {
+    text-decoration: none;
+}
+
 @media screen and (max-width: 800px) and (max-height: 450px) {
 
     ul.minihierarchy {
