@@ -117,8 +117,8 @@ public class OWLIndividualsController extends ApplicationController {
                 service.getCharacteristics(owlIndividual, ont, kit.getComparator()));
 
         if (inferred) {
-            characteristics.addAll(service.getInferredCharacteristics(
-                    owlIndividual, ont, kit.getOWLOntologyManager(), reasonerService.getReasoner()));
+            OWLReasoner reasoner = reasonerService.getReasoner();
+            characteristics.addAll(service.getInferredCharacteristics(owlIndividual, reasoner));
         }
 
         model.addAttribute("title", entityName + " (Individual)");

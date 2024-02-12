@@ -6,12 +6,12 @@ import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.IndividualCharacteristicsBuilder;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.AxiomAnnotations;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class OWLIndividualsService {
@@ -55,8 +55,9 @@ public class OWLIndividualsService {
 
     public List<Characteristic> getInferredCharacteristics(
             OWLNamedIndividual owlIndividual,
-            OWLOntology activeOntology,
-            OWLOntologyManager mngr, OWLReasoner reasoner) {
+            OWLReasoner reasoner) {
+        OWLOntology reasonerRootOnt = reasoner.getRootOntology();
+        OWLOntologyManager mngr = reasonerRootOnt.getOWLOntologyManager();
         OWLDataFactory df = mngr.getOWLDataFactory();
         try {
             // TODO materialise into an actual ontology
@@ -64,10 +65,10 @@ public class OWLIndividualsService {
             OWLOntology ont = (mngr.contains(inferredIRI)) ?
                     mngr.getOntology(inferredIRI) :
                     mngr.createOntology(inferredIRI);
-            List<AxiomWithMetadata> inf = activeOntology.objectPropertiesInSignature(Imports.INCLUDED)
+            List<AxiomWithMetadata> inf = reasonerRootOnt.objectPropertiesInSignature(Imports.INCLUDED)
                     .flatMap(p -> reasoner.objectPropertyValues(owlIndividual, p)
                             .map(obj -> df.getOWLObjectPropertyAssertionAxiom(p, owlIndividual, obj))
-                            .filter(ax -> !activeOntology.containsAxiom(ax, true))
+                            .filter(ax -> !reasonerRootOnt.containsAxiom(ax, Imports.INCLUDED, AxiomAnnotations.IGNORE_AXIOM_ANNOTATIONS))
                             .map(ax -> new AxiomWithMetadata("Inferred Relations", ax, ax, ont)))
                     .toList();
             return List.of(new Characteristic(owlIndividual, "Inferred Relations", inf));

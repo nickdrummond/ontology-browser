@@ -2,7 +2,6 @@ package org.coode.www.service.hierarchy;
 
 import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
