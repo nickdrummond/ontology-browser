@@ -11,17 +11,17 @@ $(document).ready(function(){
 
     if (isTree) {
         tree(baseUrl, () => {
-            characteristics().init();
+            characteristics().init("#content .characteristic, #metrics");
         }).init();
     }
 
     if (isQuery) {
         dlquery(baseUrl, () => {
-            characteristics().init();
+            characteristics().init("#content .characteristic, #metrics");
         }).init();
     }
 
-    characteristics().init();
+    characteristics().init(".characteristic, .owlselector, #metrics");
 
     createAurebeshHandler();
 

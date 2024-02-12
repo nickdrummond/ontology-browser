@@ -2,12 +2,12 @@ export const characteristics = () => {
 
     const HIDDEN = "hidden.";
 
-    function init() {
-        createSlideToggles();
+    function init(selectors) {
+        createSlideToggles(selectors);
         hideCharacteristics();
     }
 
-    function createSlideToggles() {
+    function createSlideToggles(selectors) {
         $("<img class=\"min\" src=\"" + baseUrl + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
             const values = $(this).nextAll("ul, table").first(); // for some reason just next does not work
             const hidden = values.is(":visible");
@@ -15,7 +15,7 @@ export const characteristics = () => {
             rememberCharacteristicHidden(characteristic, hidden);
 
             values.slideToggle('fast');
-        }).prependTo(".characteristic, .owlselector, #metrics");
+        }).prependTo(selectors);
     }
 
     function rememberCharacteristicHidden(characteristic, hidden) {
