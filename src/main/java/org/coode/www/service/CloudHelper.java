@@ -4,6 +4,7 @@ import org.coode.www.model.cloud.CloudModel;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,7 +45,11 @@ public class CloudHelper<O extends OWLEntity> {
         return model.getEntities(threshold);
     }
 
-    public List<O> getOrderedEntities() { return getEntities().stream().sorted(model.getComparator()).collect(Collectors.toList()); }
+    public List<O> getOrderedEntities() {
+        List<O> entities = getEntities().stream().sorted(model.getComparator()).collect(Collectors.toList());
+        Collections.reverse(entities);
+        return entities;
+    }
 
     public String getColor(O entity) {
         int value = model.getValue(entity);
@@ -60,7 +65,7 @@ public class CloudHelper<O extends OWLEntity> {
         if (!inverted) {
             score = 255 - score;
         }
-        Color color = new Color(score, score, 0);
+        Color color = new Color(0, 0, score);
         String rgb = Integer.toHexString(color.getRGB());
         return "#" + rgb.substring(2);
     }

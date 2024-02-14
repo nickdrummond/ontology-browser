@@ -15,6 +15,18 @@ html {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.dark {
+    color-scheme: dark;
+}
+
+.dark a {
+    color: #b4b392;
+}
+
+.dark a:hover {
+    color: #fdf8ee;
+}
+
 body {
     font-size: 12pt;
     margin: 0;
@@ -39,7 +51,7 @@ h2 {
 
 h3 {
     font-size: 14pt;
-    color: #444444;
+    color: rgba(125, 125, 125, 0.8);
     margin: 6px 12px 12px 12px;
 }
 
@@ -106,18 +118,12 @@ li {
 
 #metrics table {
     border: solid 1px #c7cfd5;
-    background: #fff;
-    color: #000;
     padding: 5px 5px 5px 25px;
     margin: 5px 0 10px 0;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     text-align: right;
     width: 99%;
-}
-
-#metrics table tr:hover {
-    background: #eeeeee;
 }
 
 #metrics table td {
@@ -159,8 +165,6 @@ a.burger, a.burger:hover, a.burger:active {
 
 .characteristic ul {
     border: solid 1px #c7cfd5;
-    background: #fff;
-    color: #000;
     padding: 5px 5px 5px 25px;
     margin: 0 0 10px 0;
     -moz-border-radius: 6px;
@@ -172,8 +176,9 @@ a.burger, a.burger:hover, a.burger:active {
     clear: both;
 }
 
-.characteristic li:hover {
-    background: #eeeeee;
+.characteristic li:hover, #metrics table tr:hover {
+    background: rgba(125, 125, 125, 0.2);
+    transition: ease-out 0.2s;
 }
 
 .characteristic .source-ont {
@@ -188,7 +193,7 @@ a.burger, a.burger:hover, a.burger:active {
 }
 
 .highlight {
-    background-color: #ffffaa;
+    background: rgba(255, 255, 0, 0.2);
 }
 
 .imageHolder{
@@ -220,7 +225,7 @@ td.key{
 }
 
 #queryform {
-    background: #ddddff;
+    background: #ff0000;
     padding: 5px;
 }
 
@@ -261,7 +266,7 @@ td.key{
 }
 
 #tabs {
-    color: #aaaacc;
+    color: rgba(125, 125, 125, 0.8);
     margin-bottom: 16px;
 }
 
@@ -277,7 +282,6 @@ td.key{
     text-align: center;
     margin: auto;
     width: 90%;
-    background-color: black;
 }
 
 .cloud span.entity {
@@ -294,10 +298,13 @@ td.key{
     color: inherit;
 }
 
-/* we want links in literals to look like links*/
-.literal a {
-    color: #002;
-    text-decoration: underline;
+.dark .cloud a.Class,
+.dark .cloud a.Object.property,
+.dark .cloud a.Data.property,
+.dark .cloud a.Annotation.property,
+.dark .cloud a.Named.individual,
+.dark .cloud a.Datatype{
+    filter: invert(100%);
 }
 
 a.subsexpand {
@@ -325,8 +332,6 @@ a.permalink {
 
 ul.minihierarchy {
     border: solid 1px #c7cfd5;
-    background: #fff;
-    color: #000;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     overflow: auto;
@@ -444,6 +449,10 @@ img.icon {
     height: 24px;
 }
 
+.dark img.icon {
+    filter: invert(100%);
+}
+
 img.button {
     position: relative;
     top: 8px;
@@ -507,7 +516,7 @@ img.thumb{
     height: 1.5em;
     margin-left: 0.5em;
     background-size: contain;
-    background-color: #fff;
+    background-color: inherit;
     background-repeat: no-repeat;
     background-image: url("../../static/images/search-svgrepo-com.svg");
     position: relative;

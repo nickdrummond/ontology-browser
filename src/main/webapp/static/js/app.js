@@ -1,6 +1,7 @@
 import {tree} from './tree.js';
 import {characteristics} from './characteristics.js';
 import {dlquery} from "./dlquery.js";
+import {classToggler} from "./classToggler.js";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -8,6 +9,10 @@ import {dlquery} from "./dlquery.js";
 $(document).ready(function(){
 
     openFullscreen();
+
+    classToggler("light", "dark")
+        .withTargetSelector("html, #find")
+        .attachTo("#darkmode");
 
     if (isTree) {
         tree(baseUrl, () => {
@@ -22,9 +27,6 @@ $(document).ready(function(){
     }
 
     characteristics().init(".characteristic, .owlselector, #metrics");
-
-    createAurebeshHandler();
-
 });
 
 function openFullscreen() {
@@ -35,25 +37,5 @@ function openFullscreen() {
     } else if (document.msRequestFullscreen) { /* IE11 */
         elem.msRequestFullscreen();
     }
-}
-
-
-function createAurebeshHandler() {
-    const key = "language";
-    const aurebesh = "aurebesh";
-    const basic = "basic";
-
-    function setLanguage(lang) {
-        const notLang = (lang == aurebesh) ? basic : aurebesh;
-        sessionStorage.setItem(key, lang);
-        $("html, #find").addClass(lang).removeClass(notLang);
-        $("#aurebesh").addClass(notLang).removeClass(lang).html(notLang);
-    }
-
-    setLanguage((sessionStorage.getItem(key) == aurebesh) ? aurebesh : basic);
-
-    $("#aurebesh").click(function(e){
-        setLanguage((sessionStorage.getItem(key) == aurebesh) ? basic : aurebesh);
-    });
 }
 

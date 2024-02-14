@@ -55,8 +55,8 @@ if(!Array.indexOf){
         if (!start){
             start = 0;
         }
-        var len = this.length;
-        for(var i=start; i<len; i++){
+        let len = this.length;
+        for(let i=start; i<len; i++){
             if(this[i]==obj){
                 return i;
             }
@@ -67,7 +67,7 @@ if(!Array.indexOf){
 
 
 // store all editors that have been requested, ready for initialisation when the page is finished loading
-var editors = new Array();
+let editors = new Array();
 
 function register(editor){
     editors.push(editor);
@@ -77,7 +77,7 @@ $(document).ready(function(){
     //alert($().jquery);
 
     // initialisation only occurs once the page is fully loaded
-    for (var i=0; i<editors.length; i++){
+    for (let i=0; i<editors.length; i++){
         editors[i].initialise();
     }
 });
@@ -87,11 +87,11 @@ $(document).ready(function(){
 // There is a single ExpressionEditor per text editor.
 function ExpressionEditor(editorId, userOptions){
 
-    var that = this;
-    var jEditor;
-    var jError;
-    var jAutoComplete;
-    var jErrorHighlighter;
+    let that = this;
+    let jEditor;
+    let jError;
+    let jAutoComplete;
+    let jErrorHighlighter;
 
     this.editorId = editorId;
 
@@ -110,7 +110,7 @@ function ExpressionEditor(editorId, userOptions){
     };
 
     // load userOptions into the options
-    for (var optName in userOptions){
+    for (let optName in userOptions){
         this.options[optName] = userOptions[optName];
     }
 
@@ -127,8 +127,8 @@ function ExpressionEditor(editorId, userOptions){
             return;
         }
 
-        var errorSpan = $(".error", getErrorHighlighter());
-        var pos = getSpanPos(errorSpan);
+        let errorSpan = $(".error", getErrorHighlighter());
+        let pos = getSpanPos(errorSpan);
 
         jError.text(error.message).css({
             "left": pos.x + DEFAULT_ERROR_OFFSET,
@@ -165,7 +165,7 @@ function ExpressionEditor(editorId, userOptions){
     function makeRequest(name, expression, method, callback, responseCache){
 
         // check cache for values that have already been used
-        var response = responseCache[expression];
+        let response = responseCache[expression];
         if (response){
             if (DEBUG_RESULTS){
                 debug(that.editorId + " " + name + " (cache hit)");
@@ -183,7 +183,7 @@ function ExpressionEditor(editorId, userOptions){
             showResponse(response.getXML());
         }
         else{
-            var data = {};
+            let data = {};
             data[that.options.queryParam] = expression;
             $.ajax({
                 url: method,
@@ -195,7 +195,7 @@ function ExpressionEditor(editorId, userOptions){
                     if (DEBUG_RESULTS){
                         debug(that.editorId + " " + this + " " + request + " (" + textStatus + ")");
                     }
-                    var response = parseResponse(xmlData);
+                    let response = parseResponse(xmlData);
                     responseCache[response.expr] = response; // cache the responses
                     callback(response);
                     showResponse(xmlData);
@@ -211,7 +211,7 @@ function ExpressionEditor(editorId, userOptions){
         else{
             that.lastAutocompleteResponse = response;
 
-            var elements = response.expected;
+            let elements = response.expected;
 
             if (elements.length == 1){
                 accept(elements[0], true, true);
@@ -231,14 +231,14 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function updateAutocomplete(response){
-        var expr = createSpan(AC_TOKEN_CLASS, response.expr, response.pos, response.token.length);
+        let expr = createSpan(AC_TOKEN_CLASS, response.expr, response.pos, response.token.length);
         updateErrorHighlighter(expr);
         jAutoComplete.empty().append(createAutocompleteContent(response));
 
-        var acSpan = $("." + AC_TOKEN_CLASS, getErrorHighlighter());
-        var pos = getSpanPos(acSpan);
+        let acSpan = $("." + AC_TOKEN_CLASS, getErrorHighlighter());
+        let pos = getSpanPos(acSpan);
 
-        var css = {
+        let css = {
             "left": pos.x,
             "top": pos.y,
             "position": "absolute",
@@ -251,11 +251,11 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function getSpanPos(span){
-        var editorPosition = jErrorHighlighter.position(); // the top left of the margin (for some reason)
-        var pos = {};
+        let editorPosition = jErrorHighlighter.position(); // the top left of the margin (for some reason)
+        let pos = {};
         if (span.length == 1){
             // TODO: need to add offsets for border + margin - padding included in .position() result
-            var errorPos = span.position(); // relative to inside top left of editor border (editor is positioned)
+            let errorPos = span.position(); // relative to inside top left of editor border (editor is positioned)
             pos.x = editorPosition.left + errorPos.left;
             pos.y = editorPosition.top + errorPos.top + span.height();
         }
@@ -267,18 +267,18 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function createAutocompleteContent(response){
-        var list = $("<ul>");
+        let list = $("<ul>");
 
-        var types = response.getTypes();
+        let types = response.getTypes();
 
-        var first = true;
+        let first = true;
 
-        for (var i=0; i<types.length; i++){
-            var type = types[i];
-            var expected = response.getExpected(type);
+        for (let i=0; i<types.length; i++){
+            let type = types[i];
+            let expected = response.getExpected(type);
 
-            for (var j=0; j<expected.length; j++){
-                var element = $("<li>");
+            for (let j=0; j<expected.length; j++){
+                let element = $("<li>");
                 element.addClass(type);
                 if (first){
                     element.addClass(CSS_SELECTED);
@@ -290,10 +290,10 @@ function ExpressionEditor(editorId, userOptions){
                     acceptAutocomplete(false, $(this));
                 });
 
-                var elementText = expected[j];
+                let elementText = expected[j];
 
                 if (that.options.highlightResults && response.token){
-                    var matchlen = response.token.length;
+                    let matchlen = response.token.length;
                     elementText = "<span class=\"match\">" + elementText.substr(0, matchlen) +
                                   "</span>" + elementText.substring(matchlen, elementText.length);
                 }
@@ -315,7 +315,7 @@ function ExpressionEditor(editorId, userOptions){
             if (!DEBUG_DISABLE_BORDER){
                 jEditor.addClass(CSS_INVALID);
             }
-            var expr = createSpan(CSS_ERROR, response.expr, response.pos, response.token.length);
+            let expr = createSpan(CSS_ERROR, response.expr, response.pos, response.token.length);
 
             updateErrorHighlighter(expr);
         }
@@ -361,7 +361,7 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function cursorIsInError(error){
-        var sel = getSelectionStart(that.editor);
+        let sel = getSelectionStart(that.editor);
         return sel >= error.pos && sel <= error.pos + error.token.length;
     }
 
@@ -370,14 +370,14 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function next(){
-        var sel = getSelection();
+        let sel = getSelection();
         if (sel.next().length > 0){
             handleSelection(sel.next());
         }
     }
 
     function prev(){
-        var sel = getSelection();
+        let sel = getSelection();
         if (sel.prev().length > 0){
             handleSelection(sel.prev());
         }
@@ -400,10 +400,10 @@ function ExpressionEditor(editorId, userOptions){
 
     function accept(word, highlight, replaceWholeWord) {
         that.hide();
-        var editor = that.editor;
+        let editor = that.editor;
         // must use the error to determine the start of the token we'll replace in cases where there is no space delimeter
-        var pos = that.lastAutocompleteResponse.pos;
-        var tLen = getSelectionStart(editor) - pos;
+        let pos = that.lastAutocompleteResponse.pos;
+        let tLen = getSelectionStart(editor) - pos;
 
         if (replaceWholeWord){
             replaceWord(editor, pos, word);
@@ -427,7 +427,7 @@ function ExpressionEditor(editorId, userOptions){
     function createErrorHighlighter() {
 
         // save the background colour as we're about to wipe it out
-        var backgroundColour = jEditor.css("background-color");
+        let backgroundColour = jEditor.css("background-color");
 
         // make the editor transparent
         // have to do this before the css copy as it affects the borders etc on Firefox
@@ -435,7 +435,7 @@ function ExpressionEditor(editorId, userOptions){
             "background-color": "transparent"
         });
 
-        var css = copyCSS(jEditor);
+        let css = copyCSS(jEditor);
 
         css["background-color"] = backgroundColour;
         css["display"] = "inline-block";            // needs to be inline-block as textarea is inline
@@ -471,7 +471,7 @@ function ExpressionEditor(editorId, userOptions){
 
         appendOverlay(jEditor, css);
 
-        var highlighter = $("<div id=\"" + that.errorHighlightId + "\" class=\"errorhighlight\"></div>").css(css);
+        let highlighter = $("<div id=\"" + that.errorHighlightId + "\" class=\"errorhighlight\"></div>").css(css);
 
         highlighter.insertAfter(jEditor);
 
@@ -479,7 +479,7 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function getEditorZindex(){
-        var zIndex = jEditor.css("z-index");
+        let zIndex = jEditor.css("z-index");
         if (zIndex == "auto"){
             zIndex = "0";
         }
@@ -498,9 +498,9 @@ function ExpressionEditor(editorId, userOptions){
         // make sure the spellchecker is turned off for firefox
         jEditor.attr("spellcheck", false);
 
-        var css = {
+        let css = {
             // turn off the blue glow by reapplying the background (for some reason)
-            "background-color": jEditor.css("background-color"), // for Firefox
+            // "background-color": jEditor.css("background-color"), // for Firefox
             "outline": "none",                                   // for Safari
 
             // turn off resize in Safari/Chrome
@@ -590,7 +590,7 @@ function ExpressionEditor(editorId, userOptions){
 
             if (isAutocompleteTrigger(event)){
                 if (!jEditor.doingAutocomplete){ // handle Opera event
-                    var expr = this.value.substr(0, getSelectionStart(this));
+                    let expr = this.value.substr(0, getSelectionStart(this));
                     requestAutocomplete(expr);
                 }
                 event.preventDefault();
@@ -622,8 +622,8 @@ function ExpressionEditor(editorId, userOptions){
                 debug("keyup:   " + event.which + " (alt=" + event.altKey + ", ctrl=" + event.ctrlKey + ", currentTokenHighlighted=" + that.currentTokenHighlighted + ")");
             }
 
-            var newValue = this.value;
-            var textChanged = (newValue != that.lastValue);
+            let newValue = this.value;
+            let textChanged = (newValue != that.lastValue);
             that.lastValue = newValue;
 
             if (isAutocompleteTrigger(event)){
@@ -698,7 +698,7 @@ function ExpressionEditor(editorId, userOptions){
 
             if (isAutocompleteTrigger(event)){
                 jEditor.doingAutocomplete = true;
-                var expr = this.value.substr(0, getSelectionStart(this));
+                let expr = this.value.substr(0, getSelectionStart(this));
                 requestAutocomplete(expr);
                 event.preventDefault();
             }
@@ -734,7 +734,7 @@ function ExpressionEditor(editorId, userOptions){
     this.initialise = function(){
 
         // find a textarea or text input with the id
-        var query = "textarea#" + this.editorId;
+        let query = "textarea#" + this.editorId;
         if (SUPPORT_TEXT_INPUT){
             query += ", input#" + this.editorId + "[type='text']";
         }
@@ -781,10 +781,10 @@ function parseResponse(xmlData){
         xmlData = parseXML(xmlData);     // if so, convert it into a dom
     }
 
-    var root = $("error", xmlData);
+    let root = $("error", xmlData);
 
     if (root.length > 0){
-        var err = new ParseError($("expression", root).text(),
+        let err = new ParseError($("expression", root).text(),
                                  $("message", root).text(),
                                  parseInt(root.attr("pos")),
                                  root.attr("found"));
@@ -795,7 +795,7 @@ function parseResponse(xmlData){
     root = $("success", xmlData);
 
     if (root.length > 0){
-        var success = new ParseSuccess($("expression", root).text(),
+        let success = new ParseSuccess($("expression", root).text(),
                                        $("message", root).text());
         success.xml = xmlData;
         return success;
@@ -804,13 +804,13 @@ function parseResponse(xmlData){
     root = $("results", xmlData);
     if (root.length > 0){
 
-        var acResult = new AutocompleteResult($("expression", root).text(),
+        let acResult = new AutocompleteResult($("expression", root).text(),
                                               parseInt(root.attr("pos")),
                                               root.attr("found"));
 
         $("expected", root).each(function(){
-            var type = $(this).attr("type");
-            var expected = new Array();
+            let type = $(this).attr("type");
+            let expected = new Array();
             $("token", $(this)).each(function(){
                 expected.push($(this).text());
             });
@@ -919,7 +919,7 @@ function AutocompleteResult(expr, pos, token){
 
 function parseXML(xml) {
     if(window.ActiveXObject && window.GetObject) {
-        var dom = new ActiveXObject('Microsoft.XMLDOM');
+        let dom = new ActiveXObject('Microsoft.XMLDOM');
         dom.loadXML(xml);
         return dom;
     }
@@ -941,7 +941,7 @@ function insertIntoString(str, pos, word){
 }
 
 function replaceWordInString(str, pos, word){ // replace the word containing the position pos
-    var endOfWord = str.indexOf(" ", pos);
+    let endOfWord = str.indexOf(" ", pos);
     if (endOfWord < 0){
         endOfWord = str.length;
     }
@@ -964,10 +964,10 @@ function replaceWord(editor, pos, word){
 
 
 function createSpan(cssClass, string, start, length){
-    var end = start + length;
+    let end = start + length;
 
-    var openSpan = "%%LT%%span%%SP%%class=%%QU%%" + cssClass + "%%QU%%%%GT%%";
-    var closeSpan = "%%LT%%/span%%GT%%";
+    let openSpan = "%%LT%%span%%SP%%class=%%QU%%" + cssClass + "%%QU%%%%GT%%";
+    let closeSpan = "%%LT%%/span%%GT%%";
 
     if (start == end){                                           // if end of line
         string = string + openSpan + "%%AMP%%nbsp;" + closeSpan; // add a trailing space for the error highlight
@@ -980,12 +980,12 @@ function createSpan(cssClass, string, start, length){
 }
 
 function setSel(editor, pos, length) {
-    var end = pos+length;
+    let end = pos+length;
     if (editor.setSelectionRange){
         editor.setSelectionRange(pos, end);
     }
     else if (editor.createTextRange) {
-        var range = editor.createTextRange();
+        let range = editor.createTextRange();
         range.collapse(true);
         range.moveEnd('character', end);
         range.moveStart('character', pos);
@@ -1012,8 +1012,8 @@ function getSelectionStart(editor) {
         return editor.selectionStart;
     }
 
-    var range = getSel();
-    var stored_range = range.duplicate();
+    let range = getSel();
+    let stored_range = range.duplicate();
     stored_range.moveToElementText(editor);
     stored_range.setEndPoint( 'EndToEnd', range );
     return stored_range.text.length - range.text.length;
@@ -1024,17 +1024,17 @@ function getSelectionEnd(editor) {
         return editor.selectionEnd;
     }
 
-    var range = getSel();
-    var stored_range = range.duplicate();
+    let range = getSel();
+    let stored_range = range.duplicate();
     stored_range.moveToElementText(editor);
     stored_range.setEndPoint( 'EndToEnd', range );
-    var start = stored_range.text.length - range.text.length;
+    let start = stored_range.text.length - range.text.length;
     return start + range.text.length;
 }
 
 function skipToNextWord(editor, addSpace) {
-    var sel = getSelectionEnd(editor);
-    var nextSpace = editor.value.indexOf(" ", sel); // the space after the current word
+    let sel = getSelectionEnd(editor);
+    let nextSpace = editor.value.indexOf(" ", sel); // the space after the current word
 
     if (nextSpace == -1){
         if (addSpace){
@@ -1046,11 +1046,11 @@ function skipToNextWord(editor, addSpace) {
 }
 
 function getStartOfSelectedWord(editor) {
-    var sel = getSelectionStart(editor);
+    let sel = getSelectionStart(editor);
     if (sel == -1){
         return 0;
     }
-    var str = editor.value;
+    let str = editor.value;
     return str.lastIndexOf(" ", str.substr(0, sel)) + 1; // the space before the current word
 }
 
@@ -1060,15 +1060,15 @@ function scroll(element, scrollParent){
         scrollParent = element.offsetParent();
     }
 
-    var elementTop = element.position().top;
-    var offset = elementTop - element.parent().position().top;
+    let elementTop = element.position().top;
+    let offset = elementTop - element.parent().position().top;
 
     if (elementTop < 0){
         scrollParent.scrollTop(offset);
     }
     else{
-        var scrollerHeight = scrollParent.height();
-        var elementHeight = element.height();
+        let scrollerHeight = scrollParent.height();
+        let elementHeight = element.height();
         if (elementTop + elementHeight > scrollerHeight){
             scrollParent.scrollTop(offset + elementHeight - scrollerHeight);
         }
@@ -1085,7 +1085,7 @@ function overlay(element, target){
 }
 
 function getOverlay(target){
-    var css = {};
+    let css = {};
     appendOverlay(target, css);
     return css;
 }
@@ -1107,7 +1107,7 @@ function appendOverlay(target, css){
 function copyCSS(element) {
 
     // styles from Firebug's computed styles inspector
-    var styles = new Array(
+    let styles = new Array(
         // text
             "font-family",
             "font-size",
@@ -1183,10 +1183,10 @@ function copyCSS(element) {
             "marker-offset"
             );
 
-    var css = {};
+    let css = {};
 
-    for (var i=0; i<styles.length; i++){
-        var style = styles[i];
+    for (let i=0; i<styles.length; i++){
+        let style = styles[i];
         css[style] = element.css(style);
     }
 
@@ -1205,7 +1205,7 @@ function encode(string){
 }
 
 function pushAll(source, target){
-    for (var i=0; i<source.length; i++){
+    for (let i=0; i<source.length; i++){
         target.push(source[i]);
     }
 }
@@ -1213,9 +1213,9 @@ function pushAll(source, target){
 ///////////////// debug info ////////////////////////////
 
 function showResponse(xmlData) {
-    var xmlConsole = $("#xml");
+    let xmlConsole = $("#xml");
     if (xmlConsole && xmlConsole.length > 0){
-        var message;
+        let message;
         try{
             message = new XMLSerializer().serializeToString(xmlData);
         }
@@ -1229,7 +1229,7 @@ function showResponse(xmlData) {
 }
 
 function debug(message) {
-    var console = $("#debug");
+    let console = $("#debug");
     if (console && console.length > 0){
 
         message = encode(message);
@@ -1242,17 +1242,17 @@ function debug(message) {
 
 //////////////// test parser implementation //////////////////
 
-var dictionary = new Array("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+let dictionary = new Array("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
                            "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty");
 
 function TestParser(expression){
 
-    var pos = 0;
-    var unrecognized = null;
+    let pos = 0;
+    let unrecognized = null;
 
-    var tokens = expression.replace(/\n/g, " ").split(" "); // replace all newlines
-    for (var i=0; i<tokens.length; i++){
-        var token = tokens[i];
+    let tokens = expression.replace(/\n/g, " ").split(" "); // replace all newlines
+    for (let i=0; i<tokens.length; i++){
+        let token = tokens[i];
         if (dictionary.indexOf(token) == -1){
             unrecognized = encode(token);
             break;
@@ -1264,26 +1264,26 @@ function TestParser(expression){
         return new ParseSuccess(expression, "OK");
     }
     else{
-        var message = "Expected the name of a Number";
+        let message = "Expected the name of a Number";
         return new ParseError(expression, message, pos, unrecognized);
     }
 }
 
 function TestAutocomplete(expression){
 
-    var lastSpace = expression.replace(/\n/g, " ").lastIndexOf(" ")+1;
-    var lastWord = expression.substring(lastSpace, expression.length);
+    let lastSpace = expression.replace(/\n/g, " ").lastIndexOf(" ")+1;
+    let lastWord = expression.substring(lastSpace, expression.length);
 
-    var matchingTerms = new Array();
+    let matchingTerms = new Array();
 
-    for (var i=0; i<dictionary.length; i++){
-        var term = dictionary[i];
+    for (let i=0; i<dictionary.length; i++){
+        let term = dictionary[i];
         if (term.match("^" + lastWord)){
             matchingTerms.push(term);
         }
     }
 
-    var result = new AutocompleteResult(expression, lastSpace, lastWord);
+    let result = new AutocompleteResult(expression, lastSpace, lastWord);
     result.addExpected("Number", matchingTerms);
     return result;
 }
@@ -1297,7 +1297,7 @@ $.fn.watch = function(props, callback, timeout){
     if(!timeout)
         timeout = 10;
     return this.each(function(){
-        var el      = $(this),
+        let el      = $(this),
                 func    = function(){ __check.call(this, el) },
                 data    = { props:  props.split(","),
                     func:   callback,
@@ -1313,10 +1313,10 @@ $.fn.watch = function(props, callback, timeout){
         }
     });
     function __check(el) {
-        var data    = el.data(),
+        let data    = el.data(),
                 changed = false,
                 temp    = "";
-        for(var i=0;i < data.props.length; i++) {
+        for(let i=0;i < data.props.length; i++) {
             temp = el.css(data.props[i]);
             if(data.vals[i] != temp){
                 data.vals[i] = temp;
