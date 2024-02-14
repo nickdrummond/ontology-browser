@@ -1,18 +1,23 @@
 # Ontology Browser
 
-The browser loads a single ontology (and its imports) on startup and 
+The browser loads a single OWL ontology (and its imports) on startup and 
 renders it for easy navigation.
 
 ![Image of Ontology browser](docs/classes.png)
 
 ## Features
 * Navigation of all entities (classes, properties, individuals and datatypes)
-* Hierarchies
+* Hierarchies, subclass/property/relations/annotations
 * Entity usage
 * Manchester OWL Syntax rendering
 * Ontology metrics
 * Searching
 * DL Query (with set subtraction)
+* Axioms view (and search)
+* Paging
+* Dark mode
+
+![Image of Ontology browser - dark mode](docs/obi-wan.png)
 
 ## Run
 
@@ -69,6 +74,6 @@ Concept "C" will be rendered as "C Label" if the conventional SKOS-XL reified la
 
 ## Implementation
 
-This is implemented using Java 11, Spring MVC, [OWLAPI](https://github.com/owlcs/owlapi), Thymeleaf.
+This is implemented using Java 20, Spring MVC, [OWLAPI](https://github.com/owlcs/owlapi), Thymeleaf and the OWLAPI.
 
 Some dependencies are local (in /repo) as they do not exist on any mvn repo.
