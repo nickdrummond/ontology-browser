@@ -237,6 +237,7 @@ function ExpressionEditor(editorId, userOptions){
 
         let acSpan = $("." + AC_TOKEN_CLASS, getErrorHighlighter());
         let pos = getSpanPos(acSpan);
+        console.log("pos", pos);
 
         let css = {
             "left": pos.x,
@@ -253,11 +254,11 @@ function ExpressionEditor(editorId, userOptions){
     function getSpanPos(span){
         let editorPosition = jErrorHighlighter.position(); // the top left of the margin (for some reason)
         let pos = {};
-        if (span.length == 1){
+        if (span.length === 1){
             // TODO: need to add offsets for border + margin - padding included in .position() result
             let errorPos = span.position(); // relative to inside top left of editor border (editor is positioned)
-            pos.x = editorPosition.left + errorPos.left;
-            pos.y = editorPosition.top + errorPos.top + span.height();
+            pos.x = editorPosition.left + errorPos.left + 4; // arbitrary offsets to align with the text
+            pos.y = editorPosition.top + errorPos.top + span.height() + 7;
         }
         else{
             pos.x = editorPosition.left;
