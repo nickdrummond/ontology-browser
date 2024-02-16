@@ -3,7 +3,7 @@
 The browser loads a single OWL ontology (and its imports) on startup and 
 renders it for easy navigation.
 
-![Image of Ontology browser](docs/classes.png)
+![Image of Ontology browser](docs/astromech.png)
 
 ## Features
 * Navigation of all entities (classes, properties, individuals and datatypes)
