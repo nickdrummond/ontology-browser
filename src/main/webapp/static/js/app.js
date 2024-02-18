@@ -17,7 +17,7 @@ $(document).ready(function(){
     if (isTree) {
         tree(baseUrl, () => {
             characteristics().init("#content .characteristic, #metrics");
-        }).init();
+        }, rewriteLinks).init();
     }
 
     if (isQuery) {

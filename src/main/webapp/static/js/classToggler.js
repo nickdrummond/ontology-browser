@@ -2,22 +2,24 @@ export const classToggler = (normal, alt) => {
 
     const key = "language"; // session storage key
 
-    let targetSelector = "html"; // default whole page
+    let targetSelector = "body"; // default whole page
 
     let toggleSelector = "";
 
     function attachTo(selector) {
         toggleSelector = selector;
-
-        setLanguage((retrieve() === alt) ? alt : normal);
-
-        $(toggleSelector).click(function(e){
-            setLanguage((retrieve() === alt) ? normal : alt);
-        });
+        const lang = retrieve();
+        const notLang = (lang === alt) ? normal : alt;
+        $(toggleSelector)
+            .addClass(notLang)
+            .removeClass(lang)
+            .click(() => setLanguage((retrieve() === alt) ? normal : alt))
+            .html(notLang);
     }
 
     function withTargetSelector(selector) {
         targetSelector = selector;
+        setLanguage((retrieve() === alt) ? alt : normal);
         return this;
     }
 

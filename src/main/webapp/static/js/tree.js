@@ -5,32 +5,36 @@ $.fn.exists = function () {
 }
 
 $.fn.replaceWithPush = function(a) {
-    var $a = $(a);
+    const $a = $(a);
 
     this.replaceWith($a);
     return $a;
 };
 
-export const tree = (baseUrl, entityLoadedCallback) => {
+const ACTIVE_ENTITY = "active-entity";
+
+export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
 
     const BUSY_IMAGE = baseUrl + "static/images/busy.gif";
 
     function init() {
         scrollTreeToSelection();
         createTreeListeners();
-        rewriteLinks(null);
+        if (isRewriteLinks) {
+            rewriteLinks(null);
+        }
     }
 
     function scrollTreeToSelection() {
-        $(".minihierarchy:visible").each(function() {
-            var active = $("span.active-entity", this);
+        $(".minihierarchy").each(function() {
+            const active = $("." + ACTIVE_ENTITY, this);
             if (active.size() > 0) {
                 // let js work out getting into the pane
                 active.get(0).scrollIntoView(false);
                 // then reposition to the middle
-                var p = $(this).scrollTop();
+                const p = $(this).scrollTop();
                 if (p > 0) {
-                    var h = $(this).height();
+                    const h = $(this).height();
                     $(this).scrollTop(p + (0.5 * h));
                 }
             }
@@ -77,7 +81,9 @@ export const tree = (baseUrl, entityLoadedCallback) => {
             context: li,
             success: function(data, textStatus, request){
                 const expanded = li.replaceWithPush(data); // replace the li with an expanded version
-                rewriteLinks(expanded[0]);
+                if (isRewriteLinks) {
+                    rewriteLinks(expanded[0]);
+                }
             },
             error: function(request, textStatus, errorThrown){
                 // get rid of the spinner and replace with an error message
@@ -107,9 +113,9 @@ export const tree = (baseUrl, entityLoadedCallback) => {
             // but only refresh the entity part of the page
             link.onclick = function (e) {
                 e.preventDefault();
-                document.querySelectorAll(".owlselector .active-entity").forEach(activeEntity =>
-                    activeEntity.classList.remove("active-entity"));
-                link.classList.add("active-entity");
+                document.querySelectorAll(".owlselector ." + ACTIVE_ENTITY).forEach(activeEntity =>
+                    activeEntity.classList.remove(ACTIVE_ENTITY));
+                link.classList.add(ACTIVE_ENTITY);
                 loadEntity(type.toLowerCase(), pluralType, entityId, link.getAttribute("href"));
             }
         });
@@ -143,7 +149,7 @@ export const tree = (baseUrl, entityLoadedCallback) => {
                     // TODO set title
                     entityLoadedCallback();
                 } else {
-                    resultWrite(type + ": error!", status + ":" + response);
+                    console.error(type + ": error! " + status + ":" + response);
                 }
             };
 

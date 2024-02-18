@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment='header (title, query, tree)'>
+<head th:fragment='header (title, query, tree, rewriteLinks)'>
 
     <title th:text='${projectInfo.name + ": " + title}'>Project Name: Page Name</title>
 
@@ -27,6 +27,7 @@
         const baseUrl = '/';
         const isQuery = [[${query}]];
         const isTree = [[${tree}]];
+        const rewriteLinks = [[${rewriteLinks}]] ?? false;
     </script>
     <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
             th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
@@ -39,7 +40,6 @@
             th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
     <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js'
             th:src='@{/static/js/gaphu-0.0.9.js}'></script>
-
 </head>
 
 <body>
