@@ -44,7 +44,7 @@ public class OntologyCharacteristicsBuilderTest {
         OWLOntology ont = mngr.createOntology(Set.of(clsAssertionAxiom), ontologyIRI);
 
         List<Characteristic> result = new IndividualCharacteristicsBuilder(
-                ind, ont, comparator).getCharacteristics();
+                ind, ont, comparator, Collections.emptyList(), 10).getCharacteristics();
 
         // Types characteristic
         assertEquals(1, result.size());

@@ -5,6 +5,7 @@ import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.renderer.ElementRenderer;
 import org.coode.www.service.OWLAxiomService;
 import org.coode.www.service.OWLOntologiesService;
+import org.coode.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -31,13 +33,14 @@ public class OWLAxiomsController extends ApplicationController {
 
     @GetMapping(value = "/")
     public String axioms(
-            final Model model,
-            @RequestParam(required = false) Optional<String> search,
-            @RequestParam(required = false, defaultValue = "true") boolean includeImports,
-            @RequestParam(required = false, defaultValue = "20") int pageSize,
-            @RequestParam(required = false, defaultValue = "1") int start,
-            @RequestParam(required = false) final String ontId
-            ) throws NotFoundException {
+        final Model model,
+        @RequestParam(required = false) Optional<String> search,
+        @RequestParam(required = false, defaultValue = "true") boolean includeImports,
+        @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+        @RequestParam(required = false, defaultValue = "1") int start,
+        @RequestParam(required = false) final String ontId,
+        HttpServletRequest request
+    ) throws NotFoundException {
 
         OWLOntology ont = ontId == null ? kit.getActiveOntology() : service.getOntologyFor(ontId, kit);
 
@@ -61,6 +64,7 @@ public class OWLAxiomsController extends ApplicationController {
         model.addAttribute("title", "Axioms");
         model.addAttribute("axioms", axioms);
         model.addAttribute("mos", owlRenderer);
+        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
 
         return "axioms";
     }

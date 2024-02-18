@@ -5,6 +5,7 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.IndividualCharacteristicsBuilder;
+import org.coode.www.model.paging.With;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.AxiomAnnotations;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -16,7 +17,10 @@ import java.util.*;
 @Service
 public class OWLIndividualsService {
 
-    public OWLNamedIndividual getOWLIndividualFor(final String propertyId, final OWLOntology ont) throws NotFoundException {
+    public OWLNamedIndividual getOWLIndividualFor(
+            final String propertyId,
+            final OWLOntology ont) throws NotFoundException {
+
         for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature(Imports.INCLUDED)) {
             if (getIdFor(owlIndividual).equals(propertyId)) {
                 return owlIndividual;
@@ -36,9 +40,11 @@ public class OWLIndividualsService {
 
     public List<Characteristic> getCharacteristics(final OWLNamedIndividual owlIndividual,
                                                    final OWLOntology ont,
-                                                   final Comparator<OWLObject> comparator) {
+                                                   final Comparator<OWLObject> comparator,
+                                                   final List<With> with,
+                                                   final int defaultPageSize) {
 
-        return new IndividualCharacteristicsBuilder(owlIndividual, ont, comparator).getCharacteristics();
+        return new IndividualCharacteristicsBuilder(owlIndividual, ont, comparator, with, defaultPageSize).getCharacteristics();
     }
 
     public OWLNamedIndividual getFirstIndividual(final OWLHTMLKit kit) throws NotFoundException {

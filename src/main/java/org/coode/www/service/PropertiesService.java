@@ -1,9 +1,9 @@
 package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.paging.With;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.semanticweb.owlapi.model.*;
 
@@ -16,7 +16,12 @@ public interface PropertiesService<T extends OWLProperty> {
 
      String getIdFor(final T property);
 
-     List<Characteristic> getCharacteristics(final T property, final OWLOntology ont, final Comparator<OWLObject> comparator);
+     List<Characteristic> getCharacteristics(
+             final T property,
+             final OWLOntology ont,
+             final Comparator<OWLObject> comparator,
+             final List<With> with,
+             final int pageSize);
 
      Comparator<Tree<OWLNamedIndividual>> getComparator(T orderByProperty, OWLOntology ont);
 

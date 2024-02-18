@@ -1,11 +1,11 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
+import org.coode.www.model.paging.With;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 public class ObjectPropertyCharacteristicsBuilder extends CharacteristicsBuilder<OWLObjectProperty> {
 
@@ -31,10 +31,13 @@ public class ObjectPropertyCharacteristicsBuilder extends CharacteristicsBuilder
             DISJOINTS
     );
 
-    public ObjectPropertyCharacteristicsBuilder(OWLObjectProperty target,
-                                                OWLOntology ont,
-                                                Comparator<OWLObject> comparator) {
-        super(target, ont, comparator);
+    public ObjectPropertyCharacteristicsBuilder(
+            OWLObjectProperty target,
+            OWLOntology ont,
+            Comparator<OWLObject> comparator,
+            List<With> with,
+            int pageSize) {
+        super(target, ont, comparator, with, pageSize);
     }
 
     @Override

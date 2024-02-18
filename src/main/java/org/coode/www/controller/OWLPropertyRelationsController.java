@@ -2,6 +2,7 @@ package org.coode.www.controller;
 
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ProjectInfo;
+import org.coode.www.model.paging.With;
 import org.coode.www.renderer.RendererFactory;
 import org.coode.www.url.CommonRelationsURLScheme;
 import org.coode.www.url.RelationPropertyURLScheme;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/relations/" + OWLPropertyRelationsController.PATH)
@@ -48,6 +51,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
             @Autowired OWLHTMLKit kit,
             @Autowired RendererFactory rendererFactory,
             @Autowired ProjectInfo projectInfo) {
+
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.reasonerFactoryService = reasonerFactoryService;
@@ -74,11 +78,13 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}")
-    public String getRelationsForProperty(@PathVariable final String propertyId,
-                                          @RequestParam(defaultValue = "false") final boolean inverse,
-                                          @RequestParam final @Nullable String orderBy,
-                                          final Model model,
-                                          HttpServletRequest request) throws NotFoundException {
+    public String getRelationsForProperty(
+        @PathVariable final String propertyId,
+        @RequestParam(defaultValue = "false") final boolean inverse,
+        @RequestParam final @Nullable String orderBy,
+        final Model model,
+        HttpServletRequest request
+    ) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
 
@@ -95,16 +101,22 @@ public class OWLPropertyRelationsController extends ApplicationController {
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
-    public String getRelationsForProperty(@PathVariable final String propertyId,
-                                          @PathVariable final String individualId,
-                                          @RequestParam(defaultValue = "false") final boolean inverse,
-                                          @RequestParam final @Nullable String orderBy,
-                                          final Model model,
-                                          HttpServletRequest request) throws NotFoundException {
+    public String getRelationsForProperty(
+        @PathVariable final String propertyId,
+        @PathVariable final String individualId,
+        @RequestParam(defaultValue = "false") final boolean inverse,
+        @RequestParam final @Nullable String orderBy,
+        @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+        @RequestParam(required = false) List<With> with,
+        final Model model,
+        HttpServletRequest request
+    ) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
 
-        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, model, kit.getComparator());
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
 
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -118,8 +130,10 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/children")
-    public String getChildren(@PathVariable final String propertyId,
-                              final Model model) throws NotFoundException {
+    public String getChildren(
+        @PathVariable final String propertyId,
+        final Model model
+    ) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
 
@@ -136,12 +150,14 @@ public class OWLPropertyRelationsController extends ApplicationController {
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
-    public String getChildren(@PathVariable final String propertyId,
-                              @PathVariable final String individualId,
-                              @RequestParam(defaultValue = "false") final boolean inverse,
-                              @RequestParam final @Nullable String orderBy,
-                              final Model model,
-                              HttpServletRequest request) throws NotFoundException {
+    public String getChildren(
+        @PathVariable final String propertyId,
+        @PathVariable final String individualId,
+        @RequestParam(defaultValue = "false") final boolean inverse,
+        @RequestParam final @Nullable String orderBy,
+        final Model model,
+        HttpServletRequest request
+    ) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);

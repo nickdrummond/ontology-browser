@@ -2,7 +2,7 @@ package org.coode.www.service;
 
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.AxiomWithMetadata;
-import org.coode.www.util.PageData;
+import org.coode.www.model.paging.PageData;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -25,14 +25,17 @@ public class OWLAxiomService {
             Set<OWLOntology> onts,
             int start,
             int pageSize) {
+
         // avoid generating search indices as not needed
         List<AxiomWithMetadata> results = onts.stream()
                 .flatMap(o -> wrappedWithOntology(o.axioms(Imports.EXCLUDED), o))
                 .toList();
-        List<AxiomWithMetadata> paged = results.stream().skip(start-1).limit(pageSize).toList();
+
+        List<AxiomWithMetadata> paged = results.stream().skip(start-1L).limit(pageSize).toList();
+
         return new Characteristic(null, "Axioms",
                 paged,
-                new PageData(start, Integer.min(paged.size(), pageSize), results.size()));
+                new PageData(start, paged.size(), results.size()));
     }
 
     public Characteristic findAxioms(
@@ -41,13 +44,12 @@ public class OWLAxiomService {
             final ShortFormProvider sfp,
             int start,
             int pageSize) {
-        Predicate<Map.Entry<OWLAxiom, String>> containsIgnoreCase = e -> e.getValue().toLowerCase().contains(search.toLowerCase());
+
+        Predicate<Map.Entry<OWLAxiom, String>> containsIgnoreCase = e ->
+                e.getValue().toLowerCase().contains(search.toLowerCase());
+
         return resultsCharacteristic(search, onts, sfp, containsIgnoreCase, start, pageSize);
     }
-//
-//    public Characteristic regexAxioms(final String search, final Set<OWLOntology> onts, final ShortFormProvider sfp) {
-//        return resultsCharacteristic(search, onts, sfp, e -> e.getValue().matches(search), start, pageSize);
-//    }
 
     private Characteristic resultsCharacteristic(
             final String search,
@@ -59,10 +61,13 @@ public class OWLAxiomService {
         List<AxiomWithMetadata> results = onts.stream()
                 .flatMap(o -> wrappedWithOntology(filterAxioms(search, o, sfp, filter), o))
                 .toList();
-        List<AxiomWithMetadata> paged = results.stream().skip(start-1).limit(pageSize).toList();
+        if (start > results.size()) {
+            throw new RuntimeException("Start out of range");
+        }
+        List<AxiomWithMetadata> paged = results.stream().skip(start-1L).limit(pageSize).toList();
         return new Characteristic(null, "Axioms containing \"" + search + "\"",
                 paged,
-                new PageData(start, Integer.min(paged.size(), pageSize), results.size()));
+                new PageData(start, paged.size(), results.size()));
     }
 
     private Stream<OWLAxiom> filterAxioms(

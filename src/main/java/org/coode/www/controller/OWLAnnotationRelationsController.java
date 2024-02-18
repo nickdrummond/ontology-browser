@@ -3,6 +3,7 @@ package org.coode.www.controller;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.ProjectInfo;
+import org.coode.www.model.paging.With;
 import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.OWLAnnotationPropertiesService;
 import org.coode.www.service.OWLIndividualsService;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -84,16 +87,28 @@ public class OWLAnnotationRelationsController extends ApplicationController {
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
-    public String getRelationsForAnnotationProperty(@PathVariable final String propertyId,
-                                                    @PathVariable final String individualId,
-                                                    @RequestParam(defaultValue = "false") final boolean inverse,
-                                                    @RequestParam final @Nullable String orderBy,
-                                                    final Model model,
-                                                    HttpServletRequest request) throws NotFoundException {
+    public String getRelationsForAnnotationProperty(
+            @PathVariable final String propertyId,
+            @PathVariable final String individualId,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            HttpServletRequest request) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
 
-        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, model, kit.getComparator());
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        OWLNamedIndividual individual = common.renderIndividual(
+                individualId,
+                ont,
+                withOrEmpty,
+                pageSize,
+                request,
+                model,
+                kit.getComparator());
 
         OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
 

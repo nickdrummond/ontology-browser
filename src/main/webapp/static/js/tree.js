@@ -102,6 +102,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
         rewriteLinksFor("Object", "objectproperties", parentElement);
         rewriteLinksFor("Data", "dataproperties", parentElement);
         rewriteLinksFor("Annotation", "annotationproperties", parentElement);
+        rewriteLinksFor("Datatypes", "dataproperties", parentElement);
         rewriteLinksFor("ontology-uri", "ontologies", parentElement);
     }
 

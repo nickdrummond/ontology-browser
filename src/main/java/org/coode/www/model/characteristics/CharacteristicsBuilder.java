@@ -2,12 +2,13 @@ package org.coode.www.model.characteristics;
 
 import com.google.common.collect.Streams;
 import org.coode.www.model.AxiomWithMetadata;
+import org.coode.www.model.paging.With;
+import org.coode.www.util.PagingUtils;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -19,9 +20,12 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
 
     private final List<Characteristic> characteristics;
 
-    protected CharacteristicsBuilder(T target,
-                                  OWLOntology ont,
-                                  Comparator<OWLObject> comparator) {
+    protected CharacteristicsBuilder(
+            T target,
+            OWLOntology ont,
+            Comparator<OWLObject> comparator,
+            List<With> with,
+            int defaultPageSize) {
 
         Stream<InterestingFilter> filters = ont.getImportsClosure().stream()
                 .map(o -> createFilter(o, target));
@@ -29,16 +33,20 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
         Stream<AxiomWithMetadata> axiomsWithMetadata = filters
                 .flatMap(InterestingFilter::findAxioms);
 
+        Map<String, List<AxiomWithMetadata>> sortAndGroupByType = axiomsWithMetadata
+                .collect(groupingBy(AxiomWithMetadata::getType));
+
         Comparator<AxiomWithMetadata> compareByOWLObject = (a, b) ->
                 comparator.compare(a.getOWLObject(), b.getOWLObject());
 
-        Map<String, List<AxiomWithMetadata>> sortAndGroupByType = axiomsWithMetadata
-                .sorted(compareByOWLObject)
-                .collect(groupingBy(AxiomWithMetadata::getType));
+        Comparator<Characteristic> compareCharacteristics = (a, b) ->
+                getOrder().indexOf(a.getName()) - getOrder().indexOf(b.getName());
 
         characteristics = sortAndGroupByType.entrySet().stream()
-                .map(entry -> new Characteristic(target, entry.getKey(), entry.getValue()))
-                .sorted((a, b) -> getOrder().indexOf(a.getName()) - getOrder().indexOf(b.getName())) // Sort by "order"
+                .map(entry -> PagingUtils.getCharacteristic(
+                        target, with, defaultPageSize, compareByOWLObject, entry.getKey(), entry.getValue()
+                ))
+                .sorted(compareCharacteristics) // Sort by "order"
                 .toList();
     }
 

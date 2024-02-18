@@ -3,21 +3,23 @@ package org.coode.www.controller;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
+import org.coode.www.model.paging.With;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.*;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
+import org.coode.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Controller
 @RequestMapping(value="/individuals")
@@ -53,10 +55,14 @@ public class OWLIndividualsController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/{individualId}")
-    public String getOWLIndividual(@PathVariable final String individualId,
-                                   @RequestParam(required=false) final String ontId,
-                                   @RequestParam(required=false) final boolean inferred,
-                                   final Model model) throws NotFoundException {
+    public String getOWLIndividual(
+        @PathVariable final String individualId,
+        @RequestParam(required=false) final String ontId,
+        @RequestParam(required=false) final boolean inferred,
+        @RequestParam(required = false) List<With> with,
+        final Model model,
+        final HttpServletRequest request
+    ) throws NotFoundException {
 
         final OWLOntology ont = (ontId != null) ?
                 ontService.getOntologyFor(ontId, kit) :
@@ -74,7 +80,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLIndividualFragment(individualId, ontId, inferred, model);
+        getOWLIndividualFragment(individualId, ontId, inferred, with, model, request);
 
         return "owlentity";
     }
@@ -82,10 +88,14 @@ public class OWLIndividualsController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/fragment/{individualId}")
-    public String getOWLIndividualFragment(@PathVariable final String individualId,
-                                   @RequestParam(required=false) final String ontId,
-                                   @RequestParam(required=false) final boolean inferred,
-                                   final Model model) throws NotFoundException {
+    public String getOWLIndividualFragment(
+        @PathVariable final String individualId,
+        @RequestParam(required=false) final String ontId,
+        @RequestParam(required=false) final boolean inferred,
+        @RequestParam(required = false) List<With> with,
+        final Model model,
+        final HttpServletRequest request
+    ) throws NotFoundException {
 
         final OWLOntology ont = (ontId != null) ?
                 ontService.getOntologyFor(ontId, kit) :
@@ -113,8 +123,10 @@ public class OWLIndividualsController extends ApplicationController {
             model.addAttribute("sound", owlIndividual.getIRI().toString());
         }
 
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
         List<Characteristic> characteristics = new ArrayList<>(
-                service.getCharacteristics(owlIndividual, ont, kit.getComparator()));
+                service.getCharacteristics(owlIndividual, ont, kit.getComparator(), withOrEmpty, DEFAULT_PAGE_SIZE));
 
         if (inferred) {
             OWLReasoner reasoner = reasonerService.getReasoner();
@@ -125,6 +137,7 @@ public class OWLIndividualsController extends ApplicationController {
         model.addAttribute("type", "Individuals");
         model.addAttribute("iri", owlIndividual.getIRI());
         model.addAttribute("characteristics", characteristics);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
         model.addAttribute("mos", owlRenderer);
 
         return "owlentityfragment";

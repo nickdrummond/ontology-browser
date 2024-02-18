@@ -1,6 +1,9 @@
 package org.coode.www.controller;
 
+import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.paging.With;
 import org.coode.www.url.CommonRelationsURLScheme;
+import org.coode.www.url.ComponentPagingURIScheme;
 import org.coode.www.url.URLScheme;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.Tree;
@@ -15,9 +18,7 @@ import org.springframework.ui.Model;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class CommonRelations<T extends OWLProperty> {
 
@@ -50,11 +51,21 @@ public class CommonRelations<T extends OWLProperty> {
     public OWLNamedIndividual renderIndividual(
             String individualId,
             OWLOntology ont,
+            List<With> with,
+            int pageSize,
+            HttpServletRequest request,
             Model model,
             Comparator<OWLObject> comparator) throws NotFoundException {
+
         OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, ont);
+
         renderEntity(individual, model);
-        model.addAttribute("characteristics", individualsService.getCharacteristics(individual, ont, comparator));
+
+        List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ont, comparator, with, pageSize);
+
+        model.addAttribute("characteristics", characteristics);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, with));
+
         return individual;
     }
 

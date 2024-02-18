@@ -155,7 +155,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     @Override
     public void visit(@Nonnull OWLDatatype datatype) {
-        writeOWLEntity(datatype, EntityType.DATA_PROPERTY.getPrintName());
+        writeOWLEntity(datatype, EntityType.DATATYPE.getPrintName());
     }
 
     @Override

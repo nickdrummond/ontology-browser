@@ -4,6 +4,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.OntologyCharacteristicsBuilder;
+import org.coode.www.model.paging.With;
 import org.coode.www.service.OWLOntologiesService;
 import org.semanticweb.owlapi.metrics.*;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -36,8 +37,17 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
         return kit.getOntologies();
     }
 
-    @Override public List<Characteristic> getCharacteristics(final OWLOntology owlOntology, final OWLHTMLKit kit) {
-        return new OntologyCharacteristicsBuilder(owlOntology, kit.getComparator()).getCharacteristics();
+    @Override public List<Characteristic> getCharacteristics(
+            final OWLOntology owlOntology,
+            final List<With> with,
+            final int defaultPageSize,
+            final OWLHTMLKit kit) {
+        return new OntologyCharacteristicsBuilder(
+                owlOntology,
+                with,
+                defaultPageSize,
+                kit.getComparator()
+        ).getCharacteristics();
     }
 
     @Override

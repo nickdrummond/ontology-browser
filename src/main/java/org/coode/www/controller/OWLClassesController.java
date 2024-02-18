@@ -2,13 +2,14 @@ package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.Tree;
+import org.coode.www.model.paging.With;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLClassesService;
-import org.coode.www.service.OWLIndividualsService;
 import org.coode.www.service.ReasonerFactoryService;
 import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
+import org.coode.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -19,7 +20,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -33,9 +37,6 @@ public class OWLClassesController extends ApplicationController {
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
 
-    @Autowired
-    private OWLIndividualsService individualsService;
-
     @GetMapping(value="/")
     public String getOWLClasses() {
 
@@ -48,8 +49,11 @@ public class OWLClassesController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{classId}")
-    public String getOWLClass(@PathVariable final String classId,
-                              final Model model) throws NotFoundException {
+    public String getOWLClass(
+            @PathVariable final String classId,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request) throws NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
@@ -64,7 +68,7 @@ public class OWLClassesController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLClassFragment(classId, model);
+        getOWLClassFragment(classId, with, model, request);
 
         return "owlentity";
     }
@@ -72,8 +76,11 @@ public class OWLClassesController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/fragment/{classId}")
-    public String getOWLClassFragment(@PathVariable final String classId,
-                              final Model model) throws NotFoundException {
+    public String getOWLClassFragment(
+            @PathVariable final String classId,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request) throws NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
@@ -83,13 +90,19 @@ public class OWLClassesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlClass);
 
-        List<Characteristic> characteristics = service.getCharacteristics(owlClass, ont, kit.getComparator());
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        List<Characteristic> characteristics = service.getCharacteristics(
+                owlClass, ont, kit.getComparator(),
+                withOrEmpty,
+                DEFAULT_PAGE_SIZE);
 
         model.addAttribute("title", entityName + " (Class)");
         model.addAttribute("type", "Classes");
         model.addAttribute("iri", owlClass.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 
         return "owlentityfragment";
     }

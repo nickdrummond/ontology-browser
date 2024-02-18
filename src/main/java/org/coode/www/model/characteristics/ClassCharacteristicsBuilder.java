@@ -1,6 +1,7 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
+import org.coode.www.model.paging.With;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.*;
@@ -23,10 +24,13 @@ public class ClassCharacteristicsBuilder extends CharacteristicsBuilder<OWLClass
             DISJOINTS
     );
 
-    public ClassCharacteristicsBuilder(OWLClass target,
-                                       OWLOntology ont,
-                                       Comparator<OWLObject> comparator) {
-        super(target, ont, comparator);
+    public ClassCharacteristicsBuilder(
+            OWLClass target,
+            OWLOntology ont,
+            Comparator<OWLObject> comparator,
+            List<With> with,
+            int defaultPageSize) {
+        super(target, ont, comparator, with, defaultPageSize);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.paging.With;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.ClassCharacteristicsBuilder;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -41,7 +42,9 @@ public class OWLClassesService {
     public List<Characteristic> getCharacteristics(
             final OWLClass owlClass,
             final OWLOntology ont,
-            final Comparator<OWLObject> comparator) {
-        return new ClassCharacteristicsBuilder(owlClass, ont, comparator).getCharacteristics();
+            final Comparator<OWLObject> comparator,
+            final List<With> with,
+            final int defaultPageSize) {
+        return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize).getCharacteristics();
     }
 }

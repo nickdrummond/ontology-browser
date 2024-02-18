@@ -4,6 +4,7 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.DatatypeCharacteristicsBuilder;
+import org.coode.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -40,7 +41,9 @@ public class OWLDatatypesService {
     public List<Characteristic> getCharacteristics(
             final OWLDatatype owlDatatype,
             final OWLOntology ont,
-            final Comparator<OWLObject> comparator) {
-        return new DatatypeCharacteristicsBuilder(owlDatatype, ont, comparator).getCharacteristics();
+            final Comparator<OWLObject> comparator,
+            final List<With> with,
+            final int pageSize) {
+        return new DatatypeCharacteristicsBuilder(owlDatatype, ont, comparator, with, pageSize).getCharacteristics();
     }
 }
