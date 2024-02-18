@@ -116,7 +116,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
                 document.querySelectorAll(".owlselector ." + ACTIVE_ENTITY).forEach(activeEntity =>
                     activeEntity.classList.remove(ACTIVE_ENTITY));
                 link.classList.add(ACTIVE_ENTITY);
-                loadEntity(type.toLowerCase(), pluralType, entityId, link.getAttribute("href"), entityLoadedCallback);
+                loadEntity(type.toLowerCase(), pluralType, entityId, entityLoadedCallback, link.getAttribute("href"));
             }
         });
     }

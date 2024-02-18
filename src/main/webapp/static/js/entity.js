@@ -1,6 +1,6 @@
 import {BUSY_IMAGE, getXmlHttpObject, setParameter} from "./util.js";
 
-export function loadEntity(type, pluralType, entityId, entityLoadedCallback) {
+export function loadEntity(type, pluralType, entityId, entityLoadedCallback, url) {
     if (entityId == null) {
         return;
     }
@@ -25,6 +25,9 @@ export function loadEntity(type, pluralType, entityId, entityLoadedCallback) {
                 responseHolder.innerHTML = response;
                 document.getElementById("content").replaceWith(responseHolder.firstChild);
                 setParameter(type, entityId);
+                if (url) {
+                    window.history.pushState({}, '', url); // make sure URL follows
+                }
                 entityLoadedCallback()
             } else {
                 console.log(type + ": error!", status + ":" + response);
