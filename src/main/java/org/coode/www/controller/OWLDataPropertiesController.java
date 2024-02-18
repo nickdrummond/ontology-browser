@@ -79,7 +79,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/fragment/{propertyId}")
+    @GetMapping(value="/{propertyId}/fragment")
     public String getOWLDataPropertyFragment(
         @PathVariable final String propertyId,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
@@ -112,8 +112,10 @@ public class OWLDataPropertiesController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}/children")
-    public String getChildren(@PathVariable final String propertyId,
-                              final Model model) throws NotFoundException {
+    public String getChildren(
+            @PathVariable final String propertyId,
+            final Model model
+    ) throws NotFoundException {
 
         OWLDataProperty property = service.getOWLDataPropertyFor(propertyId, kit);
 

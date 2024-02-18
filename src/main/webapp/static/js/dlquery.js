@@ -1,11 +1,8 @@
-/*
- * Control of AJAX calls to build the query form dynamically and request results from the ontology kit
- *
- */
-import {getXmlHttpObject, getValueOfElementByID, getParameter, setParameter, getUrlWithParameter} from "./util.js";
+import {getXmlHttpObject, getValueOfElementByID, getParameter, getUrlWithParameter} from "./util.js";
+import {loadEntity} from "./entity.js";
+import {BUSY_IMAGE} from "./util.js";
 
 export const dlquery = (baseUrl, entityLoadedCallback) => {
-    const BUSY_IMAGE = baseUrl + "static/images/busy.gif";
 
     const PARAM_QUERYTYPE = "query";
     const PARAM_EXPRESSION = "expression";
@@ -26,12 +23,12 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 
         const individual = getParameter("individual");
         if (individual) {
-            loadEntity("individual", "individuals", individual);
+            loadEntity("individual", "individuals", individual, entityLoadedCallback);
         }
 
         const cls = getParameter("class");
         if (cls) {
-            loadEntity("class", "classes", cls);
+            loadEntity("class", "classes", cls, entityLoadedCallback);
         }
     }
 
@@ -115,7 +112,7 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 
             xmlHttpReq.send();
 
-            resultWrite(queryType + "<img src='" + BUSY_IMAGE + "' width='10px' height='10px' />", "");
+            resultWrite(queryType + BUSY_IMAGE, "");
         }
     }
 
@@ -135,46 +132,9 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
             // but only refresh the entity part of the page
             link.onclick = function (e) {
                 e.preventDefault();
-                loadEntity(type.toLowerCase(), pluralType, entityId);
+                loadEntity(type.toLowerCase(), pluralType, entityId, entityLoadedCallback);
             }
         });
-    }
-
-     function loadEntity(type, pluralType, entityId) {
-        if (entityId == null) {
-            return;
-        }
-
-        const xmlHttpReq = getXmlHttpObject();
-
-        if (xmlHttpReq == null) {
-            alert("Browser does not support HTTP Request");
-        } else {
-            const req = baseUrl + pluralType + "/fragment/" + entityId;
-
-            xmlHttpReq.open("GET", req, true);
-
-            xmlHttpReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-            xmlHttpReq.onload = function () {
-                const status = xmlHttpReq.status;
-                const response = xmlHttpReq.responseText;
-
-                if (status === 200) { // OK
-                    const responseHolder = document.createElement('span');
-                    responseHolder.innerHTML = response;
-                    document.getElementById("content").replaceWith(responseHolder.firstChild);
-                    setParameter(type, entityId);
-                    entityLoadedCallback()
-                } else {
-                    resultWrite(type + ": error!", status + ":" + response);
-                }
-            };
-
-            xmlHttpReq.send();
-
-            document.getElementById("content").innerHTML = "<img src='" + BUSY_IMAGE + "' width='10px' height='10px' />";
-        }
     }
 
     return {

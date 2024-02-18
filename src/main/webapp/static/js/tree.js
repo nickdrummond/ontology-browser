@@ -1,4 +1,5 @@
-import {getXmlHttpObject} from "./util.js";
+import {loadEntity} from "./entity.js";
+import {BUSY_IMAGE} from "./util.js";
 
 $.fn.exists = function () {
     return this.length !== 0;
@@ -14,8 +15,6 @@ $.fn.replaceWithPush = function(a) {
 const ACTIVE_ENTITY = "active-entity";
 
 export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
-
-    const BUSY_IMAGE = baseUrl + "static/images/busy.gif";
 
     function init() {
         scrollTreeToSelection();
@@ -62,7 +61,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
     }
 
     function getChildren(li){
-        var childList = $(`<ul><li><img alt="loading" src="${BUSY_IMAGE}" width="10" height="10"/></li></ul>`);
+        var childList = $(`<ul><li>${BUSY_IMAGE}</li></ul>`);
 
         var query = 'children';
         if (li.closest('.minihierarchy').hasClass('Individuals')) {
@@ -117,47 +116,9 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
                 document.querySelectorAll(".owlselector ." + ACTIVE_ENTITY).forEach(activeEntity =>
                     activeEntity.classList.remove(ACTIVE_ENTITY));
                 link.classList.add(ACTIVE_ENTITY);
-                loadEntity(type.toLowerCase(), pluralType, entityId, link.getAttribute("href"));
+                loadEntity(type.toLowerCase(), pluralType, entityId, link.getAttribute("href"), entityLoadedCallback);
             }
         });
-    }
-
-    function loadEntity(type, pluralType, entityId, url) {
-        if (entityId == null) {
-            return;
-        }
-
-        const xmlHttpReq = getXmlHttpObject();
-
-        if (xmlHttpReq == null) {
-            alert("Browser does not support HTTP Request");
-        } else {
-            const req = baseUrl + pluralType + "/fragment/" + entityId;
-
-            xmlHttpReq.open("GET", req, true);
-
-            xmlHttpReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-            xmlHttpReq.onload = function () {
-                const status = xmlHttpReq.status;
-                const response = xmlHttpReq.responseText;
-
-                if (status === 200) { // OK
-                    const responseHolder = document.createElement('span');
-                    responseHolder.innerHTML = response;
-                    document.getElementById("content").replaceWith(responseHolder.firstChild);
-                    window.history.pushState({}, '', url); // make sure URL follows
-                    // TODO set title
-                    entityLoadedCallback();
-                } else {
-                    console.error(type + ": error! " + status + ":" + response);
-                }
-            };
-
-            xmlHttpReq.send();
-
-            document.getElementById("content").innerHTML = `<img src="${BUSY_IMAGE}" width="10px" height="10px" />`;
-        }
     }
 
     return {

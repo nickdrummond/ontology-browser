@@ -355,6 +355,12 @@ ul.minihierarchy {
     cursor: pointer;
 }
 
+img.busy {
+    height: 1rem;
+    width: 1rem;
+    margin: auto;
+}
+
 .inferred{
     border: dotted gray 1px;
     opacity: 0.6;

@@ -75,7 +75,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/fragment/{propertyId}")
+    @GetMapping(value="/{propertyId}/fragment")
     public String getOWLAnnotationPropertyFragment(
             @PathVariable final String propertyId,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,

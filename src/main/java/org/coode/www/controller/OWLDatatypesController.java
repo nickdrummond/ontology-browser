@@ -71,7 +71,7 @@ public class OWLDatatypesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value= "/fragment/{datatypeId}")
+    @GetMapping(value= "/{datatypeId}/fragment")
     public String getOWLDatatypeFragment(
             @PathVariable final String datatypeId,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,

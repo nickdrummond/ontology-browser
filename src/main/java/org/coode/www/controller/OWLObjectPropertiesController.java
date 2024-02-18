@@ -30,7 +30,6 @@ import java.util.List;
 @RequestMapping(value="/objectproperties")
 public class OWLObjectPropertiesController extends ApplicationController {
 
-    private static final String EMPTY_WITH = "";
     @Autowired
     private OWLObjectPropertiesService service;
 
@@ -80,7 +79,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/fragment/{propertyId}")
+    @GetMapping(value="/{propertyId}/fragment")
     public String getOWLObjectPropertyFragment(
         @PathVariable final String propertyId,
         @RequestParam(required = false) List<With> with,

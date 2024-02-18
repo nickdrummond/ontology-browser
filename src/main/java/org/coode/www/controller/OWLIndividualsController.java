@@ -87,7 +87,7 @@ public class OWLIndividualsController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value= "/fragment/{individualId}")
+    @GetMapping(value= "/{individualId}/fragment")
     public String getOWLIndividualFragment(
         @PathVariable final String individualId,
         @RequestParam(required=false) final String ontId,

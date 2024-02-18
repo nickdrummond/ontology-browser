@@ -75,7 +75,7 @@ public class OWLClassesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/fragment/{classId}")
+    @GetMapping(value="/{classId}/fragment")
     public String getOWLClassFragment(
             @PathVariable final String classId,
             @RequestParam(required = false) List<With> with,

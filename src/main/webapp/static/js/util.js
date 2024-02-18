@@ -1,3 +1,5 @@
+export const BUSY_IMAGE = "<img class='busy' alt='Loading...' src='" + baseUrl + "static/images/busy.gif" + "' />";
+
 export function getXmlHttpObject() {
     let objXMLHttp = null;
     if (window.XMLHttpRequest) { // for IE7 and other standard browsers

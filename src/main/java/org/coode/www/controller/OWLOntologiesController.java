@@ -76,7 +76,7 @@ public class OWLOntologiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value = "/fragment/{ontId}")
+    @GetMapping(value = "/{ontId}/fragment")
     public String getOntologyFragment(
         @PathVariable final String ontId,
         @RequestParam(required = false) List<With> with,
