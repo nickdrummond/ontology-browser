@@ -28,6 +28,7 @@ export function loadEntity(type, pluralType, entityId, entityLoadedCallback, url
                 if (url) {
                     window.history.pushState({}, '', url); // make sure URL follows
                 }
+                // TODO title
                 entityLoadedCallback()
             } else {
                 console.log(type + ": error!", status + ":" + response);

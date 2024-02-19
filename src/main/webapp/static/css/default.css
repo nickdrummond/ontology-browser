@@ -28,13 +28,13 @@ html {
 }
 
 body {
-    font-size: 12pt;
+    font-size: 1rem;
     margin: 0;
     padding: 0;
 }
 
 h1 {
-    font-size: 20pt;
+    font-size: 2rem;
     font-weight: bold;
     margin: 4px;
 }
@@ -44,20 +44,19 @@ h2, h3, h4 {
 }
 
 h2 {
-    font-size: 16pt;
+    font-size: 1.5rem;
     display: inline;
-    margin: 0 6px 12px 6px;
+    margin: 0.5rem;
 }
 
 h3 {
-    font-size: 14pt;
+    font-size: 1.2rem;
     color: rgba(125, 125, 125, 0.8);
-    margin: 6px 12px 12px 12px;
+    margin: 1rem;
 }
 
 h4 {
-    font-size: 12pt;
-    line-height: 9pt;
+    font-size: 1rem;
     display: inline;
     margin: 0;
 }
@@ -101,11 +100,12 @@ li {
 }
 
 #content {
-    margin-top: 15px;
+    margin: 1rem 0.5rem;
 }
 
 .owlselector {
-    margin: 5px;
+    margin: 0.5rem;
+    margin-top: 1rem;
 }
 
 #main {
@@ -137,15 +137,10 @@ li {
     text-align: left;
 }
 
-a.burger, a.burger:hover, a.burger:active {
-    padding: 5px;
-    font-size: 14pt;
-    text-decoration: none;
-    float: right;
-}
-
-#welcome li {
-    margin-top: 10px;
+.welcome p {
+    font-size: 1.5em;
+    margin: 1rem auto 1rem auto;
+    text-align: center;
 }
 
 .characteristics {
@@ -158,7 +153,7 @@ a.burger, a.burger:hover, a.burger:active {
 }
 
 .characteristic h3 {
-    font-size: 12pt;
+    font-size: 1rem;
     font-weight: bold;
     margin: 0 0 5px 0;
 }
@@ -271,7 +266,7 @@ td.key{
 }
 
 #tabs li {
-    list-style: circle;
+    list-style: none;
 }
 
 #tabs a, #tabs span.currentpage {
@@ -285,7 +280,7 @@ td.key{
 }
 
 .cloud span.entity {
-    margin: 5pt;
+    margin: 0.2rem;
 }
 
 /* Let the cloud spans determine the color */
@@ -305,13 +300,6 @@ td.key{
 .dark .cloud a.Named.individual,
 .dark .cloud a.Datatype{
     filter: invert(100%);
-}
-
-a.subsexpand {
-    color: #555555;
-    font-size: 7pt;
-    text-decoration: underline;
-    line-height: 180%;
 }
 
 a.help {
@@ -371,7 +359,7 @@ img.busy {
 p.footer {
     display: flex;
     justify-content: space-around;
-    font-size: 10pt;
+    font-size: 0.9rem;
     margin: 5px;
     width: 100%;
 }
@@ -399,6 +387,7 @@ form#load {
 #queryPane {
     flex: 1;
     overflow: auto;
+    margin: 0.5rem;
 }
 
 #dlQueryForm {
@@ -634,22 +623,22 @@ img.thumb{
 
     #find, .autosuggest li {
         line-height: 24px;
-        font-size: 18pt;
+        font-size: 1.5rem;
     }
 }
 
 @media screen and (max-width: 450px), (max-height: 450px) {
 
     body, input, select {
-        font-size: 12pt;
+        font-size: 1rem;
     }
 
     h2 {
-        font-size: 18pt;
+        font-size: 1.5rem;
     }
 
     h4 {
-        font-size: 12pt;
+        font-size: 1rem;
     }
 }
 
