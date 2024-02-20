@@ -17,14 +17,15 @@ html {
 
 .dark {
     color-scheme: dark;
-}
-
-.dark a {
     color: #b4b392;
 }
 
+.dark a {
+    color: #dad6cd;
+}
+
 .dark a:hover {
-    color: #fdf8ee;
+    color: #dad6cd;
 }
 
 body {
@@ -39,7 +40,7 @@ h1 {
     margin: 4px;
 }
 
-h2, h3, h4 {
+h2, h3 {
     font-weight: bold;
 }
 
@@ -57,6 +58,7 @@ h3 {
 
 h4 {
     font-size: 1rem;
+    font-weight: normal;
     display: inline;
     margin: 0;
 }
