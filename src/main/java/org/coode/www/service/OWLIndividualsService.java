@@ -13,6 +13,9 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.semanticweb.owlapi.model.AxiomType.CLASS_ASSERTION;
 
 @Service
 public class OWLIndividualsService {
@@ -81,5 +84,14 @@ public class OWLIndividualsService {
         } catch (OWLOntologyCreationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Set<OWLClass> getNamedTypes(OWLNamedIndividual ind, OWLOntology ont) {
+        return ont.getAxioms(ind, Imports.INCLUDED).stream()
+                .filter(ax -> ax.isOfType(CLASS_ASSERTION))
+                .map(ax -> ((OWLClassAssertionAxiom)ax).getClassExpression())
+                .filter(OWLClassExpression::isNamed)
+                .map(OWLClassExpression::asOWLClass)
+                .collect(Collectors.toSet());
     }
 }

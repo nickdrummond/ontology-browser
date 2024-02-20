@@ -14,6 +14,7 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value="/classes")
@@ -88,7 +90,9 @@ public class OWLClassesController extends ApplicationController {
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
 
-        String entityName = kit.getShortFormProvider().getShortForm(owlClass);
+        ShortFormProvider sfp = kit.getShortFormProvider();
+
+        String entityName = sfp.getShortForm(owlClass);
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -97,7 +101,13 @@ public class OWLClassesController extends ApplicationController {
                 withOrEmpty,
                 DEFAULT_PAGE_SIZE);
 
-        model.addAttribute("title", entityName + " (Class)");
+        Set<OWLClass> namedSuperclasses = service.getNamedTypes(owlClass, ont);
+
+        String supers = String.join(", ", namedSuperclasses.stream().map(sfp::getShortForm).toList());
+
+        String title = entityName + (supers.isEmpty() ? "" : " (" + supers + ")");
+
+        model.addAttribute("title", title);
         model.addAttribute("type", "Classes");
         model.addAttribute("iri", owlClass.getIRI());
         model.addAttribute("characteristics", characteristics);

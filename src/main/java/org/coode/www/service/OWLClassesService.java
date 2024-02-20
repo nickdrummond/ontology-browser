@@ -5,12 +5,15 @@ import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.paging.With;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.ClassCharacteristicsBuilder;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.semanticweb.owlapi.model.AxiomType.CLASS_ASSERTION;
+import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
 
 @Service
 public class OWLClassesService {
@@ -46,5 +49,14 @@ public class OWLClassesService {
             final List<With> with,
             final int defaultPageSize) {
         return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize).getCharacteristics();
+    }
+
+    public Set<OWLClass> getNamedTypes(OWLClass cls, OWLOntology ont) {
+        return ont.getAxioms(cls, Imports.INCLUDED).stream()
+                .filter(ax -> ax.isOfType(SUBCLASS_OF))
+                .map(ax -> ((OWLSubClassOfAxiom)ax).getSuperClass())
+                .filter(OWLClassExpression::isNamed)
+                .map(OWLClassExpression::asOWLClass)
+                .collect(Collectors.toSet());
     }
 }

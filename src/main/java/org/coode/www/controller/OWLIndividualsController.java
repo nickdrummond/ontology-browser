@@ -133,7 +133,13 @@ public class OWLIndividualsController extends ApplicationController {
             characteristics.addAll(service.getInferredCharacteristics(owlIndividual, reasoner));
         }
 
-        model.addAttribute("title", entityName + " (Individual)");
+        Set<OWLClass> namedTypes = service.getNamedTypes(owlIndividual, ont);
+
+        String types = String.join(", ", namedTypes.stream().map(sfp::getShortForm).toList());
+
+        String title = entityName + (types.isEmpty() ? "" : " (" + types + ")");
+
+        model.addAttribute("title", title);
         model.addAttribute("type", "Individuals");
         model.addAttribute("iri", owlIndividual.getIRI());
         model.addAttribute("characteristics", characteristics);
