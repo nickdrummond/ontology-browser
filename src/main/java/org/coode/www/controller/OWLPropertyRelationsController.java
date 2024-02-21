@@ -34,11 +34,8 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
     public static final String PATH = "onproperty";
     public static final String RELATION_TEMPLATE = "relation";
-    public static final String BASE_TREE = "base :: tree";
 
     private final OWLObjectPropertiesService propertiesService;
-
-    private final OWLIndividualsService individualsService;
 
     private final ReasonerFactoryService reasonerFactoryService;
 
@@ -53,7 +50,6 @@ public class OWLPropertyRelationsController extends ApplicationController {
             @Autowired ProjectInfo projectInfo) {
 
         this.propertiesService = propertiesService;
-        this.individualsService = individualsService;
         this.reasonerFactoryService = reasonerFactoryService;
         this.rendererFactory = rendererFactory;
         this.projectInfo = projectInfo;
@@ -146,7 +142,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         model.addAttribute("t", hierarchyService.getChildren(property));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new RelationPropertyURLScheme()));
 
-        return BASE_TREE;
+        return CommonRelations.BASE_TREE;
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
@@ -161,7 +157,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         OWLOntology ont = kit.getActiveOntology();
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
-        OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, ont);
+        OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, ont, orderBy, inverse);
@@ -172,6 +168,6 @@ public class OWLPropertyRelationsController extends ApplicationController {
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
 
-        return BASE_TREE;
+        return CommonRelations.BASE_TREE;
     }
 }

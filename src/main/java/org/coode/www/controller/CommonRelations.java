@@ -22,6 +22,8 @@ import java.util.*;
 
 public class CommonRelations<T extends OWLProperty> {
 
+    public static final String BASE_TREE = "base :: tree";
+
     private final String path;
     private final ShortFormProvider sfp;
     private final PropertiesService<T> propertiesService;
@@ -114,5 +116,9 @@ public class CommonRelations<T extends OWLProperty> {
         model.addAttribute("inverse", relationsHierarchyService.isInverse());
         model.addAttribute("mos", renderer);
         model.addAttribute("hierarchy2", relationsTree);
+    }
+
+    public OWLNamedIndividual getOWLIndividualFor(String individualId, OWLOntology ont) throws NotFoundException {
+        return individualsService.getOWLIndividualFor(individualId, ont);
     }
 }

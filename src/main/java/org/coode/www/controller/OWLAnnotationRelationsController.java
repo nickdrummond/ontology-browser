@@ -8,6 +8,8 @@ import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.OWLAnnotationPropertiesService;
 import org.coode.www.service.OWLIndividualsService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
+import org.coode.www.url.CommonRelationsURLScheme;
+import org.coode.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -118,5 +120,32 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
         return RELATION_TEMPLATE;
+    }
+
+
+    @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
+    public String getChildren(
+            @PathVariable final String propertyId,
+            @PathVariable final String individualId,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            final Model model,
+            HttpServletRequest request
+    ) throws NotFoundException {
+
+        OWLOntology ont = kit.getActiveOntology();
+        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
+
+        AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+
+        URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
+                "/relations/" + PATH, property).withQuery(request.getQueryString());
+
+        model.addAttribute("t", relationsHierarchyService.getChildren(individual));
+        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
+
+        return CommonRelations.BASE_TREE;
     }
 }
