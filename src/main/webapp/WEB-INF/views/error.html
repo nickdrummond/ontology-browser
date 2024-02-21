@@ -1,0 +1,40 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:include='base :: header (title=${"Error"}, query=${false}, tree=${false}, rewriteLinks=${false})'></head>
+
+<body class="wrapper">
+
+<div th:replace='base :: title'></div>
+
+<div th:replace='base :: menu'></div>
+
+<div id='main'>
+
+    <div class="error">
+        <div th:switch="${errorCode}" th:remove="tag">
+            <h2 th:case='${404}'>Not Found</h2>
+            <h2 th:case='*' th:text='${errorCode + " Error"}'>Error.</h2>
+        </div>
+
+        <p>
+            Sorry, an error has occurred.
+        </p>
+        <p>
+            Please consider reporting this to your <a th:href='${"mailto:" + projectInfo.contact}'>project contact</a>
+            who can check the application logs.
+        </p>
+        <p>
+            Or, as an issue on the
+            <a target="_blank" href='https://github.com/nickdrummond/ontology-browser/'>Github Ontology Browser
+                project</a>.
+        </p>
+    </div>
+
+</div>
+
+<div th:replace='base :: footer'></div>
+
+</body>
+</html>

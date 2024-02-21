@@ -140,9 +140,22 @@ li {
 }
 
 .welcome p {
-    font-size: 1.5em;
+    font-size: 1.5rem;
     margin: 1rem auto 1rem auto;
     text-align: center;
+}
+
+.error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    font-size: 1.5rem;
+    max-width: 100%;
+}
+
+.error h2 {
+    font-size: 2rem;
 }
 
 .characteristics {
@@ -255,6 +268,11 @@ td.key{
 #as_find {
     max-height: 75vh;
     overflow: auto;
+}
+
+#find {
+    height: 2rem;
+    border-radius: 1rem;
 }
 
 #find, .autosuggest li {
