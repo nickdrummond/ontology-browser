@@ -1,18 +1,13 @@
 import {BUSY_IMAGE, getXmlHttpObject, setParameter} from "./util.js";
 
-export function loadEntity(type, pluralType, entityId, entityLoadedCallback, url) {
-    if (entityId == null) {
-        return;
-    }
+export function loadEntity(ajaxReq, rewriteUrl, entityLoadedCallback) {
 
     const xmlHttpReq = getXmlHttpObject();
 
     if (xmlHttpReq == null) {
         alert("Browser does not support HTTP Request");
     } else {
-        const req = baseUrl + pluralType + "/" + entityId + "/fragment";
-
-        xmlHttpReq.open("GET", req, true);
+        xmlHttpReq.open("GET", ajaxReq, true);
 
         xmlHttpReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 
@@ -21,17 +16,17 @@ export function loadEntity(type, pluralType, entityId, entityLoadedCallback, url
             const response = xmlHttpReq.responseText;
 
             if (status === 200) { // OK
-                const responseHolder = document.createElement('span');
-                responseHolder.innerHTML = response;
-                document.getElementById("content").replaceWith(responseHolder.firstChild);
-                setParameter(type, entityId);
-                if (url) {
-                    window.history.pushState({}, '', url); // make sure URL follows
+                const throwaway = document.createElement('span');
+                throwaway.innerHTML = response;
+                document.getElementById("content").replaceWith(throwaway.firstChild);
+
+                if (rewriteUrl) {
+                    window.history.pushState({}, '', rewriteUrl); // make sure URL follows
                 }
                 // TODO title
-                entityLoadedCallback()
+                entityLoadedCallback();
             } else {
-                console.log(type + ": error!", status + ":" + response);
+                console.log(ajaxReq + ": error!", status + ":" + response);
             }
         };
 

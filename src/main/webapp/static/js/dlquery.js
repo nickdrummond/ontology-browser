@@ -23,12 +23,14 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 
         const individual = getParameter("individual");
         if (individual) {
-            loadEntity("individual", "individuals", individual, entityLoadedCallback);
+            const url = baseUrl + "individuals/" + individual + "/fragment";
+            loadEntity(url, null, entityLoadedCallback);
         }
 
         const cls = getParameter("class");
         if (cls) {
-            loadEntity("class", "classes", cls, entityLoadedCallback);
+            const url = baseUrl + "classes/" + cls + "/fragment";
+            loadEntity( url, null, entityLoadedCallback);
         }
     }
 
@@ -124,15 +126,18 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 
 ///////////////////////
 
+    // TODO the links should be set correctly in the backend
     function rewriteLinks(type, pluralType) {
         document.querySelectorAll(`#resultsForm a.${type}`).forEach(link => {
-            let entityId = link.getAttribute("href").split("/")[2];
+            let originalUrl = link.getAttribute("href");
+            let entityId = originalUrl.split("/")[2];
             // update the URL in the link
-            link.setAttribute("href", getUrlWithParameter(type.toLowerCase(), entityId));
+            let newUrl = getUrlWithParameter(type.toLowerCase(), entityId);
+            link.setAttribute("href", newUrl);
             // but only refresh the entity part of the page
             link.onclick = function (e) {
                 e.preventDefault();
-                loadEntity(type.toLowerCase(), pluralType, entityId, entityLoadedCallback);
+                loadEntity(originalUrl + "fragment", newUrl, entityLoadedCallback);
             }
         });
     }

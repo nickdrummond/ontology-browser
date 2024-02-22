@@ -124,6 +124,35 @@ public class OWLPropertyRelationsController extends ApplicationController {
         return RELATION_TEMPLATE;
     }
 
+    @GetMapping(value = "/{propertyId}/withindividual/{individualId}/fragment")
+    public String getRelationsForPropertyFragment(
+            @PathVariable final String propertyId,
+            @PathVariable final String individualId,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            HttpServletRequest request
+    ) throws NotFoundException {
+
+        OWLOntology ont = kit.getActiveOntology();
+
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
+
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
+
+        AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+
+        // TODO should do common without creating the tree
+        common.buildCommon(relationsHierarchyService, individual, ont, model, request);
+
+        return "owlentityfragment";
+    }
+
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/children")
     public String getChildren(

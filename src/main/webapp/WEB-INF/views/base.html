@@ -227,14 +227,14 @@
     </ul>
 </li>
 
-<div class='owlselector' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
+<div class='owlselector primary' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${title}">
         <li th:replace="base::tree(${hierarchy})">Top Thing</li>
     </ul>
 </div>
 
-<div class='owlselector' th:fragment="secondaryhierarchy (title, hierarchy, inverse)" th:if="${hierarchy != null}">
+<div class='owlselector secondary' th:fragment="secondaryhierarchy (title, hierarchy, inverse)" th:if="${hierarchy != null}">
     <h4>
         <span th:if="${inverse}" class="keyword">InverseOf</span>
         <a th:href="'.?inverse=' + ${!inverse}" th:text="${title}">Title</a>
@@ -246,7 +246,7 @@
     </ul>
 </div>
 
-<div class='owlselector' th:fragment="list (title, entities)" th:if="${entities != null}">
+<div class='owlselector primary' th:fragment="list (title, entities)" th:if="${entities != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${type}">
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
