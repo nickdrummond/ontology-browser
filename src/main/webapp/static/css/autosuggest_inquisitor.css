@@ -47,12 +47,15 @@ div.autosuggest ul
 	margin: 0 0 -4px 0;
 	padding: 0;
 	overflow: hidden;
-	background-color: #ffffff;
+	background-color: #fff;
+}
+
+.dark div.autosuggest ul {
+	background-color: #000;
 }
 
 div.autosuggest ul li
 {
-	color: #222222;
     padding: 0;
     margin: 0 4px 4px;
 	text-align: left;
@@ -60,7 +63,6 @@ div.autosuggest ul li
 
 div.autosuggest ul li a
 {
-	color: #222222;
 	display: block;
 	text-decoration: none;
 	position: relative;
@@ -142,4 +144,12 @@ div.autosuggest ul em
     font-style: normal;
     font-weight: bolder;
 	color: #11aa11;
+}
+
+
+.dark div.autosuggest ul li.as_highlight a:hover,
+.dark div.autosuggest ul li a:hover,
+.dark div.autosuggest ul li.as_highlight a {
+	background: rgba(125, 125, 125, 0.4);
+	transition: ease-out 0.2s;
 }

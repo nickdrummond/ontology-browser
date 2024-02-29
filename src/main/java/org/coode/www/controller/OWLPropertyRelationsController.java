@@ -1,5 +1,12 @@
 package org.coode.www.controller;
 
+import org.coode.www.kit.OWLHTMLKit;
+import org.coode.www.model.ProjectInfo;
+import org.coode.www.model.paging.With;
+import org.coode.www.renderer.RendererFactory;
+import org.coode.www.url.CommonRelationsURLScheme;
+import org.coode.www.url.RelationPropertyURLScheme;
+import org.coode.www.url.URLScheme;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.service.OWLIndividualsService;
 import org.coode.www.service.OWLObjectPropertiesService;
@@ -21,36 +28,40 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/relations/" + OWLPropertyRelationsController.PATH)
-public class OWLPropertyRelationsController extends ApplicationController{
+public class OWLPropertyRelationsController extends ApplicationController {
 
     public static final String PATH = "onproperty";
-    public static final String OWLENTITY = "owlentity";
-    public static final String BASE_TREE = "base :: tree";
+    public static final String RELATION_TEMPLATE = "relation";
 
     private final OWLObjectPropertiesService propertiesService;
-
-    private final OWLIndividualsService individualsService;
 
     private final ReasonerFactoryService reasonerFactoryService;
 
     private final CommonRelations<OWLObjectProperty> common;
 
-
     public OWLPropertyRelationsController(
             @Autowired OWLObjectPropertiesService propertiesService,
             @Autowired OWLIndividualsService individualsService,
-            @Autowired ReasonerFactoryService reasonerFactoryService) {
+            @Autowired ReasonerFactoryService reasonerFactoryService,
+            @Autowired OWLHTMLKit kit,
+            @Autowired RendererFactory rendererFactory,
+            @Autowired ProjectInfo projectInfo) {
+
         this.propertiesService = propertiesService;
-        this.individualsService = individualsService;
         this.reasonerFactoryService = reasonerFactoryService;
+        this.rendererFactory = rendererFactory;
+        this.projectInfo = projectInfo;
+        this.kit = kit;
 
         this.common = new CommonRelations<>(
                 PATH,
-                kit,
+                kit.getShortFormProvider(),
                 propertiesService,
                 individualsService,
                 rendererFactory
@@ -67,48 +78,91 @@ public class OWLPropertyRelationsController extends ApplicationController{
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}")
-    public String getRelationsForProperty(@PathVariable final String propertyId,
-                                          @RequestParam(defaultValue = "false") final boolean inverse,
-                                          @RequestParam final @Nullable String orderBy,
-                                          final Model model,
-                                          HttpServletRequest request) throws NotFoundException {
+    public String getRelationsForProperty(
+        @PathVariable final String propertyId,
+        @RequestParam(defaultValue = "false") final boolean inverse,
+        @RequestParam final @Nullable String orderBy,
+        final Model model,
+        HttpServletRequest request
+    ) throws NotFoundException {
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, orderBy, inverse);
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, null, model, request);
+        common.buildCommon(relationsHierarchyService, null, ont, model, request);
 
         common.renderEntity(property, model);
 
-        return OWLENTITY;
+        return RELATION_TEMPLATE;
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
-    public String getRelationsForProperty(@PathVariable final String propertyId,
-                                          @PathVariable final String individualId,
-                                          @RequestParam(defaultValue = "false") final boolean inverse,
-                                          @RequestParam final @Nullable String orderBy,
-                                          final Model model,
-                                          HttpServletRequest request) throws NotFoundException {
+    public String getRelationsForProperty(
+        @PathVariable final String propertyId,
+        @PathVariable final String individualId,
+        @RequestParam(defaultValue = "false") final boolean inverse,
+        @RequestParam final @Nullable String orderBy,
+        @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+        @RequestParam(required = false) List<With> with,
+        final Model model,
+        HttpServletRequest request
+    ) throws NotFoundException {
 
-        OWLNamedIndividual individual = common.renderIndividual(individualId, model);
+        OWLOntology ont = kit.getActiveOntology();
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, kit.getActiveOntology());
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
+
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, orderBy, inverse);
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, individual, model, request);
+        common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
-        return OWLENTITY;
+        return RELATION_TEMPLATE;
+    }
+
+    @GetMapping(value = "/{propertyId}/withindividual/{individualId}/fragment")
+    public String getRelationsForPropertyFragment(
+            @PathVariable final String propertyId,
+            @PathVariable final String individualId,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            HttpServletRequest request
+    ) throws NotFoundException {
+
+        OWLOntology ont = kit.getActiveOntology();
+
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
+
+        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
+
+        AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+
+        // TODO should do common without creating the tree
+        common.buildCommon(relationsHierarchyService, individual, ont, model, request);
+
+        return "owlentityfragment";
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/children")
-    public String getChildren(@PathVariable final String propertyId,
-                              final Model model) throws NotFoundException {
+    public String getChildren(
+        @PathVariable final String propertyId,
+        final Model model
+    ) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
 
@@ -121,23 +175,25 @@ public class OWLPropertyRelationsController extends ApplicationController{
         model.addAttribute("t", hierarchyService.getChildren(property));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new RelationPropertyURLScheme()));
 
-        return BASE_TREE;
+        return CommonRelations.BASE_TREE;
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
-    public String getChildren(@PathVariable final String propertyId,
-                              @PathVariable final String individualId,
-                              @RequestParam(defaultValue = "false") final boolean inverse,
-                              @RequestParam final @Nullable String orderBy,
-                              final Model model,
-                              HttpServletRequest request) throws NotFoundException {
+    public String getChildren(
+        @PathVariable final String propertyId,
+        @PathVariable final String individualId,
+        @RequestParam(defaultValue = "false") final boolean inverse,
+        @RequestParam final @Nullable String orderBy,
+        final Model model,
+        HttpServletRequest request
+    ) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
-        OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, kit.getOntologies());
+        OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, orderBy, inverse);
+                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
         URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
                 "/relations/" + PATH, property).withQuery(request.getQueryString());
@@ -145,6 +201,6 @@ public class OWLPropertyRelationsController extends ApplicationController{
         model.addAttribute("t", relationsHierarchyService.getChildren(new Relation<>(property, individual)));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
 
-        return BASE_TREE;
+        return CommonRelations.BASE_TREE;
     }
 }

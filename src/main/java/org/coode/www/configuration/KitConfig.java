@@ -25,7 +25,7 @@ public class KitConfig {
     public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}")   URI root,
                                  @Value("${renderer.annotation.uri}")  URI labelURI,
                                  @Value("${renderer.annotation.lang}") String labelLang) throws OWLOntologyCreationException {
-        logger.info("Loading Kit... " + root);
+        logger.info("Loading {}", root);
         OntologyLoader loader = new OntologyLoader();
         OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
         OWLOntology ont = loader.loadOntologies(mngr, root);

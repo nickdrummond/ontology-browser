@@ -3,6 +3,7 @@ package org.coode.www.service;
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.paging.With;
 import org.semanticweb.owlapi.metrics.OWLMetric;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -19,7 +20,11 @@ public interface OWLOntologiesService {
 
     Set<OWLOntology> getOntologies(OWLHTMLKit kit);
 
-    List<Characteristic> getCharacteristics(OWLOntology owlOntology, OWLHTMLKit kit);
+    List<Characteristic> getCharacteristics(
+            OWLOntology owlOntology,
+            List<With> with,
+            int defaultPageSize,
+            OWLHTMLKit kit);
 
     List<OWLMetric<?>> getMetrics(OWLOntology owlOntology);
 }

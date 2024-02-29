@@ -2,24 +2,32 @@ package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.Tree;
+import org.coode.www.model.paging.With;
+import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLClassesService;
-import org.coode.www.service.OWLIndividualsService;
 import org.coode.www.service.ReasonerFactoryService;
 import org.coode.www.service.hierarchy.OWLClassHierarchyService;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
+import org.coode.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value="/classes")
@@ -30,9 +38,6 @@ public class OWLClassesController extends ApplicationController {
 
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
-
-    @Autowired
-    private OWLIndividualsService individualsService;
 
     @GetMapping(value="/")
     public String getOWLClasses() {
@@ -46,8 +51,11 @@ public class OWLClassesController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{classId}")
-    public String getOWLClass(@PathVariable final String classId,
-                              final Model model) throws NotFoundException {
+    public String getOWLClass(
+            @PathVariable final String classId,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request) throws NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
@@ -60,19 +68,55 @@ public class OWLClassesController extends ApplicationController {
 
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
-
-        String entityName = kit.getShortFormProvider().getShortForm(owlClass);
-
-        model.addAttribute("title", entityName + " (Class)");
-        model.addAttribute("type", "Classes");
-        model.addAttribute("iri", owlClass.getIRI());
         model.addAttribute("hierarchy", prunedTree);
-        model.addAttribute("characteristics", service.getCharacteristics(owlClass, kit));
-        model.addAttribute("mos", owlRenderer);
+
+        getOWLClassFragment(classId, with, model, request);
 
         return "owlentity";
     }
+
+
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value="/{classId}/fragment")
+    public String getOWLClassFragment(
+            @PathVariable final String classId,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request) throws NotFoundException {
+
+        OWLClass owlClass = service.getOWLClassFor(classId, kit);
+
+        OWLOntology ont = kit.getActiveOntology();
+
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
+
+        ShortFormProvider sfp = kit.getShortFormProvider();
+
+        String entityName = sfp.getShortForm(owlClass);
+
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        List<Characteristic> characteristics = service.getCharacteristics(
+                owlClass, ont, kit.getComparator(),
+                withOrEmpty,
+                DEFAULT_PAGE_SIZE);
+
+        Set<OWLClass> namedSuperclasses = service.getNamedTypes(owlClass, ont);
+
+        String supers = String.join(", ", namedSuperclasses.stream().map(sfp::getShortForm).toList());
+
+        String title = entityName + (supers.isEmpty() ? "" : " (" + supers + ")");
+
+        model.addAttribute("title", title);
+        model.addAttribute("type", "Classes");
+        model.addAttribute("iri", owlClass.getIRI());
+        model.addAttribute("characteristics", characteristics);
+        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
+
+        return "owlentityfragment";
+    }
+
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{classId}/children")

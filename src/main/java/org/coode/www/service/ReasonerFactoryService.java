@@ -2,7 +2,10 @@ package org.coode.www.service;
 
 import org.coode.www.reasoner.SynchronizedOWLReasoner;
 import org.coode.www.model.ReasonerMomento;
+import org.coode.www.util.OWLUtils;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.OWLReasonerRuntimeException;
@@ -72,7 +75,8 @@ public class ReasonerFactoryService {
         if (r == null) {
             OWLReasonerFactory fac = getFactoryFor(name);
             if (fac != null) {
-                logger.warn("Creating reasoner..." + name + " for ontology " + ont.getOntologyID());
+                String ontName = OWLUtils.ontName(ont.getOntologyID());
+                logger.warn("Creating {} reasoner for {}", name, ontName);
                 r = new SynchronizedOWLReasoner(fac.createNonBufferingReasoner(ont, new SimpleConfiguration()));
                 reasonerByName.put(key, r);
             }

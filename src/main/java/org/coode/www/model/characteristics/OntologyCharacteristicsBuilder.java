@@ -1,63 +1,56 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
+import org.coode.www.model.paging.With;
+import org.coode.www.util.PagingUtils;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
 public class OntologyCharacteristicsBuilder {
 
-    private final List<Characteristic> characteristics;
+    private final List<Characteristic> characteristics = new ArrayList<>();
 
-    public OntologyCharacteristicsBuilder(OWLOntology ont, Comparator<OWLObject> comparator) {
-        characteristics = new ArrayList<>();
+    public OntologyCharacteristicsBuilder(
+            final OWLOntology ont,
+            final List<With> with,
+            final int defaultPageSize,
+            final Comparator<OWLObject> comparator) {
 
         for (Optional<Characteristic> c : asList(
-                getAnnotations(ont, comparator),
-                getImports(ont, comparator),
-                getGeneralClassAxioms(ont, comparator)
+                createCharacteristic("Annotations", ont.getAnnotations(), ont, comparator, with, defaultPageSize),
+                createCharacteristic("Imports", ont.getDirectImportsDocuments(), ont, comparator, with, defaultPageSize),
+                createCharacteristic("General Class Axioms", ont.getGeneralClassAxioms(), ont, comparator, with, defaultPageSize)
         )) {
             c.ifPresent(characteristics::add);
         }
     }
 
+    private Optional<Characteristic> createCharacteristic(
+            final String name,
+            final Set<? extends OWLObject> objs,
+            final OWLOntology ont,
+            final Comparator<OWLObject> c,
+            final List<With> with,
+            final int defaultPageSize) {
+
+        if (objs.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<AxiomWithMetadata> r = objs.stream()
+                .map(o -> new AxiomWithMetadata("s", o, null, ont))
+                .toList();
+
+        Comparator<AxiomWithMetadata> compareByOWLObject = (a, b) ->
+                c.compare(a.getOWLObject(), b.getOWLObject());
+
+        return Optional.of(PagingUtils.getCharacteristic(ont, with, defaultPageSize, compareByOWLObject, name, r));
+    }
+
     public List<Characteristic> getCharacteristics() {
         return characteristics;
-    }
-
-    public Optional<Characteristic> getAnnotations(OWLOntology ont, Comparator<OWLObject> c) {
-        return asCharacteristicNew("Annotations", ont,
-                wrapWithOntology(ont.getAnnotations(), ont, c));
-    }
-
-    public Optional<Characteristic> getImports(OWLOntology ont, Comparator<OWLObject> c) {
-        return asCharacteristicNew("Imports", ont,
-                wrapWithOntology(ont.getDirectImportsDocuments(), ont, c));
-    }
-
-    public Optional<Characteristic> getGeneralClassAxioms(OWLOntology ont, Comparator<OWLObject> c) {
-        return asCharacteristicNew("General Class Axioms", ont,
-                wrapClassAxioms(ont.getGeneralClassAxioms(), ont, c));
-    }
-
-    private List<AxiomWithMetadata> wrapWithOntology(Set<? extends OWLObject> objs, OWLOntology ont, Comparator<OWLObject> c) {
-        return objs.stream()
-                .sorted(c)
-                .map(o -> new AxiomWithMetadata("s", o, null,  ont))
-                .collect(Collectors.toList());
-    }
-
-    private List<AxiomWithMetadata> wrapClassAxioms(Set<OWLClassAxiom> axioms, OWLOntology ont, Comparator<OWLObject> c) {
-        return axioms.stream()
-                .sorted(c)
-                .map(ax -> new AxiomWithMetadata("s", ax, ax,  ont))
-                .collect(Collectors.toList());
-    }
-
-    private Optional<Characteristic> asCharacteristicNew(String name, OWLObject owlObject, List<AxiomWithMetadata> results) {
-        return results.isEmpty() ? Optional.empty() : Optional.of(new Characteristic(owlObject, name, results));
     }
 }

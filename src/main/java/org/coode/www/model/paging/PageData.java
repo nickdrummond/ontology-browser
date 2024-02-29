@@ -1,4 +1,4 @@
-package org.coode.www.util;
+package org.coode.www.model.paging;
 
 public record PageData(
         int start,

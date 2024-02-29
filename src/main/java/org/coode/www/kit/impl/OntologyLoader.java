@@ -1,6 +1,7 @@
 package org.coode.www.kit.impl;
 
 import com.google.common.collect.Maps;
+import org.coode.www.util.OWLUtils;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class OntologyLoader {
             public void finishedLoadingOntology(LoadingFinishedEvent loadingFinishedEvent) {
                 if (loadingFinishedEvent.isSuccessful() && !loadingFinishedEvent.isImported()) {
                     OWLOntologyID id = loadingFinishedEvent.getOntologyID();
-                    logger.info("loaded " +id.getDefaultDocumentIRI().map(IRI::toString));
+                    logger.info("Loaded {}", OWLUtils.ontName(id));
                 }
             }
         };

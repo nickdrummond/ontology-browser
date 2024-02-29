@@ -59,6 +59,7 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
         return writer.getBuffer().toString();
     }
 
+    // Used by templates
     public String renderFullIRI(final IRI iri) {
         return iri.getIRIString()
                 .replaceAll("/(?=[^/])", "/<wbr>")

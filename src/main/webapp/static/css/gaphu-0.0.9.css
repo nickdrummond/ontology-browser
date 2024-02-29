@@ -18,14 +18,14 @@ div.wrapper{
 div.autocomplete{
     position: absolute;
     background-color: white;
+    color: #999999;
     width: 200px; height: 200px;
     border: solid 1px black;
     padding-left: 1px; padding-right: 1px;
     display: none;
     overflow: auto;
     text-align: left;
-    font-size: 10pt;
-    color: #999999;
+    font-size: 1rem;
 }
 
 div.autocomplete ul{
@@ -85,5 +85,27 @@ div.errormessage {
     background-color: #ffffee;
     border: solid 1px gray;
     padding: 3px;
-    font-size: 8pt;
+    font-size: 0.8rem;
+}
+
+.dark div.autocomplete {
+    background-color: #000022;
+    color: #ddddff;
+}
+
+div.autocomplete li {
+    color: #ddddff;
+}
+
+div.autocomplete li.selected {
+    background: rgba(125, 125, 125, 0.4);
+    transition: ease-out 0.2s;
+}
+
+.dark div.autocomplete li span.match {
+    color: #33ff33;
+}
+
+.dark div.errormessage {
+    background-color: #000022;
 }

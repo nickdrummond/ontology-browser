@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:include='base :: header (title=${"Welcome"})'></head>
+<head th:include='base :: header (title=${"Welcome"}, query=${false}, tree=${false}, rewriteLinks=${false})'></head>
 
 <body class="wrapper">
 
@@ -10,9 +10,9 @@
 
 <div th:replace='base :: menu'></div>
 
-<div><p style="font-size: 1.5em; margin: 20px auto 20px auto; text-align: center;">Welcome to the <em th:text="${projectInfo.name}">Ontology name</em>
-    created in <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}"></a>.
-    Select a popular individual below or search the ontology yourself above.</p>
+<div class="welcome"><p>Welcome to the <em th:text="${projectInfo.name}">Ontology name</em>
+    created in <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}"></a>.</p>
+    <p>Select a popular individual below or search the ontology yourself above.</p>
 </div>
 
 <div id='main'>

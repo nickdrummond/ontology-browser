@@ -4,8 +4,10 @@ import org.coode.www.exception.NotFoundException;
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.DataPropertyCharacteristicsBuilder;
+import org.coode.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,12 @@ public class OWLDataPropertiesService {
         return String.valueOf(owlDataProperty.getIRI().hashCode());
     }
 
-    public List<Characteristic> getCharacteristics(final OWLDataProperty property, final OWLHTMLKit kit) {
-        return new DataPropertyCharacteristicsBuilder(property, kit.getActiveOntologies(), kit.getComparator()).getCharacteristics();
+    public List<Characteristic> getCharacteristics(
+            final OWLDataProperty property,
+            final OWLOntology ont,
+            final Comparator<OWLObject> comparator,
+            final List<With> with,
+            final int pageSize) {
+        return new DataPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize).getCharacteristics();
     }
 }

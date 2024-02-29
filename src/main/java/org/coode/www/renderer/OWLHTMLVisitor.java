@@ -111,29 +111,16 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             cssClass = CSS_ACTIVE_ONTOLOGY_URI;
         }
 
-        boolean writeLink = false;
-
-        if (activeObjects.isEmpty()){
-            writeLink = true;
-        }
-        else if (!activeObjects.contains(ontology)){
-            writeLink = true;
-        }
-        else{
-            write("<span class='" + CSS_ACTIVE_ENTITY + SPACE + cssClass + "'>");
-            write(ontologyIriSFProvider.getShortForm(ontology));
-            write("</span>");
+        if (activeObjects.contains(ontology)){
+            cssClass = CSS_ACTIVE_ENTITY + SPACE + cssClass;
         }
 
-
-        if (writeLink){
-            write("<a class='" + cssClass + "'");
-            String id = getOntologyIdString(ontology);
-            write(" href=\"" + link + "\" title='" + id + "'");
-            write(">");
-            write(ontologyIriSFProvider.getShortForm(ontology));
-            write("</a>");
-        }
+        write("<a class='" + cssClass + "'");
+        String id = getOntologyIdString(ontology);
+        write(" href=\"" + link + "\" title='" + id + "'");
+        write(">");
+        write(ontologyIriSFProvider.getShortForm(ontology));
+        write("</a>");
     }
 
     private String getOntologyIdString(final OWLOntology ont){
@@ -174,7 +161,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     @Override
     public void visit(@Nonnull OWLDatatype datatype) {
-        writeOWLEntity(datatype, EntityType.DATA_PROPERTY.getPrintName());
+        writeOWLEntity(datatype, EntityType.DATATYPE.getPrintName());
     }
 
     @Override
@@ -900,27 +887,16 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         Set<String> cssClasses = new HashSet<>();
         cssClasses.add(cssClass);
 
-        if (activeObjects.isEmpty()){
-            final String urlForTarget = urlScheme.getURLForOWLObject(entity);
-            write("<a href=\"" + urlForTarget + "\"");
-            writeCSSClasses(cssClasses);
-            write(" title=\"" + uri + "\">" + renderedName + "</a>");
-        }
-        else if (activeObjects.contains(entity)){
+        if (activeObjects.contains(entity)) {
             cssClasses.add(CSS_ACTIVE_ENTITY);
-            write("<span");
-            writeCSSClasses(cssClasses);
-            write(">" + renderedName + "</span>");
         }
-        else{
-            final String urlForTarget = urlScheme.getURLForOWLObject(entity);
-            write("<a href=\"" + urlForTarget + "\"");
 
-            writeCSSClasses(cssClasses);
-            write(" title=\"" + uri + "\">");
-            write(renderedName);
-            write("</a>");
-        }
+        final String urlForTarget = urlScheme.getURLForOWLObject(entity);
+        write("<a href=\"" + urlForTarget + "\"");
+        writeCSSClasses(cssClasses);
+        write(" title=\"" + uri + "\">");
+        write(renderedName);
+        write("</a>");
     }
 
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {

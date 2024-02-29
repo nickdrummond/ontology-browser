@@ -3,6 +3,12 @@
     color: green;
 }
 
+/* we want links in literals to look like links*/
+.literal a {
+    color: #008;
+    text-decoration: underline;
+}
+
 .annotation-uri {
     color: gray;
 }
@@ -16,7 +22,10 @@
 }
 
 .active-entity {
-    background-color: #ffffaa;
+    background: rgba(255, 255, 0, 0.4);
+    border-radius: 2px;
+    padding: 1px;
+    pointer-events: none;
 }
 
 .deprecated {
@@ -79,11 +88,41 @@ a.Annotation.property:hover{
 }
 
 .Named.individual{
-    color: #000000;
     font-style: italic;
 }
 
 a.Named.individual:hover{
-    color: #002;
     font-style: italic;
 }
+
+/* dark theme */
+
+.dark .Object.property{
+    color: #018b8c;
+}
+
+.dark a.Object.property:hover{
+    color: #01d2d2;
+}
+
+.dark .active-entity {
+    color: rgba(255, 255, 0, 0.8);
+}
+
+.dark .Object.property.active-entity,
+.dark a.Data.property.active-entity {
+    color: rgba(255, 255, 0, 0.8);
+}
+
+.dark .Data.property{
+    color: #4573e8;
+}
+
+.dark a.Data.property:hover{
+    color: #7caaef;
+}
+
+.dark .literal a {
+    color: #2266ff;
+}
+

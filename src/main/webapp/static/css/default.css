@@ -15,37 +15,50 @@ html {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.dark {
+    color-scheme: dark;
+    color: #b4b392;
+}
+
+.dark a {
+    color: #dad6cd;
+}
+
+.dark a:hover {
+    color: #dad6cd;
+}
+
 body {
-    font-size: 12pt;
+    font-size: 1rem;
     margin: 0;
     padding: 0;
 }
 
 h1 {
-    font-size: 20pt;
+    font-size: 2rem;
     font-weight: bold;
     margin: 4px;
 }
 
-h2, h3, h4 {
-    font-weight: normal;
+h2, h3 {
+    font-weight: bold;
 }
 
 h2 {
-    font-size: 16pt;
+    font-size: 1.5rem;
     display: inline;
-    margin: 0 6px 12px 6px;
+    margin: 0.5rem;
 }
 
 h3 {
-    font-size: 14pt;
-    color: #444444;
-    margin: 6px 12px 12px 12px;
+    font-size: 1.2rem;
+    color: rgba(125, 125, 125, 0.8);
+    margin: 1rem;
 }
 
 h4 {
-    font-size: 12pt;
-    line-height: 9pt;
+    font-size: 1rem;
+    font-weight: normal;
     display: inline;
     margin: 0;
 }
@@ -89,11 +102,12 @@ li {
 }
 
 #content {
-    margin-top: 15px;
+    margin: 1rem 0.5rem;
 }
 
 .owlselector {
-    margin: 5px;
+    margin: 0.5rem;
+    margin-top: 1rem;
 }
 
 #main {
@@ -106,18 +120,12 @@ li {
 
 #metrics table {
     border: solid 1px #c7cfd5;
-    background: #fff;
-    color: #000;
     padding: 5px 5px 5px 25px;
     margin: 5px 0 10px 0;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     text-align: right;
     width: 99%;
-}
-
-#metrics table tr:hover {
-    background: #eeeeee;
 }
 
 #metrics table td {
@@ -131,15 +139,23 @@ li {
     text-align: left;
 }
 
-a.burger, a.burger:hover, a.burger:active {
-    padding: 5px;
-    font-size: 14pt;
-    text-decoration: none;
-    float: right;
+.welcome p {
+    font-size: 1.5rem;
+    margin: 1rem auto 1rem auto;
+    text-align: center;
 }
 
-#welcome li {
-    margin-top: 10px;
+.error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    font-size: 1.5rem;
+    max-width: 100%;
+}
+
+.error h2 {
+    font-size: 2rem;
 }
 
 .characteristics {
@@ -152,15 +168,13 @@ a.burger, a.burger:hover, a.burger:active {
 }
 
 .characteristic h3 {
-    font-size: 12pt;
+    font-size: 1rem;
     font-weight: bold;
     margin: 0 0 5px 0;
 }
 
 .characteristic ul {
     border: solid 1px #c7cfd5;
-    background: #fff;
-    color: #000;
     padding: 5px 5px 5px 25px;
     margin: 0 0 10px 0;
     -moz-border-radius: 6px;
@@ -172,8 +186,9 @@ a.burger, a.burger:hover, a.burger:active {
     clear: both;
 }
 
-.characteristic li:hover {
-    background: #eeeeee;
+.characteristic li:hover, #metrics table tr:hover {
+    background: rgba(125, 125, 125, 0.2);
+    transition: ease-out 0.2s;
 }
 
 .characteristic .source-ont {
@@ -188,7 +203,7 @@ a.burger, a.burger:hover, a.burger:active {
 }
 
 .highlight {
-    background-color: #ffffaa;
+    background: rgba(255, 255, 0, 0.2);
 }
 
 .imageHolder{
@@ -220,7 +235,7 @@ td.key{
 }
 
 #queryform {
-    background: #ddddff;
+    background: #ff0000;
     padding: 5px;
 }
 
@@ -246,6 +261,7 @@ td.key{
 
 #findForm {
     display: flex;
+    align-items: center;
     justify-content: center;
 }
 
@@ -254,18 +270,23 @@ td.key{
     overflow: auto;
 }
 
+#find {
+    height: 2rem;
+    border-radius: 1rem;
+}
+
 #find, .autosuggest li {
     width: 98%;
     padding-left: 10px;
 }
 
 #tabs {
-    color: #aaaacc;
+    color: rgba(125, 125, 125, 0.8);
     margin-bottom: 16px;
 }
 
 #tabs li {
-    list-style: circle;
+    list-style: none;
 }
 
 #tabs a, #tabs span.currentpage {
@@ -276,11 +297,10 @@ td.key{
     text-align: center;
     margin: auto;
     width: 90%;
-    background-color: black;
 }
 
 .cloud span.entity {
-    margin: 5pt;
+    margin: 0.2rem;
 }
 
 /* Let the cloud spans determine the color */
@@ -293,17 +313,13 @@ td.key{
     color: inherit;
 }
 
-/* we want links in literals to look like links*/
-.literal a {
-    color: #002;
-    text-decoration: underline;
-}
-
-a.subsexpand {
-    color: #555555;
-    font-size: 7pt;
-    text-decoration: underline;
-    line-height: 180%;
+.dark .cloud a.Class,
+.dark .cloud a.Object.property,
+.dark .cloud a.Data.property,
+.dark .cloud a.Annotation.property,
+.dark .cloud a.Named.individual,
+.dark .cloud a.Datatype{
+    filter: invert(100%);
 }
 
 a.help {
@@ -324,8 +340,6 @@ a.permalink {
 
 ul.minihierarchy {
     border: solid 1px #c7cfd5;
-    background: #fff;
-    color: #000;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     overflow: auto;
@@ -349,6 +363,12 @@ ul.minihierarchy {
     cursor: pointer;
 }
 
+img.busy {
+    height: 1rem;
+    width: 1rem;
+    margin: auto;
+}
+
 .inferred{
     border: dotted gray 1px;
     opacity: 0.6;
@@ -359,7 +379,7 @@ ul.minihierarchy {
 p.footer {
     display: flex;
     justify-content: space-around;
-    font-size: 10pt;
+    font-size: 0.9rem;
     margin: 5px;
     width: 100%;
 }
@@ -385,7 +405,9 @@ form#load {
 }
 
 #queryPane {
-    flex: 2 2 auto;
+    flex: 1;
+    overflow: auto;
+    margin: 0.5rem;
 }
 
 #dlQueryForm {
@@ -442,6 +464,10 @@ img.icon {
     height: 24px;
 }
 
+.dark img.icon {
+    filter: invert(100%);
+}
+
 img.button {
     position: relative;
     top: 8px;
@@ -476,11 +502,58 @@ img.thumb{
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;;
 }
 
-    /* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
-    .wrapper {
-      display: flex;
-      flex-flow: row wrap;
-    }
+/* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+.wrapper {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.axioms-form{
+    margin-left: 0.3em;
+    margin-bottom: 0.5em;
+    display: flex;
+    align-items: center;
+}
+
+.axioms-form h2 {
+    margin-bottom: 0;
+}
+
+.axioms-form input[type="text"] {
+    font-size: 1.5em;
+    width: 50%;
+    padding-left: 10px;
+}
+
+.search-icon {
+    border: none;
+    width: 1.5em;
+    height: 1.5em;
+    margin-left: 0.5em;
+    background-size: contain;
+    background-color: inherit;
+    background-repeat: no-repeat;
+    background-image: url("../../static/images/search-svgrepo-com.svg");
+    position: relative;
+    left: -3em;
+}
+
+.paging {
+    margin-left: 0.2em;
+}
+
+.paging-arrow {
+    color: #aaa;
+}
+
+.paging-arrow a {
+    font-weight: bolder;
+}
+
+.paging-arrow a:hover {
+    text-decoration: none;
+}
+
 
 
 @media screen and (max-width: 800px) and (max-height: 450px) {
@@ -570,22 +643,22 @@ img.thumb{
 
     #find, .autosuggest li {
         line-height: 24px;
-        font-size: 18pt;
+        font-size: 1.5rem;
     }
 }
 
 @media screen and (max-width: 450px), (max-height: 450px) {
 
     body, input, select {
-        font-size: 12pt;
+        font-size: 1rem;
     }
 
     h2 {
-        font-size: 18pt;
+        font-size: 1.5rem;
     }
 
     h4 {
-        font-size: 12pt;
+        font-size: 1rem;
     }
 }
 

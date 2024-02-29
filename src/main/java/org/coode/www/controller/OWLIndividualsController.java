@@ -1,16 +1,14 @@
 package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.model.AxiomWithMetadata;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.Tree;
-import org.coode.www.renderer.MediaRenderer;
+import org.coode.www.model.paging.With;
 import org.coode.www.renderer.OWLHTMLRenderer;
-import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.*;
 import org.coode.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
+import org.coode.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
@@ -21,12 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
 
 @Controller
 @RequestMapping(value="/individuals")
@@ -60,37 +53,63 @@ public class OWLIndividualsController extends ApplicationController {
         return "redirect:/individuals/" + id;
     }
 
-
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/{individualId}")
-    public String getOWLIndividual(@PathVariable final String individualId,
-                                   @RequestParam(required=false) final String ontId,
-                                   @RequestParam(required=false) final boolean inferred,
-                                   final Model model) throws NotFoundException {
+    public String getOWLIndividual(
+        @PathVariable final String individualId,
+        @RequestParam(required=false) final String ontId,
+        @RequestParam(required=false) final boolean inferred,
+        @RequestParam(required = false) List<With> with,
+        final Model model,
+        final HttpServletRequest request
+    ) throws NotFoundException {
 
-        final OWLOntology activeOntology = (ontId != null) ?
+        final OWLOntology ont = (ontId != null) ?
                 ontService.getOntologyFor(ontId, kit) :
                 kit.getActiveOntology();
 
-        Set<OWLOntology> ontologies = activeOntology.getImportsClosure();
-
-        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ontologies);
+        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ont);
 
         Comparator<Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(activeOntology);
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         OWLIndividualsByTypeHierarchyService hierarchyService = new OWLIndividualsByTypeHierarchyService(r, comparator);
 
         Tree<OWLEntity> prunedTree = hierarchyService.getPrunedTree(owlIndividual);
 
+        model.addAttribute("hierarchy", prunedTree);
+
+        getOWLIndividualFragment(individualId, ontId, inferred, with, model, request);
+
+        return "owlentity";
+    }
+
+
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value= "/{individualId}/fragment")
+    public String getOWLIndividualFragment(
+        @PathVariable final String individualId,
+        @RequestParam(required=false) final String ontId,
+        @RequestParam(required=false) final boolean inferred,
+        @RequestParam(required = false) List<With> with,
+        final Model model,
+        final HttpServletRequest request
+    ) throws NotFoundException {
+
+        final OWLOntology ont = (ontId != null) ?
+                ontService.getOntologyFor(ontId, kit) :
+                kit.getActiveOntology();
+
+        OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ont);
+
         ShortFormProvider sfp = kit.getShortFormProvider();
 
         String entityName = sfp.getShortForm(owlIndividual);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(activeOntology).withActiveObject(owlIndividual);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlIndividual);
 
-        Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ontologies);
+        Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ont);
         if (maybeLoc.isPresent()) {
             GeoService.Loc loc = maybeLoc.get();
             model.addAttribute("geo", loc);
@@ -104,20 +123,29 @@ public class OWLIndividualsController extends ApplicationController {
             model.addAttribute("sound", owlIndividual.getIRI().toString());
         }
 
-        List<Characteristic> characteristics = service.getCharacteristics(owlIndividual, ontologies, kit.getComparator());
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        List<Characteristic> characteristics = new ArrayList<>(
+                service.getCharacteristics(owlIndividual, ont, kit.getComparator(), withOrEmpty, DEFAULT_PAGE_SIZE));
 
         if (inferred) {
-            characteristics.addAll(service.getInferredCharacteristics(
-                    owlIndividual, activeOntology, kit.getOWLOntologyManager(), reasonerService.getReasoner()));
+            OWLReasoner reasoner = reasonerService.getReasoner();
+            characteristics.addAll(service.getInferredCharacteristics(owlIndividual, reasoner));
         }
 
-        model.addAttribute("title", entityName + " (Individual)");
+        Set<OWLClass> namedTypes = service.getNamedTypes(owlIndividual, ont);
+
+        String types = String.join(", ", namedTypes.stream().map(sfp::getShortForm).toList());
+
+        String title = entityName + (types.isEmpty() ? "" : " (" + types + ")");
+
+        model.addAttribute("title", title);
         model.addAttribute("type", "Individuals");
         model.addAttribute("iri", owlIndividual.getIRI());
-        model.addAttribute("hierarchy", prunedTree);
         model.addAttribute("characteristics", characteristics);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
         model.addAttribute("mos", owlRenderer);
 
-        return "owlentity";
+        return "owlentityfragment";
     }
 }

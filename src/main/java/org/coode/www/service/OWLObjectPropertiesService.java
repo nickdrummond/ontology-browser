@@ -1,10 +1,10 @@
 package org.coode.www.service;
 
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.model.characteristics.Characteristic;
 import org.coode.www.model.characteristics.ObjectPropertyCharacteristicsBuilder;
+import org.coode.www.model.paging.With;
 import org.coode.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -52,11 +52,15 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
     public List<Characteristic> getCharacteristics(
             final OWLObjectProperty property,
             final OWLOntology ont,
-            final Comparator<OWLObject> comparator) {
-        return new ObjectPropertyCharacteristicsBuilder(property, ont.getImportsClosure(), comparator).getCharacteristics();
+            final Comparator<OWLObject> comparator,
+            final List<With> with,
+            final int pageSize) {
+        return new ObjectPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize).getCharacteristics();
     }
 
     @Override
+    public Comparator<Tree<OWLNamedIndividual>> getComparator(
+            OWLObjectProperty orderByProperty, OWLOntology ont) {
     public Comparator<Tree<Relation<OWLObjectProperty>>> getComparator(OWLObjectProperty orderByProperty, OWLOntology ont) {
         if (orderByProperty != null) {
             return new PropComparator(orderByProperty, ont);

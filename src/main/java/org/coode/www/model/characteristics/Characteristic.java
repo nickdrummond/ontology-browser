@@ -1,7 +1,7 @@
 package org.coode.www.model.characteristics;
 
 import org.coode.www.model.AxiomWithMetadata;
-import org.coode.www.util.PageData;
+import org.coode.www.model.paging.PageData;
 import org.semanticweb.owlapi.model.OWLObject;
 
 import java.util.List;

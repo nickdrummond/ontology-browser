@@ -2,8 +2,10 @@ package org.coode.www.controller;
 
 import org.coode.www.exception.NotFoundException;
 import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.paging.With;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.OWLAnnotationPropertiesService;
+import org.coode.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -13,7 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -47,8 +52,36 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}")
-    public String getOWLAnnotationProperty(@PathVariable final String propertyId,
-                              final Model model) throws NotFoundException {
+    public String getOWLAnnotationProperty(
+            @PathVariable final String propertyId,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            final HttpServletRequest request,
+            final Model model) throws NotFoundException {
+
+        OWLOntology activeOntology = kit.getActiveOntology();
+
+        Comparator<OWLObject> comparator = kit.getComparator();
+
+        List<OWLAnnotationProperty> annotationProperties =
+                service.getAnnotationProperties(activeOntology, comparator);
+
+        model.addAttribute("entities", annotationProperties);
+
+        getOWLAnnotationPropertyFragment(propertyId, pageSize, with, request, model);
+
+        return "owlentity";
+    }
+
+
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value="/{propertyId}/fragment")
+    public String getOWLAnnotationPropertyFragment(
+            @PathVariable final String propertyId,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            final HttpServletRequest request,
+            final Model model) throws NotFoundException {
 
         OWLOntology activeOntology = kit.getActiveOntology();
 
@@ -56,22 +89,22 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         Comparator<OWLObject> comparator = kit.getComparator();
 
-        List<OWLAnnotationProperty> annotationProperties =
-                service.getAnnotationProperties(activeOntology, comparator);
-
         String entityName = kit.getShortFormProvider().getShortForm(owlAnnotationProperty);
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(activeOntology).withActiveObject(owlAnnotationProperty);
 
-        List<Characteristic> characteristics = service.getCharacteristics(owlAnnotationProperty, activeOntology, comparator);
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        List<Characteristic> characteristics =
+                service.getCharacteristics(owlAnnotationProperty, activeOntology, comparator, withOrEmpty, pageSize);
 
         model.addAttribute("title", entityName + " (Annotation Property)");
         model.addAttribute("type", "Annotation Properties");
         model.addAttribute("iri", owlAnnotationProperty.getIRI());
-        model.addAttribute("entities", annotationProperties);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 
-        return "owlentity";
+        return "owlentityfragment";
     }
 }

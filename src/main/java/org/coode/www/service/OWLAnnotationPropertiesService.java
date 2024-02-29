@@ -3,10 +3,10 @@ package org.coode.www.service;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.NotImplementedException;
 import org.coode.www.exception.NotFoundException;
-import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.model.Tree;
 import org.coode.www.model.characteristics.AnnotationPropertyCharacteristicsBuilder;
 import org.coode.www.model.characteristics.Characteristic;
+import org.coode.www.model.paging.With;
 import org.coode.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
@@ -35,8 +35,10 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
     public List<Characteristic> getCharacteristics(
             final OWLAnnotationProperty property,
             final OWLOntology ont,
-            final Comparator<OWLObject> comparator) {
-        return new AnnotationPropertyCharacteristicsBuilder(property, ont.getImportsClosure(), comparator).getCharacteristics();
+            final Comparator<OWLObject> comparator,
+            final List<With> with,
+            final int pageSize) {
+        return new AnnotationPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize).getCharacteristics();
     }
 
     @Override

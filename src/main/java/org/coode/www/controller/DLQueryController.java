@@ -1,6 +1,7 @@
 package org.coode.www.controller;
 
 import org.coode.www.kit.OWLEntityFinder;
+import org.coode.www.url.GlobalPagingURIScheme;
 import org.coode.www.util.PropertyComparator;
 import org.coode.www.exception.OntServerException;
 import org.coode.www.exception.QueryTimeoutException;
@@ -11,7 +12,7 @@ import org.coode.www.model.QueryType;
 import org.coode.www.renderer.OWLHTMLRenderer;
 import org.coode.www.service.ParserService;
 import org.coode.www.service.ReasonerService;
-import org.coode.www.util.PageData;
+import org.coode.www.model.paging.PageData;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.nickdrummond.parsejs.ParseException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -40,7 +42,6 @@ public class DLQueryController extends ApplicationController {
 
     private static final Logger log = LoggerFactory.getLogger(DLQueryController.class);
 
-    public static final String DEFAULT_PAGE_SIZE = "50";
     public static final String PATH = "/dlquery";
 
     @Autowired
@@ -56,8 +57,9 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "") final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(required = false, defaultValue = "instances", name = "query") final QueryType queryType,
-            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
+            final HttpServletRequest request,
             final Model model) {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
@@ -83,6 +85,7 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("order", order);
         model.addAttribute("query", queryType);
         model.addAttribute("queries", QueryType.values());
+        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
 
         return "dlquery";
     }
@@ -94,8 +97,9 @@ public class DLQueryController extends ApplicationController {
             @RequestParam(required = false) final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(name="query") final QueryType queryType,
-            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
+            final HttpServletRequest request,
             final Model model) throws OntServerException, QueryTimeoutException, ParserException {
 
         try {
@@ -105,8 +109,9 @@ public class DLQueryController extends ApplicationController {
             DLQuery query = new DLQuery(parserService.getOWLClassExpression(expression, df, checker), queryType);
             reasonerService.asyncQuery(query);
 
-            DLQuery minusQuery = new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType);
+            DLQuery minusQuery = null;
             if (minus != null && !minus.isEmpty()) {
+                minusQuery = new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType);
                 reasonerService.asyncQuery(minusQuery);
             }
 
@@ -129,6 +134,7 @@ public class DLQueryController extends ApplicationController {
 
             Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c, start, pageSize);
 
+            // TODO update scheme to render links with the entity as a param
             OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
 
             // Target links to parent page for fragment
@@ -139,6 +145,7 @@ public class DLQueryController extends ApplicationController {
             model.addAttribute("urlBuilder", uriBuilder);
             model.addAttribute("results", resultsCharacteristic);
             model.addAttribute("mos", owlRenderer);
+            model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
 
             return "base :: results";
         } catch (ExecutionException e) {

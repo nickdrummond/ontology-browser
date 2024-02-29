@@ -1,8 +1,6 @@
 package org.coode.www.util;
 
-import org.semanticweb.owlapi.model.OWLDeclarationAxiom;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
 
 public class OWLUtils {
 
@@ -14,5 +12,11 @@ public class OWLUtils {
             }
         }
         return rootOnt;
+    }
+
+    public static String ontName(OWLOntologyID ontologyID) {
+        return ontologyID.getOntologyIRI().map(IRI::toString)
+                .orElse(ontologyID.getDefaultDocumentIRI().map(IRI::toString)
+                        .orElse("anonymous"));
     }
 }

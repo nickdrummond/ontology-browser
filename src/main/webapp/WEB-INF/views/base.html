@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment='header (title)'>
+<head th:fragment='header (title, query, tree, rewriteLinks)'>
 
     <title th:text='${projectInfo.name + ": " + title}'>Project Name: Page Name</title>
 
@@ -20,32 +20,38 @@
           th:href='@{/static/css/autosuggest_inquisitor.css}'/>
     <link rel='stylesheet' type='text/css' href='../../static/css/gaphu-0.0.9.css'
           th:href='@{/static/css/gaphu-0.0.9.css}'/>
-    <link rel='stylesheet' type='text/css' href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
+    <link rel='stylesheet' type='text/css' href='../../static/css/default.css'
+          th:href='@{/static/css/default.css}'/>
 
     <script type='text/javascript' th:inline='javascript'>
-        // TODO Thymeleaf inlining http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html#script-inlining-javascript-and-dart
-        baseUrl =/*[[@{/}]]*/ '/';
-        // document.getElementById("uri-spec").focus();
+        const baseUrl = '/';
+        const isQuery = [[${query}]];
+        const isTree = [[${tree}]];
+        const rewriteLinks = [[${rewriteLinks}]] ?? false;
     </script>
     <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
             th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
-    <script type='text/javascript' src='../../static/js/default.js' th:src='@{/static/js/default.js}'></script>
+
+    <script type='module' src='../../static/js/app.js'
+            th:src='@{/static/js/app.js}'>
+    </script>
+
     <script type='text/javascript' src='../../static/js/bsn.AutoSuggest_2.1_multiword.js'
             th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
-    <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js' th:src='@{/static/js/gaphu-0.0.9.js}'></script>
-    <script type='text/javascript' src='../../static/js/dlquery.js' th:src='@{/static/js/dlquery.js}'></script>
-
+    <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js'
+            th:src='@{/static/js/gaphu-0.0.9.js}'></script>
 </head>
 
 <body>
 
-<div id='title' th:fragment='title'>
+<div id='title' th:fragment="title (search)">
     <h1><img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
         <a th:href='@{/}' th:text="${projectInfo.name}">Project Name</a></h1>
     <a style='display: none;' href='#content'>skip to content</a>
     <div id="entityfinder" th:fragment="entityfinder">
         <form id='findForm' method='get'>
-            <input id='find' class='autocomplete' type='text' name='input' placeholder='search...'/>
+            <input id='find' class='autocomplete' type='text' name='search' placeholder='search...'/>
+            <input th:if="${search}" class="search-icon" type='submit' value="" />
         </form>
 
         <script type='text/javascript'>
@@ -79,6 +85,7 @@
         <a th:href='@{/dataproperties/}'>Data</a> /
         <a th:href='@{/annotationproperties/}'>Annotation</a></li>
     <li><a th:href='@{/datatypes/}'>Datatypes</a></li>
+    <li><a th:href='@{/axioms/}'>Axioms</a></li>
     <li><a th:href='@{/dlquery/}'>DL Query</a></li>
 
     <li>Usage:
@@ -98,33 +105,34 @@
 </div>
 
 <!-- paging -->
-<span th:fragment="paged (data)" th:switch="${(data.start == 1) and (data.pageSize == data.total)}">
+<span class="paging" th:fragment="paged (data, componentName)" th:switch="${(data.start == 1) and (data.pageSize == data.total)}">
     <span th:case="${true}" th:text='${"(" + data.total + ")"}'>(2)</span>
-    <span th:case="${false}"
-          th:with="urlBuilder=${(urlBuilder != null) ? urlBuilder : T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+    <span th:case="${false}">
 
-        <span th:switch="${data.start gt 1}">
+        <span class="paging-arrow" th:switch="${data.start gt 1}">
             <a th:case="${true}"
                th:with="start=${data.start-data.pageSize gt 1 ? data.start-data.pageSize : 1}"
-               th:href='${urlBuilder.replaceQueryParam("start", start).replaceQueryParam("pageSize", data.pageSize).toUriString()}'>&lt; prev</a>
-            <span th:case="${false}">&lt; prev</span>
+               th:href='${pageURIScheme.updateForPage(componentName, start, data.pageSize)}'>&#8678;</a>
+            <span th:case="${false}">&#8678;</span>
         </span>
 
-        <span th:text='${"(" + data.start + "-" + (data.start+data.pageSize-1) + " of " + data.total + ")"}'>(1-20 of 100)</span>
+        <span th:with="end=${T(java.lang.Math).min(data.total, data.start + data.pageSize-1)}"
+                th:text='${"(" + data.start + "-" + end + " of " + data.total + ")"}'>(1-20 of 100)</span>
 
-        <span th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
+        <span class="paging-arrow" th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
             <a th:case="${true}"
-               th:href='${urlBuilder.replaceQueryParam("start", start).replaceQueryParam("pageSize", data.pageSize).toUriString()}'>next &gt;</a>
-            <span th:case="${false}">next &gt;</span>
+               th:href='${pageURIScheme.updateForPage(componentName, start, data.pageSize)}'>&#8680;</a>
+            <span th:case="${false}">&#8680;</span>
         </span>
     </span>
 </span>
 
 
-<div th:class='${"characteristic " + ch.name.replaceAll(" ", "_").toLowerCase()}' th:fragment="characteristic (ch)">
+<div th:with='name=${T(org.coode.www.util.PagingUtils).getIdFor(ch.name)}'
+     th:class='${"characteristic " + name}' th:fragment="characteristic (ch)">
 
     <h4 th:text='${ch.name}'>Some Characteristic</h4>
-    <span th:replace="base::paged (${ch.getPageData()})">(2)</span>
+    <span th:replace="base::paged (${ch.getPageData()}, ${name})">(2)</span>
     <ul th:remove="all-but-first">
         <li class="asserted" th:each="object : ${ch.objects}">
             <span class="owlobject" th:utext="${mos.render(object.getOWLObject())}">
@@ -220,14 +228,14 @@
     </ul>
 </li>
 
-<div class='owlselector' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
+<div class='owlselector primary' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${title}">
         <li th:replace="base::tree(${hierarchy})">Top Thing</li>
     </ul>
 </div>
 
-<div class='owlselector' th:fragment="secondaryhierarchy (title, hierarchy, inverse)" th:if="${hierarchy != null}">
+<div class='owlselector secondary' th:fragment="secondaryhierarchy (title, hierarchy, inverse)" th:if="${hierarchy != null}">
     <h4>
         <span th:if="${inverse}" class="keyword">InverseOf</span>
         <a th:href="'.?inverse=' + ${!inverse}" th:text="${title}">Title</a>
@@ -239,7 +247,7 @@
     </ul>
 </div>
 
-<div class='owlselector' th:fragment="list (title, entities)" th:if="${entities != null}">
+<div class='owlselector primary' th:fragment="list (title, entities)" th:if="${entities != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${type}">
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
@@ -248,8 +256,42 @@
     </ul>
 </div>
 
+
+<div id='content' th:fragment="owlentity">
+    <h2 th:text="${title}">An OWLClass</h2>
+    <div class="iri">
+        <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
+    </div>
+
+    <div th:replace="base :: image (${image})">
+        Possibly an image
+    </div>
+
+    <div th:replace="base :: sound (${sound})">
+        Possibly a sound
+    </div>
+
+    <div th:replace="base :: map (${geo})">
+        Possibly a map
+    </div>
+
+    <div class="characteristics">
+        <div th:each="ch : ${characteristics}" th:remove="tag">
+            <div th:replace="base :: characteristic (${ch})">
+                A characteristic
+            </div>
+        </div>
+
+        <div th:replace="base :: metrics (${metrics})">
+            Possibly some metrics
+        </div>
+    </div>
+
+</div>
+
+
 <p class='footer' th:fragment='footer'>
-    <a href="#" id="aurebesh" class="aurebesh">aurebesh</a>
+    <a href="#" id="darkmode" class="light">darkmode</a>
     <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}">Project Link</a>
     <a href='https://github.com/nickdrummond/ontology-browser/'>rendered with Ontology Browser</a>
     <a th:href='${"mailto:" + projectInfo.contact}'>Contact</a>

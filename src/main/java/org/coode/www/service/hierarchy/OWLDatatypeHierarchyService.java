@@ -2,9 +2,9 @@ package org.coode.www.service.hierarchy;
 
 import com.google.common.collect.Sets;
 import org.coode.www.model.Tree;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.impl.OWLDatatypeNode;
 
@@ -17,14 +17,13 @@ import java.util.stream.Collectors;
 public class OWLDatatypeHierarchyService extends AbstractHierarchyService<OWLDatatype> {
 
     private final OWLDatatypeNode topNode;
-    private final Set<OWLOntology> ontologies;
+    private final OWLOntology ont;
 
-    public OWLDatatypeHierarchyService(final OWLDataFactory dataFactory,
-                                       final Set<OWLOntology> ontologies,
+    public OWLDatatypeHierarchyService(final OWLOntology ont,
                                        final Comparator<? super Tree<OWLDatatype>> comparator) {
         super(comparator);
-        this.ontologies = ontologies;
-        this.topNode = new OWLDatatypeNode(dataFactory.getTopDatatype());
+        this.ont = ont;
+        this.topNode = new OWLDatatypeNode(ont.getOWLOntologyManager().getOWLDataFactory().getTopDatatype());
     }
 
     @Override
@@ -46,9 +45,8 @@ public class OWLDatatypeHierarchyService extends AbstractHierarchyService<OWLDat
     protected Set<Set<OWLDatatype>> subs(OWLDatatype cls) {
         Set<Set<OWLDatatype>> subs = new HashSet<>();
         if (topNode.contains(cls)){
-            for (OWLOntology ont : ontologies){
-                subs.addAll(ont.getDatatypesInSignature().stream().map(Set::of).collect(Collectors.toSet()));
-            }
+            subs.addAll(ont.getDatatypesInSignature(Imports.INCLUDED).stream()
+                    .map(OWLDatatypeNode::new).collect(Collectors.toSet()));
         }
         return subs;
     }
