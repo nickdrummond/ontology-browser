@@ -59,8 +59,6 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
     }
 
     @Override
-    public Comparator<Tree<OWLNamedIndividual>> getComparator(
-            OWLObjectProperty orderByProperty, OWLOntology ont) {
     public Comparator<Tree<Relation<OWLObjectProperty>>> getComparator(OWLObjectProperty orderByProperty, OWLOntology ont) {
         if (orderByProperty != null) {
             return new PropComparator(orderByProperty, ont);

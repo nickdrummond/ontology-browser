@@ -46,7 +46,7 @@ public class OWLDatatypeHierarchyService extends AbstractHierarchyService<OWLDat
         Set<Set<OWLDatatype>> subs = new HashSet<>();
         if (topNode.contains(cls)){
             subs.addAll(ont.getDatatypesInSignature(Imports.INCLUDED).stream()
-                    .map(OWLDatatypeNode::new).collect(Collectors.toSet()));
+                    .map(Set::of).collect(Collectors.toSet()));
         }
         return subs;
     }

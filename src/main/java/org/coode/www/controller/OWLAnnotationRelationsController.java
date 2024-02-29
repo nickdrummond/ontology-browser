@@ -8,6 +8,7 @@ import org.coode.www.renderer.RendererFactory;
 import org.coode.www.service.OWLAnnotationPropertiesService;
 import org.coode.www.service.OWLIndividualsService;
 import org.coode.www.service.hierarchy.AbstractRelationsHierarchyService;
+import org.coode.www.service.hierarchy.Relation;
 import org.coode.www.url.CommonRelationsURLScheme;
 import org.coode.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -143,7 +144,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
                 "/relations/" + PATH, property).withQuery(request.getQueryString());
 
-        model.addAttribute("t", relationsHierarchyService.getChildren(individual));
+        model.addAttribute("t", relationsHierarchyService.getChildren(new Relation<>(property, individual)));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
 
         return CommonRelations.BASE_TREE;
