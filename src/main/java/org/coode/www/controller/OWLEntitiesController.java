@@ -63,8 +63,8 @@ public class OWLEntitiesController extends ApplicationController {
 
         if (results.size() == 1) {
             OWLObject owlObject = results.get(0).getOWLObject();
-            if (owlObject instanceof OWLAnnotationAssertionAxiom) {
-                Optional<IRI> iri = ((OWLAnnotationAssertionAxiom) owlObject).getSubject().asIRI();
+            if (owlObject instanceof OWLAnnotationAssertionAxiom ax) {
+                Optional<IRI> iri = ax.getSubject().asIRI();
                 OWLObject o = service.getEntities(iri.orElseThrow(), kit).iterator().next();
                 return "redirect:" + kit.getURLScheme().getURLForOWLObject(o);
             }

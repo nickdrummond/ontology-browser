@@ -44,7 +44,7 @@ public class PagingUtils {
                 .limit(pageSize)
                 .toList();
 
-        PageData pageData = new PageData(start, sortedAndPaged.size(), results.size());
+        PageData pageData = new PageData(start, pageSize, results.size());
 
         return new Characteristic(target, charName, sortedAndPaged, pageData);
     }
