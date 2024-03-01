@@ -58,16 +58,22 @@ public class OWLAxiomService {
             final Predicate<? super Map.Entry<OWLAxiom, String>> filter,
             int start,
             int pageSize) {
+
         List<AxiomWithMetadata> results = onts.stream()
                 .flatMap(o -> wrappedWithOntology(filterAxioms(search, o, sfp, filter), o))
                 .toList();
-        if (start > results.size()) {
-            throw new RuntimeException("Start out of range");
+
+        int size = results.size();
+
+        if (start > size) {
+            start = 1;
         }
+
         List<AxiomWithMetadata> paged = results.stream().skip(start-1L).limit(pageSize).toList();
+
         return new Characteristic(null, "Axioms containing \"" + search + "\"",
                 paged,
-                new PageData(start, paged.size(), results.size()));
+                size == 0 ? new PageData(1, 0, 0) : new PageData(start, pageSize, size));
     }
 
     private Stream<OWLAxiom> filterAxioms(
