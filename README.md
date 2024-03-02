@@ -3,6 +3,8 @@
 The browser loads a single OWL ontology (and its imports) on startup and 
 renders it for easy navigation.
 
+[Example using the Star Wars Ontology](https://star-wars-ontology.up.railway.app/) running on railway.app
+
 ![Image of Ontology browser](docs/astromech.png)
 
 ## Features
@@ -36,6 +38,13 @@ based on [Jetty 10](https://hub.docker.com/_/jetty/)  Alpine
 
 Run the image and navigate to http://localhost:8080
 
+## Deploy
+
+### railway.app
+
+You can deploy this on [railway.app](https://railway.app) with the button below and be up and running with just a few config variables.
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/hI-_yx?referralCode=-eh5ht)
+
 ### Configuration
 
 To load your own, set the root ontology location and reasoner root ontology IRI environment variables:
@@ -48,12 +57,6 @@ To load your own, set the root ontology location and reasoner root ontology IRI 
     PROJECT_CONTACT=<Email address of contact>
     LABEL_IRI=<IRI of the annotation property to use for rendering>
     RESTART_SECRET=<used for /restart endpoint secret param>
-
-## Notes
-
-This is a "fork" of the ontology browser from the [CO-ODE project](https://code.google.com/p/ontology-browser/) now hosted at https://github.com/co-ode-owl-plugins/ontology-browser.
-
-Unlike v1, there is no storing of sessions/multi config.
 
 ## SKOS/SKOS-XL support
 
@@ -74,6 +77,19 @@ Concept "C" will be rendered as "C Label" if the conventional SKOS-XL reified la
 
 ## Implementation
 
-This is implemented using Java 20, Spring MVC, [OWLAPI](https://github.com/owlcs/owlapi), Thymeleaf and the OWLAPI.
+This is implemented using Java 20, Spring MVC, [OWLAPI](https://github.com/owlcs/owlapi) and Thymeleaf.
 
 Some dependencies are local (in /repo) as they do not exist on any mvn repo.
+
+
+## Status
+
+This is a personal project and all development is on a purely "as time allows" basis.
+
+There is no release schedule or plan as I currently have no known users.
+If you wish to use this project in a production environment, please consider contacting me and considering
+funding development and support. Alternatively, you may fork the project and maintain it yourself.
+
+This is a "fork" of the ontology browser from the [CO-ODE project](https://code.google.com/p/ontology-browser/) now hosted at https://github.com/co-ode-owl-plugins/ontology-browser.
+
+Unlike v1, there is no storing of sessions/multi config.
