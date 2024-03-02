@@ -105,12 +105,12 @@
 </div>
 
 <!-- paging -->
-<span class="paging" th:fragment="paged (data, componentName)" th:switch="${(data.start == 1) and (data.pageSize == data.total)}">
+<span class="paging" th:fragment="paged (data, componentName)" th:switch="${(data.start == 1) and (data.pageSize >= data.total)}">
     <span th:case="${true}" th:text='${"(" + data.total + ")"}'>(2)</span>
     <span th:case="${false}">
 
         <span class="paging-arrow" th:switch="${data.start gt 1}">
-            <a th:case="${true}"
+            <a th:case="${true}" rel="nofollow"
                th:with="start=${data.start-data.pageSize gt 1 ? data.start-data.pageSize : 1}"
                th:href='${pageURIScheme.updateForPage(componentName, start, data.pageSize)}'>&#8678;</a>
             <span th:case="${false}">&#8678;</span>
@@ -120,7 +120,7 @@
                 th:text='${"(" + data.start + "-" + end + " of " + data.total + ")"}'>(1-20 of 100)</span>
 
         <span class="paging-arrow" th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
-            <a th:case="${true}"
+            <a th:case="${true}" rel="nofollow"
                th:href='${pageURIScheme.updateForPage(componentName, start, data.pageSize)}'>&#8680;</a>
             <span th:case="${false}">&#8680;</span>
         </span>
