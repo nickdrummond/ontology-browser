@@ -17,6 +17,19 @@
     <link rel='stylesheet' type='text/css' href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
     <link rel='stylesheet' type='text/css' href="../../static/css/events.css" th:href='@{/static/css/events.css}'/>
 
+    <script type='text/javascript' th:inline='javascript'>
+        const baseUrl = '/';
+        const isQuery = false;
+        const isTree = false;
+        const rewriteLinks = false;
+    </script>
+    <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
+            th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
+
+    <script type='module' src='../../static/js/app.js'
+            th:src='@{/static/js/app.js}'>
+    </script>
+
     <script type='text/javascript' src='../../static/js/timeline.js' th:src='@{/static/js/timeline.js}'></script>
 </head>
 

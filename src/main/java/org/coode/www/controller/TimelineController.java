@@ -44,9 +44,6 @@ public class TimelineController extends ApplicationController {
         this.ontologiesService = ontologiesService;
     }
 
-
-    // TODO highlight events with a given participant
-    // TODO YEAR!
     @GetMapping(path = "/starwars")
     public String starwarsTimeline(
             final @RequestParam(defaultValue = "A_long_time_ago") String event,
@@ -108,7 +105,7 @@ public class TimelineController extends ApplicationController {
 
         EventFactory fac = new EventFactory(duringTree, afterTree);
 
-        model.addAttribute("title", "Timeline");
+        model.addAttribute("title", "Timeline: " + event);
         model.addAttribute("root", fac.buildTimelineFromEvent(target, depth));
 
         // TODO link to the filtered timeline page?

@@ -94,7 +94,7 @@ div.events {
 }
 
 .events .parent>.event-label a {
-    color: rgba(37, 78, 94, 0.49) !important;
+    color: rgba(48, 115, 141, 0.5) !important;
 }
 
 .events .parallel {
@@ -136,4 +136,14 @@ div.events {
 
 .events .converge .prop, .events .diverge .prop {
     flex-grow: 1;
+}
+
+.dark .events .event-label {
+    color: white;
+    background-color: #121212;
+}
+
+.dark .events .parent>.event-label a {
+    color: rgba(48, 115, 141, 0.5) !important;
+    background: none;
 }
