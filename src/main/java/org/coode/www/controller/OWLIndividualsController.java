@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Controller
@@ -61,8 +62,8 @@ public class OWLIndividualsController extends ApplicationController {
         @RequestParam(required=false) final boolean inferred,
         @RequestParam(required = false) List<With> with,
         final Model model,
-        final HttpServletRequest request
-    ) throws NotFoundException {
+        final HttpServletRequest request,
+        final HttpServletResponse response) throws NotFoundException {
 
         final OWLOntology ont = (ontId != null) ?
                 ontService.getOntologyFor(ontId, kit) :
@@ -80,7 +81,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLIndividualFragment(individualId, ontId, inferred, with, model, request);
+        getOWLIndividualFragment(individualId, ontId, inferred, with, model, request, response);
 
         return "owlentity";
     }
@@ -89,13 +90,13 @@ public class OWLIndividualsController extends ApplicationController {
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/{individualId}/fragment")
     public String getOWLIndividualFragment(
-        @PathVariable final String individualId,
-        @RequestParam(required=false) final String ontId,
-        @RequestParam(required=false) final boolean inferred,
-        @RequestParam(required = false) List<With> with,
-        final Model model,
-        final HttpServletRequest request
-    ) throws NotFoundException {
+            @PathVariable final String individualId,
+            @RequestParam(required=false) final String ontId,
+            @RequestParam(required=false) final boolean inferred,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response) throws NotFoundException {
 
         final OWLOntology ont = (ontId != null) ?
                 ontService.getOntologyFor(ontId, kit) :
@@ -145,6 +146,8 @@ public class OWLIndividualsController extends ApplicationController {
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
         model.addAttribute("mos", owlRenderer);
+
+        response.addHeader("title", projectInfo.getName() + ": " + title);
 
         return "owlentityfragment";
     }

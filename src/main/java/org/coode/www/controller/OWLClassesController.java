@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -55,7 +56,8 @@ public class OWLClassesController extends ApplicationController {
             @PathVariable final String classId,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request) throws NotFoundException {
+            final HttpServletRequest request,
+            final HttpServletResponse response) throws NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
@@ -70,7 +72,7 @@ public class OWLClassesController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLClassFragment(classId, with, model, request);
+        getOWLClassFragment(classId, with, model, request, response);
 
         return "owlentity";
     }
@@ -82,7 +84,8 @@ public class OWLClassesController extends ApplicationController {
             @PathVariable final String classId,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request) throws NotFoundException {
+            final HttpServletRequest request,
+            final HttpServletResponse response) throws NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, kit);
 
@@ -114,6 +117,7 @@ public class OWLClassesController extends ApplicationController {
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 
+        response.addHeader("title", projectInfo.getName() + ": " + title);
         return "owlentityfragment";
     }
 

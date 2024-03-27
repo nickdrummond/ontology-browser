@@ -55,9 +55,9 @@ public class OWLOntologiesController extends ApplicationController {
     public String getOntology(
         @PathVariable final String ontId,
         @RequestParam(required = false) List<With> with,
+        final Model model,
         final HttpServletRequest request,
-        final Model model
-    ) throws NotFoundException {
+        final HttpServletResponse response) throws NotFoundException {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -69,7 +69,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         model.addAttribute("hierarchy", ontologyTree);
 
-        getOntologyFragment(ontId, with, request, model);
+        getOntologyFragment(ontId, with, model, request, response);
 
         return "owlentity";
     }
@@ -80,9 +80,9 @@ public class OWLOntologiesController extends ApplicationController {
     public String getOntologyFragment(
         @PathVariable final String ontId,
         @RequestParam(required = false) List<With> with,
+        final Model model,
         final HttpServletRequest request,
-        final Model model
-    ) throws NotFoundException {
+        final HttpServletResponse response) throws NotFoundException {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -103,6 +103,8 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
+
+        response.addHeader("title", projectInfo.getName() + ": " + title);
 
         return "owlentityfragment";
     }
