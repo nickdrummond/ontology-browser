@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 
@@ -54,9 +55,9 @@ public class OWLObjectPropertiesController extends ApplicationController {
     public String getOWLObjectProperty(
         @PathVariable final String propertyId,
         @RequestParam(required = false) List<With> with,
+        final Model model,
         final HttpServletRequest request,
-        final Model model
-    ) throws NotFoundException {
+        final HttpServletResponse response) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
 
@@ -73,7 +74,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLObjectPropertyFragment(propertyId, with, request, model);
+        getOWLObjectPropertyFragment(propertyId, with, model, request, response);
 
         return "owlentity";
     }
@@ -81,11 +82,11 @@ public class OWLObjectPropertiesController extends ApplicationController {
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}/fragment")
     public String getOWLObjectPropertyFragment(
-        @PathVariable final String propertyId,
-        @RequestParam(required = false) List<With> with,
-        final HttpServletRequest request,
-        final Model model
-    ) throws NotFoundException {
+            @PathVariable final String propertyId,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response) throws NotFoundException {
 
         OWLOntology ont = kit.getActiveOntology();
 
@@ -105,6 +106,8 @@ public class OWLObjectPropertiesController extends ApplicationController {
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
+
+        response.addHeader("title", projectInfo.getName() + ": " + entityName);
 
         return "owlentityfragment";
     }

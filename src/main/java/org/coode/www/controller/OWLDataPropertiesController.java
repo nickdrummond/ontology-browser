@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 
@@ -54,9 +55,9 @@ public class OWLDataPropertiesController extends ApplicationController {
         @PathVariable final String propertyId,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
+        final Model model,
         final HttpServletRequest request,
-        final Model model
-    ) throws NotFoundException {
+        final HttpServletResponse response) throws NotFoundException {
 
         OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
 
@@ -72,7 +73,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLDataPropertyFragment(propertyId, pageSize, with, request, model);
+        getOWLDataPropertyFragment(propertyId, pageSize, with, model, request, response);
 
         return "owlentity";
     }
@@ -84,9 +85,9 @@ public class OWLDataPropertiesController extends ApplicationController {
         @PathVariable final String propertyId,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
+        final Model model,
         final HttpServletRequest request,
-        final Model model
-    ) throws NotFoundException {
+        final HttpServletResponse response) throws NotFoundException {
 
         OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
 
@@ -106,6 +107,8 @@ public class OWLDataPropertiesController extends ApplicationController {
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
+
+        response.addHeader("title", projectInfo.getName() + ": " + entityName);
 
         return "owlentityfragment";
     }

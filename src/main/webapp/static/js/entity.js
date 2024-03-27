@@ -1,37 +1,28 @@
-import {BUSY_IMAGE, getXmlHttpObject, setParameter} from "./util.js";
+import {BUSY_IMAGE} from "./util.js";
 
-export function loadEntity(ajaxReq, rewriteUrl, entityLoadedCallback) {
-
-    const xmlHttpReq = getXmlHttpObject();
-
-    if (xmlHttpReq == null) {
-        alert("Browser does not support HTTP Request");
-    } else {
-        xmlHttpReq.open("GET", ajaxReq, true);
-
-        xmlHttpReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-        xmlHttpReq.onload = function () {
-            const status = xmlHttpReq.status;
-            const response = xmlHttpReq.responseText;
-
-            if (status === 200) { // OK
+export function loadEntity(url, rewriteUrl, entityLoadedCallback) {
+    fetch(url)
+        .then(response => {
+            response.text().then(html => {
                 const throwaway = document.createElement('span');
-                throwaway.innerHTML = response;
+                throwaway.innerHTML = html;
                 document.getElementById("content").replaceWith(throwaway.firstChild);
+            });
 
-                if (rewriteUrl) {
-                    window.history.pushState({}, '', rewriteUrl); // make sure URL follows
-                }
-                // TODO title
-                entityLoadedCallback();
-            } else {
-                console.log(ajaxReq + ": error!", status + ":" + response);
+            if (rewriteUrl) {
+                window.history.pushState({}, '', rewriteUrl); // make sure URL follows
             }
-        };
 
-        xmlHttpReq.send();
+            if (response.headers.has("title")) {
+                window.document.title = response.headers.get("title");
+            }
 
-        document.getElementById("content").innerHTML = BUSY_IMAGE;
-    }
+            entityLoadedCallback();
+        })
+        .catch((err) => {
+            console.log(err);
+            document.getElementById("content").innerHTML = "";
+        })
+
+    document.getElementById("content").innerHTML = BUSY_IMAGE;
 }
