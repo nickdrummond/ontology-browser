@@ -30,7 +30,7 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
         const cls = getParameter("class");
         if (cls) {
             const url = baseUrl + "classes/" + cls + "/fragment";
-            loadEntity( url, null, entityLoadedCallback);
+            loadEntity(url, null, entityLoadedCallback);
         }
     }
 
@@ -59,47 +59,36 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 
     function sendSubQuery(expression, minus, order, syntax, queryType, start, pageSize, retry) {
 
-        const xmlHttpReq = getXmlHttpObject();
+        let req = queryURL + "?" + PARAM_QUERYTYPE + "=" + queryType + "&" +
+            PARAM_EXPRESSION + "=" + expression;
 
-        if (xmlHttpReq == null) {
-            alert("Browser does not support HTTP Request");
-        } else {
-            let req = queryURL + "?" + PARAM_QUERYTYPE + "=" + queryType + "&" +
-                PARAM_EXPRESSION + "=" + expression;
+        if (minus) {
+            req = req + "&" + PARAM_MINUS + "=" + minus;
+        }
+        if (order) {
+            req = req + "&" + PARAM_ORDER + "=" + order;
+        }
+        if (start) {
+            req = req + "&start=" + start;
+        }
+        if (pageSize) {
+            req = req + "&pageSize=" + pageSize;
+        }
 
-            if (minus) {
-                req = req + "&" + PARAM_MINUS + "=" + minus;
-            }
-            if (order) {
-                req = req + "&" + PARAM_ORDER + "=" + order;
-            }
-            if (start) {
-                req = req + "&start=" + start;
-            }
-            if (pageSize) {
-                req = req + "&pageSize=" + pageSize;
-            }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-            xmlHttpReq.open("GET", req, true);
-
-            xmlHttpReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-
-            xmlHttpReq.onload = function () {
-                const response = xmlHttpReq.responseText;
-                const status = xmlHttpReq.status;
-
-                if (status === 200) { // OK
-                    resultsForm.innerHTML = response;
-                    rewriteLinks("Class", "classes"); // note Capitalised
-                    rewriteLinks("individual", "individuals");
-                } else {
-                    resultWrite(queryType + ": error!", status + ":" + response);
-                }
-            };
-
-            // timeouts
-            xmlHttpReq.timeout = 10000;
-            xmlHttpReq.ontimeout = function (e) {
+        fetch(req, {
+            signal: controller.signal
+        }).then(response => {
+            clearTimeout(timeoutId);
+            response.text().then(html => {
+                resultsForm.innerHTML = html;
+                rewriteLinks("Class", "classes"); // note Capitalised
+                rewriteLinks("individual", "individuals");
+            });
+        }).catch(err => {
+            if (err.name === "AbortError") {
                 if (retry <= MAX_RETRIES) {
                     const t = 5 * retry; // retry at greater delay each time
                     resultWrite(queryType + ": timeout", "Slow query. Retrying in " + t + " seconds...");
@@ -108,14 +97,16 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
                     }, t * 1000);
                 } else {
                     resultWrite(queryType + ": timeout", "Perhaps your query is a little heavy for this poor server." +
-                        "Please <a href='https://github.com/nickdrummond/star-wars-ontology/issues'>let us know</a>");
+                        " Please <a href='https://github.com/nickdrummond/star-wars-ontology/issues'>let us know</a>");
                 }
             }
+            else {
+                console.log(err);
+                resultWrite(queryType + ": error!", "error fetching" + ": " + err);
+            }
+        });
 
-            xmlHttpReq.send();
-
-            resultWrite(queryType + BUSY_IMAGE, "");
-        }
+        resultWrite(queryType + BUSY_IMAGE, "");
     }
 
     function resultWrite(header, message) {
@@ -126,7 +117,7 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 
 ///////////////////////
 
-    // TODO the links should be set correctly in the backend
+// TODO the links should be set correctly in the backend
     function rewriteLinks(type, pluralType) {
         document.querySelectorAll(`#resultsForm a.${type}`).forEach(link => {
             let originalUrl = link.getAttribute("href");
