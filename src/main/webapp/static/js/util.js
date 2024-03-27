@@ -1,15 +1,5 @@
 export const BUSY_IMAGE = "<img class='busy' alt='Loading...' src='" + baseUrl + "static/images/busy.gif" + "' />";
 
-export function getXmlHttpObject() {
-    let objXMLHttp = null;
-    if (window.XMLHttpRequest) { // for IE7 and other standard browsers
-        objXMLHttp = new XMLHttpRequest();
-    } else if (window.ActiveXObject) { // for IE6 and earlier
-        objXMLHttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    return objXMLHttp;
-}
-
 // just shorthand for below
 export function getValueOfElementByID(id) {
     return getValueForElement(document.getElementById(id));
@@ -30,7 +20,6 @@ export function getValueForElement(element) {
             return "";
     }
 }
-
 
 export function getParameter(key) {
     return new URLSearchParams(window.location.search).get(key);

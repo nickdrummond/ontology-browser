@@ -1,4 +1,4 @@
-import {getXmlHttpObject, getValueOfElementByID, getParameter, getUrlWithParameter} from "./util.js";
+import {getValueOfElementByID, getParameter, getUrlWithParameter} from "./util.js";
 import {loadEntity} from "./entity.js";
 import {BUSY_IMAGE} from "./util.js";
 

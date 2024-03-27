@@ -5,7 +5,7 @@ $.fn.exists = function () {
     return this.length !== 0;
 }
 
-$.fn.replaceWithPush = function(a) {
+$.fn.replaceWithPush = function (a) {
     const $a = $(a);
 
     this.replaceWith($a);
@@ -26,8 +26,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
             }
             createTreeListeners(primaryTree, false);
             createTreeListeners(secondaryTree, isRewriteLinks);
-        }
-        else if (primaryTree) {
+        } else if (primaryTree) {
             if (isRewriteLinks) {
                 rewriteLinks(null); // default to the main tree
             }
@@ -36,7 +35,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
     }
 
     function scrollTreeToSelection() {
-        $(".minihierarchy").each(function() {
+        $(".minihierarchy").each(function () {
             const active = $("." + ACTIVE_ENTITY, this);
             if (active.size() > 0) {
                 // let js work out getting into the pane
@@ -63,10 +62,9 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
 
     function handleExpand(li, isRewriteLinks) {
         const children = $("ul", li);
-        if (children.length > 0){
+        if (children.length > 0) {
             children.slideToggle('fast');
-        }
-        else{
+        } else {
             li.append(getChildren(li, isRewriteLinks));
         }
     }
@@ -86,21 +84,19 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
             url = url + '?' + nodeUrlPieces[1];
         }
 
-        $.ajax({
-            url: url,
-            context: li,
-            success: function(data, textStatus, request){
-                const expanded = li.replaceWithPush(data); // replace the li with an expanded version
-                if (isRewriteLinks) {
-                    rewriteLinks(expanded[0]);
-                }
-            },
-            error: function(request, textStatus, errorThrown){
-                // get rid of the spinner and replace with an error message
-                console.error(errorThrown);
-                $("ul", this).html("Sorry, cannot get children - " + textStatus);
-            }
-        });
+        fetch(url)
+            .then(response => {
+                response.text().then(html => {
+                    const expanded = li.replaceWithPush(html); // replace the li with an expanded version
+                    if (isRewriteLinks) {
+                        rewriteLinks(expanded[0]);
+                    }
+                })
+            })
+            .catch(err => {
+                console.error(err);
+                $("ul", this).html("???");
+            });
 
         return childList;
     }
@@ -128,7 +124,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
             // this depends on URLScheme staying in sync
 
             let pathElements = originalUrl.split("/");
-            let entityId = pathElements[pathElements.length-2];
+            let entityId = pathElements[pathElements.length - 2];
 
             // but only refresh the entity part of the page
             link.onclick = function (e) {
