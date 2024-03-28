@@ -13,6 +13,7 @@ $.fn.replaceWithPush = function (a) {
 };
 
 const ACTIVE_ENTITY = "active-entity";
+const MINIHIERARCHY = '.minihierarchy';
 
 export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
 
@@ -35,16 +36,17 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
     }
 
     function scrollTreeToSelection() {
-        $(".minihierarchy").each(function () {
-            const active = $("." + ACTIVE_ENTITY, this);
-            if (active.size() > 0) {
+        const h = document.querySelectorAll(MINIHIERARCHY);
+        h.forEach(hierarchy => {
+            const active = hierarchy.querySelectorAll("." + ACTIVE_ENTITY);
+            if (active.length > 0) {
                 // let js work out getting into the pane
-                active.get(0).scrollIntoView(false);
+                active.item(0).scrollIntoView(false);
                 // then reposition to the middle
-                const p = $(this).scrollTop();
+                const p = hierarchy.scrollTop;
                 if (p > 0) {
-                    const h = $(this).height();
-                    $(this).scrollTop(p + (0.5 * h));
+                    const h = hierarchy.clientHeight;
+                    hierarchy.scrollTo(0, p + (0.5 * h));
                 }
             }
         });
@@ -52,34 +54,35 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
 
     function createTreeListeners(parent, isRewriteLinks) {
         // add a single listener for expandable tree nodes
-        parent.onclick = (e) => {
-            const t = $(e.target).closest('span.expandable');
-            if (t.exists()) {
-                handleExpand(t.parent(), isRewriteLinks);
+        parent.addonclick = (e) => {
+            const t = e.target.closest('span.expandable');
+            if (t) {
+                handleExpand(t.parentNode, isRewriteLinks);
             }
         };
     }
 
     function handleExpand(li, isRewriteLinks) {
-        const children = $("ul", li);
+        const children = li.querySelectorAll("ul");
         if (children.length > 0) {
-            children.slideToggle('fast');
+            $(children).slideToggle('fast'); // TODO remove JQuery slideToggle - see https://codepen.io/jorgemaiden/pen/YgGZMg
         } else {
             li.append(getChildren(li, isRewriteLinks));
         }
     }
 
     function getChildren(li, isRewriteLinks) {
-        var childList = $(`<ul><li>${BUSY_IMAGE}</li></ul>`);
+        const childList = document.createElement('ul');
+        childList.innerHTML = `<li>${BUSY_IMAGE}</li>`;
 
-        var query = 'children';
-        if (li.closest('.minihierarchy').hasClass('Individuals')) {
+        let query = 'children';
+        if (li.closest(MINIHIERARCHY).classList.contains('Individuals')) {
             query = 'instances';
         }
 
-        var nodeUrl = $('a', li).first().attr('href');
-        var nodeUrlPieces = nodeUrl.split('?');
-        var url = nodeUrlPieces[0] + query;
+        const nodeUrl = li.querySelector('a').href;
+        const nodeUrlPieces = nodeUrl.split('?');
+        let url = nodeUrlPieces[0] + query;
         if (nodeUrlPieces[1]) {
             url = url + '?' + nodeUrlPieces[1];
         }
@@ -87,15 +90,20 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
         fetch(url)
             .then(response => {
                 response.text().then(html => {
-                    const expanded = li.replaceWithPush(html); // replace the li with an expanded version
+                    const dummy = document.createElement("div");
+                    dummy.innerHTML = html;
+                    let expandedNode = dummy.firstChild;
+                    li.replaceWith(expandedNode); // replace the li with an expanded version
                     if (isRewriteLinks) {
-                        rewriteLinks(expanded[0]);
+                        rewriteLinks(expandedNode);
                     }
                 })
             })
             .catch(err => {
                 console.error(err);
-                $("ul", this).html("???");
+                const dummy = document.createElement("ul");
+                dummy.innerHTML = "<li>???</li>";
+                li.querySelector("ul").replaceWith(dummy);
             });
 
         return childList;
@@ -115,7 +123,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
     function rewriteLinksFor(type, pluralType, parentElement) {
         const parent = parentElement ?? document.querySelector(".owlselector");
 
-        // TODO a single listener for all links - with closest
+        // TODO a single listener for all links - with closest - but already have createTreeListeners
         parent.querySelectorAll(`a.${type}`).forEach(link => {
             let originalUrl = link.getAttribute("href");
 
