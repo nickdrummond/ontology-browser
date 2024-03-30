@@ -19,16 +19,28 @@ import java.net.URI;
 @Configuration
 public class KitConfig {
 
+    @Value("${redirect.root}")
+    protected String redirectRoot;
+
     protected final Logger logger = LoggerFactory.getLogger(KitConfig.class);
 
     @Bean
     public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}")   URI root,
                                  @Value("${renderer.annotation.uri}")  URI labelURI,
                                  @Value("${renderer.annotation.lang}") String labelLang) throws OWLOntologyCreationException {
-        logger.info("Loading {}", root);
-        OntologyLoader loader = new OntologyLoader();
         OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
-        OWLOntology ont = loader.loadOntologies(mngr, root);
+        OntologyLoader loader = new OntologyLoader();
+
+        OWLOntology ont;
+        if (redirectRoot == null) {
+            // Only load the ontologies if we don't have a redirect
+            logger.info("Loading {}", root);
+            ont = loader.loadOntologies(mngr, root);
+        }
+        else {
+            logger.info("Not loading ontologies as redirect in place");
+            ont = mngr.createOntology();
+        }
         OWLHTMLKit kit = new OWLHTMLKitImpl(mngr, ont);
         kit.setLabelParams(labelURI, labelLang);
         return kit;
