@@ -3,7 +3,7 @@
 The browser loads a single OWL ontology (and its imports) on startup and 
 renders it for easy navigation.
 
-[Example using the Star Wars Ontology](https://star-wars-ontology.up.railway.app/) running on railway.app
+[Example using the Star Wars Ontology](https://www.star-wars-ontology.co.uk/)
 
 ![Image of Ontology browser](docs/astromech.png)
 
