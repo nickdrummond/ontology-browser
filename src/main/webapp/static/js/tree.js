@@ -54,7 +54,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
 
     function createTreeListeners(parent, isRewriteLinks) {
         // add a single listener for expandable tree nodes
-        parent.addonclick = (e) => {
+        parent.onclick = (e) => {
             const t = e.target.closest('span.expandable');
             if (t) {
                 handleExpand(t.parentNode, isRewriteLinks);
