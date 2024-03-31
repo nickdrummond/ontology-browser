@@ -12,10 +12,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.WebContentInterceptor;
+
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @ComponentScan({"org.coode.www.renderer"})
@@ -38,7 +42,10 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**").addResourceLocations("/static/");
+        registry
+                .addResourceHandler("/static/**")
+                .addResourceLocations("/static/")
+                .setCacheControl(CacheControl.maxAge(1, TimeUnit.DAYS));
     }
 
     @Bean
@@ -55,5 +62,10 @@ public class MvcConfig implements WebMvcConfigurer {
         else {
             log.info("No redirect set");
         }
+
+        WebContentInterceptor interceptor = new WebContentInterceptor();
+        interceptor.addCacheMapping(CacheControl.maxAge(1, TimeUnit.HOURS)
+                .mustRevalidate(), "/**");
+        registry.addInterceptor(interceptor);
     }
 }
