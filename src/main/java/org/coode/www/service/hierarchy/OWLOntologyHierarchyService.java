@@ -3,10 +3,7 @@ package org.coode.www.service.hierarchy;
 import org.coode.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntology> {
 
@@ -20,7 +17,7 @@ public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntol
 
     @Override
     public Tree<OWLOntology> getPrunedTree(OWLOntology focus) {
-        return getTree(rootOntology);
+        return getTree(rootOntology, new HashSet<>());
     }
 
     @Override
@@ -28,11 +25,17 @@ public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntol
         throw new RuntimeException("Ouch");
     }
 
-    private Tree<OWLOntology> getTree(OWLOntology ont) {
+    private Tree<OWLOntology> getTree(OWLOntology ont, Set<OWLOntology> visited) {
+        if (visited.contains(ont)){ // detect loops
+            return new Tree<>(Collections.singleton(ont), Collections.emptyList());
+        }
+        // TODO cache
+
+        visited.add(ont);
         List<Tree<OWLOntology>> children = ont.getDirectImports().stream()
-                .map(this::getTree)
+                .map(o -> getTree(o, visited))
                 .sorted(comparator)
-                .collect(Collectors.toList());
+                .toList();
         return new Tree<>(Collections.singleton(ont), children);
     }
 }

@@ -1,6 +1,7 @@
-package org.coode.www.kit.impl;
+package org.coode.www.oi;
 
 import com.google.common.collect.Maps;
+import org.coode.www.kit.impl.BaseURIMapper;
 import org.coode.www.util.OWLUtils;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
@@ -27,14 +28,17 @@ public class OntologyLoader {
         }
 
         OWLOntologyLoaderListener ontLoadListener = new OWLOntologyLoaderListener() {
+
+            private int count = 0;
             public void startedLoadingOntology(@NonNull LoadingStartedEvent loadingStartedEvent) {
                 // do nothing
             }
 
             public void finishedLoadingOntology(LoadingFinishedEvent loadingFinishedEvent) {
+                count++;
                 if (loadingFinishedEvent.isSuccessful() && !loadingFinishedEvent.isImported()) {
                     OWLOntologyID id = loadingFinishedEvent.getOntologyID();
-                    logger.info("Loaded {}", OWLUtils.ontName(id));
+                    logger.info("Loaded {} with {} imports", OWLUtils.ontName(id), count-1);
                 }
             }
         };

@@ -2,7 +2,7 @@ package org.coode.www.configuration;
 
 import org.coode.www.kit.OWLHTMLKit;
 import org.coode.www.kit.impl.OWLHTMLKitImpl;
-import org.coode.www.kit.impl.OntologyLoader;
+import org.coode.www.oi.OntologyLoader;
 import org.coode.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLOntology;
