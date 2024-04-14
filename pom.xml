@@ -180,6 +180,25 @@
       <version>2.3.6</version>
     </dependency>
 
+    <dependency>
+      <!-- https://central.sonatype.dev/artifact/org.eclipse.jgit/org.eclipse.jgit/ -->
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>6.8.0.202311291450-r</version>
+    </dependency>
+    <dependency>
+      <!-- SSH support for JGit based on Apache MINA sshd -->
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit.ssh.apache</artifactId>
+      <version>6.8.0.202311291450-r</version>
+    </dependency>
+    <dependency>
+    <!-- GPG support for JGit based on BouncyCastle (commit signing) -->
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit.gpg.bc</artifactId>
+      <version>6.8.0.202311291450-r</version>
+    </dependency>
+
   </dependencies>
 
   <build>
