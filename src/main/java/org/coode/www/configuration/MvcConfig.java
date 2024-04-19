@@ -46,6 +46,9 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceHandler("/static/**")
                 .addResourceLocations("/static/")
                 .setCacheControl(CacheControl.maxAge(1, TimeUnit.DAYS));
+        registry.addResourceHandler("/robots.txt")
+                .addResourceLocations("/static/robots.txt")
+                .setCacheControl(CacheControl.maxAge(1, TimeUnit.DAYS));
     }
 
     @Bean
