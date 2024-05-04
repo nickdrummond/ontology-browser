@@ -128,7 +128,7 @@
 </span>
 
 
-<div th:with='name=${T(org.coode.www.util.PagingUtils).getIdFor(ch.name)}'
+<div th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(ch.name)}'
      th:class='${"characteristic " + name}' th:fragment="characteristic (ch)">
 
     <h4 th:text='${ch.name}'>Some Characteristic</h4>
