@@ -10,6 +10,8 @@ $(document).ready(function(){
 
     openFullscreen();
 
+    burgerNavigation();
+
     classToggler("light", "dark")
         .withTargetSelector("html, #find")
         .attachTo("#darkmode");
@@ -36,6 +38,24 @@ function openFullscreen() {
         elem.webkitRequestFullscreen();
     } else if (document.msRequestFullscreen) { /* IE11 */
         elem.msRequestFullscreen();
+    }
+}
+
+const NONE = "none";
+
+function burgerNavigation() {
+    let burger = document.getElementById("burger");
+    if (burger.style.display !== NONE) { // setup once??
+        let tabs = document.getElementById("tabs"); // TODO rename
+        let defaultStyle = tabs.style.display;
+        tabs.style.display = NONE; // hide by default
+        burger.onclick = () => {
+            if (tabs.style.display === NONE) {
+                tabs.style.display = defaultStyle;
+            } else {
+                tabs.style.display = NONE;
+            }
+        }
     }
 }
 
