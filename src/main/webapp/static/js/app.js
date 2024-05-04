@@ -43,10 +43,14 @@ function openFullscreen() {
 
 const NONE = "none";
 
+function isHidden(el) {
+    return (el.offsetParent === null)
+}
+
 function burgerNavigation() {
     let burger = document.getElementById("burger");
-    if (burger.style.display !== NONE) { // setup once??
-        let tabs = document.getElementById("tabs"); // TODO rename
+    if (!isHidden(burger)) { // setup once
+        let tabs = document.getElementById("tabs");
         let defaultStyle = tabs.style.display;
         tabs.style.display = NONE; // hide by default
         burger.onclick = () => {
