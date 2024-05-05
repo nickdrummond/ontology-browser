@@ -7,6 +7,7 @@ import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
+import org.ontbrowser.www.service.OWLAxiomService;
 import org.ontbrowser.www.service.OWLOntologiesService;
 import org.ontbrowser.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
@@ -26,9 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/ontologies")
@@ -39,6 +38,9 @@ public class OWLOntologiesController extends ApplicationController {
 
     @Autowired
     private OntologyIRIShortFormProvider sfp;
+
+    @Autowired
+    private OWLAxiomService axiomService;
 
     @GetMapping("/")
     public String getOntologies() {
@@ -94,6 +96,12 @@ public class OWLOntologiesController extends ApplicationController {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
         List<Characteristic> characteristics = service.getCharacteristics(ont, withOrEmpty, DEFAULT_PAGE_SIZE, kit);
+
+        With axiomPaging = With.getOrDefault("axioms", withOrEmpty);
+        Characteristic axioms = axiomService.getAxioms(Collections.singleton(ont), axiomPaging.start(), axiomPaging.pageSize());
+        if (!axioms.getObjects().isEmpty()) {
+            characteristics.add(axioms);
+        }
 
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");

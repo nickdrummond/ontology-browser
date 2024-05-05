@@ -42,16 +42,16 @@ public class OWLAxiomsController extends ApplicationController {
         HttpServletRequest request
     ) throws NotFoundException {
 
-        OWLOntology ont = ontId == null ? kit.getActiveOntology() : service.getOntologyFor(ontId, kit);
-
-        Set<OWLOntology> onts = includeImports ? ont.getImportsClosure() : Collections.singleton(ont);
-
         search.ifPresent(s -> {
             // Prevent injection attacks
             if (s.contains("<") || s.contains(">") || s.contains("%")) {
                 throw new IllegalArgumentException("Search terms may be text only");
             }
         });
+
+        OWLOntology ont = ontId == null ? kit.getActiveOntology() : service.getOntologyFor(ontId, kit);
+
+        Set<OWLOntology> onts = includeImports ? ont.getImportsClosure() : Collections.singleton(ont);
 
         ElementRenderer<OWLObject> owlRenderer = search
                 .map(s -> getHighlightRenderer(s, rendererFactory.getRenderer(ont)))
