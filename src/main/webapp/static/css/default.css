@@ -270,12 +270,12 @@ td.key{
     overflow: auto;
 }
 
-#find {
+#search {
     height: 2rem;
     border-radius: 1rem;
 }
 
-#find, .autosuggest li {
+#search, .autosuggest li {
     width: 98%;
     padding-left: 10px;
 }
@@ -464,14 +464,14 @@ form#load {
     margin-bottom: 12px;
 }
 
-img.icon {
+.icon {
     position: relative;
     top: 2px;
     width: 24px;
     height: 24px;
 }
 
-.dark img.icon {
+.dark .icon {
     filter: invert(100%);
 }
 
@@ -543,6 +543,7 @@ img.thumb{
     background-image: url("../../static/images/search-svgrepo-com.svg");
     position: relative;
     left: -3em;
+    cursor: pointer;
 }
 
 .paging {
@@ -658,7 +659,7 @@ img.thumb{
         flex: 0 1 auto;
     }
 
-    #find, .autosuggest li {
+    #search, .autosuggest li {
         line-height: 24px;
         font-size: 1.5rem;
     }

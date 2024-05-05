@@ -6,7 +6,7 @@
 
 <body class="wrapper">
 
-<div th:replace='base :: title(search=${true})'></div>
+<div th:replace='base :: title'></div>
 
 <div th:replace='base :: menu'></div>
 
@@ -24,15 +24,6 @@
 </div>
 
 <div th:replace='base :: footer'></div>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        const search = new URLSearchParams(window.location.search).get('search');
-        if (search) {
-            document.getElementById('find').setAttribute("value", search);
-        }
-    });
-</script>
 
 </body>
 </html>

@@ -44,15 +44,15 @@
 
 <body>
 
-<div id='title' th:fragment="title (search)">
+<div id='title' th:fragment="title">
     <h1><img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
         <a th:href='@{/}' th:text="${projectInfo.name}">Project Name</a></h1>
     <a style='display: none;' href='#content'>skip to content</a>
     <div id="entityfinder" th:fragment="entityfinder">
-        <form id='findForm' method='get'>
+        <form id='findForm' action="/axioms/" method='get'>
             <a id="burger">&#8801;</a>
-            <input id='find' class='autocomplete' type='text' name='search' placeholder='search...'/>
-            <input th:if="${search}" class="search-icon" type='submit' value="" />
+            <input type='text' id='search' class='autocomplete' name='search' placeholder='search...'/>
+            <input type='submit' class="search-icon icon" value="" />
         </form>
 
         <script type='text/javascript'>
@@ -61,10 +61,11 @@
                 varname: 'name',
                 cache: false,
                 callback: function (obj) {
+                    console.log("callback");
                     window.location = obj.id;
                 }
             };
-            var as = new AutoSuggest("find", options);
+            var as = new AutoSuggest("search", options);
         </script>
     </div>
 </div>

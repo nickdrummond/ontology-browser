@@ -114,8 +114,7 @@ _bsn.AutoSuggest.prototype.onKeyPress = function(ev)
     switch(key)
             {
         case RETURN:
-            this.setHighlightedValue();
-            bubble = false;
+            bubble = this.setHighlightedValue();
             break;
 
         case ESC:
@@ -564,7 +563,9 @@ _bsn.AutoSuggest.prototype.setHighlightedValue = function ()
         //
         if (typeof(this.oP.callback) == "function")
             this.oP.callback( this.aSuggestions[this.iHighlighted-1] );
+        return false;
     }
+    return true;
 }
 
 

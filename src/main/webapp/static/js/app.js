@@ -12,8 +12,10 @@ $(document).ready(function(){
 
     burgerNavigation();
 
+    fillSearch();
+
     classToggler("light", "dark")
-        .withTargetSelector("html, #find")
+        .withTargetSelector("html, #search")
         .attachTo("#darkmode");
 
     if (isTree) {
@@ -60,6 +62,16 @@ function burgerNavigation() {
                 tabs.style.display = NONE;
             }
         }
+    }
+}
+
+function fillSearch() {
+    const search = new URLSearchParams(window.location.search).get('search');
+    if (search) {
+        let searchBox = document.getElementById('search');
+        searchBox.setAttribute("value", search);
+        searchBox.selectionStart = searchBox.selectionEnd = searchBox.value.length;
+        searchBox.focus();
     }
 }
 
