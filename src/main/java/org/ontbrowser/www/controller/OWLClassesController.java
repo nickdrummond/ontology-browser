@@ -18,78 +18,81 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-@Controller
+@RestController
 @RequestMapping(value="/classes")
 public class OWLClassesController extends ApplicationController {
 
-    @Autowired
-    private OWLClassesService service;
+    private final OWLClassesService service;
+    private final ReasonerFactoryService reasonerFactoryService;
 
-    @Autowired
-    private ReasonerFactoryService reasonerFactoryService;
+    public OWLClassesController(
+            @Autowired OWLClassesService service,
+            @Autowired ReasonerFactoryService reasonerFactoryService) {
+        this.service = service;
+        this.reasonerFactoryService = reasonerFactoryService;
+    }
 
     @GetMapping(value="/")
-    public String getOWLClasses() {
+    public void getOWLClasses(
+            final HttpServletResponse response
+    ) throws IOException {
 
         OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
 
         String id = service.getIdFor(owlThing);
 
-        return "redirect:/classes/" + id;
+        response.sendRedirect("/classes/" + id);
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{classId}")
-    public String getOWLClass(
+    public ModelAndView getOWLClass(
             @PathVariable final String classId,
+            @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response) throws NotFoundException {
 
-        OWLClass owlClass = service.getOWLClassFor(classId, kit);
+        OWLClass owlClass = service.getOWLClassFor(classId, ont);
 
         Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
-        OWLOntology ont = kit.getActiveOntology();
-
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
+
         OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
 
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(owlClass);
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLClassFragment(classId, with, model, request, response);
+        getOWLClassFragment(classId, ont, with, model, request, response);
 
-        return "owlentity";
+        return new ModelAndView("owlentity");
     }
-
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{classId}/fragment")
-    public String getOWLClassFragment(
+    public ModelAndView getOWLClassFragment(
             @PathVariable final String classId,
+            @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response) throws NotFoundException {
 
-        OWLClass owlClass = service.getOWLClassFor(classId, kit);
-
-        OWLOntology ont = kit.getActiveOntology();
+        OWLClass owlClass = service.getOWLClassFor(classId, ont);
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
 
@@ -118,20 +121,21 @@ public class OWLClassesController extends ApplicationController {
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 
         response.addHeader("title", projectInfo.getName() + ": " + title);
-        return "owlentityfragment";
+        return new ModelAndView("owlentityfragment");
+
     }
 
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{classId}/children")
-    public String getChildren(@PathVariable final String classId,
-                              final Model model) throws NotFoundException {
+    public ModelAndView getChildren(
+            @PathVariable final String classId,
+            @ModelAttribute final OWLOntology ont,
+            final Model model) throws NotFoundException {
 
-        OWLClass owlClass = service.getOWLClassFor(classId, kit);
+        OWLClass owlClass = service.getOWLClassFor(classId, ont);
 
         Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLOntology ont = kit.getActiveOntology();
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
@@ -144,19 +148,19 @@ public class OWLClassesController extends ApplicationController {
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
 
-        return "base :: tree";
+        return new ModelAndView("base :: tree");
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{classId}/instances")
-    public String getInstances(@PathVariable final String classId,
-                               final Model model) throws NotFoundException {
+    public ModelAndView getInstances(
+            @PathVariable final String classId,
+            @ModelAttribute final OWLOntology ont,
+            final Model model) throws NotFoundException {
 
-        OWLEntity owlClass = service.getOWLClassFor(classId, kit);
+        OWLEntity owlClass = service.getOWLClassFor(classId, ont);
 
         Comparator<Tree<OWLEntity>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLOntology ont = kit.getActiveOntology();
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
@@ -169,6 +173,6 @@ public class OWLClassesController extends ApplicationController {
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
 
-        return "base :: tree";
+        return new ModelAndView("base :: tree");
     }
 }

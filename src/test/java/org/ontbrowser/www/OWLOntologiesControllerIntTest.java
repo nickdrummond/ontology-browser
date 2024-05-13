@@ -1,6 +1,5 @@
 package org.ontbrowser.www;
 
-import org.ontbrowser.www.controller.OWLOntologiesController;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.service.OWLAxiomService;
@@ -65,11 +64,6 @@ public class OWLOntologiesControllerIntTest {
         @Bean
         public OWLHTMLKit owlhtmlKit() {
             return mock(OWLHTMLKit.class);
-        }
-
-        @Bean
-        public OWLOntologiesController ontologiesController() {
-            return new OWLOntologiesController();
         }
 
         @Bean

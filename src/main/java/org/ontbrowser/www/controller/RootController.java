@@ -16,36 +16,40 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.support.XmlWebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-@Controller
+@RestController
 public class RootController extends ApplicationController implements ApplicationContextAware {
 
     @Nullable
     @Value("${restart.secret}")
     private String restartSecret;
-
     private XmlWebApplicationContext applicationContext;
 
     // Entry point
     @GetMapping("/")
-    public String index(final Model model,
-                        @RequestParam(required=false) final String redirect) {
+    public ModelAndView index(
+            final Model model,
+            @ModelAttribute OWLOntology ont,
+            @RequestParam(required=false) final String redirect,
+            HttpServletResponse response) throws IOException {
 
         if (redirect != null) {
-            return "redirect:" + redirect;
+            response.sendRedirect(redirect);
+            return new ModelAndView();
         }
         else {
-            Set<OWLOntology> ontologies = kit.getOntologies();
+            Set<OWLOntology> ontologies = ont.getImportsClosure();
 
             IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(ontologies);
 
@@ -54,22 +58,21 @@ public class RootController extends ApplicationController implements Application
             helper.setZoom(4);
             helper.setNormalise(true);
 
-            OWLOntology ont = kit.getActiveOntology();
-
             model.addAttribute("activeOntology", ont);
             model.addAttribute("ontologies", ontologies);
             model.addAttribute("cloud", cloudModel);
             model.addAttribute("helper", helper);
             model.addAttribute("mos", rendererFactory.getRenderer(ont));
 
-            return "index";
+            return new ModelAndView("index");
         }
     }
 
     @GetMapping("/restart")
-    public String reload(
+    public void reload(
             @RequestParam(required=false) final String redirect,
-            @RequestParam final String secret) throws NotAuthorisedException {
+            @RequestParam final String secret,
+            HttpServletResponse response) throws NotAuthorisedException, IOException {
 
         if (!Objects.equals(secret, restartSecret)) {
             throw new NotAuthorisedException();
@@ -78,15 +81,11 @@ public class RootController extends ApplicationController implements Application
         // Shouldn't do this - https://www.baeldung.com/java-restart-spring-boot-app
         applicationContext.refresh();
 
-        if (redirect != null) {
-            return "redirect:" + redirect;
-        }
-
-        return "redirect:/";
+        response.sendRedirect((redirect != null) ? redirect : "/");
     }
 
     @GetMapping(value = "/sitemap.xml")
-    @ResponseBody
+
     public XmlUrlSet sitemap() {
         final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 

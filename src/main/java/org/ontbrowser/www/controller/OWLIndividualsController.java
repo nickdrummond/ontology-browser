@@ -6,67 +6,63 @@ import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.*;
-import org.ontbrowser.www.service.*;
 import org.ontbrowser.www.service.hierarchy.OWLIndividualsByTypeHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
-@Controller
+@RestController
 @RequestMapping(value="/individuals")
 public class OWLIndividualsController extends ApplicationController {
 
-    @Autowired
-    private OWLIndividualsService service;
+    private final OWLIndividualsService service;
+    private final MediaService mediaService;
+    private final ReasonerFactoryService reasonerFactoryService;
+    private final ReasonerService reasonerService;
 
-    @Autowired
-    private OWLOntologiesService ontService;
-
-    @Autowired
-    private GeoService geoService;
-
-    @Autowired
-    private MediaService mediaService;
-
-    @Autowired
-    private ReasonerFactoryService reasonerFactoryService;
-
-    @Autowired
-    private ReasonerService reasonerService;
+    public OWLIndividualsController(
+            @Autowired OWLIndividualsService service,
+            @Autowired MediaService mediaService,
+            @Autowired ReasonerFactoryService reasonerFactoryService,
+            @Autowired ReasonerService reasonerService) {
+        this.service = service;
+        this.mediaService = mediaService;
+        this.reasonerFactoryService = reasonerFactoryService;
+        this.reasonerService = reasonerService;
+    }
 
     @GetMapping(value="/")
-    public String getOWLIndividuals() throws NotFoundException {
+    public void getOWLIndividuals(
+            final HttpServletResponse response
+    ) throws IOException, NotFoundException {
 
         OWLNamedIndividual firstIndividual = service.getFirstIndividual(kit);
 
         String id = service.getIdFor(firstIndividual);
 
-        return "redirect:/individuals/" + id;
+        response.sendRedirect("/individuals/" + id);
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/{individualId}")
-    public String getOWLIndividual(
+    public ModelAndView getOWLIndividual(
         @PathVariable final String individualId,
-        @RequestParam(required=false) final String ontId,
-        @RequestParam(required=false) final boolean inferred,
+        @RequestParam(defaultValue = "false") final boolean inferred,
         @RequestParam(required = false) List<With> with,
+        @ModelAttribute final OWLOntology ont,
         final Model model,
         final HttpServletRequest request,
         final HttpServletResponse response) throws NotFoundException {
-
-        final OWLOntology ont = (ontId != null) ?
-                ontService.getOntologyFor(ontId, kit) :
-                kit.getActiveOntology();
 
         OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ont);
 
@@ -80,26 +76,21 @@ public class OWLIndividualsController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLIndividualFragment(individualId, ontId, inferred, with, model, request, response);
+        getOWLIndividualFragment(individualId, inferred, with, ont, model, request, response);
 
-        return "owlentity";
+        return new ModelAndView("owlentity");
     }
-
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/{individualId}/fragment")
-    public String getOWLIndividualFragment(
+    public ModelAndView getOWLIndividualFragment(
             @PathVariable final String individualId,
-            @RequestParam(required=false) final String ontId,
-            @RequestParam(required=false) final boolean inferred,
+            @RequestParam(defaultValue = "false") final boolean inferred,
             @RequestParam(required = false) List<With> with,
+            @ModelAttribute final OWLOntology ont,
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response) throws NotFoundException {
-
-        final OWLOntology ont = (ontId != null) ?
-                ontService.getOntologyFor(ontId, kit) :
-                kit.getActiveOntology();
 
         OWLNamedIndividual owlIndividual = service.getOWLIndividualFor(individualId, ont);
 
@@ -108,12 +99,6 @@ public class OWLIndividualsController extends ApplicationController {
         String entityName = sfp.getShortForm(owlIndividual);
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlIndividual);
-
-        Optional<GeoService.Loc> maybeLoc = geoService.getLocation(owlIndividual, ont);
-        if (maybeLoc.isPresent()) {
-            GeoService.Loc loc = maybeLoc.get();
-            model.addAttribute("geo", loc);
-        }
 
         if (mediaService.isImageURL(owlIndividual.getIRI())) {
             model.addAttribute("image", owlIndividual.getIRI().toString());
@@ -148,6 +133,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         response.addHeader("title", projectInfo.getName() + ": " + title);
 
-        return "owlentityfragment";
+        return new ModelAndView("owlentityfragment");
+
     }
 }

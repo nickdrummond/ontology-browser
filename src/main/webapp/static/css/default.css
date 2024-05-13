@@ -562,6 +562,23 @@ img.thumb{
     text-decoration: none;
 }
 
+.edit {
+    display: none;
+}
+
+.edit .autocomplete {
+    display: flex;
+    flex-direction: row;
+}
+
+#edit-axiom {
+    flex-grow: 2;
+}
+
+#edit-ontology {
+    float: right;
+}
+
 @media screen and (max-width: 800px) and (max-height: 450px) {
 
     #burger {

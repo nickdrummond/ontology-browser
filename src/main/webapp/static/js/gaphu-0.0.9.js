@@ -16,7 +16,7 @@
  ****************************************************************/
 
 /////////////////////////////// debugging flags
-DEBUG_RESULTS = false;
+DEBUG_RESULTS = true;
 DEBUG_KEYS = false;
 INLINE_ERROR_HIGHLIGHTER = false; // show the error highlighter after the editor
 DEBUG_SHOW_ERROR_DIV = INLINE_ERROR_HIGHLIGHTER || false; // show the error highlighter text
@@ -65,7 +65,6 @@ if(!Array.indexOf){
     }
 }
 
-
 // store all editors that have been requested, ready for initialisation when the page is finished loading
 let editors = new Array();
 
@@ -74,8 +73,6 @@ function register(editor){
 }
 
 $(document).ready(function(){
-    //alert($().jquery);
-
     // initialisation only occurs once the page is fully loaded
     for (let i=0; i<editors.length; i++){
         editors[i].initialise();
@@ -168,14 +165,14 @@ function ExpressionEditor(editorId, userOptions){
         let response = responseCache[expression];
         if (response){
             if (DEBUG_RESULTS){
-                debug(that.editorId + " " + name + " (cache hit)");
+                console.log(that.editorId + " " + name + " (cache hit)");
             }
             callback(response);
             showResponse(response.getXML());
         }
         else if (jQuery.isFunction(method)){
             if (DEBUG_RESULTS){
-                debug(that.editorId + " " + name + " (function call)");
+                console.log(that.editorId + " " + name + " (function call)");
             }
             response = method(expression);
             responseCache[expression] = response; // cache the responses
@@ -193,7 +190,7 @@ function ExpressionEditor(editorId, userOptions){
                 parseCache: false, // don't cache the results (at least not while debugging)
                 success: function(xmlData, textStatus, request){
                     if (DEBUG_RESULTS){
-                        debug(that.editorId + " " + this + " " + request + " (" + textStatus + ")");
+                        console.log(that.editorId + " " + this + " " + request + " (" + textStatus + ")");
                     }
                     let response = parseResponse(xmlData);
                     responseCache[response.expr] = response; // cache the responses
@@ -308,6 +305,7 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function handleParse(response) {
+        console.log(response);
         if (typeof response.pos === "undefined"){ // hack to see if this is an error
             response = null;
         }
@@ -358,7 +356,7 @@ function ExpressionEditor(editorId, userOptions){
         if (!errorThrown){
             errorThrown = "Service failed to satisfy this request";
         }
-        debug(that.editorId + " (" + request.statusText + "): " + errorThrown);
+        console.log(that.editorId, " (" + request.statusText + "): ", errorThrown);
     }
 
     function cursorIsInError(error){
@@ -586,7 +584,7 @@ function ExpressionEditor(editorId, userOptions){
     function setupKeys(){
         jEditor.keypress(function(event){
             if (DEBUG_KEYS){
-                debug("keypress:   " + event.which + " (alt=" + event.altKey + ", ctrl=" + event.ctrlKey + ", currentTokenHighlighted=" + that.currentTokenHighlighted + ")");
+                console.log("keypress:   " + event.which + " (alt=" + event.altKey + ", ctrl=" + event.ctrlKey + ", currentTokenHighlighted=" + that.currentTokenHighlighted + ")");
             }
 
             if (isAutocompleteTrigger(event)){
@@ -620,7 +618,7 @@ function ExpressionEditor(editorId, userOptions){
         // create key bindings
         jEditor.keyup(function(event){
             if (DEBUG_KEYS){
-                debug("keyup:   " + event.which + " (alt=" + event.altKey + ", ctrl=" + event.ctrlKey + ", currentTokenHighlighted=" + that.currentTokenHighlighted + ")");
+                console.log("keyup:   " + event.which + " (alt=" + event.altKey + ", ctrl=" + event.ctrlKey + ", currentTokenHighlighted=" + that.currentTokenHighlighted + ")");
             }
 
             let newValue = this.value;
@@ -694,7 +692,7 @@ function ExpressionEditor(editorId, userOptions){
             that.repeat = false;
 
             if (DEBUG_KEYS){
-                debug("keydown: " + event.which + " (alt=" + event.altKey + ", ctrl=" + event.ctrlKey + ", currentTokenHighlighted=" + that.currentTokenHighlighted + ")");
+                console.log("keydown: " + event.which + " (alt=" + event.altKey + ", ctrl=" + event.ctrlKey + ", currentTokenHighlighted=" + that.currentTokenHighlighted + ")");
             }
 
             if (isAutocompleteTrigger(event)){
@@ -770,6 +768,12 @@ function ExpressionEditor(editorId, userOptions){
             if (jEditor.val().length > 0){
                 requestParse(jEditor.val());
             }
+
+            this.editor.onfocus = () => {
+                if (jEditor.val().length > 0){
+                    requestParse(jEditor.val());
+                }
+            };
         }
     }
 }
@@ -835,6 +839,10 @@ function parseResponse(xmlData){
  */
 function ParseError(expr, message, pos, token){
 
+    if (DEBUG_RESULTS) {
+        console.log("error", expr, message, pos, token);
+    }
+
     this.expr = expr;
     this.message = message;
     this.pos = pos;
@@ -853,6 +861,10 @@ function ParseError(expr, message, pos, token){
 }
 
 function ParseSuccess(expr, message){
+
+    if (DEBUG_RESULTS) {
+       console.log("success", expr, message);
+    }
 
     this.expr = expr;
     this.message = message;
@@ -933,8 +945,8 @@ function parseXML(xml) {
 // revisit all of this by looking at Range (http://www.quirksmode.org/dom/range_intro.html)
 
 function replaceInString(str, start, end, word){
-    //    debug("replace (" + start + ", " + end + ") with \"" + word + "\" in string \"" + str + "\"");
-    return str.substr(0, start) + word + str.substring(end, str.length);
+    //    console.log("replace (" + start + ", " + end + ") with \"" + word + "\" in string \"" + str + "\"");
+    return str.substring(0, start) + word + str.substring(end, str.length);
 }
 
 function insertIntoString(str, pos, word){
@@ -1229,17 +1241,6 @@ function showResponse(xmlData) {
     }
 }
 
-function debug(message) {
-    let console = $("#debug");
-    if (console && console.length > 0){
-
-        message = encode(message);
-
-        console.append("<br/>" + message);
-
-        scrollBottom(console);
-    }
-}
 
 //////////////// test parser implementation //////////////////
 

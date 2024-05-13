@@ -2,19 +2,20 @@ package org.ontbrowser.www.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Controller
+@RestController
 public class CustomErrorController extends ApplicationController {
 
     private static final Logger log = LoggerFactory.getLogger(CustomErrorController.class);
 
     @GetMapping("/error")
-    public String handleError(
+    public ModelAndView handleError(
             HttpServletRequest httpRequest,
             Exception e,
             Model model) {
@@ -30,6 +31,6 @@ public class CustomErrorController extends ApplicationController {
             model.addAttribute("errorCode", 0);
         }
 
-        return "error";
+        return new ModelAndView("error");
     }
 }

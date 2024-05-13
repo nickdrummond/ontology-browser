@@ -19,6 +19,7 @@ public class SearchService {
 
     private final String wildcard = "*";
 
+    // TODO get Kit out of here
     public List<OWLEntity> findByName(final String input, final OWLHTMLKit kit) {
 
         if ((input == null) || (input.isEmpty())) {
@@ -48,20 +49,20 @@ public class SearchService {
             }
         };
 
-        return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).collect(Collectors.toList());
+        return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).toList();
     }
 
     public List<AxiomWithMetadata> findByAnnotation(@Nonnull String value,
                                                     OWLAnnotationProperty searchProp,
-                                                    @Nonnull OWLHTMLKit kit) {
+                                                    @Nonnull OWLOntology ont) {
         Optional<OWLAnnotationProperty> prop = Optional.ofNullable(searchProp);
         Set<AxiomWithMetadata> results = new HashSet<>();
-        for (OWLOntology ont : kit.getOWLOntologyManager().getOntologies()) {
-            for (OWLAnnotationAssertionAxiom ax : ont.getAxioms(AxiomType.ANNOTATION_ASSERTION)) {
+        for (OWLOntology o : ont.getImportsClosure()) {
+            for (OWLAnnotationAssertionAxiom ax : o.getAxioms(AxiomType.ANNOTATION_ASSERTION)) {
                 if (prop.isEmpty() || prop.get().equals(ax.getProperty())) {
                     OWLAnnotationValue v = ax.getValue();
                     if (v.isLiteral() && v.asLiteral().isPresent() && v.asLiteral().get().getLiteral().contains(value)) {
-                        results.add(new AxiomWithMetadata("results", ax, ax, ont));
+                        results.add(new AxiomWithMetadata("results", ax, ax, o));
                     }
                 }
             }
@@ -69,13 +70,12 @@ public class SearchService {
         return new ArrayList<>(results);
     }
 
-    public Set<OWLEntity> getEntities(IRI iri, OWLHTMLKit kit) {
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLOntology activeOnt = kit.getActiveOntology();
+    public Set<OWLEntity> getEntities(IRI iri, OWLOntology ont) {
+        OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
         return EntityType.values().stream()
                 .map(t -> {
                     OWLEntity e = df.getOWLEntity(t, iri);
-                    if (activeOnt.containsEntityInSignature(e, Imports.INCLUDED)) {
+                    if (ont.containsEntityInSignature(e, Imports.INCLUDED)) {
                         return e;
                     }
                     return null;

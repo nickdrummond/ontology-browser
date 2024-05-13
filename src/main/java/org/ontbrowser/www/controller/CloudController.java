@@ -1,100 +1,102 @@
 package org.ontbrowser.www.controller;
 
-import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.model.cloud.*;
 import org.ontbrowser.www.model.cloud.*;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Could have gone in each OWLEntity type Controller, but this is a bit tangential.
  */
-@Controller
+@RestController
 @RequestMapping(value = "/clouds")
 @SessionAttributes("kit")
 public class CloudController extends ApplicationController {
 
     @GetMapping(value = "/classes")
-    public String getClassesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                  @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
-                                  @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
-                                  @RequestParam(defaultValue="false") boolean normalise,
-                                  final Model model) {
+    public ModelAndView getClassesCloud(
+            @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+            @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
+            @RequestParam(defaultValue="false") boolean normalise,
+            @ModelAttribute final OWLOntology ont,
+            final Model model) {
 
-        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(kit.getOntologies());
+        ClassesByUsageCloud cloudModel = new ClassesByUsageCloud(ont.getImportsClosure());
 
-        return cloud(kit, model, "Classes Usage Cloud", cloudModel, zoom, threshold, normalise);
+        return cloud(ont, model, "Classes Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
     @GetMapping(value = "/individuals")
-    public String getIndividualsCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                      @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
-                                      @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
-                                      @RequestParam(defaultValue="false") boolean normalise,
-                                      final Model model) {
+    public ModelAndView getIndividualsCloud(
+            @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+            @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
+            @RequestParam(defaultValue="false") boolean normalise,
+            @ModelAttribute final OWLOntology ont,
+            final Model model) {
 
-        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(kit.getOntologies());
+        IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(ont.getImportsClosure());
 
-        return cloud(kit, model, "Individuals Usage Cloud", cloudModel, zoom, threshold, normalise);
+        return cloud(ont, model, "Individuals Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
     @GetMapping(value = "/objectproperties")
-    public String getObjectPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                           @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
-                                           @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
-                                           @RequestParam(defaultValue="false") boolean normalise,
-                                           final Model model) {
+    public ModelAndView getObjectPropertiesCloud(
+            @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+            @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
+            @RequestParam(defaultValue="false") boolean normalise,
+            @ModelAttribute final OWLOntology ont,
+            final Model model) {
 
-        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(kit.getOntologies());
+        ObjectPropsByUsageCloud cloudModel = new ObjectPropsByUsageCloud(ont.getImportsClosure());
 
-        return cloud(kit, model, "Object Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+        return cloud(ont, model, "Object Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
     @GetMapping(value = "/dataproperties")
-    public String getDataPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                         @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
-                                         @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
-                                         @RequestParam(defaultValue="false") boolean normalise,
-                                         final Model model) {
+    public ModelAndView getDataPropertiesCloud(
+            @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+            @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
+            @RequestParam(defaultValue="false") boolean normalise,
+            @ModelAttribute final OWLOntology ont,
+            final Model model) {
 
-        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(kit.getOntologies());
+        DataPropsByUsageCloud cloudModel = new DataPropsByUsageCloud(ont.getImportsClosure());
 
-        return cloud(kit, model, "Data Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+        return cloud(ont, model, "Data Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
     @GetMapping(value = "/annotationproperties")
-    public String getAnnotationPropertiesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                               @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
-                                               @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
-                                               @RequestParam(defaultValue="false") boolean normalise,
-                                               final Model model) {
+    public ModelAndView getAnnotationPropertiesCloud(
+            @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+            @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
+            @RequestParam(defaultValue="false") boolean normalise,
+            @ModelAttribute final OWLOntology ont,
+            final Model model) {
 
-        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(kit.getOntologies());
+        AnnotationPropsByUsageCloud cloudModel = new AnnotationPropsByUsageCloud(ont.getImportsClosure());
 
-        return cloud(kit, model, "Annotation Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
+        return cloud(ont, model, "Annotation Properties Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
     @GetMapping(value = "/datatypes")
-    public String getDatatypesCloud(@ModelAttribute("kit") final OWLHTMLKit kit,
-                                    @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
-                                    @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
-                                    @RequestParam(defaultValue="false") boolean normalise,
-                                    final Model model) {
+    public ModelAndView getDatatypesCloud(
+            @RequestParam(defaultValue = "${cloud.zoom.default}") int zoom,
+            @RequestParam(defaultValue = "${cloud.threshold.default}") int threshold,
+            @RequestParam(defaultValue="false") boolean normalise,
+            @ModelAttribute final OWLOntology ont,
+            final Model model) {
 
-        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(kit.getOntologies());
+        DatatypesByUsageCloud cloudModel = new DatatypesByUsageCloud(ont.getImportsClosure());
 
-        return cloud(kit, model, "Datatypes Usage Cloud", cloudModel, zoom, threshold, normalise);
+        return cloud(ont, model, "Datatypes Usage Cloud", cloudModel, zoom, threshold, normalise);
     }
 
     @SuppressWarnings("SameReturnValue")
-    public <T extends OWLEntity>String cloud(final OWLHTMLKit kit,
+    public <T extends OWLEntity> ModelAndView cloud(final OWLOntology ont,
                                              final Model model,
                                              final String title,
                                              final CloudModel<T> cloudModel,
@@ -107,18 +109,14 @@ public class CloudController extends ApplicationController {
         helper.setThreshold(threshold);
         helper.setNormalise(normalise);
 
-        OWLOntology ont = kit.getActiveOntology();
-
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
-
-        Set<OWLOntology> ontologies = kit.getOntologies();
 
         model.addAttribute("title", title);
         model.addAttribute("activeOntology", ont);
-        model.addAttribute("ontologies", ontologies);
+        model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("helper", helper);
         model.addAttribute("mos", owlRenderer);
 
-        return "cloud";
+        return new ModelAndView("cloud");
     }
 }

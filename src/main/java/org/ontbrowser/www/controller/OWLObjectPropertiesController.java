@@ -17,28 +17,33 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(value="/objectproperties")
 public class OWLObjectPropertiesController extends ApplicationController {
 
-    @Autowired
-    private OWLObjectPropertiesService service;
+    private final OWLObjectPropertiesService service;
+    private final ReasonerFactoryService reasonerFactoryService;
 
-    @Autowired
-    private ReasonerFactoryService reasonerFactoryService;
+    public OWLObjectPropertiesController(
+            @Autowired OWLObjectPropertiesService service,
+            @Autowired ReasonerFactoryService reasonerFactoryService) {
+        this.service = service;
+        this.reasonerFactoryService = reasonerFactoryService;
+    }
 
     @GetMapping(value="/")
-    public String getOWLObjectProperties() {
+    public void getOWLObjectProperties(
+            final HttpServletResponse response
+    ) throws IOException {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
@@ -46,20 +51,19 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         String id = service.getIdFor(owlTopObjectProperty);
 
-        return "redirect:/objectproperties/" + id;
+        response.sendRedirect("/objectproperties/" + id);
     }
 
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}")
-    public String getOWLObjectProperty(
+    public ModelAndView getOWLObjectProperty(
         @PathVariable final String propertyId,
+        @ModelAttribute final OWLOntology ont,
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
         final HttpServletResponse response) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
 
         OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
 
@@ -74,21 +78,20 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLObjectPropertyFragment(propertyId, with, model, request, response);
+        getOWLObjectPropertyFragment(propertyId, ont, with, model, request, response);
 
-        return "owlentity";
+        return new ModelAndView("owlentity");
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}/fragment")
-    public String getOWLObjectPropertyFragment(
+    public ModelAndView getOWLObjectPropertyFragment(
             @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
 
         OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
 
@@ -109,17 +112,17 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         response.addHeader("title", projectInfo.getName() + ": " + entityName);
 
-        return "owlentityfragment";
+        return new ModelAndView("owlentityfragment");
+
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}/children")
-    public String getChildren(
+    public ModelAndView getChildren(
         @PathVariable final String propertyId,
+        @ModelAttribute final OWLOntology ont,
         final Model model
     ) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
 
         OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
 
@@ -136,6 +139,6 @@ public class OWLObjectPropertiesController extends ApplicationController {
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
 
-        return "base :: tree";
+        return new ModelAndView("base :: tree");
     }
 }

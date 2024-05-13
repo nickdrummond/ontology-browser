@@ -14,25 +14,35 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping(value="/entities")
 public class OWLEntitiesController extends ApplicationController {
 
-    @Autowired
-    private SearchService service;
+    private final SearchService service;
+    private final NameService nameService;
 
-    @Autowired
-    private NameService nameService;
+    public OWLEntitiesController(
+            @Autowired SearchService service,
+            @Autowired NameService nameService) {
+        this.service = service;
+        this.nameService = nameService;
+    }
 
     @GetMapping(value="/", produces = MediaType.APPLICATION_XML_VALUE)
-    public @ResponseBody SearchResults find(
+    public SearchResults find(
+            @ModelAttribute final OWLOntology ont,
             @RequestParam final String name) {
 
         SearchResults results = new SearchResults();
+
+        // TODO use the ontology as the basis for the search
 
         // Minimum search length of 2
         if (name.length() > 1) {
@@ -46,10 +56,14 @@ public class OWLEntitiesController extends ApplicationController {
     }
 
     @GetMapping(value="annotation")
-    public String findAnnotation(
+    public ModelAndView findAnnotation(
             @RequestParam final String search,
             @RequestParam(required = false) final String property,
-            final Model model) throws OntServerException {
+            @ModelAttribute final OWLOntology ont,
+            final HttpServletResponse response,
+            final Model model) throws OntServerException, IOException {
+
+        // TODO use the ontology as a basis for search
 
         Optional<String> optProp = Optional.ofNullable(property);
 
@@ -59,18 +73,19 @@ public class OWLEntitiesController extends ApplicationController {
             throw new OntServerException("Unknown property: " + property);
         }
 
-        List<AxiomWithMetadata> results = service.findByAnnotation(search, optAnnot.orElse(null), kit);
+        List<AxiomWithMetadata> results = service.findByAnnotation(search, optAnnot.orElse(null), ont);
 
         if (results.size() == 1) {
             OWLObject owlObject = results.get(0).getOWLObject();
             if (owlObject instanceof OWLAnnotationAssertionAxiom ax) {
                 Optional<IRI> iri = ax.getSubject().asIRI();
-                OWLObject o = service.getEntities(iri.orElseThrow(), kit).iterator().next();
-                return "redirect:" + kit.getURLScheme().getURLForOWLObject(o);
+                OWLObject o = service.getEntities(iri.orElseThrow(), ont).iterator().next();
+                response.sendRedirect(kit.getURLScheme().getURLForOWLObject(o));
+                return new ModelAndView("");
             }
         }
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         String propLabel = optProp.orElse("All annotations");
 
@@ -81,6 +96,6 @@ public class OWLEntitiesController extends ApplicationController {
         model.addAttribute("results", resultsCharacteristic);
         model.addAttribute("mos", owlRenderer);
 
-        return "searchresults";
+        return new ModelAndView("searchresults");
     }
 }

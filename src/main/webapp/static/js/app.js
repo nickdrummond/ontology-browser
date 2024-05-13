@@ -2,11 +2,14 @@ import {tree} from './tree.js';
 import {characteristics} from './characteristics.js';
 import {dlquery} from "./dlquery.js";
 import {classToggler} from "./classToggler.js";
+import {edits} from "./edits.js";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 
 $(document).ready(function(){
+
+    // TODO enable edits edits().rememberTransaction();
 
     openFullscreen();
 
@@ -19,19 +22,20 @@ $(document).ready(function(){
         .attachTo("#darkmode");
 
     if (isTree) {
-        tree(baseUrl, () => {
-            characteristics().init("#content .characteristic, #metrics");
-        }, rewriteLinks).init();
+        tree(baseUrl, entityLoaded, rewriteLinks).init();
     }
 
     if (isQuery) {
-        dlquery(baseUrl, () => {
-            characteristics().init("#content .characteristic, #metrics");
-        }).init();
+        dlquery(baseUrl, entityLoaded).init();
     }
 
-    characteristics().init(".characteristic, .owlselector, #metrics");
+    entityLoaded();
 });
+
+function entityLoaded() {
+    characteristics().init("#content .characteristic, #metrics");
+// TODO enable edits    edits().init(".characteristic");
+}
 
 function openFullscreen() {
     if (document.requestFullscreen) {

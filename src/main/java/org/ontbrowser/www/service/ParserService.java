@@ -1,6 +1,7 @@
 package org.ontbrowser.www.service;
 
 import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.parser.MOSAxiomTreeParser;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;
@@ -51,6 +52,14 @@ public class ParserService {
         }
     }
 
+    public OWLAxiom parseAxiom(String axiom, OWLDataFactory df, OWLEntityChecker checker) throws ParseException {
+        try {
+            return new MOSAxiomTreeParser(df, checker).parse(axiom);
+        } catch (ParserException e) {
+            throw new ParseException(axiom, e.getMessage(), e.getStartPos(), e.getCurrentToken());
+        }
+    }
+
     /**
      * Wraps results in Gaphu AutocompleteResult for client processing.
      */
@@ -65,6 +74,20 @@ public class ParserService {
             throw new RuntimeException("Cannot get here if we have correctly forced an error");
         } catch (ParserException e) {
             return exceptionToAutocomplete(expression, e, finder, sfp);
+        }
+    }
+
+    public AutocompleteResult autocompleteAxiom(final String axiom,
+                                           final OWLDataFactory df,
+                                           final OWLEntityChecker owlEntityChecker,
+                                           final OWLEntityFinder finder,
+                                           final ShortFormProvider sfp) {
+
+        try {
+            new MOSAxiomTreeParser(df, owlEntityChecker).parse(axiom);
+            throw new RuntimeException("Cannot get here if we have correctly forced an error");
+        } catch (ParserException e) {
+            return exceptionToAutocomplete(axiom, e, finder, sfp);
         }
     }
 
@@ -188,6 +211,4 @@ public class ParserService {
         }
         map.put(cls.getName(), names);
     }
-
-
 }

@@ -44,6 +44,10 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     ShortFormProvider getShortFormProvider();
 
+    String render(OWLObject owlObject);
+
+    String getOntIRI(OWLOntology ontology);
+
     OntologyIRIShortFormProvider getOntologyShortFormProvider();
 
     OWLOntology getRootOntology();

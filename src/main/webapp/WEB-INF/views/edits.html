@@ -1,0 +1,37 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<!--suppress HtmlUnknownTag, GrazieInspection, XmlDuplicatedId, CheckTagEmptyBody, HtmlExtraClosingTag -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div class="edit" th:fragment="axiom (original, ontologyIRI)">
+        <form class='autocomplete' method='get' id='edit' action='/axioms/add'>
+            <input type="hidden" name="transaction" th:if="${transaction != null}" id="edit-transaction" th:value="${transaction}"/>
+            <input type="hidden" name="originalAxiom" id="edit-original-axiom" th:value="${original}"/>
+            <input type="hidden" name="originalOntology" id="edit-original-ontology" th:value="${ontologyIRI}"/>
+<!--            <label for="edit-axiom">Axiom</label>-->
+            <textarea name='axiom' id='edit-axiom'
+                      th:placeholder="${original}"
+                      th:text='${original}'>Pizza</textarea>
+
+            <input class="edit-add" type='submit' value='add'/>
+<!--            <input class="edit-edit" type='submit' value='edit'/>-->
+
+            <!--            <label for="edit-ontology">Ontology</label>-->
+            <select  name="ontology" id="edit-ontology">
+                <option th:each="ont : ${kit.getOntologies()}"
+                        class="ontology-uri"
+                        th:value='${kit.getOntIRI(ont)}'
+                        th:text="${kit.getOntologyShortFormProvider().getShortForm(ont)}">ontology</option>
+            </select>
+        </form>
+
+        <script type="text/javascript">
+            var options = {
+                parser: baseUrl + 'dlquery/parse/axiom',
+                autocomplete: baseUrl + 'dlquery/ac/axiom'
+            };
+            new ExpressionEditor("edit-axiom", options);
+        </script>
+    </div>
+</body>
+</html>

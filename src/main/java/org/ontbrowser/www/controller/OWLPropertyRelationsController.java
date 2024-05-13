@@ -18,27 +18,26 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(value = "/relations/" + OWLPropertyRelationsController.PATH)
 public class OWLPropertyRelationsController extends ApplicationController {
 
     public static final String PATH = "onproperty";
     public static final String RELATION_TEMPLATE = "relation";
-
     private final OWLObjectPropertiesService propertiesService;
-
     private final ReasonerFactoryService reasonerFactoryService;
-
     private final CommonRelations<OWLObjectProperty> common;
 
     public OWLPropertyRelationsController(
@@ -65,24 +64,25 @@ public class OWLPropertyRelationsController extends ApplicationController {
     }
 
     @GetMapping(value = "/")
-    public String getRelationsForProperty() {
+    public void getRelationsForProperty(
+            final HttpServletResponse response
+    ) throws IOException {
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
         String id = propertiesService.getIdFor(owlTopObjectProperty);
-        return "redirect:/relations/" + PATH + "/" + id + "/";
+        response.sendRedirect("/relations/" + PATH + "/" + id + "/");
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}")
-    public String getRelationsForProperty(
+    public ModelAndView getRelationsForProperty(
         @PathVariable final String propertyId,
+        @ModelAttribute final OWLOntology ont,
         @RequestParam(defaultValue = "false") final boolean inverse,
         @RequestParam final @Nullable String orderBy,
         final Model model,
         HttpServletRequest request
     ) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
 
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -93,22 +93,21 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         common.renderEntity(property, model);
 
-        return RELATION_TEMPLATE;
+        return new ModelAndView(RELATION_TEMPLATE);
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
-    public String getRelationsForProperty(
+    public ModelAndView getRelationsForProperty(
         @PathVariable final String propertyId,
         @PathVariable final String individualId,
         @RequestParam(defaultValue = "false") final boolean inverse,
         @RequestParam final @Nullable String orderBy,
+        @ModelAttribute final OWLOntology ont,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
         final Model model,
         HttpServletRequest request
     ) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -121,22 +120,21 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
-        return RELATION_TEMPLATE;
+        return new ModelAndView(RELATION_TEMPLATE);
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}/fragment")
-    public String getRelationsForPropertyFragment(
+    public ModelAndView getRelationsForPropertyFragment(
             @PathVariable final String propertyId,
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
+            @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false) List<With> with,
             final Model model,
             HttpServletRequest request
     ) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -150,17 +148,16 @@ public class OWLPropertyRelationsController extends ApplicationController {
         // TODO should do common without creating the tree
         common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
-        return "owlentityfragment";
+        return new ModelAndView("owlentityfragment");
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/children")
-    public String getChildren(
+    public ModelAndView getChildren(
         @PathVariable final String propertyId,
+        @ModelAttribute final OWLOntology ont,
         final Model model
     ) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
 
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -171,20 +168,20 @@ public class OWLPropertyRelationsController extends ApplicationController {
         model.addAttribute("t", hierarchyService.getChildren(property));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new RelationPropertyURLScheme()));
 
-        return CommonRelations.BASE_TREE;
+        return new ModelAndView(CommonRelations.BASE_TREE);
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
-    public String getChildren(
+    public ModelAndView getChildren(
         @PathVariable final String propertyId,
         @PathVariable final String individualId,
         @RequestParam(defaultValue = "false") final boolean inverse,
         @RequestParam final @Nullable String orderBy,
+        @ModelAttribute final OWLOntology ont,
         final Model model,
         HttpServletRequest request
     ) throws NotFoundException {
 
-        OWLOntology ont = kit.getActiveOntology();
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
         OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
 
@@ -197,6 +194,6 @@ public class OWLPropertyRelationsController extends ApplicationController {
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
 
-        return CommonRelations.BASE_TREE;
+        return new ModelAndView(CommonRelations.BASE_TREE);
     }
 }

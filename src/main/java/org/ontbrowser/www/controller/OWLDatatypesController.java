@@ -15,22 +15,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(value="/datatypes")
 public class OWLDatatypesController extends ApplicationController {
 
-    @Autowired
-    private OWLDatatypesService service;
+    private final OWLDatatypesService service;
+
+    public OWLDatatypesController(
+            @Autowired OWLDatatypesService service) {
+        this.service = service;
+    }
 
     @GetMapping(value="/")
-    public String getOWLDatatypes() {
+    public void getOWLDatatypes(
+            final HttpServletResponse response
+    ) throws IOException {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
@@ -38,22 +46,21 @@ public class OWLDatatypesController extends ApplicationController {
 
         String id = service.getIdFor(owlTopDatatype);
 
-        return "redirect:/datatypes/" + id;
+        response.sendRedirect("/datatypes/" + id);
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/{datatypeId}")
-    public String getOWLDatatype(
+    public ModelAndView getOWLDatatype(
         @PathVariable final String datatypeId,
+        @ModelAttribute final OWLOntology ont,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
         final HttpServletResponse response) throws NotFoundException {
 
-        OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, kit);
-
-        OWLOntology ont = kit.getActiveOntology();
+        OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, ont);
 
         Comparator<Tree<OWLDatatype>> comparator = Comparator.comparing(o -> o.value.iterator().next());
 
@@ -65,29 +72,28 @@ public class OWLDatatypesController extends ApplicationController {
 
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLDatatypeFragment(datatypeId, pageSize, withOrEmpty, model, request, response);
+        getOWLDatatypeFragment(datatypeId, ont, pageSize, withOrEmpty, model, request, response);
 
-        return "owlentity";
+        return new ModelAndView("owlentity");
     }
 
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value= "/{datatypeId}/fragment")
-    public String getOWLDatatypeFragment(
+    public ModelAndView getOWLDatatypeFragment(
             @PathVariable final String datatypeId,
+            @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response) throws NotFoundException {
 
-        OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, kit);
-
-        OWLOntology ont = kit.getActiveOntology();
+        OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, ont);
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDatatype);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology()).withActiveObject(owlDatatype);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlDatatype);
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -102,20 +108,20 @@ public class OWLDatatypesController extends ApplicationController {
 
         response.addHeader("title", projectInfo.getName() + ": " + entityName);
 
-        return "owlentityfragment";
+        return new ModelAndView("owlentityfragment");
+
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}/children")
-    public String getChildren(
+    public ModelAndView getChildren(
             @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
             final Model model) throws NotFoundException {
 
-        OWLDatatype property = service.getOWLDatatypeFor(propertyId, kit);
+        OWLDatatype property = service.getOWLDatatypeFor(propertyId, ont);
 
         Comparator<Tree<OWLDatatype>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLOntology ont = kit.getActiveOntology();
 
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(ont, comparator);
 
@@ -126,6 +132,6 @@ public class OWLDatatypesController extends ApplicationController {
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
 
-        return "base :: tree";
+        return new ModelAndView("base :: tree");
     }
 }

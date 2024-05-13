@@ -18,20 +18,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-@Controller
+@RestController
 @RequestMapping(value = "/relations/" + OWLAnnotationRelationsController.PATH)
 public class OWLAnnotationRelationsController extends ApplicationController {
 
     public static final String PATH = "onannotationproperty";
     public static final String RELATION_TEMPLATE = "relation";
-
     private final OWLAnnotationPropertiesService propertiesService;
     private final CommonRelations<OWLAnnotationProperty> common;
 
@@ -55,26 +57,28 @@ public class OWLAnnotationRelationsController extends ApplicationController {
     }
 
     @GetMapping(value = "/")
-    public String getRelationsForAnnotationProperty() throws NotFoundException {
+    public void getRelationsForAnnotationProperty(
+            final HttpServletResponse response
+    ) throws IOException, NotFoundException {
         Set<OWLAnnotationProperty> props = kit.getActiveOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED);
         if (props.isEmpty()) {
             throw new NotFoundException("Annotation Property");
         }
         // Start with random
         String id = propertiesService.getIdFor(props.iterator().next());
-        return "redirect:/relations/" + PATH + "/" + id + "/";
+        response.sendRedirect("/relations/" + PATH + "/" + id + "/");
     }
 
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}")
-    public String getRelationsForAnnotationProperty(@PathVariable final String propertyId,
-                                                    @RequestParam(defaultValue = "false") final boolean inverse,
-                                                    @RequestParam final @Nullable String orderBy,
-                                                    final Model model,
-                                                    HttpServletRequest request) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
+    public ModelAndView getRelationsForAnnotationProperty(
+            @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            final Model model,
+            HttpServletRequest request) throws NotFoundException {
 
         OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -85,21 +89,20 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
         common.renderEntity(property, model);
 
-        return RELATION_TEMPLATE;
+        return new ModelAndView(RELATION_TEMPLATE);
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
-    public String getRelationsForAnnotationProperty(
+    public ModelAndView getRelationsForAnnotationProperty(
             @PathVariable final String propertyId,
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
+            @ModelAttribute final OWLOntology ont,
             @RequestParam final @Nullable String orderBy,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false) List<With> with,
             final Model model,
             HttpServletRequest request) throws NotFoundException {
-
-        OWLOntology ont = kit.getActiveOntology();
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -119,21 +122,21 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
         common.buildCommon(relationsHierarchyService, individual, ont, model, request);
 
-        return RELATION_TEMPLATE;
+        return new ModelAndView(RELATION_TEMPLATE);
     }
 
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
-    public String getChildren(
+    public ModelAndView getChildren(
             @PathVariable final String propertyId,
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
+            @ModelAttribute final OWLOntology ont,
             final Model model,
             HttpServletRequest request
     ) throws NotFoundException {
 
-        OWLOntology ont = kit.getActiveOntology();
         OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
         OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
 
@@ -146,6 +149,6 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
 
-        return CommonRelations.BASE_TREE;
+        return new ModelAndView(CommonRelations.BASE_TREE);
     }
 }

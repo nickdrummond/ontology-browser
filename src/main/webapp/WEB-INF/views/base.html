@@ -137,19 +137,29 @@
     <span th:replace="base::paged (${ch.getPageData()}, ${name})">(2)</span>
     <ul th:remove="all-but-first">
         <li class="asserted" th:each="object : ${ch.objects}">
-            <span class="owlobject" th:utext="${mos.render(object.getOWLObject())}">
-            <a href="../../classes/1934778517/" class='Class'
-               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
-            <span class='keyword'>&equiv;</span>
-            <a href="../../classes/140023861/" class='Class'
-               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza">Pizza</a>
-            <span class='keyword'>and</span>
-            <span class='active-entity Object Property'>hasBase</span>
-            <span class='only'>only</span>
-            <a href="../../classes/677040734/" class='Class'
-               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
+
+            <span class="owlobject"
+                  th:data="${kit.render(object.getOWLObject())}"
+                  th:utext="${mos.render(object.getOWLObject())}">
+                <a href="../../classes/1934778517/" class='Class'
+                   title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
+                <span class='keyword'>&equiv;</span>
+                <a href="../../classes/140023861/" class='Class'
+                   title="http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza">Pizza</a>
+                <span class='keyword'>and</span>
+                <span class='active-entity Object Property'>hasBase</span>
+                <span class='only'>only</span>
+                <a href="../../classes/677040734/" class='Class'
+                   title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
             </span>
-            <span class="source-ont" th:utext="${mos.render(object.getOWLOntology())}">pizza.owl</span>
+
+            <span class="source-ont"
+                  th:data="${kit.getOntIRI(object.getOWLOntology())}"
+                  th:utext="${mos.render(object.getOWLOntology())}"
+            >
+                pizza.owl
+            </span>
+
             <ul th:if="${object.getOWLAxiom() != null and !object.getOWLAxiom().getAnnotations().isEmpty()}"
                 th:remove="all-but-first" class="axiom-annotations">
                 <li class="axiom-annotation" th:each="annot : ${object.getOWLAxiom().getAnnotations()}">
@@ -274,6 +284,10 @@
 
     <div th:replace="base :: map (${geo})">
         Possibly a map
+    </div>
+
+    <div th:replace='edits :: axiom(${""}, ${""})'>
+        Edit this axiom
     </div>
 
     <div class="characteristics">

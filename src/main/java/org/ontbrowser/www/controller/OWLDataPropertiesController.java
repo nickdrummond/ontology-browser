@@ -16,28 +16,33 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(value="/dataproperties")
 public class OWLDataPropertiesController extends ApplicationController {
 
-    @Autowired
-    private OWLDataPropertiesService service;
+    private final OWLDataPropertiesService service;
+    private final ReasonerFactoryService reasonerFactoryService;
 
-    @Autowired
-    private ReasonerFactoryService reasonerFactoryService;
+    public OWLDataPropertiesController(
+            @Autowired OWLDataPropertiesService service,
+            @Autowired ReasonerFactoryService reasonerFactoryService) {
+        this.service = service;
+        this.reasonerFactoryService = reasonerFactoryService;
+    }
 
     @GetMapping(value="/")
-    public String getOWLDataProperties() {
+    public void getOWLDataProperties(
+            final HttpServletResponse response
+    ) throws IOException {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
@@ -45,13 +50,13 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         String id = service.getIdFor(owlTopDataProperty);
 
-        return "redirect:/dataproperties/" + id;
+        response.sendRedirect("/dataproperties/" + id);
     }
 
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}")
-    public String getOWLDataProperty(
+    public ModelAndView getOWLDataProperty(
         @PathVariable final String propertyId,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
@@ -75,13 +80,13 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         getOWLDataPropertyFragment(propertyId, pageSize, with, model, request, response);
 
-        return "owlentity";
+        return new ModelAndView("owlentity");
     }
 
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}/fragment")
-    public String getOWLDataPropertyFragment(
+    public ModelAndView getOWLDataPropertyFragment(
         @PathVariable final String propertyId,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
@@ -110,12 +115,13 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         response.addHeader("title", projectInfo.getName() + ": " + entityName);
 
-        return "owlentityfragment";
+        return new ModelAndView("owlentityfragment");
+
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}/children")
-    public String getChildren(
+    public ModelAndView getChildren(
             @PathVariable final String propertyId,
             final Model model
     ) throws NotFoundException {
@@ -137,6 +143,6 @@ public class OWLDataPropertiesController extends ApplicationController {
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
 
-        return "base :: tree";
+        return new ModelAndView("base :: tree");
     }
 }

@@ -41,7 +41,7 @@ div.autocomplete li{
 
 /* The style of the matched text in autocompleter when highlightResults is on */
 div.autocomplete li span.match{
-    color: black;
+    color: #11aa11;
 }
 
 div.autocomplete li.selected{
@@ -94,7 +94,7 @@ div.errormessage {
 }
 
 div.autocomplete li {
-    color: #ddddff;
+    color: #777;
 }
 
 div.autocomplete li.selected {
@@ -104,6 +104,10 @@ div.autocomplete li.selected {
 
 .dark div.autocomplete li span.match {
     color: #33ff33;
+}
+
+.dark div.autocomplete li {
+    color: #ddddff;
 }
 
 .dark div.errormessage {

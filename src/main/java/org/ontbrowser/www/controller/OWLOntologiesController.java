@@ -17,44 +17,49 @@ import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-@Controller
+@RestController
 @RequestMapping(value = "/ontologies")
 public class OWLOntologiesController extends ApplicationController {
 
-    @Autowired
-    private OWLOntologiesService service;
+    private final OWLOntologiesService service;
+    private final OntologyIRIShortFormProvider sfp;
+    private final OWLAxiomService axiomService;
 
-    @Autowired
-    private OntologyIRIShortFormProvider sfp;
-
-    @Autowired
-    private OWLAxiomService axiomService;
+    public OWLOntologiesController(
+            @Autowired OWLOntologiesService service,
+            @Autowired OntologyIRIShortFormProvider sfp,
+            @Autowired OWLAxiomService axiomService) {
+        this.service = service;
+        this.sfp = sfp;
+        this.axiomService = axiomService;
+    }
 
     @GetMapping("/")
-    public String getOntologies() {
+    public void getOntologies(
+            final HttpServletResponse response
+    ) throws IOException {
 
         OWLOntology rootOntology = kit.getRootOntology();
 
         String id = service.getIdFor(rootOntology);
 
-        return "redirect:/ontologies/" + id;
+        response.sendRedirect("/ontologies/" + id);
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}")
-    public String getOntology(
+    public ModelAndView getOntology(
         @PathVariable final String ontId,
         @RequestParam(required = false) List<With> with,
         final Model model,
@@ -73,13 +78,13 @@ public class OWLOntologiesController extends ApplicationController {
 
         getOntologyFragment(ontId, with, model, request, response);
 
-        return "owlentity";
+        return new ModelAndView("owlentity");
     }
 
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}/fragment")
-    public String getOntologyFragment(
+    public ModelAndView getOntologyFragment(
         @PathVariable final String ontId,
         @RequestParam(required = false) List<With> with,
         final Model model,
@@ -98,7 +103,7 @@ public class OWLOntologiesController extends ApplicationController {
         List<Characteristic> characteristics = service.getCharacteristics(ont, withOrEmpty, DEFAULT_PAGE_SIZE, kit);
 
         With axiomPaging = With.getOrDefault("axioms", withOrEmpty);
-        Characteristic axioms = axiomService.getAxioms(Collections.singleton(ont), axiomPaging.start(), axiomPaging.pageSize());
+        Characteristic axioms = axiomService.getAxioms(ont, axiomPaging.start(), axiomPaging.pageSize());
         if (!axioms.getObjects().isEmpty()) {
             characteristics.add(axioms);
         }
@@ -114,7 +119,8 @@ public class OWLOntologiesController extends ApplicationController {
 
         response.addHeader("title", projectInfo.getName() + ": " + title);
 
-        return "owlentityfragment";
+        return new ModelAndView("owlentityfragment");
+
     }
 
     @GetMapping(value = "/{ontId}", produces = "application/rdf+xml")

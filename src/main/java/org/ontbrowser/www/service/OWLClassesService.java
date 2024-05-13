@@ -1,7 +1,6 @@
 package org.ontbrowser.www.service;
 
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.model.characteristics.Characteristic;
 import org.ontbrowser.www.model.characteristics.ClassCharacteristicsBuilder;
@@ -17,21 +16,21 @@ import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
 @Service
 public class OWLClassesService {
 
-    public OWLClass getOWLClassFor(final String classId, final OWLHTMLKit kit) throws NotFoundException {
-        OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
+    public OWLClass getOWLClassFor(final String classId, final OWLOntology ont) throws NotFoundException {
+        OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
+
+        OWLClass owlThing = df.getOWLThing();
         if (getIdFor(owlThing).equals(classId)) {
             return owlThing;
         }
-        OWLClass owlNothing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLNothing();
+        OWLClass owlNothing = df.getOWLNothing();
         if (getIdFor(owlNothing).equals(classId)) {
             return owlNothing;
         }
 
-        for (OWLOntology ont : kit.getActiveOntologies()){
-            for (OWLClass owlClass: ont.getClassesInSignature()) {
-                if (getIdFor(owlClass).equals(classId)){
-                    return owlClass;
-                }
+        for (OWLClass owlClass: ont.getClassesInSignature(Imports.INCLUDED)) {
+            if (getIdFor(owlClass).equals(classId)){
+                return owlClass;
             }
         }
         throw new NotFoundException("OWLClass", classId);

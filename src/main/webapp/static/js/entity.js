@@ -7,6 +7,7 @@ export function loadEntity(url, rewriteUrl, entityLoadedCallback) {
                 const throwaway = document.createElement('span');
                 throwaway.innerHTML = html;
                 document.getElementById("content").replaceWith(throwaway.firstChild);
+                entityLoadedCallback();
             });
 
             if (rewriteUrl) {
@@ -16,8 +17,6 @@ export function loadEntity(url, rewriteUrl, entityLoadedCallback) {
             if (response.headers.has("title")) {
                 window.document.title = response.headers.get("title");
             }
-
-            entityLoadedCallback();
         })
         .catch((err) => {
             console.log(err);

@@ -27,35 +27,40 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.nickdrummond.parsejs.ParseException;
+import uk.co.nickdrummond.parsejs.ParseResult;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.*;
 
-@Controller
+@RestController
 @RequestMapping(value= DLQueryController.PATH)
 public class DLQueryController extends ApplicationController {
 
     private static final Logger log = LoggerFactory.getLogger(DLQueryController.class);
-
     public static final String PATH = "/dlquery";
+    private final ParserService parserService;
+    private final ReasonerService reasonerService;
 
-    @Autowired
-    private ParserService parserService;
-
-    @Autowired
-    private ReasonerService reasonerService;
+    public DLQueryController(
+            @Autowired ParserService parserService,
+            @Autowired ReasonerService reasonerService) {
+        this.parserService = parserService;
+        this.reasonerService = reasonerService;
+    }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping
-    public String dlQuery(
+    public ModelAndView dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
             @RequestParam(required = false, defaultValue = "") final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(required = false, defaultValue = "instances", name = "query") final QueryType queryType,
+            @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
             final HttpServletRequest request,
@@ -73,12 +78,12 @@ public class DLQueryController extends ApplicationController {
             reasonerService.asyncQuery(new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType));
         }
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
+        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         model.addAttribute("reasonerName", reasonerService.getReasoner().getReasonerName());
         model.addAttribute("reasoningOntology", reasonerService.getReasoningActiveOnt());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("ontologies", kit.getOntologies());
+        model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("expression", expression);
         model.addAttribute("minus", minus);
         model.addAttribute("order", order);
@@ -86,16 +91,17 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("queries", QueryType.values());
         model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
 
-        return "dlquery";
+        return new ModelAndView("dlquery");
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="results")
-    public String getResults(
+    public ModelAndView getResults(
             @RequestParam final String expression,
             @RequestParam(required = false) final String minus,
             @RequestParam(required = false) final String order,
             @RequestParam(name="query") final QueryType queryType,
+            @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
             final HttpServletRequest request,
@@ -134,7 +140,7 @@ public class DLQueryController extends ApplicationController {
             Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c, start, pageSize);
 
             // TODO update scheme to render links with the entity as a param
-            OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(kit.getActiveOntology());
+            OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
             // Target links to parent page for fragment
             UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -146,7 +152,7 @@ public class DLQueryController extends ApplicationController {
             model.addAttribute("mos", owlRenderer);
             model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
 
-            return "base :: results";
+            return new ModelAndView("base :: results");
         } catch (ExecutionException e) {
             throw new OntServerException(e);
         } catch (InterruptedException | TimeoutException e) {
@@ -155,7 +161,7 @@ public class DLQueryController extends ApplicationController {
     }
 
     @GetMapping(value = "/ac", produces = MediaType.APPLICATION_XML_VALUE)
-    public @ResponseBody String autocompleteOWLClassExpression(
+    public String autocompleteOWLClassExpression(
             @RequestParam String expression) {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
@@ -168,7 +174,7 @@ public class DLQueryController extends ApplicationController {
 
     // TODO return the actual ParseResult or an XML rendering of the parse exception
     @GetMapping(value = "/parse", produces = MediaType.APPLICATION_XML_VALUE)
-    public @ResponseBody String parseOWLClassExpression(
+    public String parseOWLClassExpression(
             @RequestParam String expression) {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
@@ -176,6 +182,33 @@ public class DLQueryController extends ApplicationController {
 
         try {
             return parserService.parse(expression, df, checker).toString();
+        } catch (ParseException e) {
+            return e.toString();
+        }
+    }
+
+    @GetMapping(value = "/ac/axiom", produces = MediaType.APPLICATION_XML_VALUE)
+    public String autocompleteOWLAxiom(
+            @RequestParam String expression) {
+
+        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+        OWLEntityChecker checker = kit.getOWLEntityChecker();
+        OWLEntityFinder finder = kit.getFinder();
+        ShortFormProvider sfp = kit.getShortFormProvider();
+
+        return parserService.autocompleteAxiom(expression, df, checker, finder, sfp).toString();
+    }
+
+    @GetMapping(value = "/parse/axiom", produces = MediaType.APPLICATION_XML_VALUE)
+    public String parseOWLAxiom(
+            @RequestParam String expression) {
+
+        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+        OWLEntityChecker checker = kit.getOWLEntityChecker();
+
+        try {
+            // TODO this needs to be tidier - return the Axiom and let the OK be the response status
+            return new ParseResult(kit.render(parserService.parseAxiom(expression, df, checker)), "OK").toString();
         } catch (ParseException e) {
             return e.toString();
         }

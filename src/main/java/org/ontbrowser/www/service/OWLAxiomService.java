@@ -22,12 +22,12 @@ public class OWLAxiomService {
     private final Map<OWLOntology, Map<OWLAxiom, String>> axiomsRenderingsByOntology = new HashMap<>();
 
     public Characteristic getAxioms(
-            Set<OWLOntology> onts,
+            OWLOntology ont,
             int start,
             int pageSize) {
 
         // avoid generating search indices as not needed
-        List<AxiomWithMetadata> results = onts.stream()
+        List<AxiomWithMetadata> results = ont.importsClosure()
                 .flatMap(o -> wrappedWithOntology(o.axioms(Imports.EXCLUDED), o))
                 .toList();
 
@@ -40,7 +40,7 @@ public class OWLAxiomService {
 
     public Characteristic findAxioms(
             final String search,
-            final Set<OWLOntology> onts,
+            final OWLOntology ont,
             final ShortFormProvider sfp,
             int start,
             int pageSize) {
@@ -48,18 +48,18 @@ public class OWLAxiomService {
         Predicate<Map.Entry<OWLAxiom, String>> containsIgnoreCase = e ->
                 e.getValue().toLowerCase().contains(search.toLowerCase());
 
-        return resultsCharacteristic(search, onts, sfp, containsIgnoreCase, start, pageSize);
+        return resultsCharacteristic(search, ont, sfp, containsIgnoreCase, start, pageSize);
     }
 
     private Characteristic resultsCharacteristic(
             final String search,
-            final Set<OWLOntology> onts,
+            final OWLOntology ont,
             final ShortFormProvider sfp,
             final Predicate<? super Map.Entry<OWLAxiom, String>> filter,
             int start,
             int pageSize) {
 
-        List<AxiomWithMetadata> results = onts.stream()
+        List<AxiomWithMetadata> results = ont.importsClosure()
                 .flatMap(o -> wrappedWithOntology(filterAxioms(search, o, sfp, filter), o))
                 .toList();
 
