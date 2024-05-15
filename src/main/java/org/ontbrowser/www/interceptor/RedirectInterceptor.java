@@ -5,6 +5,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// TODO use profiles to turn on
 public class RedirectInterceptor implements HandlerInterceptor {
 
     private final String redirectRoot;

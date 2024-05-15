@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -37,10 +38,11 @@ public class ReasonerService {
 
     private final ReasonerFactoryService reasonerFactoryService;
 
-    public ReasonerService(OWLHTMLKit kit,
-                           ExecutorService es,
-                           Map<DLQuery, Future<Set<OWLEntity>>> cache,
-                           ReasonerFactoryService reasonerFactoryService) {
+    public ReasonerService(
+            @Autowired OWLHTMLKit kit,
+            @Autowired     ExecutorService es,
+            @Autowired     Map<DLQuery, Future<Set<OWLEntity>>> cache,
+            @Autowired     ReasonerFactoryService reasonerFactoryService) {
         this.kit = kit;
         this.es = es;
         this.cache = cache;

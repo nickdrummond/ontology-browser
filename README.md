@@ -23,6 +23,17 @@ renders it for easy navigation.
 
 ## Run
 
+### Profiles
+
+The following profiles are supported
+* **dev** for turning off caching and other local options
+* **reasoners** enable scanning for various DL reasoners (eg Pellet, JFact) on startup for use in DL Query, otherwise simple structural reasoner is used
+
+Use the following java option on run to enable the profile
+```
+-Dspring.profiles.active=dev,reasoners
+```
+
 ### Maven
 
 `mvn clean jetty:run`
