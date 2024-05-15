@@ -6,6 +6,7 @@ import org.ontbrowser.www.renderer.ElementRenderer;
 import org.ontbrowser.www.service.OWLAxiomService;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class OWLAxiomsController extends ApplicationController {
 
         Characteristic axioms = search
                 .map(s -> axiomService.findAxioms(search.get(), ont, kit.getShortFormProvider(), start, pageSize))
-                .orElse(axiomService.getAxioms(ont, start, pageSize));
+                .orElse(axiomService.getAxioms(ont, Imports.INCLUDED, start, pageSize));
 
         model.addAttribute("title", "Axioms");
         model.addAttribute("axioms", axioms);

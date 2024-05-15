@@ -85,7 +85,7 @@ public class ParserService {
 
         try {
             new MOSAxiomTreeParser(df, owlEntityChecker).parse(axiom);
-            throw new RuntimeException("Cannot get here if we have correctly forced an error");
+            throw new RuntimeException("Cannot get here if we have correctly forced an error " + axiom);
         } catch (ParserException e) {
             return exceptionToAutocomplete(axiom, e, finder, sfp);
         }

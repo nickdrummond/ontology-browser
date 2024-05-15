@@ -28,6 +28,7 @@
         const isQuery = [[${query}]];
         const isTree = [[${tree}]];
         const rewriteLinks = [[${rewriteLinks}]] ?? false;
+        const editingEnabled = [[${editingEnabled}]] ?? false;
     </script>
     <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
             th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
@@ -139,7 +140,8 @@
         <li class="asserted" th:each="object : ${ch.objects}">
 
             <span class="owlobject"
-                  th:data="${kit.render(object.getOWLObject())}"
+                  th:with="data=${object.getOWLAxiom() != null ? object.getOWLAxiom() : object.getOWLObject()}"
+                  th:data="${kit.render(data)}"
                   th:utext="${mos.render(object.getOWLObject())}">
                 <a href="../../classes/1934778517/" class='Class'
                    title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
@@ -286,7 +288,8 @@
         Possibly a map
     </div>
 
-    <div th:replace='edits :: axiom(${""}, ${""})'>
+    <div th:if="${editingEnabled}"
+         th:replace='edits :: axiom(${""}, ${""})'>
         Edit this axiom
     </div>
 

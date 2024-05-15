@@ -41,7 +41,13 @@ public class OntologyCharacteristicsBuilder {
         }
 
         List<AxiomWithMetadata> r = objs.stream()
-                .map(o -> new AxiomWithMetadata("s", o, null, ont))
+                .map(o -> {
+                    if (o instanceof OWLAxiom axiom) {
+                        return new AxiomWithMetadata("s", o, axiom, ont);
+                    }
+                    // Ontology annotations and imports are not axioms
+                    return new AxiomWithMetadata("s", o, null, ont);
+                })
                 .toList();
 
         Comparator<AxiomWithMetadata> compareByOWLObject = (a, b) ->

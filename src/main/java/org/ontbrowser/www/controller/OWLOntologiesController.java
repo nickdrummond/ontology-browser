@@ -13,6 +13,7 @@ import org.ontbrowser.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -103,7 +104,7 @@ public class OWLOntologiesController extends ApplicationController {
         List<Characteristic> characteristics = service.getCharacteristics(ont, withOrEmpty, DEFAULT_PAGE_SIZE, kit);
 
         With axiomPaging = With.getOrDefault("axioms", withOrEmpty);
-        Characteristic axioms = axiomService.getAxioms(ont, axiomPaging.start(), axiomPaging.pageSize());
+        Characteristic axioms = axiomService.getAxioms(ont, Imports.EXCLUDED, axiomPaging.start(), axiomPaging.pageSize());
         if (!axioms.getObjects().isEmpty()) {
             characteristics.add(axioms);
         }

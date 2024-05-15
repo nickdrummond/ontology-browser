@@ -23,11 +23,12 @@ public class OWLAxiomService {
 
     public Characteristic getAxioms(
             OWLOntology ont,
+            Imports imports,
             int start,
             int pageSize) {
 
-        // avoid generating search indices as not needed
-        List<AxiomWithMetadata> results = ont.importsClosure()
+        Stream<OWLOntology> ontologies = imports == Imports.INCLUDED ? ont.importsClosure() : Stream.of(ont);
+        List<AxiomWithMetadata> results = ontologies
                 .flatMap(o -> wrappedWithOntology(o.axioms(Imports.EXCLUDED), o))
                 .toList();
 

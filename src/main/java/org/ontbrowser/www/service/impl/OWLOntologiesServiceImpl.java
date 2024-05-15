@@ -38,12 +38,12 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
     }
 
     @Override public List<Characteristic> getCharacteristics(
-            final OWLOntology owlOntology,
+            final OWLOntology ont,
             final List<With> with,
             final int defaultPageSize,
             final OWLHTMLKit kit) {
         return new OntologyCharacteristicsBuilder(
-                owlOntology,
+                ont,
                 with,
                 defaultPageSize,
                 kit.getComparator()

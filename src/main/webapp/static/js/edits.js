@@ -11,14 +11,18 @@ export const edits = () => {
 
     function init(selectors) {
 
+        let editForm = document.getElementsByClassName("edit").item(0);
+
         let editAxiom = document.getElementById("edit-axiom");
         let editOntology = document.getElementById("edit-ontology");
-        let editOriginalOntology = document.getElementById("edit-original-ontology");
-        let editOriginalAxiom = document.getElementById("edit-original-axiom");
+        // let editOriginalOntology = document.getElementById("edit-original-ontology");
+        // let editOriginalAxiom = document.getElementById("edit-original-axiom");
 
-        // focus the editor
-        editAxiom.selectionStart = editAxiom.selectionEnd = editAxiom.value.length;
-        editAxiom.focus();
+        var options = {
+            parser: baseUrl + 'dlquery/parse/axiom',
+            autocomplete: baseUrl + 'dlquery/ac/axiom'
+        };
+        new ExpressionEditor("edit-axiom", options).initialise();
 
         // clicking on axioms in characteristics sets the editor
         document.querySelectorAll(selectors).forEach(el => {
@@ -26,11 +30,13 @@ export const edits = () => {
                 ax.onclick = () => {
                     const axiom = ax.querySelector(".owlobject").getAttribute("data");
                     const ontology = ax.querySelector(".source-ont").getAttribute("data");
-                    editOriginalAxiom.value = axiom;
                     editAxiom.value = editAxiom.placeholder = axiom;
-                    editOriginalOntology.value = ontology;
                     editOntology.value = ontology;
+                    // editOriginalAxiom.value = axiom;
+                    // editOriginalOntology.value = ontology;
+                    // focus the editor
                     editAxiom.selectionStart = editAxiom.selectionEnd = editAxiom.value.length;
+                    editForm.classList.add("active");
                     editAxiom.focus();
                 }
             });

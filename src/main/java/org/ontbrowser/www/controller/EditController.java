@@ -12,6 +12,7 @@ import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,7 @@ import static org.ontbrowser.www.renderer.HighlightingHTMLRenderer.getHighlightR
 import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 
 @RestController
+@Profile("editing")
 @RequestMapping(value = "/axioms")
 public class EditController extends ApplicationController {
 

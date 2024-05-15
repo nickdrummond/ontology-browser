@@ -563,7 +563,12 @@ img.thumb{
 }
 
 .edit {
+    margin: 0 5px;
     display: none;
+}
+
+.edit.active {
+    display: block;
 }
 
 .edit .autocomplete {

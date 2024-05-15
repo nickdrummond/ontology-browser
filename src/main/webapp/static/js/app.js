@@ -9,7 +9,10 @@ import {edits} from "./edits.js";
 
 $(document).ready(function(){
 
-    // TODO enable edits edits().rememberTransaction();
+    if (editingEnabled) {
+        console.log("EDITING ENABLED");
+        edits().rememberTransaction();
+    }
 
     openFullscreen();
 
@@ -34,7 +37,10 @@ $(document).ready(function(){
 
 function entityLoaded() {
     characteristics().init("#content .characteristic, #metrics");
-// TODO enable edits    edits().init(".characteristic");
+
+    if (editingEnabled) {
+        edits().init(".characteristic");
+    }
 }
 
 function openFullscreen() {

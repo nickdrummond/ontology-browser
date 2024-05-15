@@ -732,6 +732,8 @@ function ExpressionEditor(editorId, userOptions){
 
     this.initialise = function(){
 
+        console.log("initiialising gaphu", this.editorId);
+
         // find a textarea or text input with the id
         let query = "textarea#" + this.editorId;
         if (SUPPORT_TEXT_INPUT){
