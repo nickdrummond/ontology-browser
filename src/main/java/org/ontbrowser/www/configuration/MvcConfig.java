@@ -36,7 +36,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
     public MvcConfig(
             @Autowired OntologyIdFormatter ontologyIdFormatter,
-            @Autowired CachingInterceptor cachingInterceptor) {
+            @Autowired(required = false) CachingInterceptor cachingInterceptor) {
         this.ontologyIdFormatter = ontologyIdFormatter;
         this.cachingInterceptor = cachingInterceptor;
     }
