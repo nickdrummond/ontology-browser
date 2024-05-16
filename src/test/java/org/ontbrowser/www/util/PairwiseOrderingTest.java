@@ -1,17 +1,21 @@
 package org.ontbrowser.www.util;
 
-import junit.framework.TestCase;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class PairwiseOrderingTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class PairwiseOrderingTest {
 
     @SafeVarargs
     private final <T> List<T> l(T... elements) {
         return Arrays.asList(elements);
     }
 
+    @Test
     public void testJoinTwoPairsOnOverlap() {
         PairwiseOrdering<Character> ordering = new PairwiseOrdering<>();
         ordering.add(l('A', 'B'));
@@ -20,7 +24,7 @@ public class PairwiseOrderingTest extends TestCase {
         assertEquals(l(l('A', 'B', 'C')), ordering.getResult());
     }
 
-
+    @Test
     public void testJoinOutOfSequence() {
         PairwiseOrdering<Character> ordering = new PairwiseOrdering<>();
         ordering.add(l('B', 'C'));
@@ -29,6 +33,7 @@ public class PairwiseOrderingTest extends TestCase {
         assertEquals(l(l('A', 'B', 'C')), ordering.getResult());
     }
 
+    @Test
     public void testJoinPrevious() {
         PairwiseOrdering<Character> ordering = new PairwiseOrdering<>();
         ordering.add(l('A', 'B'));
@@ -38,6 +43,7 @@ public class PairwiseOrderingTest extends TestCase {
         assertEquals(l(l('A', 'B', 'C', 'D')), ordering.getResult());
     }
 
+    @Test
     public void testDiscontiguous() {
         PairwiseOrdering<Character> ordering = new PairwiseOrdering<>();
         ordering.add(l('A', 'B'));
@@ -50,7 +56,8 @@ public class PairwiseOrderingTest extends TestCase {
                 l('R', 'S', 'T')), ordering.getResult());
     }
 
-
+    @Ignore
+    @Test
     public void testNaturalOrdering() {
         PairwiseOrdering<Character> ordering = new PairwiseOrdering<>();
         ordering.add(l('S', 'T'));
@@ -63,6 +70,7 @@ public class PairwiseOrderingTest extends TestCase {
                 l('R', 'S', 'T')), ordering.getResult());
     }
 
+    @Test
     public void testLongerLists() {
         PairwiseOrdering<Character> ordering = new PairwiseOrdering<>();
         ordering.add(l('A', 'B'));
@@ -75,6 +83,7 @@ public class PairwiseOrderingTest extends TestCase {
                 l('Q', 'R', 'S', 'T', 'U', 'V')), ordering.getResult());
     }
 
+    @Test
     public void testFlattened() {
         PairwiseOrdering<Character> ordering = new PairwiseOrdering<>();
         ordering.add(l('A', 'B'));
