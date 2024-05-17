@@ -17,6 +17,14 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
     function init() {
+
+        const options = {
+            parser : baseUrl + 'dlquery/parse',
+            autocomplete: baseUrl + 'dlquery/ac'
+        };
+        new ExpressionEditor("dlQuery", options).initialise();
+        new ExpressionEditor("dlQuery2", options).initialise();
+
         if (document.getElementById('dlQuery')) {
             sendQuery();
         }
@@ -82,7 +90,6 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
             signal: controller.signal
         }).then(response => {
             clearTimeout(timeoutId);
-            console.log("r", response);
             response.text().then(html => {
                 resultsForm.innerHTML = html;
                 rewriteLinks("Class", "classes"); // note Capitalised
@@ -102,7 +109,6 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
                 }
             }
             else {
-                console.log(err);
                 resultWrite(queryType + ": error!", "error fetching" + ": " + err);
             }
         });

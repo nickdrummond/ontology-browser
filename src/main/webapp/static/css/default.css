@@ -28,6 +28,10 @@ html {
     color: #dad6cd;
 }
 
+.dark .autosuggest {
+    background-color: black;
+}
+
 body {
     font-size: 1rem;
     margin: 0;
@@ -105,9 +109,12 @@ li {
     margin: 1rem 0.5rem;
 }
 
+.skip-nav {
+    display: none;
+}
+
 .owlselector {
-    margin: 0.5rem;
-    margin-top: 1rem;
+    margin: 1rem 0.5rem 0.5rem;
 }
 
 #main {
@@ -564,14 +571,14 @@ img.thumb{
 
 .edit {
     margin: 0 5px;
-    display: none;
+    /*display: none;*/
 }
 
 .edit.active {
-    display: block;
+    /*display: block;*/
 }
 
-.edit .autocomplete {
+#edit {
     display: flex;
     flex-direction: row;
 }

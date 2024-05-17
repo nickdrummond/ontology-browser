@@ -6,8 +6,11 @@ import {edits} from "./edits.js";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
+document.addEventListener("DOMContentLoaded", function(event) {
 
-$(document).ready(function(){
+    classToggler("light", "dark")
+        .withTargetSelector("html, #search")
+        .attachTo("#darkmode");
 
     if (editingEnabled) {
         console.log("EDITING ENABLED");
@@ -18,11 +21,7 @@ $(document).ready(function(){
 
     burgerNavigation();
 
-    fillSearch();
-
-    classToggler("light", "dark")
-        .withTargetSelector("html, #search")
-        .attachTo("#darkmode");
+    initSearch();
 
     if (isTree) {
         tree(baseUrl, entityLoaded, rewriteLinks).init();
@@ -75,7 +74,7 @@ function burgerNavigation() {
     }
 }
 
-function fillSearch() {
+function initSearch() {
     const search = new URLSearchParams(window.location.search).get('search');
     if (search) {
         let searchBox = document.getElementById('search');
@@ -83,5 +82,14 @@ function fillSearch() {
         searchBox.selectionStart = searchBox.selectionEnd = searchBox.value.length;
         searchBox.focus();
     }
+
+    new AutoSuggest("search", {
+        script: baseUrl + 'entities/?',
+        varname: 'name',
+        cache: false,
+        callback: function (obj) {
+            window.location = obj.id;
+        }
+    });
 }
 

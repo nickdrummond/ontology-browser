@@ -4,7 +4,7 @@
       xmlns:th="http://www.thymeleaf.org">
 <body>
     <div class="edit" th:fragment="axiom (original, ontologyIRI)">
-        <form class='autocomplete' method='get' id='edit' action='/axioms/add'>
+        <form method='get' id='edit' action='/axioms/add'>
             <input type="hidden" name="transaction" th:if="${transaction != null}" id="edit-transaction" th:value="${transaction}"/>
 <!--            <input type="hidden" name="originalAxiom" id="edit-original-axiom" th:value="${original}"/>-->
 <!--            <input type="hidden" name="originalOntology" id="edit-original-ontology" th:value="${ontologyIRI}"/>-->

@@ -16,8 +16,10 @@
  ****************************************************************/
 
 /////////////////////////////// debugging flags
-DEBUG_RESULTS = true;
+DEBUG_GAPHU = false;
+DEBUG_RESULTS = false;
 DEBUG_KEYS = false;
+DEBUG_AUTOCOMPLETE = true;
 INLINE_ERROR_HIGHLIGHTER = false; // show the error highlighter after the editor
 DEBUG_SHOW_ERROR_DIV = INLINE_ERROR_HIGHLIGHTER || false; // show the error highlighter text
 DEBUG_DISABLE_BORDER = false;
@@ -65,20 +67,6 @@ if(!Array.indexOf){
     }
 }
 
-// store all editors that have been requested, ready for initialisation when the page is finished loading
-let editors = new Array();
-
-function register(editor){
-    editors.push(editor);
-}
-
-$(document).ready(function(){
-    // initialisation only occurs once the page is fully loaded
-    for (let i=0; i<editors.length; i++){
-        editors[i].initialise();
-    }
-});
-
 
 // The ExpressionEditor object itself.
 // There is a single ExpressionEditor per text editor.
@@ -111,10 +99,6 @@ function ExpressionEditor(editorId, userOptions){
         this.options[optName] = userOptions[optName];
     }
 
-    register(this);
-
-
-
     // the default error handler just shows the error in a div beneath the editor
     this.defaultErrorHandler = function(error){
 
@@ -138,6 +122,9 @@ function ExpressionEditor(editorId, userOptions){
     };
 
     this.show = function() {
+        if (DEBUG_AUTOCOMPLETE) {
+            console.log("showing");
+        }
         jError.fadeOut("fast");
         jAutoComplete.fadeIn("fast");
     };
@@ -234,17 +221,20 @@ function ExpressionEditor(editorId, userOptions){
 
         let acSpan = $("." + AC_TOKEN_CLASS, getErrorHighlighter());
         let pos = getSpanPos(acSpan);
-        console.log("pos", pos);
 
         let css = {
             "left": pos.x,
             "top": pos.y,
             "position": "absolute",
             "overflow-x" : "hidden",
-            "z-index" : 5, // z-index above the error
             "font-family": jEditor.css("font-family"), // use the same font as the editor
             "font-size": jEditor.css("font-size")
         };
+        css["z-index"] = getEditorZindex()+5;       // below the editor
+
+        if (DEBUG_AUTOCOMPLETE) {
+            console.log("updating Autocomplete");
+        }
         jAutoComplete.css(css);
     }
 
@@ -305,7 +295,9 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function handleParse(response) {
-        console.log(response);
+        if (DEBUG_RESULTS) {
+            console.log(response);
+        }
         if (typeof response.pos === "undefined"){ // hack to see if this is an error
             response = null;
         }
@@ -732,7 +724,9 @@ function ExpressionEditor(editorId, userOptions){
 
     this.initialise = function(){
 
-        console.log("initiialising gaphu", this.editorId);
+        if (DEBUG_GAPHU) {
+            console.log("initialising gaphu", this.editorId);
+        }
 
         // find a textarea or text input with the id
         let query = "textarea#" + this.editorId;

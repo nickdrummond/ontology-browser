@@ -13,6 +13,8 @@ div.autosuggest
 	position: absolute;
 	padding: 0 0 0 0;
     border: solid 1px #000044;
+	z-index: 10;
+	background-color: white;
 }
 
 div.autosuggest div.as_header,
