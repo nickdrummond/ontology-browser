@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class CachingInterceptor extends WebContentInterceptor {
 
     public CachingInterceptor() {
+        super();
         System.out.println("CACHING");
         addCacheMapping(CacheControl.maxAge(1, TimeUnit.HOURS)
                 .mustRevalidate(), "/**");

@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace='base :: header (title=${"Options"})'></head>
+<head th:replace='~{base :: header (title=${"Options"})}'></head>
 
 <body>
 
-<div th:replace='base :: title'></div>
+<div th:replace='~{base :: title}'></div>
 
-<div th:replace='base :: menu'></div>
+<div th:replace='~{base :: menu}'></div>
 
 <div id="main">
 
@@ -82,7 +82,7 @@
     </div><!-- content -->
 </div>
 
-<div th:replace='base :: footer'></div>
+<div th:replace='~{base :: footer}'></div>
 
 </body>
 </html>

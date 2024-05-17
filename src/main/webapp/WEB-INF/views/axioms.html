@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace='base :: header (title=${title}, query=${false}, tree=${false}, rewriteLinks=${true})'></head>
+<head th:replace='~{base :: header (title=${title}, query=${false}, tree=${false}, rewriteLinks=${true})}'></head>
 
 <body class="wrapper">
 
-<div th:replace='base :: title'></div>
+<div th:replace='~{base :: title}'></div>
 
-<div th:replace='base :: menu'></div>
+<div th:replace='~{base :: menu}'></div>
 
 <div id="main">
 
@@ -16,14 +16,14 @@
 
         <h2 th:text="${title}">Title</h2>
 
-        <div th:replace="base :: characteristic (${axioms})">
+        <div th:replace="~{base :: characteristic (${axioms})}">
             A characteristic
         </div>
 
     </div>
 </div>
 
-<div th:replace='base :: footer'></div>
+<div th:replace='~{base :: footer}'></div>
 
 </body>
 </html>

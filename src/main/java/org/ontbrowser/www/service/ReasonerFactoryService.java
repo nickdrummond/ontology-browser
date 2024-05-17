@@ -32,10 +32,10 @@ public class ReasonerFactoryService {
             try {
                 final OWLReasonerFactory fac = (OWLReasonerFactory) Class.forName(momento.getCls()).getDeclaredConstructor().newInstance();
                 facsByName.put(label, fac);
-                logger.info("Reasoner found: " + label);
+                logger.info("Reasoner installed: " + label);
             }
             catch (Throwable e){
-                logger.info("Reasoner cannot be found: " + label);
+                logger.info("skipping: " + label);
             }
         }
     }

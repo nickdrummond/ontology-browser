@@ -92,7 +92,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
                 response.text().then(html => {
                     const dummy = document.createElement("div");
                     dummy.innerHTML = html;
-                    let expandedNode = dummy.firstChild;
+                    let expandedNode = dummy.firstElementChild;
                     li.replaceWith(expandedNode); // replace the li with an expanded version
                     if (isRewriteLinks) {
                         rewriteLinks(expandedNode);

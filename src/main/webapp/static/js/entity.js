@@ -6,7 +6,8 @@ export function loadEntity(url, rewriteUrl, entityLoadedCallback) {
             response.text().then(html => {
                 const throwaway = document.createElement('span');
                 throwaway.innerHTML = html;
-                document.getElementById("content").replaceWith(throwaway.firstChild);
+                let content = document.getElementById("content");
+                content.replaceWith(throwaway.firstElementChild);
                 entityLoadedCallback();
             });
 

@@ -1,17 +1,22 @@
 package org.ontbrowser.www.model;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JacksonXmlRootElement(localName = "rs")
 public class SearchResult {
 
-    @XmlAttribute
+    @JacksonXmlProperty(isAttribute = true)
     private String id;
 
-    @XmlAttribute
+    @JacksonXmlProperty(isAttribute = true)
     private String info;
 
-    @XmlValue
+    @JacksonXmlText
     private String label;
 
     public SearchResult() {
@@ -22,4 +27,6 @@ public class SearchResult {
         this.info = info;
         this.label = label;
     }
+
+
 }

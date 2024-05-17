@@ -2,30 +2,30 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace='base :: header (title=${title}, query=${false}, tree=${true}, rewriteLinks=${true})'></head>
+<head th:replace='~{base :: header (title=${title}, query=${false}, tree=${true}, rewriteLinks=${true})}'></head>
 
 <body class="wrapper">
 
-<div th:replace='base :: title'></div>
+<div th:replace='~{base :: title}'></div>
 
-<div th:replace='base :: menu'></div>
+<div th:replace='~{base :: menu}'></div>
 
 <div id="main">
 
-    <div id='entities' th:replace="base :: list(${type}, ${entities})">
+    <div id='entities' th:replace="~{base :: list(${type}, ${entities})}">
         A list
     </div>
 
-    <div id='hierarchy'  th:replace="base :: hierarchy(${type}, ${hierarchy})">
+    <div id='hierarchy'  th:replace="~{base :: hierarchy(${type}, ${hierarchy})}">
         A hierarchy
     </div>
 
-    <div th:replace="base :: owlentity">
+    <div th:replace="~{base :: owlentity}">
         An entity
     </div>
 </div>
 
-<div th:replace='base :: footer'></div>
+<div th:replace='~{base :: footer}'></div>
 
 </body>
 </html>

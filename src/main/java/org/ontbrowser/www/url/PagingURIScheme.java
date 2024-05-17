@@ -1,6 +1,6 @@
 package org.ontbrowser.www.url;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 public abstract class PagingURIScheme {

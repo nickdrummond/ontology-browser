@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class CustomErrorController extends ApplicationController {
@@ -20,9 +20,24 @@ public class CustomErrorController extends ApplicationController {
             Exception e,
             Model model) {
 
-        log.error(e.getMessage(), e);
+        // TODO if request for XML or fragment, don't spit out HTML
 
-        Object errorCode = httpRequest.getAttribute("javax.servlet.error.status_code");
+        if (log.isDebugEnabled()) {
+            httpRequest.getAttributeNames().asIterator().forEachRemaining(n -> {
+                log.debug("request attr = " + n);
+            });
+        }
+
+        if (e != null) {
+            log.error("Application error", e);
+        }
+
+        Object exception = httpRequest.getAttribute("jakarta.servlet.error.exception");
+        if (exception instanceof Exception ex) {
+            log.error("Servlet/container error " + ex.getMessage(), ex);
+        }
+
+        Object errorCode = httpRequest.getAttribute("jakarta.servlet.error.status_code");
         if (errorCode instanceof Integer code) {
             model.addAttribute("errorCode", code);
         }

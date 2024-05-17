@@ -32,7 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.nickdrummond.parsejs.ParseException;
 import uk.co.nickdrummond.parsejs.ParseResult;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -151,7 +151,7 @@ public class DLQueryController extends ApplicationController {
             model.addAttribute("mos", owlRenderer);
             model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
 
-            return new ModelAndView("base :: results");
+            return new ModelAndView("base::results");
         } catch (ExecutionException e) {
             throw new OntServerException(e);
         } catch (InterruptedException | TimeoutException e) {

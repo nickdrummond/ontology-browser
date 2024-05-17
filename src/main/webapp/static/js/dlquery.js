@@ -82,6 +82,7 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
             signal: controller.signal
         }).then(response => {
             clearTimeout(timeoutId);
+            console.log("r", response);
             response.text().then(html => {
                 resultsForm.innerHTML = html;
                 rewriteLinks("Class", "classes"); // note Capitalised

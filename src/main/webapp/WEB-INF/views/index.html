@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:include='base :: header (title=${"Welcome"}, query=${false}, tree=${false}, rewriteLinks=${false})'></head>
+<head th:insert='~{base :: header (title=${"Welcome"}, query=${false}, tree=${false}, rewriteLinks=${false})}'></head>
 
 <body class="wrapper">
 
-<div th:replace='base :: title'></div>
+<div th:replace='~{base :: title}'></div>
 
-<div th:replace='base :: menu'></div>
+<div th:replace='~{base :: menu}'></div>
 
 <div class="welcome"><p>Welcome to the <em th:text="${projectInfo.name}">Ontology name</em>
     created in <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}"></a>.</p>
@@ -17,11 +17,11 @@
 
 <div id='main'>
 
-    <div th:replace='cloud :: cloud'></div>
+    <div th:replace='~{cloud :: cloud}'></div>
 
 </div>
 
-<div th:replace='base :: footer'></div>
+<div th:replace='~{base :: footer}'></div>
 
 </body>
 </html>

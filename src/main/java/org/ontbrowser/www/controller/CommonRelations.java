@@ -19,12 +19,12 @@ import org.springframework.ui.Model;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class CommonRelations<T extends OWLProperty> {
 
-    public static final String BASE_TREE = "base :: tree";
+    public static final String BASE_TREE = "base::tree";
 
     private final String path;
     private final ShortFormProvider sfp;

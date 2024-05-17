@@ -3,7 +3,7 @@ package org.ontbrowser.www.url;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.model.paging.WithEditor;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;

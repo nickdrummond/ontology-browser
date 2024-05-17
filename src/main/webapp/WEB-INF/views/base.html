@@ -73,7 +73,7 @@
 
 <div id='menu' th:fragment="menu">
 
-    <ul th:replace='base :: tabs'>Tabs</ul>
+    <ul th:replace='~{base :: tabs}'>Tabs</ul>
 
 </div> <!-- menu -->
 
@@ -81,15 +81,15 @@
     <li><a th:href='@{/ontologies/}'>Ontologies</a></li>
     <li><a th:href='@{/classes/}'>Classes</a></li>
     <li>Individuals:
-        <a th:href='@{/individuals/}'>by Type</a> /
-        <a th:href='@{/relations/onproperty/}'>by Relation</a> /
-        <a th:href='@{/relations/onannotationproperty/}'>by Annotation</a></li>
+        <a th:href='@{/individuals/}'>by&nbsp;Type</a> /
+        <a th:href='@{/relations/onproperty/}'>by&nbsp;Relation</a> /
+        <a th:href='@{/relations/onannotationproperty/}'>by&nbsp;Annotation</a></li>
     <li>Properties: <a th:href='@{/objectproperties/}'>Object</a> /
         <a th:href='@{/dataproperties/}'>Data</a> /
         <a th:href='@{/annotationproperties/}'>Annotation</a></li>
     <li><a th:href='@{/datatypes/}'>Datatypes</a></li>
     <li><a th:href='@{/axioms/}'>Axioms</a></li>
-    <li><a th:href='@{/dlquery/}'>DL Query</a></li>
+    <li><a th:href='@{/dlquery/}'>DL&nbsp;Query</a></li>
 
     <li>Usage:
         <a th:href='@{/clouds/classes}'>cl</a> /
@@ -104,7 +104,7 @@
 
 <div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
 
-<div class="results" th:fragment="results" th:replace="::characteristic (${results})">
+<div class="results" th:fragment="results" th:replace="~{base::characteristic (${results})}">
 </div>
 
 <!-- paging -->
@@ -135,7 +135,7 @@
      th:class='${"characteristic " + name}' th:fragment="characteristic (ch)">
 
     <h4 th:text='${ch.name}'>Some Characteristic</h4>
-    <span th:replace="base::paged (${ch.getPageData()}, ${name})">(2)</span>
+    <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
     <ul th:remove="all-but-first">
         <li class="asserted" th:each="object : ${ch.objects}">
 
@@ -236,7 +236,7 @@
 
     <ul th:if="${!t.children.isEmpty()}">
         <div class="removeme" th:each="child : ${t.children}" th:remove="tag">
-            <li th:replace="base::tree(${child})"></li>
+            <li th:replace="~{base::tree(${child})}"></li>
         </div>
     </ul>
 </li>
@@ -244,7 +244,7 @@
 <div class='owlselector primary' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${title}">
-        <li th:replace="base::tree(${hierarchy})">Top Thing</li>
+        <li th:replace="~{base::tree(${hierarchy})}">Top Thing</li>
     </ul>
 </div>
 
@@ -255,7 +255,7 @@
     </h4>
     <ul class="minihierarchy" th:classappend="${title}" th:if="${!hierarchy.children.isEmpty()}">
         <div class="removeme" th:each="child : ${hierarchy.children}" th:remove="tag">
-            <li th:replace="base::tree(${child})"></li>
+            <li th:replace="~{base::tree(${child})}"></li>
         </div>
     </ul>
 </div>
@@ -276,30 +276,30 @@
         <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
     </div>
 
-    <div th:replace="base :: image (${image})">
+    <div th:replace="~{base :: image (${image})}">
         Possibly an image
     </div>
 
-    <div th:replace="base :: sound (${sound})">
+    <div th:replace="~{base :: sound (${sound})}">
         Possibly a sound
     </div>
 
-    <div th:replace="base :: map (${geo})">
+    <div th:replace="~{base :: map (${geo})}">
         Possibly a map
     </div>
 
     <div th:if="${editingEnabled}"
-         th:replace='edits :: axiom(${""}, ${""})'>
+         th:replace='~{edits :: axiom(${""}, ${""})}'>
         Edit this axiom
     </div>
 
     <div class="characteristics">
-        <div th:replace="base :: metrics (${metrics})">
+        <div th:replace="~{base :: metrics (${metrics})}">
             Possibly some metrics
         </div>
 
         <div th:each="ch : ${characteristics}" th:remove="tag">
-            <div th:replace="base :: characteristic (${ch})">
+            <div th:replace="~{base :: characteristic (${ch})}">
                 A characteristic
             </div>
         </div>
