@@ -225,7 +225,7 @@ public class DLQueryController extends ApplicationController {
         List<AxiomWithMetadata> result = results.stream()
                 .sorted(comp)
                 .map(e -> new AxiomWithMetadata("result", e, null, OWLUtils.getDeclaringOntology(e, ont)))
-                .skip(start).limit(pageSize)
+                .skip(start-1L).limit(pageSize)
                 .toList();
 
         PageData pageData = new PageData(start, pageSize, results.size());

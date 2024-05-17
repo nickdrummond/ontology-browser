@@ -72,7 +72,7 @@ public class ReasonerService {
 
     private Future<Set<OWLEntity>> computeResults(final DLQuery query) {
         return es.submit(() -> {
-            long start = System.currentTimeMillis();
+            long start = System.nanoTime();
 
             OWLOntology reasoningOnt = getReasoningActiveOnt();
 
@@ -80,7 +80,9 @@ public class ReasonerService {
 
             Set<OWLEntity> results = getResults(query, r);
 
-            logger.debug(query.getQueryType() + " of \"" + query.getOwlClassExpression() + "\": " + results.size() + " results in " + (System.currentTimeMillis()-start) + "ms");
+            long t = TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start);
+
+            logger.info(query.getQueryType() + " " + results.size() + " results in " + t + "ms: " + kit.render(query.getOwlClassExpression()));
 
             return results;
         });

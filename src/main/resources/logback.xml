@@ -11,13 +11,14 @@
     </appender>
 
     <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>ontology-browser.log</File>
+        <File>logs/ontology-browser.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
             <FileNamePattern>ontology-browser.%d{yyyy-MM-dd}.log</FileNamePattern>
-
-            <!-- keep 30 days' worth of history -->
+            <!-- keep 30 days' worth of logs -->
             <maxHistory>30</maxHistory>
+            <!-- and max 3GB -->
+            <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
 
         <encoder>
