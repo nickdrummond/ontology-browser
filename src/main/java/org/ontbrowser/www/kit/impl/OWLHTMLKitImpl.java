@@ -143,7 +143,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     @Override
     public String render(OWLObject owlObject) {
         StringWriter writer = new StringWriter();
-        ManchesterOWLSyntaxObjectRenderer ren = new ManchesterOWLSyntaxObjectRenderer(writer, getShortFormProvider());
+        MOSRenderer ren = new MOSRenderer(writer, getFinder(), getShortFormProvider());
         owlObject.accept(ren);
         return writer.toString();
     }

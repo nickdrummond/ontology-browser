@@ -42,12 +42,13 @@ public class TransactionOntologyControllerAdvice {
     private OWLOntology getDefaultOntology(String ontId, String transaction) throws NotFoundException {
         if (transaction != null) {
             IRI ontIRI = TransactionUtils.iriForTransaction(transaction);
+            // TODO if the transaction is not known, we should redirect to strip the param out
             return kit.getOntologyForIRI(ontIRI)
-                    .orElseThrow(() -> new NotFoundException("No ontology for the given transaction: " + transaction));
+                    .orElse(kit.getRootOntology());
         }
         if (ontId != null) {
             return ontService.getOntologyFor(ontId, kit);
         }
-        return kit.getActiveOntology();
+        return kit.getRootOntology();
     }
 }
