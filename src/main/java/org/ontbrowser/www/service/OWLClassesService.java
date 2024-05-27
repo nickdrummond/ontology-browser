@@ -1,11 +1,16 @@
 package org.ontbrowser.www.service;
 
 import org.ontbrowser.www.exception.NotFoundException;
+import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.model.characteristics.Characteristic;
 import org.ontbrowser.www.model.characteristics.ClassCharacteristicsBuilder;
+import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
+import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,6 +20,9 @@ import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
 
 @Service
 public class OWLClassesService {
+
+    @Autowired
+    private ReasonerFactoryService reasonerFactoryService;
 
     public OWLClass getOWLClassFor(final String classId, final OWLOntology ont) throws NotFoundException {
         OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
@@ -28,12 +36,18 @@ public class OWLClassesService {
             return owlNothing;
         }
 
+        // TODO unbelievably inefficient - CACHE using a shortformprovider
         for (OWLClass owlClass: ont.getClassesInSignature(Imports.INCLUDED)) {
             if (getIdFor(owlClass).equals(classId)){
                 return owlClass;
             }
         }
         throw new NotFoundException("OWLClass", classId);
+    }
+
+    public OWLHierarchyService<OWLClass> getHierarchyService(OWLOntology ont) {
+        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
+        return new OWLClassHierarchyService(r, Comparator.comparing(o -> o.value.iterator().next()));
     }
 
     public String getIdFor(final OWLClass owlClass) {

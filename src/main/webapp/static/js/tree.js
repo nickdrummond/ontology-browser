@@ -75,16 +75,21 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
         const childList = document.createElement('ul');
         childList.innerHTML = `<li>${BUSY_IMAGE}</li>`;
 
-        let query = 'children';
-        if (li.closest(MINIHIERARCHY).classList.contains('Individuals')) {
-            query = 'instances';
-        }
+        // let query = 'children';
+        // if (li.closest(MINIHIERARCHY).classList.contains('Individuals')) {
+        //     query = 'instances';
+        // }
+        const statsName = li.querySelector('.node').getAttribute('data');
 
+        // TODO there is a tidier way to construct the query
         const nodeUrl = li.querySelector('a').href;
         const nodeUrlPieces = nodeUrl.split('?');
-        let url = nodeUrlPieces[0] + query;
+        let url = nodeUrlPieces[0] + 'children?';
         if (nodeUrlPieces[1]) {
-            url = url + '?' + nodeUrlPieces[1];
+            url = url + nodeUrlPieces[1] + "&";
+        }
+        if (statsName) {
+            url = url + "statsName=" + statsName;
         }
 
         fetch(url)
@@ -93,7 +98,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
                     const dummy = document.createElement("div");
                     dummy.innerHTML = html;
                     let expandedNode = dummy.firstElementChild;
-                    li.replaceWith(expandedNode); // replace the li with an expanded version
+                    childList.replaceWith(expandedNode); // replace the spinner with the children
                     if (isRewriteLinks) {
                         rewriteLinks(expandedNode);
                     }

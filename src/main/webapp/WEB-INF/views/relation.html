@@ -20,8 +20,16 @@
         A hierarchy
     </div>
 
-    <div id='hierarchy2'  th:replace="~{base :: secondaryhierarchy(${type2}, ${hierarchy2}, ${inverse})}">
+    <div id='hierarchy2'
+         th:if="${hierarchy2 != null}"
+         th:replace="~{base :: secondaryhierarchy(${type2}, ${hierarchy2}, ${inverse})}">
         Another hierarchy
+    </div>
+
+    <div id='list'
+         th:if="${entities2 != null}"
+         th:replace="~{base :: list(${type2}, ${entities2})}">
+        A list of entities
     </div>
 
     <div th:replace="~{base :: owlentity}">

@@ -2,6 +2,7 @@ package org.ontbrowser.www.service.hierarchy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Streams;
 import org.ontbrowser.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.reasoner.Node;
@@ -12,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public abstract class AbstractOWLHierarchyService<T extends OWLObject> implements OWLHierarchyService<T> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -33,6 +35,12 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
         return buildAllTree(topNode(), new HashSet<>());
     }
 
+    public Tree<T> getClosedTree() {
+        Set<Node<T>> subNodes = subs(topNode().getRepresentativeElement());
+        List<Tree<T>> subs = subNodes.stream().map(n -> new Tree<>(n, getChildCount(n))).sorted(comparator).toList();
+        return new Tree<>(topNode(), subs, subNodes.size());
+    }
+
     @Override
     public Tree<T> getChildren(T base) {
         List<Tree<T>> subs = Lists.newArrayList();
@@ -42,7 +50,8 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
             }
         }
         subs.sort(comparator);
-        return new Tree<>(equivs(base), subs);
+        Node<T> baseNode = equivs(base);
+        return new Tree<>(baseNode, subs, getChildCount(baseNode));
     }
 
     // TODO cache
@@ -59,10 +68,10 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
             }
         }
         subs.sort(comparator);
-        return new Tree<>(current, subs);
+        return new Tree<>(current, subs, getChildCount(current));
     }
 
-    private int getChildCount(Node<T> subNode) {
+    protected int getChildCount(Node<T> subNode) {
         Set<Node<T>> subs = subs(subNode.getRepresentativeElement());
         if (subs.size() == 1 && subs.iterator().next().isBottomNode()) {
             return 0;
@@ -85,7 +94,7 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
             }
         }
         subs.sort(comparator);
-        return new Tree<>(current, subs);
+        return new Tree<>(current, subs, getChildCount(current));
     }
 
     private Set<Node<T>> without(final Set<Node<T>> original, final Node<T> node) {
@@ -105,4 +114,13 @@ public abstract class AbstractOWLHierarchyService<T extends OWLObject> implement
     protected abstract Set<Node<T>> ancestors(T entity);
 
     protected abstract Node<T> equivs(T entity);
+
+    @Override
+    public Stream<Node<T>> getDescendants(T t) {
+        Set<Node<T>> subs = subs(t);
+        Stream<Node<T>> recursive = subs.stream().flatMap(sub -> getDescendants(sub.getRepresentativeElement()));
+        return Streams.concat(
+                subs.stream(),
+                recursive);
+    }
 }

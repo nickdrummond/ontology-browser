@@ -365,16 +365,41 @@ ul.minihierarchy {
     padding-left: 15px;
 }
 
-.minihierarchy ul li {
+.minihierarchy li {
     white-space: nowrap;
 }
 
-.minihierarchy .node{
+.minihierarchy .tree-node {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.minihierarchy li .node{
     font-family: monospace;
 }
 
-.minihierarchy .node.expandable{
+.minihierarchy li .node.expandable{
     cursor: pointer;
+}
+
+.minihierarchy li .child-count {
+    display: inline-block;
+    background-color: #a7d4e3;
+    font-size: x-small;
+}
+
+/* hide the dummy nodes for annotations */
+.minihierarchy.Annotation.Properties > li > .node,
+.minihierarchy.Annotation.Properties > li > .tree-node,
+.minihierarchy.Annotations.on > li > .node,
+.minihierarchy.Annotations.on > li > .tree-node {
+    display: none;
+}
+
+.dark .minihierarchy li .child-count {
+    background-color: #671d16;
 }
 
 img.busy {
@@ -571,11 +596,11 @@ img.thumb{
 
 .edit {
     margin: 0 5px;
-    /*display: none;*/
+    display: none;
 }
 
 .edit.active {
-    /*display: block;*/
+    display: block;
 }
 
 #edit {

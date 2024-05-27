@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         .attachTo("#darkmode");
 
     if (editingEnabled) {
-        console.log("EDITING ENABLED");
         edits().rememberTransaction();
     }
 

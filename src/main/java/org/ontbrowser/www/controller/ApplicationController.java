@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 public abstract class ApplicationController {
 
-    protected static final int DEFAULT_PAGE_SIZE = 30;
+    static final int DEFAULT_PAGE_SIZE = 30;
     protected static final String DEFAULT_PAGE_SIZE_STR = "30";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

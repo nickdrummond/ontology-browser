@@ -4,6 +4,9 @@ import org.ontbrowser.www.model.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.service.OWLIndividualsService;
 import org.ontbrowser.www.service.PropertiesService;
+import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
+import org.ontbrowser.www.service.stats.StatsMemo;
+import org.ontbrowser.www.service.stats.StatsService;
 import org.ontbrowser.www.url.CommonRelationsURLScheme;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
@@ -11,7 +14,6 @@ import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.renderer.RendererFactory;
-import org.ontbrowser.www.service.*;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -24,25 +26,28 @@ import java.util.*;
 
 public class CommonRelations<T extends OWLProperty> {
 
-    public static final String BASE_TREE = "base::tree";
+    public static final String BASE_TREE = "base::children";
 
     private final String path;
     private final ShortFormProvider sfp;
     private final PropertiesService<T> propertiesService;
     private final OWLIndividualsService individualsService;
     private final RendererFactory rendererFactory;
+    private final StatsService statsService;
 
     public CommonRelations(
             String path,
             ShortFormProvider sfp,
             PropertiesService<T> propertiesService,
             OWLIndividualsService individualsService,
-            @Nonnull RendererFactory rendererFactory) {
+            @Nonnull RendererFactory rendererFactory,
+            StatsService statsService) {
         this.path = path;
         this.sfp = sfp;
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.rendererFactory = rendererFactory;
+        this.statsService = statsService;
     }
 
     public void renderEntity(OWLEntity entity, Model model) {
@@ -88,17 +93,44 @@ public class CommonRelations<T extends OWLProperty> {
                 .withProperties(property, ont, inverse);
     }
 
-    public void buildCommon(
+   public void buildPrimaryTree(
+           T property,
+           OWLHierarchyService<? super T> hierarchyService,
+           String title,
+           Model model
+   ) {
+       model.addAttribute("type", title);
+       model.addAttribute("hierarchy", hierarchyService.getPrunedTree(property));
+   }
+
+    public void buildSecondaryTree(
             AbstractRelationsHierarchyService<T> relationsHierarchyService,
             @Nullable OWLNamedIndividual individual,
-            OWLOntology ont,
             Model model,
             HttpServletRequest request) {
 
         T property =  relationsHierarchyService.getProperty();
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
-                "/relations/" + path, property).withQuery(request.getQueryString());
+        Tree<OWLNamedIndividual> relationsTree = (individual != null) ?
+                relationsHierarchyService.getPrunedTree(individual) :
+                relationsHierarchyService.getClosedTree();
+
+        model.addAttribute("type2", sfp.getShortForm(property));
+        model.addAttribute("inverse", relationsHierarchyService.isInverse());
+        model.addAttribute("mos", getRenderer(relationsHierarchyService, property, individual, request));
+        model.addAttribute("hierarchy2", relationsTree);
+        //TODO fix this - generics!!
+        model.addAttribute("stats2", statsService.getTreeStats(createMemo(relationsHierarchyService), relationsHierarchyService));
+        model.addAttribute("statsName2", "transitiveRelationsCount");
+    }
+
+    public OWLHTMLRenderer getRenderer(
+            AbstractRelationsHierarchyService<T> relationsHierarchyService,
+            T property,
+            @Nullable OWLNamedIndividual individual,
+            HttpServletRequest request) {
+
+        URLScheme urlScheme = getUrlScheme(relationsHierarchyService, property, request);
 
         Set<OWLObject> activeObjects = new HashSet<>();
         activeObjects.add(property);
@@ -106,21 +138,25 @@ public class CommonRelations<T extends OWLProperty> {
             activeObjects.add(individual);
         }
 
-        Tree<OWLNamedIndividual> relationsTree = (individual != null) ?
-                relationsHierarchyService.getPrunedTree(individual) :
-                relationsHierarchyService.getTree();
+        return rendererFactory.getRenderer(relationsHierarchyService.getOnt())
+                .withActiveObjects(activeObjects)
+                .withURLScheme(urlScheme);
+    }
 
-        OWLHTMLRenderer renderer = rendererFactory.getRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
-
-        model.addAttribute("type", "Relations on");
-        model.addAttribute("hierarchy", propertiesService.getPropTree(property, ont));
-        model.addAttribute("type2", sfp.getShortForm(property));
-        model.addAttribute("inverse", relationsHierarchyService.isInverse());
-        model.addAttribute("mos", renderer);
-        model.addAttribute("hierarchy2", relationsTree);
+    private URLScheme getUrlScheme(AbstractRelationsHierarchyService<T> relationsHierarchyService, T property, HttpServletRequest request) {
+        return new CommonRelationsURLScheme<>("/relations/" + path, property)
+                .withTree(relationsHierarchyService)
+                .withQuery(request.getQueryString());
     }
 
     public OWLNamedIndividual getOWLIndividualFor(String individualId, OWLOntology ont) throws NotFoundException {
         return individualsService.getOWLIndividualFor(individualId, ont);
+    }
+
+    public StatsMemo createMemo(AbstractRelationsHierarchyService<?> hierarchyService) {
+        return new StatsMemo(
+                hierarchyService.getProperty().toString(),
+                hierarchyService.getOnt().getOntologyID().toString(),
+                Boolean.toString(hierarchyService.isInverse()));
     }
 }

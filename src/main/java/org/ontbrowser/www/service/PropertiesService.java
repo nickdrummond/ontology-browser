@@ -4,7 +4,12 @@ import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.service.hierarchy.AbstractOWLHierarchyService;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
+import org.ontbrowser.www.service.hierarchy.OWLAnnotationPropertyHierarchyService;
+import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
+import org.ontbrowser.www.service.stats.Stats;
+import org.ontbrowser.www.service.stats.StatsService;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.Comparator;
@@ -25,7 +30,7 @@ public interface PropertiesService<T extends OWLProperty> {
 
      Comparator<Tree<OWLNamedIndividual>> getComparator(T orderByProperty, OWLOntology ont);
 
-     Tree<? extends OWLObject> getPropTree(T property, OWLOntology ont);
+     OWLHierarchyService<? super T> getHierarchyService(OWLOntology ont);
 
      AbstractRelationsHierarchyService<T> getRelationsHierarchy (Comparator<Tree<OWLNamedIndividual>> comparator);
 }

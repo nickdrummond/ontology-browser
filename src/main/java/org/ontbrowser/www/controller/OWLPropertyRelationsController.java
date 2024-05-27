@@ -4,6 +4,7 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.RendererFactory;
+import org.ontbrowser.www.service.stats.StatsService;
 import org.ontbrowser.www.url.CommonRelationsURLScheme;
 import org.ontbrowser.www.url.RelationPropertyURLScheme;
 import org.ontbrowser.www.url.URLScheme;
@@ -17,6 +18,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
     public static final String RELATION_TEMPLATE = "relation";
     private final OWLObjectPropertiesService propertiesService;
     private final ReasonerFactoryService reasonerFactoryService;
+    private final StatsService statsService;
     private final CommonRelations<OWLObjectProperty> common;
 
     public OWLPropertyRelationsController(
@@ -46,10 +49,12 @@ public class OWLPropertyRelationsController extends ApplicationController {
             @Autowired ReasonerFactoryService reasonerFactoryService,
             @Autowired OWLHTMLKit kit,
             @Autowired RendererFactory rendererFactory,
+            @Autowired StatsService statsService,
             @Autowired ProjectInfo projectInfo) {
 
         this.propertiesService = propertiesService;
         this.reasonerFactoryService = reasonerFactoryService;
+        this.statsService = statsService;
         this.rendererFactory = rendererFactory;
         this.projectInfo = projectInfo;
         this.kit = kit;
@@ -59,7 +64,8 @@ public class OWLPropertyRelationsController extends ApplicationController {
                 kit.getShortFormProvider(),
                 propertiesService,
                 individualsService,
-                rendererFactory
+                rendererFactory,
+                statsService
         );
     }
 
@@ -80,16 +86,22 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @ModelAttribute final OWLOntology ont,
         @RequestParam(defaultValue = "false") final boolean inverse,
         @RequestParam final @Nullable String orderBy,
+        @RequestParam(defaultValue = "relationsCount") final String statsName,
         final Model model,
         HttpServletRequest request
     ) throws NotFoundException {
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = propertiesService.getPropertyFor(propertyId, ont);
 
-        AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, null, ont, model, request);
+        var reasoner = reasonerFactoryService.getToldReasoner(ont);
+
+        common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
+        model.addAttribute("stats", statsService.getPropertyStats(statsName, reasoner));
+        model.addAttribute("statsName", statsName);
+
+        common.buildSecondaryTree(relationsHierarchyService, null, model, request);
 
         common.renderEntity(property, model);
 
@@ -102,23 +114,24 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @PathVariable final String individualId,
         @RequestParam(defaultValue = "false") final boolean inverse,
         @RequestParam final @Nullable String orderBy,
-        @ModelAttribute final OWLOntology ont,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
+        @RequestParam final String statsName,
+        @ModelAttribute final OWLOntology ont,
         final Model model,
         HttpServletRequest request
     ) throws NotFoundException {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
-        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
+        var individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = propertiesService.getPropertyFor(propertyId, ont);
 
-        AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, individual, ont, model, request);
+        common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
+        common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
 
         return new ModelAndView(RELATION_TEMPLATE);
     }
@@ -129,24 +142,23 @@ public class OWLPropertyRelationsController extends ApplicationController {
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
-            @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false) List<With> with,
+            @RequestParam final String statsName,
+            @ModelAttribute final OWLOntology ont,
             final Model model,
             HttpServletRequest request
     ) throws NotFoundException {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
-        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
+        var individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = propertiesService.getPropertyFor(propertyId, ont);
 
-        AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        // TODO should do common without creating the tree
-        common.buildCommon(relationsHierarchyService, individual, ont, model, request);
+        common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
 
         return new ModelAndView("owlentityfragment");
     }
@@ -155,6 +167,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
     @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
         @PathVariable final String propertyId,
+        @RequestParam(defaultValue = "relationsCount") final String statsName,
         @ModelAttribute final OWLOntology ont,
         final Model model
     ) throws NotFoundException {
@@ -165,8 +178,12 @@ public class OWLPropertyRelationsController extends ApplicationController {
                 reasonerFactoryService.getToldReasoner(ont),
                 Comparator.comparing(o -> o.value.iterator().next()));
 
+        OWLReasoner reasoner = reasonerFactoryService.getToldReasoner(ont);
+
         model.addAttribute("t", hierarchyService.getChildren(property));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new RelationPropertyURLScheme()));
+        model.addAttribute("stats", statsService.getPropertyStats(statsName, reasoner));
+        model.addAttribute("statsName", statsName);
 
         return new ModelAndView(CommonRelations.BASE_TREE);
     }
@@ -177,6 +194,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @PathVariable final String individualId,
         @RequestParam(defaultValue = "false") final boolean inverse,
         @RequestParam final @Nullable String orderBy,
+        @RequestParam(defaultValue = "transitiveRelationsCount") final String statsName,
         @ModelAttribute final OWLOntology ont,
         final Model model,
         HttpServletRequest request
@@ -188,12 +206,16 @@ public class OWLPropertyRelationsController extends ApplicationController {
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
-                "/relations/" + PATH, property).withQuery(request.getQueryString());
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property)
+                .withTree(relationsHierarchyService)
+                .withQuery(request.getQueryString());
 
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
+        model.addAttribute("stats", statsService.getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService));
+        model.addAttribute("statsName", statsName); // TODO not used
 
         return new ModelAndView(CommonRelations.BASE_TREE);
     }
+
 }

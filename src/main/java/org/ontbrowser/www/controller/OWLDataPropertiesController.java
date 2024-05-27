@@ -60,25 +60,16 @@ public class OWLDataPropertiesController extends ApplicationController {
         @PathVariable final String propertyId,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
+        @ModelAttribute OWLOntology ont,
         final Model model,
         final HttpServletRequest request,
         final HttpServletResponse response) throws NotFoundException {
 
-        OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
+        OWLDataProperty prop = service.getPropertyFor(propertyId, ont);
 
-        Comparator<Tree<OWLDataProperty>> comparator = Comparator.comparing(o -> o.value.iterator().next());
+        model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
-        OWLOntology ont = kit.getActiveOntology();
-
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-
-        OWLDataPropertyHierarchyService hierarchyService = new OWLDataPropertyHierarchyService(r, comparator);
-
-        Tree<OWLDataProperty> prunedTree = hierarchyService.getPrunedTree(owlDataProperty);
-
-        model.addAttribute("hierarchy", prunedTree);
-
-        getOWLDataPropertyFragment(propertyId, pageSize, with, model, request, response);
+        getOWLDataPropertyFragment(propertyId, pageSize, with, ont, model, request, response);
 
         return new ModelAndView("owlentity");
     }
@@ -90,13 +81,12 @@ public class OWLDataPropertiesController extends ApplicationController {
         @PathVariable final String propertyId,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
+        @ModelAttribute OWLOntology ont,
         final Model model,
         final HttpServletRequest request,
         final HttpServletResponse response) throws NotFoundException {
 
-        OWLDataProperty owlDataProperty = service.getOWLDataPropertyFor(propertyId, kit);
-
-        OWLOntology ont = kit.getActiveOntology();
+        OWLDataProperty owlDataProperty = service.getPropertyFor(propertyId, ont);
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDataProperty);
 
@@ -123,26 +113,15 @@ public class OWLDataPropertiesController extends ApplicationController {
     @GetMapping(value="/{propertyId}/children")
     public ModelAndView getChildren(
             @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
             final Model model
     ) throws NotFoundException {
 
-        OWLDataProperty property = service.getOWLDataPropertyFor(propertyId, kit);
+        OWLDataProperty prop = service.getPropertyFor(propertyId, ont);
 
-        Comparator<Tree<OWLDataProperty>> comparator = Comparator.comparing(o -> o.value.iterator().next());
+        model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
+        model.addAttribute("mos", rendererFactory.getRenderer(ont));
 
-        OWLOntology ont = kit.getActiveOntology();
-
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-
-        OWLDataPropertyHierarchyService hierarchyService = new OWLDataPropertyHierarchyService(r, comparator);
-
-        Tree<OWLDataProperty> prunedTree = hierarchyService.getChildren(property);
-
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
-
-        model.addAttribute("t", prunedTree);
-        model.addAttribute("mos", owlRenderer);
-
-        return new ModelAndView("base :: tree");
+        return new ModelAndView("base::children");
     }
 }

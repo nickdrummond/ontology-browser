@@ -1,15 +1,15 @@
 package org.ontbrowser.www.service;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.NotImplementedException;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.characteristics.AnnotationPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.model.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
-import org.ontbrowser.www.service.hierarchy.AnnotationPropComparator;
-import org.ontbrowser.www.service.hierarchy.AnnotationsHierarchyService;
-import org.ontbrowser.www.service.hierarchy.OWLAnnotationPropertyHierarchyService;
+import org.ontbrowser.www.service.hierarchy.*;
+import org.ontbrowser.www.service.stats.Stats;
+import org.ontbrowser.www.service.stats.StatsService;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
 
@@ -52,10 +52,8 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
     }
 
     @Override
-    public Tree<? extends OWLObject> getPropTree(OWLAnnotationProperty property, OWLOntology ont) {
-        OWLAnnotationPropertyHierarchyService hierarchyService =
-                new OWLAnnotationPropertyHierarchyService(ont, Comparator.comparing(o -> o.value.iterator().next()));
-        return hierarchyService.getPrunedTree(property);
+    public OWLHierarchyService<OWLAnnotationProperty> getHierarchyService(OWLOntology ont) {
+        return new OWLAnnotationPropertyHierarchyService(ont, Comparator.comparing(o -> o.value.iterator().next()));
     }
 
     @Override
@@ -69,6 +67,6 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
         for (OWLOntology ont : activeOntology.getImportsClosure()) {
             props.addAll(ont.getAnnotationPropertiesInSignature());
         }
-        return props.stream().sorted(comparator).collect(Collectors.toList());
+        return props.stream().sorted(comparator).toList();
     }
 }

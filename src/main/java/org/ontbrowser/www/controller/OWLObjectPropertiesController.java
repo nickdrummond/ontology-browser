@@ -1,5 +1,7 @@
 package org.ontbrowser.www.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.characteristics.Characteristic;
@@ -15,13 +17,10 @@ import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
@@ -65,18 +64,9 @@ public class OWLObjectPropertiesController extends ApplicationController {
         final HttpServletRequest request,
         final HttpServletResponse response) throws NotFoundException {
 
-        OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
+        OWLObjectProperty prop = service.getPropertyFor(propertyId, ont);
 
-        Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-
-        OWLObjectPropertyHierarchyService hierarchyService =
-                new OWLObjectPropertyHierarchyService(r, comparator);
-
-        Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getPrunedTree(property);
-
-        model.addAttribute("hierarchy", prunedTree);
+        model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
         getOWLObjectPropertyFragment(propertyId, ont, with, model, request, response);
 
@@ -124,21 +114,11 @@ public class OWLObjectPropertiesController extends ApplicationController {
         final Model model
     ) throws NotFoundException {
 
-        OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
+        OWLObjectProperty prop = service.getPropertyFor(propertyId, ont);
 
-        Comparator<Tree<OWLObjectPropertyExpression>> comparator = Comparator.comparing(o -> o.value.iterator().next());
+        model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
+        model.addAttribute("mos", rendererFactory.getRenderer(ont));
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-
-        OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(r, comparator);
-
-        Tree<OWLObjectPropertyExpression> prunedTree = hierarchyService.getChildren(property);
-
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
-
-        model.addAttribute("t", prunedTree);
-        model.addAttribute("mos", owlRenderer);
-
-        return new ModelAndView("base :: tree");
+        return new ModelAndView("base::children");
     }
 }

@@ -5,9 +5,9 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.RendererFactory;
-import org.ontbrowser.www.service.OWLAnnotationPropertiesService;
-import org.ontbrowser.www.service.OWLIndividualsService;
+import org.ontbrowser.www.service.*;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
+import org.ontbrowser.www.service.stats.StatsService;
 import org.ontbrowser.www.url.CommonRelationsURLScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
@@ -15,7 +15,6 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,6 +34,8 @@ public class OWLAnnotationRelationsController extends ApplicationController {
     public static final String PATH = "onannotationproperty";
     public static final String RELATION_TEMPLATE = "relation";
     private final OWLAnnotationPropertiesService propertiesService;
+    private final ReasonerFactoryService reasonerFactoryService;
+    private final StatsService statsService;
     private final CommonRelations<OWLAnnotationProperty> common;
 
 
@@ -43,8 +44,12 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @Autowired OWLIndividualsService individualsService,
             @Autowired OWLHTMLKit kit,
             @Autowired ProjectInfo projectInfo,
-            @Autowired RendererFactory rendererFactory) {
+            @Autowired RendererFactory rendererFactory,
+            @Autowired ReasonerFactoryService reasonerFactoryService,
+            @Autowired StatsService statsService) {
         this.propertiesService = propertiesService;
+        this.reasonerFactoryService = reasonerFactoryService;
+        this.statsService = statsService;
         this.projectInfo = projectInfo;
         this.kit = kit;
         this.common = new CommonRelations<>(
@@ -52,7 +57,8 @@ public class OWLAnnotationRelationsController extends ApplicationController {
                 kit.getShortFormProvider(),
                 propertiesService,
                 individualsService,
-                rendererFactory
+                rendererFactory,
+                statsService
         );
     }
 
@@ -77,15 +83,21 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
+            @RequestParam(defaultValue = "annotationsCount") final String statsName,
             final Model model,
             HttpServletRequest request) throws NotFoundException {
 
-        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = propertiesService.getPropertyFor(propertyId, ont);
 
-        AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, null, ont, model, request);
+        var primaryHierarchy = propertiesService.getHierarchyService(ont);
+
+        common.buildPrimaryTree(property, primaryHierarchy, "Annotations on", model);
+        common.buildSecondaryTree(relationsHierarchyService, null, model, request);
+
+        model.addAttribute("stats", statsService.getAnnotationPropertyStats(statsName, ont, primaryHierarchy));
+        model.addAttribute("statsName", statsName);
 
         common.renderEntity(property, model);
 
@@ -101,12 +113,13 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @RequestParam final @Nullable String orderBy,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false) List<With> with,
+            @RequestParam(defaultValue = "annotationsCount") final String statsName,
             final Model model,
             HttpServletRequest request) throws NotFoundException {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
-        OWLNamedIndividual individual = common.renderIndividual(
+        var individual = common.renderIndividual(
                 individualId,
                 ont,
                 withOrEmpty,
@@ -115,16 +128,41 @@ public class OWLAnnotationRelationsController extends ApplicationController {
                 model,
                 kit.getComparator());
 
-        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = propertiesService.getPropertyFor(propertyId, ont);
 
-        AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        common.buildCommon(relationsHierarchyService, individual, ont, model, request);
+        var primaryHierarchy = propertiesService.getHierarchyService(ont);
+
+        common.buildPrimaryTree(property, primaryHierarchy, "Annotations on", model);
+        common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
 
         return new ModelAndView(RELATION_TEMPLATE);
     }
 
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value = "/{propertyId}/children")
+    public ModelAndView getChildren(
+            @PathVariable final String propertyId,
+            @RequestParam(defaultValue = "relationsCount") final String statsName,
+            @ModelAttribute final OWLOntology ont,
+            final Model model,
+            final HttpServletRequest request
+    ) throws NotFoundException {
+
+        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
+
+        model.addAttribute("t", propertiesService.getHierarchyService(ont).getChildren(property));
+        model.addAttribute("stats", statsService.getAnnotationPropertyStats(statsName, ont, propertiesService.getHierarchyService(ont)));
+        model.addAttribute("statsName", statsName);
+
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property)
+                .withQuery(request.getQueryString());
+
+        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme).withActiveObject(property));
+
+        return new ModelAndView(CommonRelations.BASE_TREE);
+    }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
     public ModelAndView getChildren(
@@ -143,8 +181,9 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>(relationsHierarchyService,
-                "/relations/" + PATH, property).withQuery(request.getQueryString());
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property)
+                .withTree(relationsHierarchyService)
+                .withQuery(request.getQueryString());
 
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));

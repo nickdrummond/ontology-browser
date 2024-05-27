@@ -1,9 +1,12 @@
 package org.ontbrowser.www.service.hierarchy;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.ontbrowser.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.reasoner.Node;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntology> {
 
@@ -23,6 +26,11 @@ public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntol
     @Override
     public Tree<OWLOntology> getChildren(OWLOntology base) {
         throw new RuntimeException("Ouch");
+    }
+
+    @Override
+    public Stream<Node<OWLOntology>> getDescendants(OWLOntology ont) {
+        throw new NotImplementedException("Descendants not implemented for ontologies");
     }
 
     private Tree<OWLOntology> getTree(OWLOntology ont, Set<OWLOntology> visited) {

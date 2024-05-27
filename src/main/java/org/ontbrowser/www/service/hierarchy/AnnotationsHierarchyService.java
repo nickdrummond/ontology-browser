@@ -1,5 +1,6 @@
 package org.ontbrowser.www.service.hierarchy;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.ontbrowser.www.model.Tree;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -8,6 +9,7 @@ import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AnnotationsHierarchyService extends AbstractRelationsHierarchyService<OWLAnnotationProperty> {
 

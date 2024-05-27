@@ -1,5 +1,6 @@
 package org.ontbrowser.www.service;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.characteristics.Characteristic;
@@ -10,6 +11,8 @@ import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLObjectPropertyHierarchyService;
 import org.ontbrowser.www.service.hierarchy.PropComparator;
 import org.ontbrowser.www.service.hierarchy.RelationsHierarchyService;
+import org.ontbrowser.www.service.stats.Stats;
+import org.ontbrowser.www.service.stats.StatsService;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,11 +74,10 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
     }
 
     @Override
-    public Tree<? extends OWLObject> getPropTree(OWLObjectProperty property, OWLOntology ont) {
-        OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
+    public OWLHierarchyService<OWLObjectPropertyExpression> getHierarchyService(OWLOntology ont) {
+        return new OWLObjectPropertyHierarchyService(
                 reasonerFactoryService.getToldReasoner(ont),
                 Comparator.comparing(o -> o.value.iterator().next()));
-        return hierarchyService.getPrunedTree(property);
     }
 
     public AbstractRelationsHierarchyService<OWLObjectProperty> getRelationsHierarchy (

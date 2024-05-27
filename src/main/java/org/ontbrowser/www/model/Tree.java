@@ -23,6 +23,12 @@ public class Tree<T extends OWLObject> {
         this.children = children;
     }
 
+    public Tree(final Iterable<T> value, final List<Tree<T>> children, int childCount) {
+        this.value = value;
+        this.childCount = childCount;
+        this.children = children;
+    }
+
     @Override
     public String toString() {
         String node = "\"node\": \"[" + StringUtils.join(value, ", ") + "]\"";

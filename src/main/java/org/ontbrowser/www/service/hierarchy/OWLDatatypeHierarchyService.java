@@ -1,6 +1,7 @@
 package org.ontbrowser.www.service.hierarchy;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.lang3.NotImplementedException;
 import org.ontbrowser.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -13,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OWLDatatypeHierarchyService extends AbstractOWLHierarchyService<OWLDatatype> {
 

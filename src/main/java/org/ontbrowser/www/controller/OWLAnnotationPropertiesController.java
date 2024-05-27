@@ -1,14 +1,19 @@
 package org.ontbrowser.www.controller;
 
 import org.ontbrowser.www.exception.NotFoundException;
+import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.OWLAnnotationPropertiesService;
+import org.ontbrowser.www.service.hierarchy.AnnotationsHierarchyService;
+import org.ontbrowser.www.service.hierarchy.OWLAnnotationPropertyHierarchyService;
+import org.ontbrowser.www.service.hierarchy.OWLDataPropertyHierarchyService;
+import org.ontbrowser.www.service.hierarchy.OWLObjectPropertyHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.ontbrowser.www.url.RelationPropertyURLScheme;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,7 +58,6 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         response.sendRedirect("/annotationproperties/" + id);
     }
 
-
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value="/{propertyId}")
     public ModelAndView getOWLAnnotationProperty(
@@ -65,12 +69,9 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             final HttpServletRequest request,
             final HttpServletResponse response) throws NotFoundException {
 
-        Comparator<OWLObject> comparator = kit.getComparator();
+        var prop = service.getPropertyFor(propertyId, ont);
 
-        List<OWLAnnotationProperty> annotationProperties =
-                service.getAnnotationProperties(ont, comparator);
-
-        model.addAttribute("entities", annotationProperties);
+        model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
         getOWLAnnotationPropertyFragment(propertyId, ont, pageSize, with, model, request, response);
 
@@ -112,6 +113,21 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         response.addHeader("title", projectInfo.getName() + ": " + entityName);
 
         return new ModelAndView("owlentityfragment");
+    }
 
+    @SuppressWarnings("SameReturnValue")
+    @GetMapping(value="/{propertyId}/children")
+    public ModelAndView getChildren(
+            @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
+            final Model model
+    ) throws NotFoundException {
+
+        OWLAnnotationProperty prop = service.getPropertyFor(propertyId, ont);
+
+        model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
+        model.addAttribute("mos", rendererFactory.getRenderer(ont));
+
+        return new ModelAndView("base::children");
     }
 }

@@ -5,7 +5,8 @@ import org.semanticweb.owlapi.model.*;
 
 import java.util.Comparator;
 
-public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> extends AbstractOWLHierarchyService<OWLNamedIndividual> {
+public abstract class AbstractRelationsHierarchyService<T extends OWLProperty>
+        extends AbstractOWLHierarchyService<OWLNamedIndividual> {
 
     protected T property;
 
@@ -29,6 +30,10 @@ public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> e
         this.root = ont.getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(property.getIRI());
 
         return this;
+    }
+
+    public OWLOntology getOnt() {
+        return ont;
     }
 
     public boolean isInverse() {
