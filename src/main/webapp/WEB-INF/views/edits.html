@@ -20,7 +20,7 @@
             <select name="ontology" id="edit-ontology">
                 <option th:each="ont : ${kit.getOntologies()}"
                         class="ontology-uri"
-                        th:value='${kit.getOntIRI(ont)}'
+                        th:value='${T(org.ontbrowser.www.util.OWLUtils).ontIRI(ont)}'
                         th:text="${kit.getOntologyShortFormProvider().getShortForm(ont)}">ontology</option>
             </select>
         </form>

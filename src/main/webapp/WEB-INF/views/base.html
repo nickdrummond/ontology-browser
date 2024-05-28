@@ -143,7 +143,7 @@
             </span>
 
             <span class="source-ont"
-                  th:data="${kit.getOntIRI(object.getOWLOntology())}"
+                  th:data="${T(org.ontbrowser.www.util.OWLUtils).ontIRI(object.getOWLOntology())}"
                   th:utext="${mos.render(object.getOWLOntology())}"
             >
                 pizza.owl

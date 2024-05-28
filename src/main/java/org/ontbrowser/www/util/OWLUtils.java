@@ -14,7 +14,11 @@ public class OWLUtils {
         return rootOnt;
     }
 
-    public static String ontName(OWLOntologyID ontologyID) {
+    public static String ontIRI(OWLOntology ont) {
+        return ontIRI(ont.getOntologyID());
+    }
+
+    public static String ontIRI(OWLOntologyID ontologyID) {
         return ontologyID.getOntologyIRI().map(IRI::toString)
                 .orElse(ontologyID.getDefaultDocumentIRI().map(IRI::toString)
                         .orElse("anonymous"));

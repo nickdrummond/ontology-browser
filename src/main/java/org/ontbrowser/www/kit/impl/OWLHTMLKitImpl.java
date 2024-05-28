@@ -6,12 +6,10 @@ import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.util.OWLObjectComparator;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.renderer.*;
 import org.ontbrowser.www.util.OWLUtils;
 import org.ontbrowser.www.util.VocabUtils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
-import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
@@ -86,10 +84,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return activeOntology;
     }
 
-    public void setActiveOntology(@Nonnull OWLOntology ont) {
-        activeOntology = ont;
-    }
-
     public Set<OWLOntology> getOntologies() {
         return mngr.getOntologies();
     }
@@ -115,7 +109,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         }
         return finder;
     }
-
 
     public OWLEntityChecker getOWLEntityChecker() {
         if (owlEntityChecker == null){
@@ -146,11 +139,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         MOSRenderer ren = new MOSRenderer(writer, getFinder(), getShortFormProvider());
         owlObject.accept(ren);
         return writer.toString();
-    }
-
-    @Override
-    public String getOntIRI(OWLOntology ontology) {
-        return OWLUtils.ontName(ontology.getOntologyID());
     }
 
     public OntologyIRIShortFormProvider getOntologyShortFormProvider() {

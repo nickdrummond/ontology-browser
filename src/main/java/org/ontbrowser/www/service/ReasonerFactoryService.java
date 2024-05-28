@@ -73,7 +73,7 @@ public class ReasonerFactoryService {
         if (r == null) {
             OWLReasonerFactory fac = getFactoryFor(name);
             if (fac != null) {
-                String ontName = OWLUtils.ontName(ont.getOntologyID());
+                String ontName = OWLUtils.ontIRI(ont.getOntologyID());
                 logger.warn("Creating {} reasoner for {}", name, ontName);
                 r = new SynchronizedOWLReasoner(fac.createNonBufferingReasoner(ont, new SimpleConfiguration()));
                 reasonerByName.put(key, r);

@@ -38,7 +38,7 @@ public class OntologyLoader {
                 count++;
                 if (loadingFinishedEvent.isSuccessful() && !loadingFinishedEvent.isImported()) {
                     OWLOntologyID id = loadingFinishedEvent.getOntologyID();
-                    logger.info("Loaded {} with {} imports", OWLUtils.ontName(id), count-1);
+                    logger.info("Loaded {} with {} imports", OWLUtils.ontIRI(id), count-1);
                 }
             }
         };

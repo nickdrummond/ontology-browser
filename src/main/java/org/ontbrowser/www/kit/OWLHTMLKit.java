@@ -24,8 +24,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
 
     Set<OWLOntology> getOntologies();
 
-    void setActiveOntology(@Nonnull OWLOntology ont);
-
     /**
      * First get an ontology with a matching version IRI if one exists.
      * If not, get an ontology with a matching ontology IRI.
@@ -45,8 +43,6 @@ public interface OWLHTMLKit extends ActiveOntologyProvider {
     ShortFormProvider getShortFormProvider();
 
     String render(OWLObject owlObject);
-
-    String getOntIRI(OWLOntology ontology);
 
     OntologyIRIShortFormProvider getOntologyShortFormProvider();
 
