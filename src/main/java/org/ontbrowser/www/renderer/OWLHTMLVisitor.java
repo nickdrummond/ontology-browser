@@ -800,12 +800,12 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     // Make names line breakable on underscore
     private String renderBreakableName(OWLEntity entity){
-        return sfProvider.getShortForm(entity).replaceAll("_(?=[^_])", "_<wbr>");
+        return sfProvider.getShortForm(entity).replace("_", "_<wbr>");
     }
 
     // Make string line breakable on /
     private String makeBreakable(String s) {
-        return s.replaceAll("/(?=[^/])", "/<wbr>").replace("#", "#<wbr>");
+        return s.replace("/", "/<wbr>").replace("#", "#<wbr>");
     }
 
     private void writeIRIWithBoldFragment(@Nonnull IRI iri, @Nonnull String shortForm) {

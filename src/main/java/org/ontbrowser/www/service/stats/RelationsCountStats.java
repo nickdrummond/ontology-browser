@@ -6,6 +6,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 class RelationsCountStats implements Stats<OWLObjectProperty> {
 
@@ -13,6 +15,7 @@ class RelationsCountStats implements Stats<OWLObjectProperty> {
 
     // TODO centralize cache
     private Map<OWLObjectPropertyExpression, Integer> cache = new HashMap<>();
+    private Map<OWLObjectProperty, Set<OWLObjectProperty>> subsCache = new HashMap<>();
 
     private OWLReasoner reasoner;
 
@@ -23,9 +26,28 @@ class RelationsCountStats implements Stats<OWLObjectProperty> {
         this.ont = reasoner.getRootOntology();
     }
 
-    public int getStats(OWLObjectProperty prop) {
-        int directRelations = getNumberOfRelations(prop);
-        return directRelations + reasoner.subObjectProperties(prop, false).map(this::getNumberOfRelations).mapToInt(i -> i).sum();
+    public int getStats(OWLObjectProperty target) {
+        if (cache.containsKey(target)) {
+            return cache.get(target);
+        }
+        int directRelations = getNumberOfRelations(target);
+        Set<OWLObjectProperty> subs = getNamedSubs(target);
+        int result = directRelations + subs.stream().map(child -> getStats(child)).mapToInt(i -> i).sum();
+        cache.put(target, result);
+        return result;
+    }
+
+    private Set<OWLObjectProperty> getNamedSubs(OWLObjectProperty prop) {
+        if (subsCache.containsKey(prop)) {
+            return subsCache.get(prop);
+        }
+
+        Set<OWLObjectProperty> subs = reasoner.subObjectProperties(prop)
+                .filter(s -> s.isNamed())
+                .map(s -> s.asOWLObjectProperty())
+                .collect(Collectors.toSet());
+        subsCache.put(prop, subs);
+        return subs;
     }
 
     @Override
@@ -33,15 +55,12 @@ class RelationsCountStats implements Stats<OWLObjectProperty> {
         return NAME;
     }
 
-    public int getStats(OWLNamedIndividual ind) {
-        return 0;
-    }
-
     private int getNumberOfRelations(OWLObjectPropertyExpression prop) {
         if (cache.containsKey(prop)) {
             return cache.get(prop);
         }
-        int size = ont.axioms(AxiomType.OBJECT_PROPERTY_ASSERTION, Imports.INCLUDED).filter(ax -> ax.getProperty().equals(prop)).toList().size();
+        int size = ont.axioms(AxiomType.OBJECT_PROPERTY_ASSERTION, Imports.INCLUDED)
+                .filter(ax -> ax.getProperty().equals(prop)).toList().size();
         cache.put(prop, size);
         return size;
     }

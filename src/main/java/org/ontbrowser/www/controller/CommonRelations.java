@@ -1,27 +1,27 @@
 package org.ontbrowser.www.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.ontbrowser.www.exception.NotFoundException;
+import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
+import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.service.OWLIndividualsService;
 import org.ontbrowser.www.service.PropertiesService;
+import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
 import org.ontbrowser.www.service.stats.StatsMemo;
 import org.ontbrowser.www.service.stats.StatsService;
 import org.ontbrowser.www.url.CommonRelationsURLScheme;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
-import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.renderer.RendererFactory;
-import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.ui.Model;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class CommonRelations<T extends OWLProperty> {
@@ -34,6 +34,7 @@ public class CommonRelations<T extends OWLProperty> {
     private final OWLIndividualsService individualsService;
     private final RendererFactory rendererFactory;
     private final StatsService statsService;
+    private final Map<StatsMemo, AbstractRelationsHierarchyService<T>> hierarchyCache = new HashMap<>();
 
     public CommonRelations(
             String path,
@@ -88,9 +89,18 @@ public class CommonRelations<T extends OWLProperty> {
 
         Comparator<Tree<OWLNamedIndividual>> comparator = propertiesService.getComparator(orderByProperty, ont);
 
-        return propertiesService
+        // TODO central cache
+        StatsMemo memo = new StatsMemo(property.getIRI().toString(), String.valueOf(inverse), ont.getOntologyID().toString());
+
+        if (hierarchyCache.containsKey(memo)) {
+            return hierarchyCache.get(memo);
+        }
+
+        var hierarchy = propertiesService
                 .getRelationsHierarchy(comparator)
                 .withProperties(property, ont, inverse);
+        hierarchyCache.put(memo, hierarchy);
+        return hierarchy;
     }
 
    public void buildPrimaryTree(
