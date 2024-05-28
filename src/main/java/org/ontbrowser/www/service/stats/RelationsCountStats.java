@@ -4,11 +4,16 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
+import java.util.HashMap;
+import java.util.Map;
+
 class RelationsCountStats implements Stats<OWLObjectProperty> {
 
     public static final String NAME = "relationsCount";
 
-    // TODO cache
+    // TODO centralize cache
+    private Map<OWLObjectPropertyExpression, Integer> cache = new HashMap<>();
+
     private OWLReasoner reasoner;
 
     private OWLOntology ont;
@@ -33,6 +38,11 @@ class RelationsCountStats implements Stats<OWLObjectProperty> {
     }
 
     private int getNumberOfRelations(OWLObjectPropertyExpression prop) {
-        return ont.axioms(AxiomType.OBJECT_PROPERTY_ASSERTION, Imports.INCLUDED).filter(ax -> ax.getProperty().equals(prop)).toList().size();
+        if (cache.containsKey(prop)) {
+            return cache.get(prop);
+        }
+        int size = ont.axioms(AxiomType.OBJECT_PROPERTY_ASSERTION, Imports.INCLUDED).filter(ax -> ax.getProperty().equals(prop)).toList().size();
+        cache.put(prop, size);
+        return size;
     }
 }

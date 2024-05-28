@@ -99,11 +99,7 @@ public class RelationsHierarchyService extends AbstractRelationsHierarchyService
     }
 
     private void insert(OWLNamedIndividual parent, OWLNamedIndividual child, Map<OWLNamedIndividual, List<OWLNamedIndividual>> map) {
-        List<OWLNamedIndividual> children = map.get(parent);
-        if (children == null) {
-            children = new ArrayList<>();
-            map.put(parent, children);
-        }
+        List<OWLNamedIndividual> children = map.computeIfAbsent(parent, k -> new ArrayList<>());
         children.add(child);
     }
 

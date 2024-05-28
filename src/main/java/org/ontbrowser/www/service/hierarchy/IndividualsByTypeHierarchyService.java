@@ -1,9 +1,8 @@
 package org.ontbrowser.www.service.hierarchy;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.ontbrowser.www.model.Tree;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
@@ -11,7 +10,7 @@ import org.semanticweb.owlapi.reasoner.impl.OWLNamedIndividualNode;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class IndividualsByTypeHierarchyService
         extends AbstractOWLHierarchyService<OWLNamedIndividual> {
@@ -38,7 +37,24 @@ public class IndividualsByTypeHierarchyService
 
     @Override
     protected Set<Node<OWLNamedIndividual>> subs(OWLNamedIndividual entity) {
+        if (entity == root) {
+            return getRoots(); // Told reasoner fails to return individuals with no asserted type
+        }
         return reasoner.getInstances(type, direct).getNodes();
+    }
+
+    private Set<Node<OWLNamedIndividual>> getRoots() {
+        OWLOntology ont = reasoner.getRootOntology();
+        OWLClass owlThing = ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
+        Set<OWLIndividual> nonRoots = ont.axioms(AxiomType.CLASS_ASSERTION, Imports.INCLUDED)
+                .filter(ax -> ax.getClassExpression() != owlThing)
+                .map(ax -> ax.getIndividual())
+                .collect(Collectors.toSet());
+
+        Set<OWLNamedIndividual> all = ont.getIndividualsInSignature(Imports.INCLUDED);
+        all.removeAll(nonRoots);
+
+        return all.stream().map(OWLNamedIndividualNode::new).collect(Collectors.toSet());
     }
 
     @Override

@@ -34,19 +34,23 @@ public class OWLAnnotationPropertyHierarchyService extends AbstractOWLHierarchyS
     @Override
     protected Set<Node<OWLAnnotationProperty>> subs(OWLAnnotationProperty prop) {
         if (prop == dummyroot) {
-            Set<OWLAnnotationProperty> nonRoots = ont.axioms(AxiomType.SUB_ANNOTATION_PROPERTY_OF, Imports.INCLUDED)
-                    .map(ax -> ax.getSubProperty())
-                    .collect(Collectors.toSet());
-
-            Set<OWLAnnotationProperty> all = ont.getAnnotationPropertiesInSignature(Imports.INCLUDED);
-            all.removeAll(nonRoots);
-
-            return all.stream().map(AnnotationPropertyNode::new).collect(Collectors.toSet());
+            return getRoots();
         }
         return ont.axioms(AxiomType.SUB_ANNOTATION_PROPERTY_OF, Imports.INCLUDED)
                 .filter(ax -> ax.getSuperProperty() == prop)
                 .map(ax -> new AnnotationPropertyNode(ax.getSubProperty()))
                 .collect(Collectors.toSet());
+    }
+
+    private Set<Node<OWLAnnotationProperty>> getRoots() {
+        Set<OWLAnnotationProperty> nonRoots = ont.axioms(AxiomType.SUB_ANNOTATION_PROPERTY_OF, Imports.INCLUDED)
+                .map(ax -> ax.getSubProperty())
+                .collect(Collectors.toSet());
+
+        Set<OWLAnnotationProperty> all = ont.getAnnotationPropertiesInSignature(Imports.INCLUDED);
+        all.removeAll(nonRoots);
+
+        return all.stream().map(AnnotationPropertyNode::new).collect(Collectors.toSet());
     }
 
     @Override

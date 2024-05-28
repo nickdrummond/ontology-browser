@@ -23,7 +23,10 @@ public class StatsService {
 
     public Stats<OWLObjectProperty> getPropertyStats(String type, OWLReasoner reasoner) throws NotFoundException {
         return switch (type) {
-            case RelationsCountStats.NAME -> new RelationsCountStats(reasoner);
+            case RelationsCountStats.NAME -> cache.computeIfAbsent(
+                    new StatsMemo(type, reasoner.getRootOntology().getOntologyID().toString()), m ->
+                        new RelationsCountStats(reasoner)
+                    );
             default -> throw new NotFoundException("No object property stats called " + type);
         };
     }
