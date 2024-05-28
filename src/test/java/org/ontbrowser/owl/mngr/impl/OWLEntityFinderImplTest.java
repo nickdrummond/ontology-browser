@@ -1,6 +1,5 @@
 package org.ontbrowser.owl.mngr.impl;
 
-import org.ontbrowser.www.kit.ActiveOntologyProvider;
 import org.ontbrowser.www.kit.impl.OWLEntityFinderImpl;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -19,8 +18,6 @@ public class OWLEntityFinderImplTest {
         OWLDataFactory df = mngr.getOWLDataFactory();
         OWLOntology ont = mngr.createOntology();
 
-        ActiveOntologyProvider ontProvider = () -> ont;
-
         CachingBidirectionalShortFormProvider cache = new CachingBidirectionalShortFormProvider() {
             @Override
             protected String generateShortForm(OWLEntity owlEntity) {
@@ -28,7 +25,7 @@ public class OWLEntityFinderImplTest {
             }
         };
 
-        OWLEntityFinderImpl finder = new OWLEntityFinderImpl(cache, df, ontProvider);
+        OWLEntityFinderImpl finder = new OWLEntityFinderImpl(cache, df);
 
         OWLClass helping_at_the = cls("Helping_at_the", df, ont, cache);
         OWLClass also_helping_at_the = cls("Also_helping_at_the", df, ont, cache);

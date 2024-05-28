@@ -29,14 +29,6 @@ public class OWLOntologiesServiceImpl implements OWLOntologiesService {
         return String.valueOf(ontology.getOntologyID().hashCode());
     }
 
-    @Override public OWLOntology getActiveOntology(final OWLHTMLKit kit) {
-        return kit.getActiveOntology();
-    }
-
-    @Override public Set<OWLOntology> getOntologies(final OWLHTMLKit kit) {
-        return kit.getOntologies();
-    }
-
     @Override public List<Characteristic> getCharacteristics(
             final OWLOntology ont,
             final List<With> with,

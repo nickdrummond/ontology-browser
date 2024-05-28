@@ -30,19 +30,11 @@ public interface OWLEntityFinder {
 
     Set<OWLEntity> getOWLEntities(String str);
 
-    <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type);
+    Set<OWLEntity> getOWLEntities(String str, OWLOntology ont);
+
     <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont);
 
-    Set<OWLEntity> getOWLEntities(IRI iri);
-
-    /**
-     * @param iri the id of the searched for entity
-     * @param type the type of the searched for entity
-     *
-     * @return can return a set if the type is entities (an individual and a class could be returned)
-     */
-    <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type);
-    <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type, OWLOntology ont);
+    Set<OWLEntity> getOWLEntities(IRI iri, OWLOntology ont);
 
     void dispose();
 }

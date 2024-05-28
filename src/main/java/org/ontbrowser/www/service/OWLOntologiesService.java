@@ -16,10 +16,6 @@ public interface OWLOntologiesService {
 
     String getIdFor(OWLOntology ontology);
 
-    OWLOntology getActiveOntology(OWLHTMLKit kit);
-
-    Set<OWLOntology> getOntologies(OWLHTMLKit kit);
-
     List<Characteristic> getCharacteristics(
             OWLOntology owlOntology,
             List<With> with,

@@ -1,7 +1,6 @@
 package org.ontbrowser.www.kit.impl;
 
 import com.google.common.collect.Sets;
-import org.ontbrowser.www.kit.ActiveOntologyProvider;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -27,14 +26,10 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
 
     private final OWLDataFactory df;
 
-    private final ActiveOntologyProvider activeOntologyProvider;
-
     public OWLEntityFinderImpl(BidirectionalShortFormProvider cache,
-                               OWLDataFactory df,
-                               ActiveOntologyProvider activeOntologyProvider) {
+                               OWLDataFactory df) {
         this.cache = cache;
         this.df = df;
-        this.activeOntologyProvider = activeOntologyProvider;
     }
 
     public Set<OWLClass> getOWLClasses (String str){
@@ -79,6 +74,14 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public Set<OWLEntity> getOWLEntities(String str, OWLOntology ont) {
+        final Set<OWLEntity> results = getOWLEntities(str);
+        if (ont != null){
+            results.removeIf(result -> !ont.containsEntityInSignature(result.getIRI()));
+        }
+        return results;    }
+
     public <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type) {
         return getMatches(str, type);
     }
@@ -91,8 +94,7 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         return results;
     }
 
-    public Set<OWLEntity> getOWLEntities(IRI iri) {
-        OWLOntology ont = activeOntologyProvider.getActiveOntology();
+    public Set<OWLEntity> getOWLEntities(IRI iri, OWLOntology ont) {
         return getOWLEntities(iri, ont, Imports.INCLUDED);
     }
 
@@ -117,10 +119,6 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
             results.add(df.getOWLDatatype(iri));
         }
         return results;
-    }
-
-    public <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type) {
-        return getOWLEntity(iri, type, activeOntologyProvider.getActiveOntology(), Imports.INCLUDED);
     }
 
     public <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type, OWLOntology ont) {

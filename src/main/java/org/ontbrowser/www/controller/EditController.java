@@ -76,7 +76,7 @@ public class EditController extends ApplicationController {
         }
 
         OWLOntology transactionOntology =
-                editService.add(newAxiom, targetOnt, transaction, kit.getActiveOntology());
+                editService.add(newAxiom, targetOnt, transaction, kit.getRootOntology());
 
         String refererHeader = request.getHeader(HttpHeaders.REFERER);
         if (refererHeader != null) {
@@ -133,7 +133,7 @@ public class EditController extends ApplicationController {
             transaction = UUID.randomUUID().toString();
         }
 
-        editService.edit(originalAx, newAxiom, originalOnt, targetOnt, transaction, kit.getActiveOntology());
+        editService.edit(originalAx, newAxiom, originalOnt, targetOnt, transaction, kit.getRootOntology());
 
         URI referer = URI.create(request.getHeader("referer"));
 

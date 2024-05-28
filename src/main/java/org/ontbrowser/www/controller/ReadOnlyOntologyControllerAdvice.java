@@ -31,7 +31,7 @@ public class ReadOnlyOntologyControllerAdvice {
         if (ontId != null) {
             return ontService.getOntologyFor(ontId, kit);
         }
-        return kit.getActiveOntology();
+        return kit.getRootOntology();
     }
 
 }

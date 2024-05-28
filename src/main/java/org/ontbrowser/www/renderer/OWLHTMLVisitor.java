@@ -7,6 +7,7 @@ import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -55,10 +56,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private final ShortFormProvider sfProvider;
 
     private final OntologyIRIShortFormProvider ontologyIriSFProvider;
-
-    private final Set<OWLOntology> ontologies;
-
-    private final OWLOntology activeOntology;
+    private final OWLOntology ont;
     private final OWLEntityFinder finder;
 
     private PrintWriter out;
@@ -69,14 +67,12 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             ShortFormProvider sfProvider,
             OntologyIRIShortFormProvider ontologySFProvider,
             URLScheme urlScheme,
-            Set<OWLOntology> ontologies,
-            OWLOntology activeOntology,
+            OWLOntology ont,
             OWLEntityFinder finder) {
         this.sfProvider = sfProvider;
         this.ontologyIriSFProvider = ontologySFProvider;
         this.urlScheme = urlScheme;
-        this.ontologies = ImmutableSet.copyOf(ontologies);
-        this.activeOntology = activeOntology;
+        this.ont = ont;
         this.finder = finder;
     }
     public void setURLScheme(URLScheme urlScheme) {
@@ -101,7 +97,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLOntology ontology) {
         String link = urlScheme.getURLForOWLObject(ontology);
         String cssClass = CSS_ONTOLOGY_URI;
-        if (ontology.equals(activeOntology)){
+        if (ontology.equals(ont)){
             cssClass = CSS_ACTIVE_ONTOLOGY_URI;
         }
 
@@ -160,7 +156,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     @Override
     public void visit(@Nonnull IRI iri) {
-        Set<? extends OWLEntity> entities = finder.getOWLEntities(iri);
+        Set<? extends OWLEntity> entities = finder.getOWLEntities(iri, ont);
         if (entities.isEmpty()){
             writeIRIWithBoldFragment(iri, iri.getShortForm());
         }
@@ -535,11 +531,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLAnnotationAssertionAxiom axiom) {
         final OWLAnnotationSubject subject = axiom.getSubject();
         // extract the entities with this IRI
-        if (subject instanceof IRI){
-            Set<OWLEntity> entities = Sets.newHashSet();
-            for (OWLOntology ont : ontologies){
-                entities.addAll(ont.getEntitiesInSignature((IRI)subject));
-            }
+        if (subject instanceof IRI iri){
+            Set<OWLEntity> entities = ont.getEntitiesInSignature(iri, Imports.INCLUDED);
             if (!entities.isEmpty()){
                 boolean started = false;
                 for (OWLEntity entity : entities){
@@ -893,16 +886,15 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {
-        final Collection<OWLClassExpression> types = EntitySearcher.getTypes(individual, ontologies.stream()).collect(Collectors.toList());
+        final Collection<OWLClassExpression> types =
+                EntitySearcher.getTypes(individual, ont.importsClosure()).toList();
+
         if (!types.isEmpty()){
             writeOpList(types, ", ");
         }
 
-        Set<OWLAnnotation> annotations = new HashSet<>();
-
-        for (OWLOntology o : ontologies) {
-            annotations.addAll(EntitySearcher.getAnnotations(individual, o).collect(Collectors.toList()));
-        }
+        Set<OWLAnnotation> annotations = EntitySearcher.getAnnotations(individual, ont.importsClosure(), null)
+                .collect(Collectors.toSet());
 
         if (!annotations.isEmpty()){
             write(HTML_LIST_START);
@@ -915,7 +907,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLDataPropertyExpression, OWLLiteral> dataValues =
-                EntitySearcher.getDataPropertyValues(individual, ontologies.stream());
+                EntitySearcher.getDataPropertyValues(individual, ont.importsClosure());
         if (!dataValues.isEmpty()){
             write(HTML_LIST_START);
             for (OWLDataPropertyExpression p : dataValues.keySet()){
@@ -932,7 +924,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLDataPropertyExpression, OWLLiteral> negDataValues =
-                EntitySearcher.getNegativeDataPropertyValues(individual, ontologies.stream());
+                EntitySearcher.getNegativeDataPropertyValues(individual, ont.importsClosure());
         if (!negDataValues.isEmpty()){
             write(HTML_LIST_START);
 
@@ -947,7 +939,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLObjectPropertyExpression, OWLIndividual> objValues =
-                EntitySearcher.getObjectPropertyValues(individual, ontologies.stream());
+                EntitySearcher.getObjectPropertyValues(individual, ont.importsClosure());
         if (!objValues.isEmpty()){
             write(HTML_LIST_START);
 
@@ -963,7 +955,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         }
 
         Multimap<OWLObjectPropertyExpression, OWLIndividual> negbjValues =
-                EntitySearcher.getNegativeObjectPropertyValues(individual, ontologies.stream());
+                EntitySearcher.getNegativeObjectPropertyValues(individual, ont.importsClosure());
         if (!negbjValues.isEmpty()){
             write(HTML_LIST_START);
 

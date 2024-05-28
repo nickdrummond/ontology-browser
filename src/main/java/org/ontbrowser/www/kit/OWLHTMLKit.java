@@ -6,21 +6,14 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
-import javax.annotation.Nonnull;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 
-public interface OWLHTMLKit extends ActiveOntologyProvider {
+public interface OWLHTMLKit {
 
     URLScheme getURLScheme();
-
-    /**
-     * Get the ontologies used for reasoning
-     * @return imports closure of the current active ontology (plus meta ontology if it exists)
-     */
-    Set<OWLOntology> getActiveOntologies();
 
     Set<OWLOntology> getOntologies();
 

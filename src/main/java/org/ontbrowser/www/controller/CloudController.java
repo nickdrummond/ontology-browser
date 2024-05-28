@@ -112,7 +112,6 @@ public class CloudController extends ApplicationController {
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
 
         model.addAttribute("title", title);
-        model.addAttribute("activeOntology", ont);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("helper", helper);
         model.addAttribute("mos", owlRenderer);

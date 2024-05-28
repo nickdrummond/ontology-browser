@@ -39,12 +39,10 @@ public class OWLHTMLVisitorTest {
     @Parameterized.Parameter(2)
     public String fExpected;
 
-    // TODO too many dependencies = smell
     private final OWLHTMLVisitor visitor = new OWLHTMLVisitor(
             mock(ShortFormProvider.class),
             mock(OntologyShortFormProvider.class),
             mock(URLScheme.class),
-            Collections.emptySet(),
             mock(OWLOntology.class),
             mock(OWLEntityFinder.class));
 

@@ -11,6 +11,7 @@ import org.ontbrowser.www.service.hierarchy.*;
 import org.ontbrowser.www.service.stats.Stats;
 import org.ontbrowser.www.service.stats.StatsService;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -61,12 +62,8 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
         return new AnnotationsHierarchyService(comparator);
     }
 
-    public List<OWLAnnotationProperty> getAnnotationProperties(final OWLOntology activeOntology,
+    public List<OWLAnnotationProperty> getAnnotationProperties(final OWLOntology ont,
                                                                final Comparator<OWLObject> comparator) {
-        Set<OWLAnnotationProperty> props = Sets.newHashSet();
-        for (OWLOntology ont : activeOntology.getImportsClosure()) {
-            props.addAll(ont.getAnnotationPropertiesInSignature());
-        }
-        return props.stream().sorted(comparator).toList();
+        return ont.getAnnotationPropertiesInSignature(Imports.INCLUDED).stream().sorted(comparator).toList();
     }
 }

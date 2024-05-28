@@ -50,18 +50,6 @@ public class OWLIndividualsService {
         return new IndividualCharacteristicsBuilder(owlIndividual, ont, comparator, with, defaultPageSize).getCharacteristics();
     }
 
-    public OWLNamedIndividual getFirstIndividual(final OWLHTMLKit kit) throws NotFoundException {
-
-        List<OWLNamedIndividual> inds = new ArrayList<>(kit.getActiveOntology().getIndividualsInSignature(Imports.INCLUDED));
-        if (inds.isEmpty()) {
-            throw new NotFoundException("OWLIndividual", "any");
-        }
-        else {
-            inds.sort(kit.getComparator());
-            return inds.get(0);
-        }
-    }
-
     public List<Characteristic> getInferredCharacteristics(
             OWLNamedIndividual owlIndividual,
             OWLReasoner reasoner) {

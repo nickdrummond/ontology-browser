@@ -58,7 +58,6 @@ public class RootController extends ApplicationController implements Application
             helper.setZoom(4);
             helper.setNormalise(true);
 
-            model.addAttribute("activeOntology", ont);
             model.addAttribute("ontologies", ontologies);
             model.addAttribute("cloud", cloudModel);
             model.addAttribute("helper", helper);
@@ -112,20 +111,20 @@ public class RootController extends ApplicationController implements Application
         xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/annotationproperties"));
         xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/datatypes"));
 
-        OWLOntology activeOntology = kit.getActiveOntology();
+        OWLOntology ont = kit.getRootOntology();
         URLScheme scheme = kit.getURLScheme();
 
         // ontologies
-        activeOntology.getImportsClosure().forEach(o -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(o))));
+        ont.getImportsClosure().forEach(o -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(o))));
 
         // entities
         Consumer<OWLEntity> action = i -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(i)));
-        activeOntology.getClassesInSignature(Imports.INCLUDED).forEach(action);
-        activeOntology.getIndividualsInSignature(Imports.INCLUDED).forEach(action);
-        activeOntology.getObjectPropertiesInSignature(Imports.INCLUDED).forEach(action);
-        activeOntology.getDataPropertiesInSignature(Imports.INCLUDED).forEach(action);
-        activeOntology.getAnnotationPropertiesInSignature(Imports.INCLUDED).forEach(action);
-        activeOntology.getDatatypesInSignature(Imports.INCLUDED).forEach(action);
+        ont.getClassesInSignature(Imports.INCLUDED).forEach(action);
+        ont.getIndividualsInSignature(Imports.INCLUDED).forEach(action);
+        ont.getObjectPropertiesInSignature(Imports.INCLUDED).forEach(action);
+        ont.getDataPropertiesInSignature(Imports.INCLUDED).forEach(action);
+        ont.getAnnotationPropertiesInSignature(Imports.INCLUDED).forEach(action);
+        ont.getDatatypesInSignature(Imports.INCLUDED).forEach(action);
 
         return xmlUrlSet;
     }

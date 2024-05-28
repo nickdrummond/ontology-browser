@@ -18,6 +18,7 @@ import java.util.Set;
  */
 public class MediaRenderer extends OWLHTMLRenderer {
 
+    private final OWLOntology ont;
     private final OWLEntityFinder entityFinder;
 
     private final MediaService mediaService;
@@ -25,9 +26,10 @@ public class MediaRenderer extends OWLHTMLRenderer {
     public MediaRenderer(final ShortFormProvider sfp,
                          final OntologyShortFormProvider ontSfp,
                          final URLScheme urlScheme,
-                         final OWLOntology activeOntology,
+                         final OWLOntology ont,
                          final OWLEntityFinder finder) {
-        super(sfp, ontSfp, urlScheme, activeOntology, finder);
+        super(sfp, ontSfp, urlScheme, ont, finder);
+        this.ont = ont;
         this.entityFinder = finder;
         this.mediaService = new MediaService();
     }
@@ -63,7 +65,7 @@ public class MediaRenderer extends OWLHTMLRenderer {
 
     // if an annotation value is an IRI with matching entities, write the entity links instead
     private String handleIRI(IRI value) {
-        Set<? extends OWLEntity> entities = entityFinder.getOWLEntities(value);
+        Set<? extends OWLEntity> entities = entityFinder.getOWLEntities(value, ont);
         if (entities.isEmpty()){
             return super.render(value);
         }

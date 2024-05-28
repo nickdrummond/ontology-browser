@@ -20,14 +20,13 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
     public OWLHTMLRenderer(final ShortFormProvider sfp,
                            final OntologyIRIShortFormProvider ontSfp,
                            final URLScheme urlScheme,
-                           final OWLOntology activeOntology,
+                           final OWLOntology ont,
                            final OWLEntityFinder finder) {
         rendererVisitor = new OWLHTMLVisitor(
                 sfp,
                 ontSfp,
                 urlScheme,
-                activeOntology.getImportsClosure(),
-                activeOntology,
+                ont,
                 finder);
     }
 

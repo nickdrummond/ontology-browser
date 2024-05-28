@@ -66,7 +66,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
     public void getRelationsForAnnotationProperty(
             final HttpServletResponse response
     ) throws IOException, NotFoundException {
-        Set<OWLAnnotationProperty> props = kit.getActiveOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED);
+        Set<OWLAnnotationProperty> props = kit.getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED);
         if (props.isEmpty()) {
             throw new NotFoundException("Annotation Property");
         }

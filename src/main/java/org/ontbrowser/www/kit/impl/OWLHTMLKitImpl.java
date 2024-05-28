@@ -6,7 +6,6 @@ import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.util.OWLObjectComparator;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.util.OWLUtils;
 import org.ontbrowser.www.util.VocabUtils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
@@ -15,7 +14,6 @@ import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
-import javax.annotation.Nonnull;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Comparator;
@@ -25,8 +23,6 @@ import java.util.Set;
 public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private final OWLOntologyManager mngr;
-
-    private OWLOntology activeOntology;
 
     private ShortFormProvider shortFormProvider;
 
@@ -77,19 +73,8 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
                 .findFirst();
     }
 
-    public OWLOntology getActiveOntology() {
-        if (activeOntology == null){
-            activeOntology = rootOntology;
-        }
-        return activeOntology;
-    }
-
     public Set<OWLOntology> getOntologies() {
         return mngr.getOntologies();
-    }
-
-    public Set<OWLOntology> getActiveOntologies() {
-        return mngr.getImportsClosure(getActiveOntology());
     }
 
     public OWLOntologyManager getOWLOntologyManager() {
@@ -105,7 +90,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     public OWLEntityFinder getFinder() {
         if (finder == null){
-            finder = new OWLEntityFinderImpl(getNameCache(), getOWLOntologyManager().getOWLDataFactory(), this);
+            finder = new OWLEntityFinderImpl(getNameCache(), getOWLOntologyManager().getOWLDataFactory());
         }
         return finder;
     }
@@ -123,11 +108,11 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
             OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(IRI.create(labelURI));
             if (VocabUtils.isSkosXLLabelAnnotation(labelAnnotationProperty)) {
                 shortFormProvider = new SkosXLShortFormProvider(
-                        labelLang, getActiveOntologies(), new FixedSimpleShortFormProvider());
+                        labelLang, getOntologies(), new FixedSimpleShortFormProvider());
             }
             else {
                 shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
-                        labelLang, getActiveOntologies(), new FixedSimpleShortFormProvider());
+                        labelLang, getOntologies(), new FixedSimpleShortFormProvider());
             }
         }
         return shortFormProvider;
@@ -136,7 +121,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     @Override
     public String render(OWLObject owlObject) {
         StringWriter writer = new StringWriter();
-        MOSRenderer ren = new MOSRenderer(writer, getFinder(), getShortFormProvider());
+        MOSRenderer ren = new MOSRenderer(writer, getFinder(), getShortFormProvider(), rootOntology);
         owlObject.accept(ren);
         return writer.toString();
     }
@@ -154,7 +139,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private CachingBidirectionalShortFormProvider getNameCache(){
         if (nameCache == null){
-            nameCache = new QuotingBiDirectionalShortFormProvider(getShortFormProvider(), getActiveOntologies());
+            nameCache = new QuotingBiDirectionalShortFormProvider(getShortFormProvider(), getOntologies());
         }
         return nameCache;
     }
