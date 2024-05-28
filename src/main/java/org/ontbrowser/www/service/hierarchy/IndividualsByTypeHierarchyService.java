@@ -37,7 +37,8 @@ public class IndividualsByTypeHierarchyService
 
     @Override
     protected Set<Node<OWLNamedIndividual>> subs(OWLNamedIndividual entity) {
-        if (entity == root) {
+        OWLOntology ont = reasoner.getRootOntology();
+        if (entity == root && entity.getIRI() == ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing().getIRI()) {
             return getRoots(); // Told reasoner fails to return individuals with no asserted type
         }
         return reasoner.getInstances(type, direct).getNodes();
