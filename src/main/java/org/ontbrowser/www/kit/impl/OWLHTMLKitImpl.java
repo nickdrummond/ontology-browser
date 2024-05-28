@@ -103,19 +103,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public ShortFormProvider getShortFormProvider() {
-        if (shortFormProvider == null){
-            OWLDataFactory df = mngr.getOWLDataFactory();
-            OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(IRI.create(labelURI));
-            if (VocabUtils.isSkosXLLabelAnnotation(labelAnnotationProperty)) {
-                shortFormProvider = new SkosXLShortFormProvider(
-                        labelLang, getOntologies(), new FixedSimpleShortFormProvider());
-            }
-            else {
-                shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
-                        labelLang, getOntologies(), new FixedSimpleShortFormProvider());
-            }
-        }
-        return shortFormProvider;
+        return getNameCache();
     }
 
     @Override
@@ -137,9 +125,25 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return rootOntology;
     }
 
+    private ShortFormProvider getInternalShortFormProvider() {
+        if (shortFormProvider == null){
+            OWLDataFactory df = mngr.getOWLDataFactory();
+            OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(IRI.create(labelURI));
+            if (VocabUtils.isSkosXLLabelAnnotation(labelAnnotationProperty)) {
+                shortFormProvider = new SkosXLShortFormProvider(
+                        labelLang, getOntologies(), new FixedSimpleShortFormProvider());
+            }
+            else {
+                shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
+                        labelLang, getOntologies(), new FixedSimpleShortFormProvider());
+            }
+        }
+        return shortFormProvider;
+    }
+
     private CachingBidirectionalShortFormProvider getNameCache(){
         if (nameCache == null){
-            nameCache = new QuotingBiDirectionalShortFormProvider(getShortFormProvider(), getOntologies());
+            nameCache = new QuotingBiDirectionalShortFormProvider(getInternalShortFormProvider(), getOntologies());
         }
         return nameCache;
     }
