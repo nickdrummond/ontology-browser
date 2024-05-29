@@ -95,10 +95,8 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        var reasoner = reasonerFactoryService.getToldReasoner(ont);
-
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
-        model.addAttribute("stats", statsService.getPropertyStats(statsName, reasoner));
+        model.addAttribute("stats", statsService.getPropertyStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
 
         common.buildSecondaryTree(relationsHierarchyService, null, model, request);
@@ -116,7 +114,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @RequestParam final @Nullable String orderBy,
         @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
         @RequestParam(required = false) List<With> with,
-        @RequestParam final String statsName,
+        @RequestParam(defaultValue = "relationsCount") final String statsName,
         @ModelAttribute final OWLOntology ont,
         final Model model,
         HttpServletRequest request
@@ -131,6 +129,9 @@ public class OWLPropertyRelationsController extends ApplicationController {
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
+        model.addAttribute("stats", statsService.getPropertyStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
+        model.addAttribute("statsName", statsName);
+
         common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
 
         return new ModelAndView(RELATION_TEMPLATE);
