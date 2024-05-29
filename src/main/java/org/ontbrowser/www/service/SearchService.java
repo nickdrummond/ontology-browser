@@ -2,6 +2,7 @@ package org.ontbrowser.www.service;
 
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.AxiomWithMetadata;
+import org.ontbrowser.www.util.MyStringUtils;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -26,13 +27,16 @@ public class SearchService {
             return Collections.emptyList();
         }
 
-        String searchStr = (input.endsWith(wildcard)) ? ".*" + input.replace("\\" + wildcard, ".*") :
-                ".*" + input + ".*";
+        String sanitised = MyStringUtils.sanitiseForRegex(input);
+
+        String searchStr = (sanitised.endsWith(wildcard)) ?
+                ".*" + sanitised.replace("\\" + wildcard, ".*") :
+                ".*" + sanitised + ".*";
 
         // Sort first by index of search and then alphabetically
         Comparator<OWLEntity> c = new Comparator<>() {
             final ShortFormProvider sfp = kit.getShortFormProvider();
-            final String str = input.replaceAll("\\" + wildcard, "").toLowerCase();
+            final String str = input.replace("\\" + wildcard, "").toLowerCase();
 
             @Override
             public int compare(OWLEntity o1, OWLEntity o2) {

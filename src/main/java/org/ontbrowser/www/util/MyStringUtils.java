@@ -63,4 +63,13 @@ public class MyStringUtils {
     public static String stripQuotes(String s) {
         return (s.startsWith("\"") && (s.endsWith("\""))) ? s.substring(1, s.length()-1) : s;
     }
+
+    public static String sanitiseForRegex(final String s) {
+        String[] symbols = {"[", "*", "+", "?", "{", "}", ".", "(", ")", "^", "$", "|", "]", "-"};
+        String result = s;
+        for (String symbol : symbols) {
+            result = result.replace(symbol, "\\" + symbol);
+        }
+        return result;
+    }
 }
