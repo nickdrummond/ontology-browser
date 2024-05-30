@@ -803,9 +803,9 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
         return sfProvider.getShortForm(entity).replace("_", "_<wbr>");
     }
 
-    // Make string line breakable on /
+    // Make string line breakable on / and #
     private String makeBreakable(String s) {
-        return s.replace("/", "/<wbr>").replace("#", "#<wbr>");
+        return s.replaceAll("/(?=[^/])", "/<wbr>").replace("#", "#<wbr>");
     }
 
     private void writeIRIWithBoldFragment(@Nonnull IRI iri, @Nonnull String shortForm) {
