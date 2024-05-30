@@ -296,11 +296,15 @@ td.key{
 
 #tabs {
     color: rgba(125, 125, 125, 0.8);
-    margin: 0;
+    margin: 0 0.5rem;
+    padding: 0;
 }
 
 #tabs li {
     list-style: none;
+    border-top: solid 1px;
+    border-radius: 0.5rem;
+    padding: 0.1rem 0.5rem;
 }
 
 #tabs a, #tabs span.currentpage {
@@ -358,6 +362,7 @@ ul.minihierarchy {
     -webkit-border-radius: 6px;
     overflow: auto;
     height: 200px;
+    margin-top: 5px;
     padding-left: 10px;
 }
 
