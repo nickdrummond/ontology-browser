@@ -46,10 +46,12 @@ public class OWLAxiomService {
             int start,
             int pageSize) {
 
-        Predicate<Map.Entry<OWLAxiom, String>> containsIgnoreCase = e ->
-                e.getValue().toLowerCase().contains(search.toLowerCase());
+        String stripped = normalise(search);
 
-        return resultsCharacteristic(search, ont, sfp, containsIgnoreCase, start, pageSize);
+        Predicate<Map.Entry<OWLAxiom, String>> contains = e ->
+                e.getValue().contains(stripped);
+
+        return resultsCharacteristic(search, ont, sfp, contains, start, pageSize);
     }
 
     private Characteristic resultsCharacteristic(
@@ -101,9 +103,16 @@ public class OWLAxiomService {
 
     private String render(final OWLAxiom axiom, final ShortFormProvider sfp) {
         StringWriter writer = new StringWriter();
-        ManchesterOWLSyntaxObjectRenderer mosRenderer = new ManchesterOWLSyntaxObjectRenderer(writer, sfp);
+        var mosRenderer = new ManchesterOWLSyntaxObjectRenderer(writer, sfp);
         axiom.accept(mosRenderer);
-        return writer.toString();
+        return normalise(writer.toString());
+    }
+
+    private String normalise(String s) {
+        return s.replace("\n", "")
+                .replace("(", "")
+                .replace(")", "")
+                .toLowerCase();
     }
 
     private Stream<AxiomWithMetadata> wrappedWithOntology(Stream<OWLAxiom> axioms, OWLOntology ont) {
