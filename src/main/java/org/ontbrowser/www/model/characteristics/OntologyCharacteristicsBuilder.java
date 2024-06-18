@@ -24,7 +24,7 @@ public class OntologyCharacteristicsBuilder {
                 createCharacteristic("Imports", ont.getDirectImportsDocuments(), ont, comparator, with, defaultPageSize),
                 createCharacteristic("General Class Axioms", ont.getGeneralClassAxioms(), ont, comparator, with, defaultPageSize)
         )) {
-            c.ifPresent(characteristics::add);
+            c.ifPresent(characteristics::add); // TODO better way to do this?
         }
     }
 

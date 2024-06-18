@@ -621,6 +621,10 @@ img.thumb{
     float: right;
 }
 
+.debug {
+    background-color: rgba(120, 150, 255, 0.2);
+}
+
 @media screen and (max-width: 800px) and (max-height: 450px) {
 
     #burger {

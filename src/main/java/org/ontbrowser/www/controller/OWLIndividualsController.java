@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
+import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.model.characteristics.ClassCharacteristicsBuilder;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.*;
@@ -12,6 +14,7 @@ import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.service.stats.Stats;
 import org.ontbrowser.www.service.stats.StatsService;
 import org.ontbrowser.www.url.CommonRelationsURLScheme;
+import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -27,8 +30,10 @@ import java.io.IOException;
 import java.util.*;
 
 @RestController
-@RequestMapping(value="/individuals")
+@RequestMapping(value = "/individuals")
 public class OWLIndividualsController extends ApplicationController {
+
+    private static final int DEFAULT_SECONDARY_PAGE_SIZE = 60;
 
     private final OWLIndividualsService individualsService;
     private final OWLClassesService owlClassesService;
@@ -56,7 +61,7 @@ public class OWLIndividualsController extends ApplicationController {
         return new CommonFragments(kit, projectInfo, reasonerService);
     }
 
-    @GetMapping(value="/")
+    @GetMapping(value = "/")
     public void getOWLIndividuals(
             final HttpServletResponse response
     ) throws IOException {
@@ -64,7 +69,7 @@ public class OWLIndividualsController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value= "/{individualId}")
+    @GetMapping(value = "/{individualId}")
     public void getOWLIndividual(
             @PathVariable final String individualId,
             @ModelAttribute final OWLOntology ont,
@@ -76,10 +81,10 @@ public class OWLIndividualsController extends ApplicationController {
 
         response.sendRedirect(
                 "/individuals/by/type/" + owlClassesService.getIdFor(firstType) +
-                "/withindividual/" + individualId);
+                        "/withindividual/" + individualId);
     }
 
-    @GetMapping(value="/by/type/")
+    @GetMapping(value = "/by/type/")
     public void byType(
             @ModelAttribute final OWLOntology ont,
             final HttpServletResponse response
@@ -88,7 +93,7 @@ public class OWLIndividualsController extends ApplicationController {
                 owlClassesService.getIdFor(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing()));
     }
 
-    @GetMapping(value="/by/type/{classId}")
+    @GetMapping(value = "/by/type/{classId}")
     public ModelAndView byType(
             @PathVariable final String classId,
             @RequestParam(defaultValue = "inferredInstances") final String statsName,
@@ -99,23 +104,38 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletResponse response
     ) throws NotFoundException {
 
+        OWLClass type = buildNav(classId, statsName, with, ont, model, request);
+
+        getOWLClassFragment(classId, ont, with, model, request, response);
+
+        model.addAttribute("mos", getRenderer(type, null, ont, request));
+
+        return new ModelAndView("instances");
+    }
+
+    private OWLClass buildNav(
+            String classId,
+            String statsName,
+            List<With> with,
+            OWLOntology ont,
+            Model model,
+            HttpServletRequest request
+    ) throws NotFoundException {
         OWLClass type = owlClassesService.getOWLClassFor(classId, ont);
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
         buildPrimaryHierarchy(statsName, model, type, r);
 
-        IndividualsByTypeHierarchyService secondaryHierarchyService = buildSecondaryHierarchy(model, type, r);
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
-        getOWLClassFragment(classId, ont, with, model, request, response);
+        buildSecondaryNavigation(ont, model, type, withOrEmpty, request);
 
-        model.addAttribute("mos", getRenderer(type, null, ont, request, secondaryHierarchyService));
-
-        return new ModelAndView("relation");
+        return type;
     }
 
 
-    @GetMapping(value="/by/type/{classId}/withindividual/{individualId}")
+    @GetMapping(value = "/by/type/{classId}/withindividual/{individualId}")
     public ModelAndView byType(
             @PathVariable final String classId,
             @PathVariable final String individualId,
@@ -129,28 +149,20 @@ public class OWLIndividualsController extends ApplicationController {
 
         OWLNamedIndividual ind = individualsService.getOWLIndividualFor(individualId, ont);
 
-        OWLClass type = owlClassesService.getOWLClassFor(classId, ont);
-
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-
-        buildPrimaryHierarchy(statsName, model, type, r);
-
-        IndividualsByTypeHierarchyService secondaryHierarchyService = buildSecondaryHierarchy(model, type, r);
+        OWLClass type = buildNav(classId, statsName, with, ont, model, request);
 
         getOWLIndividualFragment(individualId, false, with, ont, model, request, response);
 
-        model.addAttribute("mos", getRenderer(type, ind, ont, request, secondaryHierarchyService));
+        model.addAttribute("mos", getRenderer(type, ind, ont, request));
 
-        return new ModelAndView("relation");
+        return new ModelAndView("instances");
     }
 
     private OWLHTMLRenderer getRenderer(
             OWLClass type, OWLNamedIndividual ind,
-            OWLOntology ont, HttpServletRequest request,
-            IndividualsByTypeHierarchyService secondaryHierarchyService) {
+            OWLOntology ont, HttpServletRequest request) {
 
         URLScheme urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type)
-                .withTree(secondaryHierarchyService)
                 .withQuery(request.getQueryString());
 
         Set<OWLObject> activeObjects = new HashSet<>();
@@ -192,7 +204,7 @@ public class OWLIndividualsController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/by/type/{classId}/children")
+    @GetMapping(value = "/by/type/{classId}/children")
     public ModelAndView getChildren(
             @PathVariable final String classId,
             @RequestParam final String statsName,
@@ -210,7 +222,7 @@ public class OWLIndividualsController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value= "/{individualId}/fragment")
+    @GetMapping(value = "/{individualId}/fragment")
     public ModelAndView getOWLIndividualFragment(
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inferred,
@@ -227,7 +239,7 @@ public class OWLIndividualsController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/by/type/{classId}/fragment")
+    @GetMapping(value = "/by/type/{classId}/fragment")
     public ModelAndView getOWLClassFragment(
             @PathVariable final String classId,
             @ModelAttribute final OWLOntology ont,
@@ -240,5 +252,37 @@ public class OWLIndividualsController extends ApplicationController {
         // TODO custom renderer
         OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
         return getCommon().getOWLClassFragment(owlClassesService, owlClass, ont, owlRenderer, with, model, request, response);
+    }
+
+    @GetMapping(value = "/by/type/{classId}/fragment/direct")
+    public ModelAndView getDirect(
+            @PathVariable final String classId,
+            @RequestParam(required = false) List<With> with,
+            @ModelAttribute final OWLOntology ont,
+            final Model model,
+            final HttpServletRequest request
+    ) throws NotFoundException {
+
+        OWLClass type = owlClassesService.getOWLClassFor(classId, ont);
+
+        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+
+        buildSecondaryNavigation(ont, model, type, withOrEmpty, request);
+
+        model.addAttribute("mos", getRenderer(type, null, ont, request));
+
+        return new ModelAndView("base::secondary");
+    }
+
+    private void buildSecondaryNavigation(OWLOntology ont, Model model, OWLClass type,
+                                          List<With> withOrEmpty, HttpServletRequest request) {
+        var characteristic = owlClassesService.getCharacteristic(
+                        ClassCharacteristicsBuilder.MEMBERS,
+                        type, ont, kit.getComparator(), withOrEmpty, DEFAULT_SECONDARY_PAGE_SIZE);
+
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
+
+        model.addAttribute("direct",
+                characteristic.orElse(new Characteristic(type, "Members", Collections.emptyList())));
     }
 }

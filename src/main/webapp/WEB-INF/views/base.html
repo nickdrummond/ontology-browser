@@ -118,12 +118,15 @@
 </span>
 
 
-<div th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(ch.name)}'
-     th:class='${"characteristic " + name}' th:fragment="characteristic (ch)">
+<div th:fragment="characteristic (ch)"
+     th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(ch.name)}'
+     th:class='${"characteristic " + name}'>
 
-    <h4 th:text='${ch.name}'>Some Characteristic</h4>
-    <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
-    <ul th:remove="all-but-first">
+    <h4>
+        <span th:text='${ch.name}'>Some Characteristic</span>
+        <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
+    </h4>
+    <ul th:remove="all-but-first" th:class="${cls}">
         <li class="asserted" th:each="object : ${ch.objects}">
 
             <span class="owlobject"
@@ -275,6 +278,28 @@
     </ul>
 </div>
 
+<div id='direct' th:fragment="secondary"
+     th:if="${direct != null}"
+     class="owlselector secondary">
+
+    <h4 th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(direct.name)}'>
+        <span th:text='${direct.name}'>Some Characteristic</span>
+        <span th:replace="~{base::paged (${direct.getPageData()}, ${name})}">(2)</span>
+    </h4>
+
+    <ul th:remove="all-but-first"
+        th:class="minihierarchy">
+        <li class="asserted"
+            th:each="object : ${direct.objects}">
+                <span class="owlobject"
+                      th:with="data=${object.getOWLAxiom() != null ? object.getOWLAxiom() : object.getOWLObject()}"
+                      th:data="${kit.render(data)}"
+                      th:utext="${mos.render(object.getOWLObject())}">
+                    individual
+                </span>
+        </li>
+    </ul>
+</div>
 
 <div id='content' th:fragment="owlentity">
     <h2 th:text="${title}">An OWLClass</h2>

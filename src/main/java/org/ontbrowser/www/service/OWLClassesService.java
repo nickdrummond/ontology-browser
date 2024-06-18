@@ -63,6 +63,17 @@ public class OWLClassesService {
         return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize).getCharacteristics();
     }
 
+    public Optional<Characteristic> getCharacteristic(
+            final String name,
+            final OWLClass owlClass,
+            final OWLOntology ont,
+            final Comparator<OWLObject> comparator,
+            final List<With> with,
+            final int defaultPageSize) {
+        // TODO inefficient - rebuilds all
+        return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize).getCharacteristic(name);
+    }
+
     public Set<OWLClass> getNamedTypes(OWLClass cls, OWLOntology ont) {
         return ont.getAxioms(cls, Imports.INCLUDED).stream()
                 .filter(ax -> ax.isOfType(SUBCLASS_OF))

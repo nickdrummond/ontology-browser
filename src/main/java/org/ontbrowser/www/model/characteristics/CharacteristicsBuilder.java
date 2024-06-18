@@ -26,7 +26,7 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
             Comparator<OWLObject> comparator,
             List<With> with,
             int defaultPageSize) {
-
+        // TODO don't do all the work in the constructor
         Stream<InterestingFilter> filters = ont.getImportsClosure().stream()
                 .map(o -> createFilter(o, target));
 
@@ -52,6 +52,11 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
 
     public List<Characteristic> getCharacteristics() {
         return characteristics;
+    }
+
+    // TODO lazy retrieve one characteristic?
+    public Optional<Characteristic> getCharacteristic(String name) {
+        return characteristics.stream().filter(ch -> Objects.equals(ch.getName(), name)).findFirst();
     }
 
     abstract InterestingFilter createFilter(OWLOntology ont, T target);
