@@ -254,8 +254,8 @@ public class OWLIndividualsController extends ApplicationController {
         return getCommon().getOWLClassFragment(owlClassesService, owlClass, ont, owlRenderer, with, model, request, response);
     }
 
-    @GetMapping(value = "/by/type/{classId}/fragment/direct")
-    public ModelAndView getDirect(
+    @GetMapping(value = "/by/type/{classId}/secondary")
+    public ModelAndView getSecondaryFragment(
             @PathVariable final String classId,
             @RequestParam(required = false) List<With> with,
             @ModelAttribute final OWLOntology ont,

@@ -131,7 +131,7 @@ public class CommonRelations<T extends OWLProperty> {
         model.addAttribute("hierarchy2", relationsTree);
         //TODO fix this - generics!!
         model.addAttribute("stats2", statsService.getTreeStats(createMemo(relationsHierarchyService), relationsHierarchyService));
-        model.addAttribute("statsName2", "transitiveRelationsCount");
+        model.addAttribute("statsName2", "treeStats");
     }
 
     public OWLHTMLRenderer getRenderer(

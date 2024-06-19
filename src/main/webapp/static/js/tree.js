@@ -1,30 +1,20 @@
-import {loadEntity} from "./entity.js";
 import {BUSY_IMAGE} from "./util.js";
 
 const ACTIVE_ENTITY = "active-entity";
 const MINIHIERARCHY = '.minihierarchy';
 
-export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
+export const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
 
-    function init() {
-        scrollTreeToSelection();
-        const primaryTree = document.querySelector(".owlselector.primary");
-        const secondaryTree = document.querySelector(".owlselector.secondary");
-        if (secondaryTree) {
-            if (primaryTree) {
-                rewrite(primaryTree);
-            }
-            if (isRewriteLinks) {
-                rewriteLinks(secondaryTree);
-            }
-            createTreeListeners(primaryTree, rewrite);
-            createTreeListeners(secondaryTree, rewriteLinks);
-        } else if (primaryTree) {
-            if (isRewriteLinks) {
-                rewriteLinks(primaryTree);
-            }
-            createTreeListeners(primaryTree, rewriteLinks);
+    let selectedEntityCallback;
+
+    function init(callback) {
+        selectedEntityCallback = callback;
+
+        scrollToSelection();
+        if (isRewriteLinks) {
+            rewriteLinks(treeElement);
         }
+        createExpandListeners(rewriteLinks);
     }
 
     function showSelected(component) {
@@ -41,16 +31,16 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
         }
     }
 
-    function scrollTreeToSelection() {
-        const h = document.querySelectorAll(MINIHIERARCHY);
+    function scrollToSelection() {
+        const h = treeElement.querySelectorAll(MINIHIERARCHY);
         h.forEach(hierarchy => {
             showSelected(hierarchy);
         });
     }
 
-    function createTreeListeners(parent, rewriteFunction) {
+    function createExpandListeners(rewriteFunction) {
         // add a single listener for expandable tree nodes
-        parent.onclick = (e) => {
+        treeElement.onclick = (e) => {
             const t = e.target.closest('span.expandable');
             if (t) {
                 handleExpand(t.parentNode, rewriteFunction);
@@ -108,37 +98,32 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
 
     // TODO a single listener for all links - with closest - but already have createTreeListeners
     function rewriteLinksFor(type, pluralType, parent) {
+        const cb = selectedEntityCallback;
+
         parent.querySelectorAll(`a.${type}`).forEach(link => {
-            let originalUrl = link.getAttribute("href");
+            const originalUrl = link.getAttribute("href");
             const entityId = getEntityId(originalUrl);
 
             // but only refresh the entity part of the page
             link.onclick = function (e) {
                 e.preventDefault();
+                if (originalUrl) {
+                    window.history.pushState({}, '', originalUrl); // make sure URL follows
+                }
                 selectEntity(link);
-                loadEntity("/" + pluralType + "/" + entityId + "/fragment", originalUrl, entityLoadedCallback);
+
+                // TODO move url gen out
+                const url = "/" + pluralType + "/" + entityId + "/fragment";
+                entityPane.loadEntity(url, originalUrl);
+                if (cb) {
+                    cb(entityId);
+                }
             }
         });
     }
 
-    function rewrite(parent) {
-        parent.querySelectorAll(`a.Class`).forEach(link => {
-            let originalUrl = link.getAttribute("href");
-            const entityId = getEntityId(originalUrl);
-
-            // but only refresh the secondary hierarchy
-            link.onclick = function (e) {
-                e.preventDefault();
-                selectEntity(link);
-                loadSecondary(entityId, originalUrl);
-                loadEntity("/classes/" + entityId + "/fragment", originalUrl, entityLoadedCallback);
-            }
-        });
-    }
-
-    function loadSecondary(entityId, rewriteUrl) {
-        let content = document.getElementsByClassName("secondary").item(0);
-        fetch("/individuals/by/type/" + entityId + "/fragment/direct")
+    function reload(url) {
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("(" + response.status + ") " + response.statusText);
@@ -148,31 +133,26 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
                         const throwaway = document.createElement('span');
                         throwaway.innerHTML = html;
                         rewriteLinks(throwaway.firstElementChild);
-                        content.replaceWith(throwaway.firstElementChild);
+                        treeElement.replaceChildren(...throwaway.firstElementChild.childNodes);
                     } else {
-                        content.innerHTML = "<h4>Members (0)</h4>";
+                        treeElement.innerHTML = "<h4>Members (0)</h4>";
                     }
                 });
-
-                if (rewriteUrl) {
-                    window.history.pushState({}, '', rewriteUrl); // make sure URL follows
-                }
 
                 if (response.headers.has("title")) {
                     window.document.title = response.headers.get("title");
                 }
             })
             .catch((err) => {
-                content.innerHTML = "<h4>" + err +"</h4>";
+                treeElement.innerHTML = "<h4>" + err +"</h4>";
             })
 
-        content.innerHTML = BUSY_IMAGE;
+        treeElement.innerHTML = BUSY_IMAGE;
     }
 
     function selectEntity(element) {
         // switch selection
-        const component = element.closest(".owlselector");
-        component.querySelectorAll("." + ACTIVE_ENTITY)
+        treeElement.querySelectorAll("." + ACTIVE_ENTITY)
             .forEach(activeEntity =>
                 activeEntity.classList.remove(ACTIVE_ENTITY)
             );
@@ -188,12 +168,12 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
 
         // TODO there is a tidier way to construct the query
         const nodeUrl = li.querySelector('a').href;
-        const nodeUrlPieces = nodeUrl.split('?');
-        let url = nodeUrlPieces[0] + 'children?';
-        if (nodeUrlPieces[1]) {
-            url = url + nodeUrlPieces[1] + "&";
+        const [path, search] = nodeUrl.split('?');
+        let url = path + 'children?';
+        if (search) {
+            url = url + search + "&";
         }
-        if (statsName) {
+        if (statsName && url.indexOf("statsName=") === -1) {
             url = url + "statsName=" + statsName;
         }
         return url;
@@ -208,6 +188,7 @@ export const tree = (baseUrl, entityLoadedCallback, isRewriteLinks) => {
     }
 
     return {
-        init: init
+        init: init,
+        reload: reload,
     };
 };

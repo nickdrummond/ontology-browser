@@ -250,23 +250,18 @@
 </div>
 
 <div class='owlselector secondary'
-     th:fragment="secondaryhierarchy (title, hierarchy, inverse)"
-     th:if="${hierarchy != null}">
+     th:fragment="secondaryhierarchy"
+     th:if="${hierarchy2 != null}">
 
-    <h4 th:if="${inverse == null}" th:text="${title}"></h4>
+    <h4 th:if="${inverse == null}" th:text="${type2}"></h4>
     <h4 th:if="${inverse != null}">
         <span th:if="${inverse}" class="keyword">InverseOf</span>
-        <a th:href="'.?inverse=' + ${!inverse}" th:text="${title}">Title</a>
+        <a th:href="'.?inverse=' + ${!inverse}" th:text="${type2}">Title</a>
     </h4>
 
-    <ul class="minihierarchy" th:classappend="${title}">
-        <li th:replace="~{base::tree(t=${hierarchy}, stats=${stats2}, statsName=${statsName2})}">Top Thing</li>
+    <ul class="minihierarchy" th:classappend="${type2}">
+        <li th:replace="~{base::tree(t=${hierarchy2}, stats=${stats2}, statsName=${statsName2})}">Top Thing</li>
     </ul>
-<!--    <ul class="minihierarchy" th:classappend="${title}" th:if="${!hierarchy.children.isEmpty()}">-->
-<!--        <div class="removeme" th:each="child : ${hierarchy.children}" th:remove="tag">-->
-<!--            <li th:replace="~{base::tree(t=${child}, stats=${stats2}, statsName=${statsName2})}"></li>-->
-<!--        </div>-->
-<!--    </ul>-->
 </div>
 
 <div class='owlselector primary' th:fragment="list (title, entities)" th:if="${entities != null}">

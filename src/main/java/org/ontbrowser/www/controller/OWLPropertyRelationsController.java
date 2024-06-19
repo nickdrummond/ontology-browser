@@ -106,6 +106,25 @@ public class OWLPropertyRelationsController extends ApplicationController {
         return new ModelAndView(RELATION_TEMPLATE);
     }
 
+    @GetMapping(value = "/{propertyId}/secondary")
+    public ModelAndView getSecondaryFragment(
+            @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            final Model model,
+            HttpServletRequest request
+    ) throws NotFoundException {
+
+        var property = propertiesService.getPropertyFor(propertyId, ont);
+
+        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+
+        common.buildSecondaryTree(relationsHierarchyService, null, model, request);
+
+        return new ModelAndView("base::secondaryhierarchy");
+    }
+
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
     public ModelAndView getRelationsForProperty(
         @PathVariable final String propertyId,
@@ -195,7 +214,6 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @PathVariable final String individualId,
         @RequestParam(defaultValue = "false") final boolean inverse,
         @RequestParam final @Nullable String orderBy,
-        @RequestParam(defaultValue = "transitiveRelationsCount") final String statsName,
         @ModelAttribute final OWLOntology ont,
         final Model model,
         HttpServletRequest request
@@ -214,7 +232,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
         model.addAttribute("stats", statsService.getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService));
-        model.addAttribute("statsName", statsName); // TODO not used
+        model.addAttribute("statsName", "treeStats"); // TODO not used
 
         return new ModelAndView(CommonRelations.BASE_TREE);
     }

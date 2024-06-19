@@ -1,8 +1,7 @@
 import {getValueOfElementByID, getParameter, getUrlWithParameter} from "./util.js";
-import {loadEntity} from "./entity.js";
 import {BUSY_IMAGE} from "./util.js";
 
-export const dlquery = (baseUrl, entityLoadedCallback) => {
+export const dlquery = (baseUrl, entityPane) => {
 
     const PARAM_QUERYTYPE = "query";
     const PARAM_EXPRESSION = "expression";
@@ -32,13 +31,13 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
         const individual = getParameter("individual");
         if (individual) {
             const url = baseUrl + "individuals/" + individual + "/fragment";
-            loadEntity(url, null, entityLoadedCallback);
+            entityPane.loadEntity(url, null);
         }
 
         const cls = getParameter("class");
         if (cls) {
             const url = baseUrl + "classes/" + cls + "/fragment";
-            loadEntity(url, null, entityLoadedCallback);
+            entityPane.loadEntity(url, null);
         }
     }
 
@@ -135,7 +134,7 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
             // but only refresh the entity part of the page
             link.onclick = function (e) {
                 e.preventDefault();
-                loadEntity(originalUrl + "fragment", newUrl, entityLoadedCallback);
+                entityPane.loadEntity(originalUrl + "fragment", newUrl);
             }
         });
     }
