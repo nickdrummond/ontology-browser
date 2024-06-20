@@ -31,13 +31,13 @@ export const dlquery = (baseUrl, entityPane) => {
         const individual = getParameter("individual");
         if (individual) {
             const url = baseUrl + "individuals/" + individual + "/fragment";
-            entityPane.loadEntity(url, null);
+            entityPane.loadEntity(url);
         }
 
         const cls = getParameter("class");
         if (cls) {
             const url = baseUrl + "classes/" + cls + "/fragment";
-            entityPane.loadEntity(url, null);
+            entityPane.loadEntity(url);
         }
     }
 
@@ -91,8 +91,8 @@ export const dlquery = (baseUrl, entityPane) => {
             clearTimeout(timeoutId);
             response.text().then(html => {
                 resultsForm.innerHTML = html;
-                rewriteLinks("Class", "classes"); // note Capitalised
-                rewriteLinks("individual", "individuals");
+                rewriteLinks("Class"); // note Capitalised
+                rewriteLinks("individual");
             });
         }).catch(err => {
             if (err.name === "AbortError") {
@@ -123,8 +123,8 @@ export const dlquery = (baseUrl, entityPane) => {
 
 ///////////////////////
 
-// TODO the links should be set correctly in the backend
-    function rewriteLinks(type, pluralType) {
+// TODO single event handler like tree
+    function rewriteLinks(type) {
         document.querySelectorAll(`#resultsForm a.${type}`).forEach(link => {
             let originalUrl = link.getAttribute("href");
             let entityId = originalUrl.split("/")[2];

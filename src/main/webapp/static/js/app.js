@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
 
     if (isQuery) {
-        dlquery(baseUrl, entityLoaded).init();
+        dlquery(baseUrl, entityPane).init();
     }
 
     entityLoaded();
