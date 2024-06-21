@@ -17,6 +17,9 @@
     <link rel='stylesheet' type='text/css' href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
     <link rel='stylesheet' type='text/css' href="../../static/css/events.css" th:href='@{/static/css/events.css}'/>
 
+    <script src="../../static/js/leader-line.min.js"
+            th:src='@{/static/js/leader-line.min.js}'></script>
+
     <script type='text/javascript' th:inline='javascript'>
         const baseUrl = '/';
         const isQuery = false;
@@ -44,6 +47,8 @@
     <div id="content">
 
         <h2 th:text="${title}">Title</h2>
+
+        <div style="background-color: blue" id="start">start</div>
 
         <ul>
             <li>http://localhost:8080/timeline/starwars?event=Escape_from_Daiyu

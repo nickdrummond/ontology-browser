@@ -590,7 +590,6 @@ img.thumb{
         display: flex;
         flex-direction: row;
         align-items: stretch;
-        overflow: hidden;
         width: auto;
     }
 
@@ -627,7 +626,6 @@ img.thumb{
 
     #content {
         flex: 2;
-        overflow: auto;
         display: flex;
         flex-direction: column;
     }
