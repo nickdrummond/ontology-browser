@@ -19,23 +19,23 @@ div.events {
 .events .prop {
     margin-top: 1rem;
     height: 0;
-    border-top: 2px solid #4189a0;
-    min-width: 2rem;
+    /*border-top: 2px solid rgba(65, 137, 160, 0.46);*/
+    min-width: 5rem;
 }
 
 .events .prop.sometimeAfter {
-    border-top: 2px dashed #4189a0;
+    /*border-top: 2px dashed rgba(65, 137, 160, 0.46);*/
     min-width: 6rem;
 }
 
 /** TODO remove when done **/
 .events .prop.wrong {
-    border-top: 2px solid red;
+    /*border-top: 2px solid red;*/
 }
 
 /** TODO remove when done **/
 .events .prop.sometimewrong {
-    border-top: 2px dashed red;
+    /*border-top: 2px dashed red;*/
 }
 
 .events .dot {
@@ -117,7 +117,7 @@ div.events {
     position: absolute;
     height: 4.78rem;
     bottom: 0;
-    border-left: 2px solid #4189a0;
+    /*border-left: 2px solid rgba(65, 137, 160, 0.46);*/
 }
 
 .events .converge:not(:first-child)>.prop:last-child {
@@ -130,7 +130,7 @@ div.events {
     height: 4.78rem;
     right: 0;
     bottom: 0;
-    border-right: 2px solid #4189a0;
+    /*border-right: 2px solid rgba(65, 137, 160, 0.46);*/
     width: 2px;
 }
 
