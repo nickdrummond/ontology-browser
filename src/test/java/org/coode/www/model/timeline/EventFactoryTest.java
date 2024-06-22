@@ -32,7 +32,7 @@ public class EventFactoryTest extends TestCase {
         AbstractRelationsHierarchyService<OWLObjectProperty> afterTree = new RelationsHierarchyService()
                 .withProperties(after, ont, true);
 
-        EventFactory eventFactory = new EventFactory(duringTree, afterTree);
+        EventFactory eventFactory = new EventFactory(duringTree, afterTree, null);
 
         OWLNamedIndividual parent = df.getOWLNamedIndividual("Parent");
         OWLNamedIndividual child1 = df.getOWLNamedIndividual("Child1");

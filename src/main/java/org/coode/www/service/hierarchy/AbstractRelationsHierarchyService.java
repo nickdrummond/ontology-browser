@@ -58,4 +58,8 @@ public abstract class AbstractRelationsHierarchyService<T extends OWLProperty> e
     public List<T> getProperties() {
         return properties;
     }
+
+    public OWLOntology getOntology() {
+        return ont;
+    }
 }

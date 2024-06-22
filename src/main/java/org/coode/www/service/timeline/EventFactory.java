@@ -22,13 +22,18 @@ public class EventFactory {
     private final AbstractRelationsHierarchyService<OWLObjectProperty> duringTree;
     private final AbstractRelationsHierarchyService<OWLObjectProperty> afterTree;
     private final HashMap<OWLObjectProperty, TProp> props;
+    private final Comparator<? super Relation<OWLObjectProperty>> byStartYear;
 
     public EventFactory(
             AbstractRelationsHierarchyService<OWLObjectProperty> duringTree,
-            AbstractRelationsHierarchyService<OWLObjectProperty> afterTree) {
+            AbstractRelationsHierarchyService<OWLObjectProperty> afterTree,
+            OWLDataProperty numericProperty) {
         this.duringTree = duringTree;
         this.afterTree = afterTree;
         this.props = new HashMap<>();
+        this.byStartYear = numericProperty != null ? Comparator.comparing(r ->
+                EventUtils.getInteger(r.individual(), numericProperty, this.afterTree.getOntology()
+                ).orElse(0)) : Comparator.comparing(r -> 0);
         afterTree.getProperties().forEach(p -> this.props.put(p, new TProp(p.getIRI().getFragment())));
         duringTree.getProperties().forEach(p -> this.props.put(p, new TProp(p.getIRI().getFragment())));
     }
@@ -97,7 +102,7 @@ public class EventFactory {
 
         event2Tree.forEach((k, v) -> logger.info("          {} -> {}", k, v));
 
-        Set<Relation<OWLObjectProperty>> roots = getRoots(event2Tree);
+        List<Relation<OWLObjectProperty>> roots = getRoots(event2Tree);
 
         if (roots.isEmpty()) {
             logger.error("No roots found");
@@ -181,7 +186,7 @@ public class EventFactory {
 
 
     private List<Timeline> buildParallelInParentEvent(
-            Set<Relation<OWLObjectProperty>> roots,
+            List<Relation<OWLObjectProperty>> roots,
             Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree,
             int depth) {
 
@@ -232,11 +237,12 @@ public class EventFactory {
         return props.get(current.property());
     }
 
-    private Set<Relation<OWLObjectProperty>> getRoots(Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree) {
+    private List<Relation<OWLObjectProperty>> getRoots(Map<Relation<OWLObjectProperty>, Tree<Relation<OWLObjectProperty>>> event2Tree) {
         // TODO also check for any which have roots NOT included in the parent
         return event2Tree.keySet().stream()
                 .filter(e -> !isChildIn(e.individual(), event2Tree))
-                .collect(Collectors.toSet());
+                .sorted(byStartYear)
+                .toList();
     }
 
     private Optional<Tree<Relation<OWLObjectProperty>>> getSubtree(

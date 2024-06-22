@@ -103,7 +103,7 @@ public class TimelineController extends ApplicationController {
             model.addAttribute("filter", null);
         }
 
-        EventFactory fac = new EventFactory(duringTree, afterTree);
+        EventFactory fac = new EventFactory(duringTree, afterTree, year);
 
         model.addAttribute("title", "Timeline: " + event);
         model.addAttribute("root", fac.buildTimelineFromEvent(target, depth));
@@ -134,7 +134,7 @@ public class TimelineController extends ApplicationController {
         AbstractRelationsHierarchyService<OWLObjectProperty> afterTree = new RelationsHierarchyService()
                 .withProperties(after, ont, true);
 
-        EventFactory eventFactory = new EventFactory(duringTree, afterTree);
+        EventFactory eventFactory = new EventFactory(duringTree, afterTree, null);
 
         OWLNamedIndividual parent = df.getOWLNamedIndividual("Parent");
         OWLNamedIndividual child1 = df.getOWLNamedIndividual("Child1");
