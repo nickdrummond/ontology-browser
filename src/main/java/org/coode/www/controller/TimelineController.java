@@ -200,9 +200,6 @@ public class TimelineController extends ApplicationController {
                                 List.of(
                                         new TConn(after, ind("ChildA")),
                                         new TConn(after, List.of(
-                                                new Timeline(List.of(
-                                                        new TConn(after, ind("ChildB"))
-                                                ), after, false, true),
                                                 new Timeline(
                                                         List.of(
                                                                 new TConn(after, ind("PA")),
@@ -216,7 +213,10 @@ public class TimelineController extends ApplicationController {
                                                                                 new TConn(after, ind("P2B1")),
                                                                                 new TConn(after, ind("P2B2"))
                                                                         ), after, false, false)))
-                                                        ), after,true, false)
+                                                        ), after,true, false),
+                                                new Timeline(List.of(
+                                                        new TConn(after, ind("ChildB"))
+                                                ), after, false, true)
                                         )),
                                         new TConn(after, ind("ChildC"))
                                 ), after,false, false)

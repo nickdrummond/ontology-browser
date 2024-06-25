@@ -20,7 +20,7 @@ div.events {
     margin-top: 1rem;
     height: 0;
     /*border-top: 2px solid rgba(65, 137, 160, 0.46);*/
-    min-width: 5rem;
+    width: 5rem;
 }
 
 .events .prop.sometimeAfter {
@@ -108,35 +108,35 @@ div.events {
     background-color: rgba(120, 120, 200, 0.05);
 }
 
-.events .diverge:not(:first-child)>.prop:first-child {
-    position: relative;
-}
+/*.events .diverge:not(:first-child)>.prop:first-child {*/
+/*    position: relative;*/
+/*}*/
 
-.events .diverge:not(:first-child)>.prop:first-child::before {
-    content: '';
-    position: absolute;
-    height: 4.78rem;
-    bottom: 0;
-    /*border-left: 2px solid rgba(65, 137, 160, 0.46);*/
-}
+/*.events .diverge:not(:first-child)>.prop:first-child::before {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    height: 4.78rem;*/
+/*    bottom: 0;*/
+/*    !*border-left: 2px solid rgba(65, 137, 160, 0.46);*!*/
+/*}*/
 
-.events .converge:not(:first-child)>.prop:last-child {
-    position: relative;
-}
+/*.events .converge:not(:first-child)>.prop:last-child {*/
+/*    position: relative;*/
+/*}*/
 
-.events .converge:not(:first-child)>.prop:last-child::after {
-    content: '';
-    position: absolute;
-    height: 4.78rem;
-    right: 0;
-    bottom: 0;
-    /*border-right: 2px solid rgba(65, 137, 160, 0.46);*/
-    width: 2px;
-}
+/*.events .converge:not(:first-child)>.prop:last-child::after {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    height: 4.78rem;*/
+/*    right: 0;*/
+/*    bottom: 0;*/
+/*    !*border-right: 2px solid rgba(65, 137, 160, 0.46);*!*/
+/*    width: 2px;*/
+/*}*/
 
-.events .converge .prop, .events .diverge .prop {
-    flex-grow: 1;
-}
+/*.events .converge .prop, .events .diverge .prop {*/
+/*    flex-grow: 1;*/
+/*}*/
 
 .dark .events .event-label {
     color: white;
