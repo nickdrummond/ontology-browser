@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 function entityLoaded() {
-    characteristics().init("#content .characteristic, #metrics");
+    characteristics("#content").init(".characteristic, #metrics");
 
     if (editingEnabled) {
         edits().init(".characteristic");

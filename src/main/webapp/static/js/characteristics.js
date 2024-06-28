@@ -1,6 +1,10 @@
-export const characteristics = () => {
+export const characteristics = (parentSelector) => {
 
-    const HIDDEN = "hidden.";
+    const HIDDEN = "hidden characteristics";
+    const ICON_HTML = "<img class=\"min\" src=\"" + baseUrl + "static/images/min.png\" width=\"16\" height=\"16\"/>";
+    const VALUES_SELECTOR = "ul, table";
+
+    const parentElement = document.querySelector(parentSelector);
 
     function init(selectors) {
         createSlideToggles(selectors);
@@ -8,33 +12,86 @@ export const characteristics = () => {
     }
 
     function createSlideToggles(selectors) {
-        $("<img class=\"min\" src=\"" + baseUrl + "static/images/min.png\" width=\"16\" height=\"16\"/>").click(function(e){
-            const values = $(this).nextAll("ul, table").first(); // for some reason just next does not work
-            const hidden = values.is(":visible");
-            const characteristic = $(this).next("h4").text();
-            rememberCharacteristicHidden(characteristic, hidden);
-
-            values.slideToggle('fast');
-        }).prependTo(selectors);
+        parentElement.querySelectorAll(selectors).forEach(characteristic => {
+            const icon = createIconElement();
+            icon.onclick = (e) => {
+                toggle(characteristic);
+            };
+            characteristic.insertBefore(icon, characteristic.firstChild);
+        });
     }
 
-    function rememberCharacteristicHidden(characteristic, hidden) {
-        if (hidden) {
-            sessionStorage.setItem(HIDDEN + characteristic, true);
+    function toggle(characteristic) {
+        const values = getValuesElement(characteristic);
+        const name = getCharacteristicName(characteristic);
+        const isVisible = values.checkVisibility();
+        if (isVisible) {
+            close(characteristic);
         }
         else {
-            sessionStorage.removeItem(HIDDEN + characteristic);
+            open(characteristic);
         }
+        setCharacteristic(name, !isVisible);
+    }
+
+    function getCharacteristicName(characteristicElement) {
+        return characteristicElement.classList.value;
+    }
+
+    function createIconElement() {
+        const throwaway = document.createElement('img');
+        throwaway.innerHTML = ICON_HTML;
+        return throwaway.firstElementChild;
+    }
+
+    function hideCharacteristic(characteristic) {
+        const arr = getHidden();
+        const isAlreadyHidden = arr.includes(characteristic);
+        if (!isAlreadyHidden) {
+            arr.push(characteristic);
+        }
+        sessionStorage.setItem(HIDDEN, JSON.stringify(arr));
+    }
+
+    function setCharacteristic(characteristic, visible) {
+        const arr = getHidden();
+        const isAlreadyHidden = arr.includes(characteristic);
+        if (visible && isAlreadyHidden) {
+            arr.splice(arr.indexOf(characteristic), 1);
+            sessionStorage.setItem(HIDDEN, JSON.stringify(arr));
+        }
+        else if (!visible && !isAlreadyHidden) {
+            arr.push(characteristic);
+            sessionStorage.setItem(HIDDEN, JSON.stringify(arr));
+        }
+    }
+
+    function getHidden() {
+        const str = sessionStorage.getItem(HIDDEN);
+        return str ? JSON.parse(str) : [];
     }
 
     function hideCharacteristics() {
-        let keys = Object.keys(sessionStorage);
-        for(let key of keys) {
-            if (key.startsWith(HIDDEN)) {
-                const characteristic = key.substr(HIDDEN.length);
-                $("h4:contains('" + characteristic + "')").nextAll("ul, table").first().hide();
-            }
-        }
+        getHidden().forEach( hidden => {
+            const sel = "." + hidden.replaceAll(" ", ".");
+            parentElement.querySelectorAll(sel).forEach(characteristic => {
+               close(characteristic);
+            });
+        });
+    }
+
+    function close(characteristic) {
+        const values = getValuesElement(characteristic);
+        $(values).slideUp("fast"); // TODO get rid of JQuery
+    }
+
+    function open(characteristic) {
+        const values = getValuesElement(characteristic);
+        $(values).slideDown("fast"); // TODO get rid of JQuery
+    }
+
+    function getValuesElement(characteristic) {
+        return characteristic.querySelector(VALUES_SELECTOR);
     }
 
     return {

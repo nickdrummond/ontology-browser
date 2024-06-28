@@ -55,7 +55,11 @@ public class PagingUtils {
     }
 
     public static String getIdFor(String componentName) {
-        return componentName.replace(" ", "_").toLowerCase();
+        return componentName
+                .replace(" ", "_")
+                .replace("(", "_")
+                .replace(")", "_")
+                .toLowerCase();
     }
 
 }
