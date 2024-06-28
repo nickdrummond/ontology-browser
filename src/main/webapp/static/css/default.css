@@ -385,8 +385,11 @@ ul.minihierarchy {
     font-family: monospace;
 }
 
-.minihierarchy li .node.expandable{
+.minihierarchy li .node{
     cursor: pointer;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    padding: 0 0.5rem;
 }
 
 .minihierarchy li .child-count {
@@ -647,6 +650,11 @@ img.thumb{
 
     .wrapper {
         height: 100vh;
+    }
+
+    .minihierarchy li .node{
+        font-size: inherit;
+        margin-right: inherit;
     }
 }
 
