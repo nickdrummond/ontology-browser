@@ -8,7 +8,7 @@ public abstract class PagingURIScheme {
 
     protected PagingURIScheme(HttpServletRequest request) {
         String queryString = request.getQueryString();
-        this.original = URI.create("./" + (queryString != null ? "?" + queryString : ""));
+        this.original = URI.create(queryString != null ? "?" + queryString : "");
     }
 
     // used in templates
