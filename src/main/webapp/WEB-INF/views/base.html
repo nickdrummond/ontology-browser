@@ -259,8 +259,10 @@
         <a th:href="'.?inverse=' + ${!inverse}" th:text="${type2}">Title</a>
     </h4>
 
-    <ul class="minihierarchy" th:classappend="${type2}">
-        <li th:replace="~{base::tree(t=${hierarchy2}, stats=${stats2}, statsName=${statsName2})}">Top Thing</li>
+    <ul class="minihierarchy" th:classappend="${type2}" th:if="${!hierarchy2.children.isEmpty()}">
+        <div class="removeme" th:each="child : ${hierarchy2.children}" th:remove="tag">
+            <li th:replace="~{base::tree(t=${child}, parent=${hierarchy2}, stats=${stats2}, statsName=${statsName2})}"></li>
+        </div>
     </ul>
 </div>
 
