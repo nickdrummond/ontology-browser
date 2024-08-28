@@ -66,10 +66,13 @@ export const dlquery = (baseUrl, entityPane) => {
 
     function sendSubQuery(expression, minus, order, syntax, queryType, start, pageSize, retry) {
 
+        expression = expression.replaceAll(" ", "+");
+
         let req = queryURL + "?" + PARAM_QUERYTYPE + "=" + queryType + "&" +
             PARAM_EXPRESSION + "=" + expression;
 
         if (minus) {
+            minus = minus.replaceAll(" ", "+");
             req = req + "&" + PARAM_MINUS + "=" + minus;
         }
         if (order) {
@@ -84,6 +87,8 @@ export const dlquery = (baseUrl, entityPane) => {
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        console.log("req = ", req);
 
         fetch(req, {
             signal: controller.signal
