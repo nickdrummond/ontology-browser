@@ -4,7 +4,7 @@
   <groupId>org.ontbrowser</groupId>
   <artifactId>ontology-browser</artifactId>
   <packaging>war</packaging>
-  <version>3.x.branch</version>
+  <version>3.0.0</version>
   <name>Ontology Browser</name>
   <url>https://github.com/nickdrummond/ontology-browser</url>
 
