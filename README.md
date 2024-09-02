@@ -66,6 +66,7 @@ To load your own, set the root ontology location and reasoner root ontology IRI 
     PROJECT_URL=<Project documentation url>
     PROJECT_TAGLINE=<Project tagline text>
     PROJECT_CONTACT=<Email address of contact>
+    INDEX_TYPE=<CLASSES_USAGE_CLOUD|INDIVIDUALS_USAGE_CLOUD|OBJECT_PROPERTIES_USAGE_CLOUD>
     LABEL_IRI=<IRI of the annotation property to use for rendering>
     RESTART_SECRET=<used for /restart endpoint secret param>
 

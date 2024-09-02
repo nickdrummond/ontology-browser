@@ -1,5 +1,8 @@
 package org.ontbrowser.www.controller;
 
+import org.ontbrowser.www.model.cloud.AbstractOWLCloudModel;
+import org.ontbrowser.www.model.cloud.ClassesByUsageCloud;
+import org.ontbrowser.www.model.cloud.ObjectPropsByUsageCloud;
 import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.model.cloud.IndividualsByUsageCloud;
 import org.ontbrowser.www.exception.NotAuthorisedException;
@@ -31,9 +34,17 @@ import java.util.function.Consumer;
 @RestController
 public class RootController extends ApplicationController implements ApplicationContextAware {
 
+    enum IndexType {
+        CLASSES_USAGE_CLOUD, INDIVIDUALS_USAGE_CLOUD, OBJECT_PROPERTIES_USAGE_CLOUD
+    }
+
     @Nullable
     @Value("${restart.secret}")
     private String restartSecret;
+
+    @Value("${INDEX_TYPE:CLASSES_USAGE_CLOUD}")
+    private IndexType indexType;
+
     private XmlWebApplicationContext applicationContext;
 
     // Entry point
@@ -51,9 +62,13 @@ public class RootController extends ApplicationController implements Application
         else {
             Set<OWLOntology> ontologies = ont.getImportsClosure();
 
-            IndividualsByUsageCloud cloudModel = new IndividualsByUsageCloud(ontologies);
+            AbstractOWLCloudModel cloudModel = switch (indexType) {
+                case INDIVIDUALS_USAGE_CLOUD -> new IndividualsByUsageCloud(ontologies);
+                case OBJECT_PROPERTIES_USAGE_CLOUD -> new ObjectPropsByUsageCloud(ontologies);
+                default -> new ClassesByUsageCloud(ontologies);
+            };
 
-            CloudHelper<OWLNamedIndividual> helper = new CloudHelper<>(cloudModel);
+            CloudHelper helper = new CloudHelper<>(cloudModel);
             helper.setThreshold(14);
             helper.setZoom(4);
             helper.setNormalise(true);
@@ -84,7 +99,6 @@ public class RootController extends ApplicationController implements Application
     }
 
     @GetMapping(value = "/sitemap.xml")
-
     public XmlUrlSet sitemap() {
         final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
