@@ -12,7 +12,7 @@
 
 <div class="welcome"><p>Welcome to the <em th:text="${projectInfo.name}">Ontology name</em>
     created in <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}"></a>.</p>
-    <p>Select a popular individual below or search the ontology yourself above.</p>
+    <p>Select a popular <span th:text="${entityType}">individual</span> below or search the ontology yourself above.</p>
 </div>
 
 <div id='main'>

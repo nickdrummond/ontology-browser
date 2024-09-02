@@ -69,10 +69,17 @@ public class RootController extends ApplicationController implements Application
             };
 
             CloudHelper helper = new CloudHelper<>(cloudModel);
-            helper.setThreshold(14);
-            helper.setZoom(4);
-            helper.setNormalise(true);
+            helper.setThreshold(4);
+            helper.setZoom(1);
+            helper.setNormalise(false);
 
+            String entityType = switch (indexType) {
+                case INDIVIDUALS_USAGE_CLOUD -> "individual";
+                case OBJECT_PROPERTIES_USAGE_CLOUD -> "object property";
+                case CLASSES_USAGE_CLOUD -> "class";
+            };
+
+            model.addAttribute("entityType", entityType);
             model.addAttribute("ontologies", ontologies);
             model.addAttribute("cloud", cloudModel);
             model.addAttribute("helper", helper);
