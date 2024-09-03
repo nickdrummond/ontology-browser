@@ -15,27 +15,27 @@ html {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.dark {
-    color-scheme: dark;
-    color: #b4b392;
-}
-
-.dark a {
-    color: #dad6cd;
-}
-
-.dark a:hover {
-    color: #dad6cd;
-}
-
-.dark .autosuggest {
-    background-color: black;
-}
-
 body {
     font-size: 1rem;
     margin: 0;
     padding: 0;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+    color: #b4b392;
+}
+
+[data-theme="dark"] a {
+    color: #dad6cd;
+}
+
+[data-theme="dark"] a:hover {
+    color: #dad6cd;
+}
+
+[data-theme="dark"] .autosuggest {
+    background-color: black;
 }
 
 h1 {
@@ -331,12 +331,12 @@ td.key{
     color: inherit;
 }
 
-.dark .cloud a.Class,
-.dark .cloud a.Object.property,
-.dark .cloud a.Data.property,
-.dark .cloud a.Annotation.property,
-.dark .cloud a.Named.individual,
-.dark .cloud a.Datatype{
+[data-theme="dark"] .cloud a.Class,
+[data-theme="dark"] .cloud a.Object.property,
+[data-theme="dark"] .cloud a.Data.property,
+[data-theme="dark"] .cloud a.Annotation.property,
+[data-theme="dark"] .cloud a.Named.individual,
+[data-theme="dark"] .cloud a.Datatype{
     filter: invert(100%);
 }
 
@@ -406,7 +406,7 @@ ul.minihierarchy {
     display: none;
 }
 
-.dark .minihierarchy li .child-count {
+[data-theme="dark"] .minihierarchy li .child-count {
     background-color: #671d16;
 }
 
@@ -511,7 +511,7 @@ form#load {
     height: 24px;
 }
 
-.dark .icon {
+[data-theme="dark"] .icon {
     filter: invert(100%);
 }
 

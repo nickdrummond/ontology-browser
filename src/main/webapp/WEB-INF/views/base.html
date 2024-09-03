@@ -29,6 +29,12 @@
         const isTree = [[${tree}]];
         const rewriteLinks = [[${rewriteLinks}]] ?? false;
         const editingEnabled = [[${editingEnabled}]] ?? false;
+        const THEME_ATTRIBUTE = "data-theme";
+        const THEME_KEY = "theme";
+        const THEME_DEFAULT = "light";
+
+        // Set dark mode early to avoid flicker
+        document.documentElement.setAttribute(THEME_ATTRIBUTE, sessionStorage.getItem(THEME_KEY) || THEME_DEFAULT);
     </script>
     <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
             th:src='@{/static/js/jquery-1.4.3.min.js}'></script>

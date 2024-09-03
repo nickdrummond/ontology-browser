@@ -52,7 +52,7 @@ div.autosuggest ul
 	background-color: #fff;
 }
 
-.dark div.autosuggest ul {
+[data-theme="dark"] div.autosuggest ul {
 	background-color: #000;
 }
 
@@ -149,9 +149,9 @@ div.autosuggest ul em
 }
 
 
-.dark div.autosuggest ul li.as_highlight a:hover,
-.dark div.autosuggest ul li a:hover,
-.dark div.autosuggest ul li.as_highlight a {
+[data-theme="dark"] div.autosuggest ul li.as_highlight a:hover,
+[data-theme="dark"] div.autosuggest ul li a:hover,
+[data-theme="dark"] div.autosuggest ul li.as_highlight a {
 	background: rgba(125, 125, 125, 0.4);
 	transition: ease-out 0.2s;
 }

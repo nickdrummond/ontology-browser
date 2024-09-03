@@ -97,32 +97,32 @@ a.Named.individual:hover{
 
 /* dark theme */
 
-.dark .Object.property{
+[data-theme="dark"] .Object.property{
     color: #018b8c;
 }
 
-.dark a.Object.property:hover{
+[data-theme="dark"] a.Object.property:hover{
     color: #01d2d2;
 }
 
-.dark .active-entity {
+[data-theme="dark"] .active-entity {
     color: rgba(255, 255, 0, 0.8);
 }
 
-.dark .Object.property.active-entity,
-.dark a.Data.property.active-entity {
+[data-theme="dark"] .Object.property.active-entity,
+[data-theme="dark"] a.Data.property.active-entity {
     color: rgba(255, 255, 0, 0.8);
 }
 
-.dark .Data.property{
+[data-theme="dark"] .Data.property{
     color: #4573e8;
 }
 
-.dark a.Data.property:hover{
+[data-theme="dark"] a.Data.property:hover{
     color: #7caaef;
 }
 
-.dark .literal a {
+[data-theme="dark"] .literal a {
     color: #2266ff;
 }
 

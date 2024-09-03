@@ -1,7 +1,7 @@
 import {tree} from './tree.js';
 import {characteristics} from './characteristics.js';
 import {dlquery} from "./dlquery.js";
-import {classToggler} from "./classToggler.js";
+import {theme} from "./theme.js";
 import {edits} from "./edits.js";
 import {entity} from "./entity.js";
 
@@ -9,8 +9,7 @@ import {entity} from "./entity.js";
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
-    classToggler("light", "dark")
-        .withTargetSelector("html, #search")
+    theme(THEME_DEFAULT, "dark", THEME_ATTRIBUTE, THEME_KEY)
         .attachTo("#darkmode");
 
     if (editingEnabled) {
