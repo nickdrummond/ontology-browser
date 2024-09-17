@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -24,6 +25,9 @@ public class OWLHTMLKitImplTest {
 
     @Mock
     private OWLOntologyManager mngr;
+
+    @Mock
+    private OntologyIRIShortFormProvider ontologyRenderer;
 
     private final String rootBase = "http://example.com/root";
     private final IRI locationIRI = IRI.create("file:///ont.owl");
@@ -42,7 +46,7 @@ public class OWLHTMLKitImplTest {
         when(mngr.getOntologyDocumentIRI(rootOnt)).thenReturn(locationIRI);
         when(rootOnt.getOntologyID()).thenReturn(new OWLOntologyID(IRI.create(rootBase), IRI.create(rootBase + "/1")));
 
-        kit = new OWLHTMLKitImpl(mngr, rootOnt);
+        kit = new OWLHTMLKitImpl(mngr, rootOnt, ontologyRenderer);
     }
 
 

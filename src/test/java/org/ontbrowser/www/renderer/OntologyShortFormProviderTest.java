@@ -3,17 +3,13 @@ package org.ontbrowser.www.renderer;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import static org.junit.Assert.*;
 
 public class OntologyShortFormProviderTest {
 
-    @Test
-    public void getShortFormForRootReturnsDefault() throws OWLOntologyCreationException {
-        OWLOntology ont = new OWLManager().get().createOntology();
-        OntologyShortFormProvider provider = new OntologyShortFormProvider(ont);
-        assertEquals("All ontologies", provider.getShortForm(ont));
-    }
+    private IRI labelIRI = OWLRDFVocabulary.RDFS_LABEL.getIRI();
 
     @Test
     public void getShortForm() throws OWLOntologyCreationException {
@@ -27,7 +23,7 @@ public class OntologyShortFormProviderTest {
         OWLImportsDeclaration importsDecl = df.getOWLImportsDeclaration(ont2.getOntologyID().getOntologyIRI().orElseThrow());
         mngr.applyChanges(new AddImport(ont, importsDecl));
 
-        OntologyShortFormProvider provider = new OntologyShortFormProvider(ont);
+        OntologyShortFormProvider provider = new OntologyShortFormProvider(labelIRI);
         assertEquals("ont2", provider.getShortForm(ont2));
     }
 
@@ -41,7 +37,22 @@ public class OntologyShortFormProviderTest {
 
         mngr.applyChanges(new AddImport(ont, mngr.getOWLDataFactory().getOWLImportsDeclaration(IRI.create(expected))));
 
-        OntologyShortFormProvider provider = new OntologyShortFormProvider(ont);
+        OntologyShortFormProvider provider = new OntologyShortFormProvider(labelIRI);
         assertEquals("ontLocation", provider.getShortForm(ont2));
+    }
+
+    @Test
+    public void getShortFormWithLabel() throws OWLOntologyCreationException {
+        OWLOntologyManager mngr = new OWLManager().get();
+        OWLDataFactory df = mngr.getOWLDataFactory();
+
+        OWLOntology ont = mngr.createOntology(IRI.create("http://example.com/"));
+        String expected = "an ontology";
+
+        OWLAnnotation labelAnnotation = df.getOWLAnnotation(df.getOWLAnnotationProperty(labelIRI), df.getOWLLiteral(expected));
+        mngr.applyChanges(new AddOntologyAnnotation(ont, labelAnnotation));
+
+        OntologyShortFormProvider provider = new OntologyShortFormProvider(labelIRI);
+        assertEquals(expected, provider.getShortForm(ont));
     }
 }

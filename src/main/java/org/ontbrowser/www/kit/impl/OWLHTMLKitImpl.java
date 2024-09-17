@@ -26,7 +26,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private ShortFormProvider shortFormProvider;
 
-    private OntologyIRIShortFormProvider uriShortFormProvider;
+    private OntologyIRIShortFormProvider ontologySFP;
 
     private OWLEntityChecker owlEntityChecker;
 
@@ -44,9 +44,13 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private String labelLang;
 
-    public OWLHTMLKitImpl(final OWLOntologyManager mngr, final OWLOntology rootOntology) {
+    public OWLHTMLKitImpl(
+            final OWLOntologyManager mngr,
+            final OWLOntology rootOntology,
+            final OntologyIRIShortFormProvider ontologySFP) {
         this.mngr = mngr;
         this.rootOntology = rootOntology;
+        this.ontologySFP = ontologySFP;
     }
 
     @Override
@@ -114,18 +118,15 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return writer.toString();
     }
 
-    public OntologyIRIShortFormProvider getOntologyShortFormProvider() {
-        if (uriShortFormProvider == null){
-            uriShortFormProvider = new OntologyShortFormProvider(getRootOntology());
-        }
-        return uriShortFormProvider;
+    public OntologyIRIShortFormProvider getOntologySFP() {
+        return ontologySFP;
     }
 
     public OWLOntology getRootOntology() {
         return rootOntology;
     }
 
-    private ShortFormProvider getInternalShortFormProvider() {
+    private ShortFormProvider getInternalSFP() {
         if (shortFormProvider == null){
             OWLDataFactory df = mngr.getOWLDataFactory();
             OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(IRI.create(labelURI));
@@ -143,7 +144,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private CachingBidirectionalShortFormProvider getNameCache(){
         if (nameCache == null){
-            nameCache = new QuotingBiDirectionalShortFormProvider(getInternalShortFormProvider(), getOntologies());
+            nameCache = new QuotingBiDirectionalShortFormProvider(getInternalSFP(), getOntologies());
         }
         return nameCache;
     }

@@ -37,7 +37,7 @@ public interface OWLHTMLKit {
 
     String render(OWLObject owlObject);
 
-    OntologyIRIShortFormProvider getOntologyShortFormProvider();
+    OntologyIRIShortFormProvider getOntologySFP();
 
     OWLOntology getRootOntology();
 

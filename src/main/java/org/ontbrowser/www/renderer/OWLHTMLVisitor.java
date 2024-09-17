@@ -1,8 +1,6 @@
 package org.ontbrowser.www.renderer;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
