@@ -607,12 +607,11 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             write("</span>");
             if (node.hasLang()){
                 final String lang = node.getLang();
-                write(" <span style='color: black;'>@" + lang + "</span>");
+                write(" <span>@" + lang + "</span>");
             }
-            else {
-                write(OPEN_PAREN);
+            else if (!dt.isString()) {
+                write("^^");
                 dt.accept(this);
-                write(CLOSE_PAREN);
             }
         }
     }
