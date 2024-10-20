@@ -13,8 +13,9 @@ public class ApplicationConfig {
     @Bean
     public ProjectInfo projectInfo(@Value("${project.name}")    String name,
                                    @Value("${project.contact}") String contact,
-                                   @Value("${project.url}")     String url,
-                                   @Value("${project.tagline}") String tagline) {
-        return new ProjectInfo(name, contact, url, tagline);
+                                   @Value("${project.url}") String url,
+                                   @Value("${project.tagline}") String tagline,
+                                   @Value("${spring.profiles.active:}") String activeProfiles) {
+        return new ProjectInfo(name, contact, url, tagline, activeProfiles);
     }
 }

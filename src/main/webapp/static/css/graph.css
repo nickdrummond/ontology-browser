@@ -19,7 +19,14 @@
 .graph .top, .graph .bottom {
     display: flex;
     flex-direction: row;
-    align-items: center;
+}
+
+.graph .bottom {
+    align-items: flex-end;
+}
+
+.graph .bottom {
+    align-items: flex-start;
 }
 
 .graph .g-lr {
@@ -58,10 +65,22 @@
 .g-node a {
     font-size: smaller;
     position: relative;
-    left: 2em;
-    top: 2em;
+    /*left: 2em;*/
+    /*top: 2em;*/
 }
 
 .g-predicate {
     display: none;
+}
+
+.g-target {
+    margin: 5rem;
+}
+
+.left .g-target, .right .g-target {
+    margin: 0 5rem;
+}
+
+.top .g-target, .bottom .g-target {
+    margin: 5rem 2rem;
 }

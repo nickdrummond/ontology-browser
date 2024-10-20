@@ -153,6 +153,14 @@ li {
     text-align: center;
 }
 
+.entity-header {
+
+}
+
+.entity-header .graph-button {
+    font-size: 1.8rem;
+}
+
 .error {
     display: flex;
     flex-direction: column;

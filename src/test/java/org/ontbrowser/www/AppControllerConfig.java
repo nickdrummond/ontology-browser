@@ -10,7 +10,7 @@ public class AppControllerConfig {
 
     @Bean
     public ProjectInfo applicationInfo() {
-        return new ProjectInfo("App name", "contact", "http://example.com/app", "tagline");
+        return new ProjectInfo("App name", "contact", "http://example.com/app", "tagline", "");
     }
 
     @Bean

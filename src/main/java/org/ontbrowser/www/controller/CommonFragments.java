@@ -14,6 +14,7 @@ import org.ontbrowser.www.service.ReasonerService;
 import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.service.stats.Stats;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
+import org.ontbrowser.www.url.GraphURLScheme;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -189,6 +190,10 @@ public class CommonFragments {
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
         model.addAttribute("mos", owlRenderer);
+
+        if (projectInfo.getActiveProfiles().contains("graph")) {
+            model.addAttribute("graphLink", new GraphURLScheme().getURLForOWLObject(owlIndividual));
+        }
 
         response.addHeader("title", projectInfo.getName() + ": " + title);
 

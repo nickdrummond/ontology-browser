@@ -10,6 +10,7 @@ import org.ontbrowser.www.url.GraphURLScheme;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 // TODO control over incoming direction
 // TODO secondary indivs and dynamic loading
 @RestController
+@Profile("graph")
 @RequestMapping(value = "/graph")
 public class GraphController extends ApplicationController {
 
