@@ -1,0 +1,67 @@
+.graph {
+    width: fit-content;
+}
+
+.graph .g-th {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.graph .right .g-th {
+    align-items: flex-start;
+}
+
+.graph .left .g-th {
+    align-items: flex-end;
+}
+
+.graph .top, .graph .bottom {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.graph .g-lr {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0;
+}
+
+.graph ul {
+    margin: 0;
+    padding: 0;
+}
+
+.graph ul li {
+    list-style: none;
+    padding-left: 0;
+}
+
+.g-edge {
+    margin-bottom: 2em;
+}
+
+.g-node {
+    display: block;
+    height: 2rem;
+    width: 2rem;
+    border: 2px solid #4189a0;
+    border-radius: 50%;
+    /*position: relative;*/
+    /*overflow: visible;*/
+    /*white-space: nowrap;*/
+    margin: 1em 5em;
+}
+
+.g-node a {
+    font-size: smaller;
+    position: relative;
+    left: 2em;
+    top: 2em;
+}
+
+.g-predicate {
+    display: none;
+}

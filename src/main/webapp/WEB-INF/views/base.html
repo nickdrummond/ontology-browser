@@ -272,6 +272,38 @@
     </ul>
 </div>
 
+<ul th:fragment="zone (current, location, locgraph)" th:class="${location}">
+    <th:block th:each="edge : ${locgraph.getEdgesWithSubject(current)}">
+        <li class="g-edge">
+            <span class="g-predicate" th:utext="${mos.render(edge.predicate())}" th:data="${sfp.getShortForm(edge.predicate())}"/>
+            <div th:replace="~{base::node(${edge.object()}, true, true, true, true)}"></div>
+        </li>
+    </th:block>
+    <th:block th:if="${current == subject}" th:each="edge : ${locgraph.getEdgesWithObject(current)}"> <!-- only top level -->
+        <li class="g-edge">
+            <span class="g-node g-subject" th:utext="${mos.render(proxies.getProxyOrOriginal(edge.subject()))}" th:data="${edge.subject()}"></span>
+            <span class="g-predicate" th:utext="${mos.render(edge.predicate())}" th:data="${sfp.getShortForm(edge.predicate())}"/>
+        </li>
+    </th:block>
+</ul>
+
+<div class="g-th" th:fragment="node (current, leftEnabled, rightEnabled, topEnabled, bottomEnabled)">
+
+    <ul th:if="${topEnabled}" th:replace="~{base::zone(${current}, 'top', ${top})}"></ul>
+
+    <div class="g-lr">
+        <ul th:if="${leftEnabled}" th:replace="~{base::zone(${current}, 'left', ${left})}"></ul>
+
+        <span class="g-node g-target" th:utext="${mos.render(proxies.getProxyOrOriginal(current))}" th:data="${current}"></span>
+
+        <ul th:if="${rightEnabled}" th:replace="~{base::zone(${current}, 'right', ${right})}"></ul>
+
+    </div>
+
+    <ul th:if="${bottomEnabled}" th:replace="~{base::zone(${current}, 'bottom', ${bottom})}"></ul>
+
+</div>
+
 <div class='owlselector primary' th:fragment="list (title, entities)" th:if="${entities != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${type}">
