@@ -1,3 +1,41 @@
- <div th:replace="~{base :: owlentity}">
-        An entity
- </div>
+<div id='content' th:fragment="owlentity">
+    <div class="entity-header">
+        <h2 th:text="${title}">An OWLClass</h2>
+
+        <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
+
+        <div class="iri">
+            <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
+        </div>
+    </div>
+
+    <div th:replace="~{base :: image (${image})}">
+        Possibly an image
+    </div>
+
+    <div th:replace="~{base :: sound (${sound})}">
+        Possibly a sound
+    </div>
+
+    <div th:replace="~{base :: map (${geo})}">
+        Possibly a map
+    </div>
+
+    <div th:if="${editingEnabled}"
+         th:replace='~{edits :: axiom(${""}, ${""})}'>
+        Edit this axiom
+    </div>
+
+    <div class="characteristics">
+        <div th:replace="~{base :: metrics (${metrics})}">
+            Possibly some metrics
+        </div>
+
+        <div th:each="ch : ${characteristics}" th:remove="tag">
+            <div th:replace="~{base :: characteristic (${ch})}">
+                A characteristic
+            </div>
+        </div>
+    </div>
+
+</div>
