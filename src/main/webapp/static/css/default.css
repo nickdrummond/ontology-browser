@@ -330,7 +330,7 @@ td.key{
     margin: 0.2rem;
 }
 
-/* Let the cloud spans determine the color */
+/* Let the model spans determine the color */
 .cloud a.Class,
 .cloud a.Object.property,
 .cloud a.Data.property,

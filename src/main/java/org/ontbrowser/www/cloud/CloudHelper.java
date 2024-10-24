@@ -1,6 +1,6 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.cloud;
 
-import org.ontbrowser.www.model.cloud.CloudModel;
+import org.ontbrowser.www.cloud.model.CloudModel;
 import org.semanticweb.owlapi.model.OWLEntity;
 
 import java.awt.*;

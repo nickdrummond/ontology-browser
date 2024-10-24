@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model.cloud;
+package org.ontbrowser.www.cloud.model;
 
 import java.util.Comparator;
 import java.util.Set;

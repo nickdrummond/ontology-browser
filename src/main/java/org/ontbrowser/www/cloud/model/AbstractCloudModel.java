@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model.cloud;
+package org.ontbrowser.www.cloud.model;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

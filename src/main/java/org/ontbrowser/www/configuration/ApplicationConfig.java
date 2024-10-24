@@ -7,7 +7,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan({"org.ontbrowser.www.service", "org.ontbrowser.www.controller", "org.ontbrowser.www.graph"})
+@ComponentScan({
+        "org.ontbrowser.www.graph",
+        "org.ontbrowser.www.cloud",
+        "org.ontbrowser.www.service",
+        "org.ontbrowser.www.controller"})
 public class ApplicationConfig {
 
     @Bean

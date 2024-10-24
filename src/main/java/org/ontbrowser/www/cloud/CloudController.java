@@ -1,8 +1,8 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.cloud;
 
-import org.ontbrowser.www.model.cloud.*;
+import org.ontbrowser.www.cloud.model.*;
+import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.service.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.ui.Model;

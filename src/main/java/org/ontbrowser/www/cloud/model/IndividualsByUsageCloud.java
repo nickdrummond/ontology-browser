@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model.cloud;
+package org.ontbrowser.www.cloud.model;
 
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
