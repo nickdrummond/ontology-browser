@@ -1,5 +1,7 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.entities;
 
+import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonRelations;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;

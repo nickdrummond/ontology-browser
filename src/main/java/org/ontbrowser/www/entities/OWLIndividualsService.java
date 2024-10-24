@@ -1,10 +1,9 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.entities;
 
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.AxiomWithMetadata;
-import org.ontbrowser.www.model.characteristics.Characteristic;
-import org.ontbrowser.www.model.characteristics.IndividualCharacteristicsBuilder;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.IndividualCharacteristicsBuilder;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.AxiomAnnotations;

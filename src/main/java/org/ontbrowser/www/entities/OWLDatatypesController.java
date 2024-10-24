@@ -1,18 +1,17 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.entities;
 
+import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.service.OWLDatatypesService;
 import org.ontbrowser.www.service.hierarchy.OWLDatatypeHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;

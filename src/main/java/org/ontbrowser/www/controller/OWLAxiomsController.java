@@ -1,7 +1,6 @@
 package org.ontbrowser.www.controller;
 
-import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.renderer.ElementRenderer;
 import org.ontbrowser.www.service.OWLAxiomService;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;

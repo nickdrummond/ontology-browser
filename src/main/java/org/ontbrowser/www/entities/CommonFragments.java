@@ -1,15 +1,14 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.service.OWLClassesService;
-import org.ontbrowser.www.service.OWLIndividualsService;
 import org.ontbrowser.www.service.ReasonerService;
 import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.service.stats.Stats;

@@ -1,9 +1,8 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.entities;
 
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.model.characteristics.Characteristic;
-import org.ontbrowser.www.model.characteristics.DatatypeCharacteristicsBuilder;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.DatatypeCharacteristicsBuilder;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;

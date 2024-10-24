@@ -1,7 +1,8 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.entities;
 
+import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.OntServerException;
-import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.SearchResult;
 import org.ontbrowser.www.model.SearchResults;
@@ -11,7 +12,6 @@ import org.ontbrowser.www.service.SearchService;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;

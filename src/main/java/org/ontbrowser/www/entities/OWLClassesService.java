@@ -1,10 +1,10 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.entities;
 
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.model.characteristics.Characteristic;
-import org.ontbrowser.www.model.characteristics.ClassCharacteristicsBuilder;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.ClassCharacteristicsBuilder;
+import org.ontbrowser.www.service.ReasonerFactoryService;
 import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
 import org.semanticweb.owlapi.model.*;

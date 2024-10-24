@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model.characteristics;
+package org.ontbrowser.www.entities.characteristics;
 
 import com.google.common.collect.Streams;
 import org.ontbrowser.www.model.AxiomWithMetadata;

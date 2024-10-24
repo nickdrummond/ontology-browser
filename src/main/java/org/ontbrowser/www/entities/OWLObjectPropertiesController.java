@@ -1,28 +1,23 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.service.OWLObjectPropertiesService;
 import org.ontbrowser.www.service.ReasonerFactoryService;
-import org.ontbrowser.www.service.hierarchy.OWLObjectPropertyHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 @RestController

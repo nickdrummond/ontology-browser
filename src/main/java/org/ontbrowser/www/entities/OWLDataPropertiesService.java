@@ -1,15 +1,13 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.entities;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.model.characteristics.Characteristic;
-import org.ontbrowser.www.model.characteristics.DataPropertyCharacteristicsBuilder;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.DataPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.service.ReasonerFactoryService;
 import org.ontbrowser.www.service.hierarchy.*;
-import org.ontbrowser.www.service.stats.Stats;
-import org.ontbrowser.www.service.stats.StatsService;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class OWLDataPropertiesService implements PropertiesService<OWLDataProperty>{
+public class OWLDataPropertiesService implements PropertiesService<OWLDataProperty> {
 
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;

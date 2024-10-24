@@ -1,7 +1,7 @@
 package org.ontbrowser.www.model;
 
-import org.ontbrowser.www.model.characteristics.Characteristic;
-import org.ontbrowser.www.model.characteristics.IndividualCharacteristicsBuilder;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.IndividualCharacteristicsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

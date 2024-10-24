@@ -1,6 +1,6 @@
 package org.ontbrowser.www.service;
 
-import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;

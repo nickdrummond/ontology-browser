@@ -2,8 +2,8 @@ package org.ontbrowser.www.graph;
 
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.service.OWLClassesService;
-import org.ontbrowser.www.service.OWLIndividualsService;
+import org.ontbrowser.www.entities.OWLClassesService;
+import org.ontbrowser.www.entities.OWLIndividualsService;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;

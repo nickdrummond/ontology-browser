@@ -5,7 +5,7 @@ import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.ontbrowser.www.util.PropertyComparator;
 import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.exception.QueryTimeoutException;
-import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.DLQuery;
 import org.ontbrowser.www.model.QueryType;

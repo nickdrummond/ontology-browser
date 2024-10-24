@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan({
+        "org.ontbrowser.www.entities",
         "org.ontbrowser.www.graph",
         "org.ontbrowser.www.cloud",
         "org.ontbrowser.www.service",

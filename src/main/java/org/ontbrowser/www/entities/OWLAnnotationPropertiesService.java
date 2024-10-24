@@ -1,21 +1,16 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.entities;
 
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.NotImplementedException;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.model.characteristics.AnnotationPropertyCharacteristicsBuilder;
-import org.ontbrowser.www.model.characteristics.Characteristic;
+import org.ontbrowser.www.entities.characteristics.AnnotationPropertyCharacteristicsBuilder;
+import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.service.hierarchy.*;
-import org.ontbrowser.www.service.stats.Stats;
-import org.ontbrowser.www.service.stats.StatsService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnnotationProperty> {

@@ -1,5 +1,7 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.entities;
 
+import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonRelations;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
@@ -9,8 +11,6 @@ import org.ontbrowser.www.url.CommonRelationsURLScheme;
 import org.ontbrowser.www.url.RelationPropertyURLScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.service.OWLIndividualsService;
-import org.ontbrowser.www.service.OWLObjectPropertiesService;
 import org.ontbrowser.www.service.ReasonerFactoryService;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLObjectPropertyHierarchyService;
