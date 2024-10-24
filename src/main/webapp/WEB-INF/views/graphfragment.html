@@ -5,23 +5,23 @@
      class="g-th" >
 
     <ul th:if="${topEnabled}"
-        th:replace="~{graphfragment :: zone(${current}, 'top', ${top})}"></ul>
+        th:replace="~{graphfragment :: zone(${current}, 'top', ${zones.top()})}"></ul>
 
     <div class="g-lr">
         <ul th:if="${leftEnabled}"
-            th:replace="~{graphfragment :: zone(${current}, 'left', ${left})}"></ul>
+            th:replace="~{graphfragment :: zone(${current}, 'left', ${zones.left})}"></ul>
 
         <span class="g-node g-target"
               th:utext="${mos.render(proxies.getProxyOrOriginal(current))}"
               th:data="${current}"></span>
 
         <ul th:if="${rightEnabled}"
-            th:replace="~{graphfragment :: zone(${current}, 'right', ${right})}"></ul>
+            th:replace="~{graphfragment :: zone(${current}, 'right', ${zones.right})}"></ul>
 
     </div>
 
     <ul th:if="${bottomEnabled}"
-        th:replace="~{graphfragment :: zone(${current}, 'bottom', ${bottom})}"></ul>
+        th:replace="~{graphfragment :: zone(${current}, 'bottom', ${zones.bottom})}"></ul>
 
 </div>
 

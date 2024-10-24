@@ -14,7 +14,7 @@ import org.ontbrowser.www.service.ReasonerService;
 import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.service.stats.Stats;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
-import org.ontbrowser.www.url.GraphURLScheme;
+import org.ontbrowser.www.graph.GraphURLScheme;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;

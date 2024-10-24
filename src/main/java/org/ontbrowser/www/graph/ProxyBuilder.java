@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model.graph;
+package org.ontbrowser.www.graph;
 
 import org.semanticweb.owlapi.model.*;
 

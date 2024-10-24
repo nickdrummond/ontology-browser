@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model.graph;
+package org.ontbrowser.www.graph;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.semanticweb.owlapi.model.*;

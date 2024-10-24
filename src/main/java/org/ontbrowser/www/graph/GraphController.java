@@ -1,24 +1,18 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.graph;
 
+import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.model.graph.GraphBuilder;
-import org.ontbrowser.www.model.graph.ProxyBuilder;
 import org.ontbrowser.www.service.OWLClassesService;
 import org.ontbrowser.www.service.OWLIndividualsService;
-import org.ontbrowser.www.url.GraphURLScheme;
-import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 // TODO darkmode
 // TODO scrolling in pane?
@@ -31,13 +25,16 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/graph")
 public class GraphController extends ApplicationController {
 
+    private final GraphService graphService;
     private OWLIndividualsService individualsService;
     private final OWLClassesService classesService;
 
     public GraphController(
+            @Autowired GraphService graphService,
             @Autowired OWLIndividualsService individualsService,
             @Autowired OWLClassesService classesService
             ) {
+        this.graphService = graphService;
         this.individualsService = individualsService;
         this.classesService = classesService;
     }
@@ -107,6 +104,7 @@ public class GraphController extends ApplicationController {
         if (cls == null) {
             throw new NotFoundException("No class " + classId);
         }
+
         return common(cls, topWithProperties, bottomWithProperties, leftWithProperties, rightWithProperties, ont, model);
     }
 
@@ -119,55 +117,18 @@ public class GraphController extends ApplicationController {
             OWLOntology ont, Model model) {
 
         var shortForm = kit.getShortFormProvider().getShortForm(entity);
+        var df = ont.getOWLOntologyManager().getOWLDataFactory();
+        var zoneDescriptors = new ZoneDescriptors(topWithProperties, bottomWithProperties, leftWithProperties, rightWithProperties);
+        var proxyBuilder = new ProxyBuilder(df);
+        var zones = graphService.createZones(entity, zoneDescriptors, ont, kit.getFinder(), proxyBuilder);
 
-        OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
-
-        ProxyBuilder proxyBuilder = new ProxyBuilder(df);
-
-        var top = createGraph(entity, topWithProperties, ont, kit.getFinder(), proxyBuilder);
-        var left = createGraph(entity, leftWithProperties, ont, kit.getFinder(), proxyBuilder);
-        var right = createGraph(entity, rightWithProperties, ont, kit.getFinder(), proxyBuilder);
-        var bottom = bottomWithProperties.isEmpty() // default to all others if not specified
-                ? new GraphBuilder(ont, proxyBuilder).withoutProperties(top, left, right).addEntity(entity)
-                : createGraph(entity, bottomWithProperties, ont, kit.getFinder(), proxyBuilder);
-
-        model.addAttribute("title", shortForm);
+        model.addAttribute("title", shortForm + " (graph)");
         model.addAttribute("subject", entity);
         model.addAttribute("proxies", proxyBuilder);
-        model.addAttribute("top", top.build());
-        model.addAttribute("left", left.build());
-        model.addAttribute("right", right.build());
-        model.addAttribute("bottom", bottom.build());
+        model.addAttribute("zones", zones);
         model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new GraphURLScheme()));
         model.addAttribute("sfp", kit.getShortFormProvider());
 
         return new ModelAndView("graphfragment :: startnode");
-    }
-
-    private GraphBuilder createGraph(
-            OWLEntity entity,
-            List<String> propNames,
-            OWLOntology ont,
-            OWLEntityFinder finder,
-            ProxyBuilder proxyBuilder) {
-
-        Set<OWLProperty> props = propNames.stream()
-                .map(name -> getProps(name, finder, ont))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
-
-        var builder = new GraphBuilder(ont, proxyBuilder);
-        if (!props.isEmpty()) {
-            builder.addEntity(entity).withProperties(props);
-        }
-        return builder;
-    }
-
-    private Set<OWLObjectProperty> getProps(String name, OWLEntityFinder finder, OWLOntology ont) {
-        if (name.equals("type")){
-            var type = ont.getOWLOntologyManager().getOWLDataFactory().getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE);
-            return Set.of(type);
-        }
-        return finder.getOWLObjectProperties(name);
     }
 }
