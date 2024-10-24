@@ -1,11 +1,11 @@
 package org.ontbrowser.www.model.graph;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import javax.annotation.Nonnull;
-import javax.swing.text.html.Option;
 import java.util.*;
 
 // TODO could make the properties a list and use that order for display?
@@ -60,6 +60,16 @@ public class GraphBuilder {
 
     private Set<OWLProperty> getProperties() {
         return withProperties;
+    }
+
+    public GraphBuilder addEntity(OWLEntity entity) {
+        if (entity instanceof OWLNamedIndividual ind) {
+            return addIndividual(ind);
+        }
+        if (entity instanceof OWLClass cls) {
+            return addClass(cls);
+        }
+        throw new NotImplementedException("Unsupported graph type " + entity.getClass());
     }
 
     public GraphBuilder addIndividual(OWLNamedIndividual ind) {

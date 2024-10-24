@@ -1,0 +1,49 @@
+<div th:fragment="startnode"
+     th:replace="~{graphfragment :: node(${subject}, true, true, true, true)}"></div>
+
+<div th:fragment="node (current, leftEnabled, rightEnabled, topEnabled, bottomEnabled)"
+     class="g-th" >
+
+    <ul th:if="${topEnabled}"
+        th:replace="~{graphfragment :: zone(${current}, 'top', ${top})}"></ul>
+
+    <div class="g-lr">
+        <ul th:if="${leftEnabled}"
+            th:replace="~{graphfragment :: zone(${current}, 'left', ${left})}"></ul>
+
+        <span class="g-node g-target"
+              th:utext="${mos.render(proxies.getProxyOrOriginal(current))}"
+              th:data="${current}"></span>
+
+        <ul th:if="${rightEnabled}"
+            th:replace="~{graphfragment :: zone(${current}, 'right', ${right})}"></ul>
+
+    </div>
+
+    <ul th:if="${bottomEnabled}"
+        th:replace="~{graphfragment :: zone(${current}, 'bottom', ${bottom})}"></ul>
+
+</div>
+
+<ul th:fragment="zone (current, location, locgraph)"
+    th:class="${location}">
+    <th:block th:each="edge : ${locgraph.getEdgesWithSubject(current)}">
+        <li class="g-edge">
+            <span class="g-predicate"
+                  th:utext="${mos.render(edge.predicate())}"
+                  th:data="${sfp.getShortForm(edge.predicate())}"></span>
+            <div th:replace="~{graphfragment :: node(${edge.object()}, true, true, true, true)}"></div>
+        </li>
+    </th:block>
+    <th:block th:if="${current == subject}"
+              th:each="edge : ${locgraph.getEdgesWithObject(current)}"> <!-- only top level -->
+        <li class="g-edge">
+            <span class="g-node g-subject"
+                  th:utext="${mos.render(proxies.getProxyOrOriginal(edge.subject()))}"
+                  th:data="${edge.subject()}"></span>
+            <span class="g-predicate"
+                  th:utext="${mos.render(edge.predicate())}"
+                  th:data="${sfp.getShortForm(edge.predicate())}"></span>
+        </li>
+    </th:block>
+</ul>

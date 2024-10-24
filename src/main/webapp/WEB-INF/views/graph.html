@@ -47,7 +47,7 @@
         <h2 th:text="${title}">Title</h2>
 
         <div class="graph">
-            <div th:replace='~{base :: node(${subject}, true, true, true, true)}'></div>
+            <div th:replace='~{graphfragment :: startnode}'></div>
         </div>
 
 </div>
