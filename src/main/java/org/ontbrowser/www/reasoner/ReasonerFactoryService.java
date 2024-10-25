@@ -1,7 +1,5 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.reasoner;
 
-import org.ontbrowser.www.reasoner.SynchronizedOWLReasoner;
-import org.ontbrowser.www.model.ReasonerMomento;
 import org.ontbrowser.www.util.OWLUtils;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;

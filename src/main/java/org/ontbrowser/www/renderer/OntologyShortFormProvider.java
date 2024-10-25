@@ -25,6 +25,13 @@ public class OntologyShortFormProvider extends OntologyIRIShortFormProvider{
                 .map(annot -> annot.getValue().asLiteral().get())
                 .map(OWLLiteral::getLiteral)
                 .findFirst();
-        return maybeLabel.orElseGet(() -> super.getShortForm(ontology));
+        return maybeLabel.orElseGet(() -> fromURI(ontology));
+    }
+
+    private String fromURI(OWLOntology ontology) {
+        if (ontology.isAnonymous()){
+            return ontology.getOWLOntologyManager().getOntologyDocumentIRI(ontology).getFragment();
+        }
+        return super.getShortForm(ontology);
     }
 }

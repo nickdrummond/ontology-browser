@@ -8,7 +8,7 @@ import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.service.stats.StatsService;
 import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.service.ReasonerFactoryService;
+import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLObjectPropertyHierarchyService;
 import org.semanticweb.owlapi.model.OWLDataFactory;

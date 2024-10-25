@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model;
+package org.ontbrowser.www.reasoner;
 
 public class ReasonerMomento {
 

@@ -6,7 +6,7 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.service.ReasonerFactoryService;
+import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.service.stats.Stats;
 import org.ontbrowser.www.service.stats.StatsService;

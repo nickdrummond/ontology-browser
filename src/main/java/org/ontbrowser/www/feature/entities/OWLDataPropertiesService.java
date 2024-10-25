@@ -6,7 +6,7 @@ import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.DataPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.service.ReasonerFactoryService;
+import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
