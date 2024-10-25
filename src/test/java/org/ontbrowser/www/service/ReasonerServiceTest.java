@@ -1,9 +1,10 @@
 package org.ontbrowser.www.service;
 
 import org.apache.commons.collections4.map.LRUMap;
+import org.ontbrowser.www.dlquery.ReasonerService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.model.DLQuery;
-import org.ontbrowser.www.model.QueryType;
+import org.ontbrowser.www.dlquery.DLQuery;
+import org.ontbrowser.www.dlquery.QueryType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

@@ -1,5 +1,6 @@
-package org.ontbrowser.www.url;
+package org.ontbrowser.www.entities;
 
+import org.ontbrowser.www.url.RestURLScheme;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 

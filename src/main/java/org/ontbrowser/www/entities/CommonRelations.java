@@ -1,4 +1,4 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.exception.NotFoundException;
@@ -7,13 +7,10 @@ import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.renderer.RendererFactory;
-import org.ontbrowser.www.entities.OWLIndividualsService;
-import org.ontbrowser.www.entities.PropertiesService;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
 import org.ontbrowser.www.service.stats.StatsMemo;
 import org.ontbrowser.www.service.stats.StatsService;
-import org.ontbrowser.www.url.CommonRelationsURLScheme;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.*;

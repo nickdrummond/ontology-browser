@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model;
+package org.ontbrowser.www.dlquery;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 

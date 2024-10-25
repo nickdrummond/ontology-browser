@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model;
+package org.ontbrowser.www.dlquery;
 
 public enum QueryType {
     instances,

@@ -9,7 +9,7 @@ import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.service.ReasonerService;
+import org.ontbrowser.www.dlquery.ReasonerService;
 import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.service.stats.Stats;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;

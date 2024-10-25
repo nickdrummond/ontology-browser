@@ -2,6 +2,8 @@ package org.ontbrowser.www.model;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.junit.Test;
+import org.ontbrowser.www.search.SearchResult;
+import org.ontbrowser.www.search.SearchResults;
 
 import java.io.IOException;
 

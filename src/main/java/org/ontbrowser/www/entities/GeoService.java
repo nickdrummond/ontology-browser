@@ -1,4 +1,4 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.entities;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;

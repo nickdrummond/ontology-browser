@@ -1,4 +1,4 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.search;
 
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLEntity;

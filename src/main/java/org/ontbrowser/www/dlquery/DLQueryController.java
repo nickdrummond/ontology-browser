@@ -1,17 +1,13 @@
-package org.ontbrowser.www.controller;
+package org.ontbrowser.www.dlquery;
 
+import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
-import org.ontbrowser.www.util.PropertyComparator;
 import org.ontbrowser.www.exception.OntServerException;
-import org.ontbrowser.www.exception.QueryTimeoutException;
 import org.ontbrowser.www.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.AxiomWithMetadata;
-import org.ontbrowser.www.model.DLQuery;
-import org.ontbrowser.www.model.QueryType;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.ParserService;
-import org.ontbrowser.www.service.ReasonerService;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.util.OWLUtils;
 import org.ontbrowser.www.util.Utils;

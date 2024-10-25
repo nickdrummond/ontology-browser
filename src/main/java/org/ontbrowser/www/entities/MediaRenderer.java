@@ -1,8 +1,10 @@
-package org.ontbrowser.www.renderer;
+package org.ontbrowser.www.entities;
 
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
+import org.ontbrowser.www.renderer.OntologyShortFormProvider;
 import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.service.MediaService;
+import org.ontbrowser.www.entities.MediaService;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;

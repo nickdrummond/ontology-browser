@@ -1,4 +1,4 @@
-package org.ontbrowser.www.util;
+package org.ontbrowser.www.dlquery;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;

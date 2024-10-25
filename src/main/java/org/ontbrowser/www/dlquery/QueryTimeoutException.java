@@ -1,4 +1,4 @@
-package org.ontbrowser.www.exception;
+package org.ontbrowser.www.dlquery;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

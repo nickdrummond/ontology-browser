@@ -1,7 +1,6 @@
 package org.ontbrowser.www.entities;
 
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.controller.CommonRelations;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
@@ -10,7 +9,6 @@ import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.service.*;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.service.stats.StatsService;
-import org.ontbrowser.www.url.CommonRelationsURLScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;

@@ -1,4 +1,4 @@
-package org.ontbrowser.www.model;
+package org.ontbrowser.www.search;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;

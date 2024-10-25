@@ -1,7 +1,7 @@
 package org.ontbrowser.www.configuration;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.ontbrowser.www.model.DLQuery;
+import org.ontbrowser.www.dlquery.DLQuery;
 import org.ontbrowser.www.model.ReasonerMomento;
 import org.ontbrowser.www.service.ReasonerFactoryService;
 import org.semanticweb.owlapi.model.OWLEntity;

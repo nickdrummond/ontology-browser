@@ -1,6 +1,8 @@
-package org.ontbrowser.www.url;
+package org.ontbrowser.www.entities;
 
 import org.ontbrowser.www.service.hierarchy.AbstractOWLHierarchyService;
+import org.ontbrowser.www.url.RestURLScheme;
+import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
