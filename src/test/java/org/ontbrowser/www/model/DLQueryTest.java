@@ -1,8 +1,8 @@
 package org.ontbrowser.www.model;
 
 import org.junit.Test;
-import org.ontbrowser.www.dlquery.DLQuery;
-import org.ontbrowser.www.dlquery.QueryType;
+import org.ontbrowser.www.feature.dlquery.DLQuery;
+import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.semanticweb.owlapi.model.IRI;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 

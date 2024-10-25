@@ -2,7 +2,7 @@ package org.ontbrowser.www.service;
 
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.metrics.OWLMetric;
 import org.semanticweb.owlapi.model.OWLOntology;

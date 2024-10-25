@@ -1,7 +1,7 @@
 package org.ontbrowser.www.util;
 
 import org.ontbrowser.www.model.AxiomWithMetadata;
-import org.ontbrowser.www.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLObject;

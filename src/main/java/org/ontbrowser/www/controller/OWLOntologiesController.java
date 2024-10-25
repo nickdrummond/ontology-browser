@@ -4,7 +4,7 @@ import com.google.common.net.HttpHeaders;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.OWLAxiomService;

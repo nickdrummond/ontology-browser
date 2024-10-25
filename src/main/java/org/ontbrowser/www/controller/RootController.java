@@ -1,14 +1,14 @@
 package org.ontbrowser.www.controller;
 
-import org.ontbrowser.www.cloud.model.AbstractOWLCloudModel;
-import org.ontbrowser.www.cloud.model.ClassesByUsageCloud;
-import org.ontbrowser.www.cloud.model.ObjectPropsByUsageCloud;
+import org.ontbrowser.www.feature.cloud.model.AbstractOWLCloudModel;
+import org.ontbrowser.www.feature.cloud.model.ClassesByUsageCloud;
+import org.ontbrowser.www.feature.cloud.model.ObjectPropsByUsageCloud;
 import org.ontbrowser.www.url.URLScheme;
-import org.ontbrowser.www.cloud.model.IndividualsByUsageCloud;
+import org.ontbrowser.www.feature.cloud.model.IndividualsByUsageCloud;
 import org.ontbrowser.www.exception.NotAuthorisedException;
 import org.ontbrowser.www.model.XmlUrl;
 import org.ontbrowser.www.model.XmlUrlSet;
-import org.ontbrowser.www.cloud.CloudHelper;
+import org.ontbrowser.www.feature.cloud.CloudHelper;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
