@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-import static org.ontbrowser.www.renderer.HighlightingHTMLRenderer.getHighlightRenderer;
+import static org.ontbrowser.www.feature.search.HighlightingHTMLRenderer.getHighlightRenderer;
 
 @RestController
 @RequestMapping(value = "/axioms")

@@ -1,6 +1,7 @@
 package org.ontbrowser.www.renderer;
 
 import org.junit.Test;
+import org.ontbrowser.www.feature.search.Highlighter;
 
 import java.io.IOException;
 import java.net.URL;

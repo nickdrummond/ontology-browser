@@ -2,7 +2,7 @@ package org.ontbrowser.www.configuration;
 
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitImpl;
-import org.ontbrowser.www.oi.OntologyLoader;
+import org.ontbrowser.www.io.OntologyLoader;
 import org.ontbrowser.www.renderer.OntologyShortFormProvider;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;

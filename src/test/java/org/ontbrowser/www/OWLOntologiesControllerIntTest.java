@@ -1,9 +1,9 @@
 package org.ontbrowser.www;
 
+import org.ontbrowser.www.feature.ontologies.OWLOntologiesService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.service.OWLAxiomService;
-import org.ontbrowser.www.service.OWLOntologiesService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

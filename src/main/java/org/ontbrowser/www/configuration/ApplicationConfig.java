@@ -8,11 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan({
-        "org.ontbrowser.www.feature.entities",
-        "org.ontbrowser.www.feature.search",
-        "org.ontbrowser.www.feature.dlquery",
-        "org.ontbrowser.www.feature.graph",
-        "org.ontbrowser.www.feature.cloud",
+        "org.ontbrowser.www.feature.*",
         "org.ontbrowser.www.service",
         "org.ontbrowser.www.controller"})
 public class ApplicationConfig {

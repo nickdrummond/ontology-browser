@@ -7,10 +7,8 @@ import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.service.ParserService;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.util.OWLUtils;
-import org.ontbrowser.www.util.Utils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
@@ -26,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.nickdrummond.parsejs.ParseException;
-import uk.co.nickdrummond.parsejs.ParseResult;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -177,33 +174,6 @@ public class DLQueryController extends ApplicationController {
 
         try {
             return parserService.parse(expression, df, checker).toString();
-        } catch (ParseException e) {
-            return e.toString();
-        }
-    }
-
-    @GetMapping(value = "/ac/axiom", produces = MediaType.APPLICATION_XML_VALUE)
-    public String autocompleteOWLAxiom(
-            @RequestParam String expression) {
-
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-        OWLEntityFinder finder = kit.getFinder();
-        ShortFormProvider sfp = kit.getShortFormProvider();
-
-        return parserService.autocompleteAxiom(expression, df, checker, finder, sfp).toString();
-    }
-
-    @GetMapping(value = "/parse/axiom", produces = MediaType.APPLICATION_XML_VALUE)
-    public String parseOWLAxiom(
-            @RequestParam String expression) {
-
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-
-        try {
-            // TODO this needs to be tidier - return the Axiom and let the OK be the response status
-            return new ParseResult(kit.render(parserService.parseAxiom(expression, df, checker)), "OK").toString();
         } catch (ParseException e) {
             return e.toString();
         }

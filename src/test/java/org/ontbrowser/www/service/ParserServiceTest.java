@@ -2,6 +2,7 @@ package org.ontbrowser.www.service;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.ontbrowser.www.feature.dlquery.ParserService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -31,7 +32,7 @@ public class ParserServiceTest {
         Mockito.when(checker.getOWLClass("PizzaTopping")).thenReturn(aClass);
         Mockito.when(checker.getOWLObjectProperty("hasTopping")).thenReturn(aProperty);
 
-        ParserService service = new ParserService();
+        ParserService service = new ParserService(new AutocompleteService());
 
         ParseResult results = service.parse(validOWLExpression, df, checker);
 
@@ -50,7 +51,7 @@ public class ParserServiceTest {
         Mockito.when(checker.getOWLClass(anyString())).thenReturn(null);
         Mockito.when(checker.getOWLObjectProperty("hasTopping")).thenReturn(aProperty);
 
-        ParserService service = new ParserService();
+        ParserService service = new ParserService(new AutocompleteService());
 
         try {
             service.parse(validOWLExpression, df, checker);
