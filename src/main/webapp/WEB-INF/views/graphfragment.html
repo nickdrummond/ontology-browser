@@ -13,7 +13,7 @@
 
         <span class="g-node g-target"
               th:utext="${mos.render(proxies.getProxyOrOriginal(current))}"
-              th:data="${current}"></span>
+              th:data="${current.getIRI()}"></span>
 
         <ul th:if="${rightEnabled}"
             th:replace="~{graphfragment :: zone(${current}, 'right', ${zones.right})}"></ul>
@@ -40,7 +40,7 @@
         <li class="g-edge">
             <span class="g-node g-subject"
                   th:utext="${mos.render(proxies.getProxyOrOriginal(edge.subject()))}"
-                  th:data="${edge.subject()}"></span>
+                  th:data="${edge.subject().getIRI()}"></span>
             <span class="g-predicate"
                   th:utext="${mos.render(edge.predicate())}"
                   th:data="${sfp.getShortForm(edge.predicate())}"></span>

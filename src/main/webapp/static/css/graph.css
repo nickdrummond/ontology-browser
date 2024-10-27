@@ -46,11 +46,11 @@
     padding-left: 0;
 }
 
-.g-edge {
+.graph .g-edge {
     margin-bottom: 2em;
 }
 
-.g-node {
+.graph .g-node {
     display: block;
     height: 2rem;
     width: 2rem;
@@ -62,25 +62,29 @@
     margin: 1em 5em;
 }
 
-.g-node a {
+.graph .selected {
+    background-color: rgba(65, 137, 160, 0.07);
+}
+
+.graph .g-node a {
     font-size: smaller;
     position: relative;
     /*left: 2em;*/
     /*top: 2em;*/
 }
 
-.g-predicate {
+.graph .g-predicate {
     display: none;
 }
 
-.g-target {
+.graph .g-target {
     margin: 5rem;
 }
 
-.left .g-target, .right .g-target {
+.graph .left .g-target, .graph .right .g-target {
     margin: 0 5rem;
 }
 
-.top .g-target, .bottom .g-target {
+.graph .top .g-target, .graph .bottom .g-target {
     margin: 5rem 2rem;
 }

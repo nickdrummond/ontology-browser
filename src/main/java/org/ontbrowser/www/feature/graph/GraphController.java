@@ -4,8 +4,10 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.OWLClassesService;
 import org.ontbrowser.www.feature.entities.OWLIndividualsService;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.ui.Model;
@@ -44,25 +46,24 @@ public class GraphController extends ApplicationController {
     @GetMapping(value = "/individuals/{individualId}")
     public ModelAndView individual(
             @PathVariable final String individualId,
-            @RequestParam(name = "top", required = false, defaultValue = "type") final List<String> topWithProperties,
-            @RequestParam(name = "bottom", required = false, defaultValue = "") final List<String> bottomWithProperties,
-            @RequestParam(name = "left", required = false, defaultValue = "") final List<String> leftWithProperties,
-            @RequestParam(name = "right", required = false, defaultValue = "") final List<String> rightWithProperties,
+            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> bottom,
+            @RequestParam(required = false, defaultValue = "") final List<String> left,
+            @RequestParam(required = false, defaultValue = "") final List<String> right,
             @ModelAttribute final OWLOntology ont,
             Model model
     ) throws NotFoundException {
-        individualFragment(individualId, topWithProperties, bottomWithProperties, leftWithProperties, rightWithProperties, ont, model);
+        individualFragment(individualId, top, bottom, left, right, ont, model);
         return new ModelAndView("graph");
     }
 
-    // default right
     @GetMapping(value = "/fragment/individuals/{individualId}")
     public ModelAndView individualFragment(
             @PathVariable final String individualId,
-            @RequestParam(name = "top", required = false, defaultValue = "type") final List<String> topWithProperties,
-            @RequestParam(name = "bottom", required = false, defaultValue = "") final List<String> bottomWithProperties,
-            @RequestParam(name = "left", required = false, defaultValue = "") final List<String> leftWithProperties,
-            @RequestParam(name = "right", required = false, defaultValue = "") final List<String> rightWithProperties,
+            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> bottom,
+            @RequestParam(required = false, defaultValue = "") final List<String> left,
+            @RequestParam(required = false, defaultValue = "") final List<String> right,
             @ModelAttribute final OWLOntology ont,
             Model model
     ) throws NotFoundException {
@@ -70,33 +71,57 @@ public class GraphController extends ApplicationController {
         if (ind == null) {
             throw new NotFoundException("No individual " + individualId);
         }
-        return common(ind, topWithProperties, bottomWithProperties, leftWithProperties, rightWithProperties, ont, model);
+        return common(ind, top, bottom, left, right, ont, model);
+    }
+
+
+    @GetMapping(value = "/fragment")
+    public ModelAndView fragmentByIRI(
+            @RequestParam final String iri,
+            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> bottom,
+            @RequestParam(required = false, defaultValue = "") final List<String> left,
+            @RequestParam(required = false, defaultValue = "") final List<String> right,
+            @ModelAttribute final OWLOntology ont,
+            Model model
+    ) throws NotFoundException {
+        var entity = getEntityForIRI(IRI.create(iri), ont);
+        return common(entity, top, bottom, left, right, ont, model);
+    }
+
+    private OWLEntity getEntityForIRI(IRI iri, OWLOntology ont) throws NotFoundException {
+        if (ont.containsIndividualInSignature(iri, Imports.INCLUDED)) {
+            return ont.getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(iri);
+        }
+        if (ont.containsClassInSignature(iri, Imports.INCLUDED)) {
+            return ont.getOWLOntologyManager().getOWLDataFactory().getOWLClass(iri);
+        }
+        throw new NotFoundException("Cannot find class or individual with IRI " + iri);
     }
 
     // default right
     @GetMapping(value = "/classes/{classId}")
     public ModelAndView cls(
             @PathVariable final String classId,
-            @RequestParam(name = "top", required = false, defaultValue = "type") final List<String> topWithProperties,
-            @RequestParam(name = "bottom", required = false, defaultValue = "") final List<String> bottomWithProperties,
-            @RequestParam(name = "left", required = false, defaultValue = "") final List<String> leftWithProperties,
-            @RequestParam(name = "right", required = false, defaultValue = "") final List<String> rightWithProperties,
+            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> bottom,
+            @RequestParam(required = false, defaultValue = "") final List<String> left,
+            @RequestParam(required = false, defaultValue = "") final List<String> right,
             @ModelAttribute final OWLOntology ont,
             Model model
     ) throws NotFoundException {
-        clsFragment(classId, topWithProperties, bottomWithProperties, leftWithProperties, rightWithProperties, ont, model);
+        clsFragment(classId, top, bottom, left, right, ont, model);
         return new ModelAndView("graph");
     }
-
 
     // default right
     @GetMapping(value = "/fragment/classes/{classId}")
     public ModelAndView clsFragment(
             @PathVariable final String classId,
-            @RequestParam(name = "top", required = false, defaultValue = "type") final List<String> topWithProperties,
-            @RequestParam(name = "bottom", required = false, defaultValue = "") final List<String> bottomWithProperties,
-            @RequestParam(name = "left", required = false, defaultValue = "") final List<String> leftWithProperties,
-            @RequestParam(name = "right", required = false, defaultValue = "") final List<String> rightWithProperties,
+            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> bottom,
+            @RequestParam(required = false, defaultValue = "") final List<String> left,
+            @RequestParam(required = false, defaultValue = "") final List<String> right,
             @ModelAttribute final OWLOntology ont,
             Model model
     ) throws NotFoundException {
@@ -105,20 +130,20 @@ public class GraphController extends ApplicationController {
             throw new NotFoundException("No class " + classId);
         }
 
-        return common(cls, topWithProperties, bottomWithProperties, leftWithProperties, rightWithProperties, ont, model);
+        return common(cls, top, bottom, left, right, ont, model);
     }
 
     private ModelAndView common(
             OWLEntity entity,
-            final List<String> topWithProperties,
-            final List<String> bottomWithProperties,
-            final List<String> leftWithProperties,
-            final List<String> rightWithProperties,
+            final List<String> top,
+            final List<String> bottom,
+            final List<String> left,
+            final List<String> right,
             OWLOntology ont, Model model) {
 
         var shortForm = kit.getShortFormProvider().getShortForm(entity);
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
-        var zoneDescriptors = new ZoneDescriptors(topWithProperties, bottomWithProperties, leftWithProperties, rightWithProperties);
+        var zoneDescriptors = new ZoneDescriptors(top, bottom, left, right);
         var proxyBuilder = new ProxyBuilder(df);
         var zones = graphService.createZones(entity, zoneDescriptors, ont, kit.getFinder(), proxyBuilder);
 
