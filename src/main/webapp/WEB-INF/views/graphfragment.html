@@ -4,29 +4,29 @@
 <div th:fragment="node (current, leftEnabled, rightEnabled, topEnabled, bottomEnabled)"
      class="g-th" >
 
-    <ul th:if="${topEnabled}"
-        th:replace="~{graphfragment :: zone(${current}, 'top', ${zones.top()})}"></ul>
+    <ul class="zone tl"></ul>
+    <ul th:replace="~{graphfragment :: zone(${current}, 'top', ${zones.top()})}"></ul>
+    <ul class="zone tl"></ul>
 
-    <div class="g-lr">
-        <ul th:if="${leftEnabled}"
-            th:replace="~{graphfragment :: zone(${current}, 'left', ${zones.left})}"></ul>
+    <ul th:replace="~{graphfragment :: zone(${current}, 'left', ${zones.left})}"></ul>
 
-        <span class="g-node g-target"
+    <div class="zone center">
+    <span class="g-node g-target"
               th:utext="${mos.render(proxies.getProxyOrOriginal(current))}"
               th:data="${current.getIRI()}"></span>
-
-        <ul th:if="${rightEnabled}"
-            th:replace="~{graphfragment :: zone(${current}, 'right', ${zones.right})}"></ul>
-
     </div>
 
-    <ul th:if="${bottomEnabled}"
-        th:replace="~{graphfragment :: zone(${current}, 'bottom', ${zones.bottom})}"></ul>
+    <ul th:replace="~{graphfragment :: zone(${current}, 'right', ${zones.right})}"></ul>
+
+    <ul class="zone bl"></ul>
+    <ul th:replace="~{graphfragment :: zone(${current}, 'bottom', ${zones.bottom})}"></ul>
+    <ul class="zone br"></ul>
 
 </div>
 
 <ul th:fragment="zone (current, location, locgraph)"
-    th:class="${location}">
+    th:class="zone"
+    th:classAppend="${location}">
     <th:block th:each="edge : ${locgraph.getEdgesWithSubject(current)}">
         <li class="g-edge">
             <span class="g-predicate"

@@ -17,15 +17,22 @@ public class GraphBuilder {
 
     private final Set<Graph.Edge> edges = new HashSet<>();
     private final Set<OWLProperty> withProperties = new HashSet<>();
+    private final Set<OWLProperty> withInverseProperties = new HashSet<>();
     private final Set<OWLProperty> withoutProperties = new HashSet<>();
     private final Set<OWLNamedIndividual> individuals = new HashSet<>();
     private final Set<OWLClass> classes = new HashSet<>();
     private boolean built = false;
+    private String name = "anon";
 
     public GraphBuilder(OWLOntology ont, ProxyBuilder proxyBuilder) {
         this.ont = ont;
         this.proxyBuilder = proxyBuilder;
         this.df = ont.getOWLOntologyManager().getOWLDataFactory();
+    }
+
+    public GraphBuilder withName(String name) {
+        this.name = name;
+        return this;
     }
 
     public GraphBuilder withProperty(OWLProperty property) {
@@ -40,6 +47,11 @@ public class GraphBuilder {
 
     public GraphBuilder withProperties(Set<OWLProperty> properties) {
         this.withProperties.addAll(properties);
+        return this;
+    }
+
+    public GraphBuilder withInverseProperties(Set<OWLProperty> invProps) {
+        this.withInverseProperties.addAll(invProps);
         return this;
     }
 
@@ -103,10 +115,18 @@ public class GraphBuilder {
             public void visit(@Nonnull OWLObjectPropertyAssertionAxiom axiom) {
                 // Only named for now
                 if (axiom.getSubject().isNamed() && axiom.getProperty().isNamed() && axiom.getObject().isNamed()) {
-                    addIfFilterAllows(
-                            0, axiom.getSubject().asOWLNamedIndividual(),
-                            axiom.getProperty().getNamedProperty(),
-                            axiom.getObject().asOWLNamedIndividual());
+                    if (axiom.getSubject().equals(ind)) {
+                        addIfFilterAllows(
+                                0, axiom.getSubject().asOWLNamedIndividual(),
+                                axiom.getProperty().getNamedProperty(),
+                                axiom.getObject().asOWLNamedIndividual());
+                    }
+                    else {
+                        addInverseIfFilterAllows(
+                                0, axiom.getSubject().asOWLNamedIndividual(),
+                                axiom.getProperty().getNamedProperty(),
+                                axiom.getObject().asOWLNamedIndividual());
+                    }
                 }
             }
 
@@ -125,6 +145,7 @@ public class GraphBuilder {
                     else { // break down a class expression
                         handleClassExpressionInd(ind, cls, 0);
                     }
+                    // TODO inverses
                 }
             }
         }));
@@ -251,7 +272,17 @@ public class GraphBuilder {
         }
     }
 
+    private void addInverseIfFilterAllows(int depth, OWLEntity subject, OWLProperty property, OWLEntity object) {
+        if (depth > 0 || isAllowedInverseProperty(property)) {
+            add(new Graph.Edge(subject, property, object));
+        }
+    }
+
     private boolean isAllowedProperty(OWLProperty property) {
-        return (withProperties.isEmpty() || withProperties.contains(property)) && !withoutProperties.contains(property);
+        return withProperties.contains(property) && !withoutProperties.contains(property);
+    }
+
+    private boolean isAllowedInverseProperty(OWLProperty property) {
+        return withInverseProperties.contains(property) && !withoutProperties.contains(property);
     }
 }

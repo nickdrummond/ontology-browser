@@ -39,7 +39,7 @@ function registerExpandClicks(g) {
 
 function renderAllEdges(g) {
     g.querySelectorAll(".g-th").forEach(element => {
-        const target = element.querySelector(`:scope > .g-lr > .g-target`);
+        const target = element.querySelector(`:scope > .zone.center > .g-target`);
         renderEdges(element, target, "top");
         renderEdges(element, target, "bottom");
         renderEdges(element, target, "left");
@@ -61,14 +61,9 @@ function getOpposite(location) {
     }
 }
 
-function isHorizontal(location) {
-    return location === "left" || location === "right";
-}
-
 function renderEdges(element, target, location) {
-    const sel = (isHorizontal(location))
-        ? ":scope > .g-lr > ." + location + " > li.g-edge"
-        : ":scope > ." + location + " > li.g-edge";
+    const sel = ":scope > .zone." + location + " > li.g-edge";
+    console.log(sel);
 
     element.querySelectorAll(sel).forEach(edge => {
         const predicate = edge.querySelector(`:scope > .g-predicate`);
@@ -85,7 +80,7 @@ function renderEdges(element, target, location) {
             }));
         }
         else { // outgoing
-            const object = edge.querySelector(`:scope > .g-th > .g-lr > .g-node`);
+            const object = edge.querySelector(`:scope > .g-th > .zone > .g-node`);
             edges.push(new LeaderLine(target, object, {
                 path: 'fluid',
                 color: '#4189a0',

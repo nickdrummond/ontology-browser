@@ -3,9 +3,13 @@
 }
 
 .graph .g-th {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     align-items: center;
+}
+
+.graph .zone {
+    /*border: 1px solid #7caaef;*/
 }
 
 .graph .right .g-th {
@@ -19,22 +23,19 @@
 .graph .top, .graph .bottom {
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
 }
 
 .graph .bottom {
-    align-items: flex-end;
+    /*align-items: flex-end;*/
 }
 
-.graph .bottom {
-    align-items: flex-start;
-}
-
-.graph .g-lr {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 0;
-}
+/*.graph .g-lr {*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*    align-items: center;*/
+/*    margin: 0;*/
+/*}*/
 
 .graph ul {
     margin: 0;
@@ -52,6 +53,7 @@
 
 .graph .g-node {
     display: block;
+    justify-self: center;
     height: 2rem;
     width: 2rem;
     border: 2px solid #4189a0;
@@ -59,7 +61,7 @@
     /*position: relative;*/
     /*overflow: visible;*/
     /*white-space: nowrap;*/
-    margin: 1em 5em;
+    /*margin: 1em 5em;*/
 }
 
 .graph .selected {
@@ -78,13 +80,21 @@
 }
 
 .graph .g-target {
-    margin: 5rem;
+    /*margin: 5rem;*/
 }
 
-.graph .left .g-target, .graph .right .g-target {
-    margin: 0 5rem;
+.graph .left .g-target {
+    margin: 1rem 5rem 1rem 0;
 }
 
-.graph .top .g-target, .graph .bottom .g-target {
-    margin: 5rem 2rem;
+.graph .right .g-target {
+    margin: 1rem 0 1rem 5rem;
+}
+
+.graph .top .g-target {
+    margin: 0 1rem 5rem 1rem;
+}
+
+.graph .bottom .g-target {
+    margin: 5rem 1rem 0 1rem;
 }

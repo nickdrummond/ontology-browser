@@ -3,8 +3,8 @@ package org.ontbrowser.www.feature.graph;
 import java.util.List;
 
 public record ZoneDescriptors(
-        List<String> topWithProperties,
-        List<String> bottomWithProperties,
-        List<String> leftWithProperties,
-        List<String> rightWithProperties
+        List<String> top,
+        List<String> bottom,
+        List<String> left,
+        List<String> right
 ) {}

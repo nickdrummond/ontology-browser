@@ -20,8 +20,8 @@ import java.util.List;
 // TODO scrolling in pane?
 // TODO nav/links from other pages
 // TODO controls for up/down/left/right
-// TODO control over incoming direction
 // TODO secondary indivs and dynamic loading
+// TODO navigation with keyboard?
 @RestController
 @Profile("graph")
 @RequestMapping(value = "/graph")
