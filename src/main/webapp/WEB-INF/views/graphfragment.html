@@ -6,7 +6,7 @@
 
     <ul class="zone tl"></ul>
     <ul th:replace="~{graphfragment :: zone(${current}, 'top', ${zones.top()})}"></ul>
-    <ul class="zone tl"></ul>
+    <ul class="zone tr"></ul>
 
     <ul th:replace="~{graphfragment :: zone(${current}, 'left', ${zones.left})}"></ul>
 
@@ -36,7 +36,7 @@
         </li>
     </th:block>
     <th:block th:if="${current == subject}"
-              th:each="edge : ${locgraph.getEdgesWithObject(current)}"> <!-- only top level -->
+              th:each="edge : ${locgraph.getEdgesWithObject(current)}">
         <li class="g-edge">
             <span class="g-node g-subject"
                   th:utext="${mos.render(proxies.getProxyOrOriginal(edge.subject()))}"

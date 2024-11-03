@@ -4,7 +4,76 @@ $(document).ready(function(){
     });
 });
 
-let edges = [];
+function init(g) {
+    renderAllEdges(g);
+    registerExpandClicks(g);
+}
+
+let currentLines = [];
+const externalLines = [];
+
+function findMatchingNode(url, g) {
+    return g.querySelector(`[data='${url}']`);
+}
+
+function zoneForPredicate(edgeLabel) {
+    const params = new URLSearchParams(window.location.search);
+    const entries = params.entries();
+    for(const entry of entries) {
+        if (entry[1] === edgeLabel) {
+            return entry[0];
+        }
+    }
+    throw "Cannot find a zone for property " + edgeLabel;
+}
+
+function merge(subGraph, g) {
+    const externalLines = [];
+    const subject = subGraph.querySelector(":scope > .center > .g-target");
+    const subjectUrl = subject.getAttribute("data");
+
+    subGraph.querySelectorAll(".g-edge").forEach(edge => {
+
+        const objectUrl = object.getAttribute("data");
+        const predicate = edge.querySelector(`:scope > .g-predicate`);
+        const edgeLabel = predicate.getAttribute("data");
+        const existingNode = findMatchingNode(objectUrl, g);
+        if (existingNode) {
+            externalLines.push({
+                subject: subjectUrl,
+                predicate: edgeLabel,
+                object: objectUrl,
+                zone: zoneForPredicate(edgeLabel),
+            });
+            // remove its edge from the subgraph
+            object.closest(".g-edge").remove();
+        }
+    });
+    return externalLines;
+}
+
+function clearLines() {
+    currentLines.forEach(oldEdge => {
+        oldEdge.remove();
+    });
+    currentLines = [];
+}
+
+function responseDOMFor(html) {
+    const dummy = document.createElement("div");
+    dummy.innerHTML = html;
+    return dummy.firstElementChild;
+}
+
+function handleResponse(response, g, th) {
+    response.text().then(html => {
+        let expandedNode = responseDOMFor(html);
+        externalLines.push(...merge(expandedNode, g));
+        th.replaceWith(expandedNode);
+        renderAllEdges(g);
+        expandedNode.classList.add("selected");
+    });
+}
 
 function registerExpandClicks(g) {
     g.onclick = (e) => {
@@ -13,22 +82,10 @@ function registerExpandClicks(g) {
         const entityIRI = node.getAttribute("data");
         const urlParams = new URLSearchParams(window.location.search);
         urlParams.append("iri", entityIRI);
-        const url = "/graph/fragment?" + urlParams.toString();
+        const url = `/graph/fragment?${urlParams.toString()}`;
         fetch(url)
             .then(response => {
-                response.text().then(html => {
-                    const dummy = document.createElement("div");
-                    dummy.innerHTML = html;
-                    let expandedNode = dummy.firstElementChild;
-                    edges.forEach(oldEdge => {
-                        oldEdge.remove();
-                    });
-                    edges = [];
-                    // TODO somehow remove duplicate nodes (but edges still need to remain)
-                    th.replaceWith(expandedNode);
-                    init(g);
-                    expandedNode.classList.add("selected");
-                });
+                handleResponse(response, g, th);
             })
             .catch(err => {
                 // TODO
@@ -38,18 +95,19 @@ function registerExpandClicks(g) {
 }
 
 function renderAllEdges(g) {
+    clearLines();
     g.querySelectorAll(".g-th").forEach(element => {
-        const target = element.querySelector(`:scope > .zone.center > .g-target`);
+        const target = element.querySelector(":scope > .zone.center > .g-target");
         renderEdges(element, target, "top");
         renderEdges(element, target, "bottom");
         renderEdges(element, target, "left");
         renderEdges(element, target, "right");
     });
-}
-
-function init(g) {
-    renderAllEdges(g);
-    registerExpandClicks(g);
+    externalLines.forEach(line => {
+        let subjectNode = findMatchingNode(line.subject, g);
+        let objectNode = findMatchingNode(line.object, g);
+        addLine(subjectNode, line.predicate, objectNode, line.zone);
+    });
 }
 
 function getOpposite(location) {
@@ -61,34 +119,32 @@ function getOpposite(location) {
     }
 }
 
-function renderEdges(element, target, location) {
-    const sel = ":scope > .zone." + location + " > li.g-edge";
-    console.log(sel);
+function addLine(subject, predicate, object, zone) {
+    currentLines.push(new LeaderLine(subject, object, {
+        path: 'fluid',
+        color: '#418910',
+        size: 2,
+        startSocket: zone,
+        endSocket: getOpposite(zone),
+        startLabel: predicate,
+    }));
+}
 
+function renderEdge(edge, target, zone) {
+    const predicate = edge.querySelector(`:scope > .g-predicate`);
+    const edgeLabel = predicate.getAttribute("data");
+    const subject = edge.querySelector(`:scope > .g-subject`);
+    if (subject) { // incoming
+        addLine(subject, edgeLabel, target, getOpposite(zone));
+    } else { // outgoing
+        const object = edge.querySelector(`:scope > .g-th > .zone > .g-node`);
+        addLine(target, edgeLabel, object, zone);
+    }
+}
+
+function renderEdges(element, target, location) {
+    const sel = `:scope > .zone.${location} > .g-edge`;
     element.querySelectorAll(sel).forEach(edge => {
-        const predicate = edge.querySelector(`:scope > .g-predicate`);
-        const edgeLabel = predicate.getAttribute("data");
-        const subject = edge.querySelector(`:scope > .g-subject`);
-        if (subject) { // incoming
-            edges.push(new LeaderLine(subject, target, {
-                path: 'fluid',
-                color: '#93b9c5',
-                size: 2,
-                startSocket: getOpposite(location),
-                endSocket: location,
-                startLabel: edgeLabel,
-            }));
-        }
-        else { // outgoing
-            const object = edge.querySelector(`:scope > .g-th > .zone > .g-node`);
-            edges.push(new LeaderLine(target, object, {
-                path: 'fluid',
-                color: '#4189a0',
-                size: 2,
-                startSocket: location,
-                endSocket: getOpposite(location),
-                endLabel: edgeLabel,
-            }));
-        }
+        renderEdge(edge, target, location);
     });
 }
