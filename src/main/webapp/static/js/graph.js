@@ -29,13 +29,21 @@ function zoneForPredicate(edgeLabel) {
 
 function merge(subGraph, g) {
     const externalLines = [];
-    const subject = subGraph.querySelector(":scope > .center > .g-target");
-    const subjectUrl = subject.getAttribute("data");
+    const target = subGraph.querySelector(":scope > .center > .g-target");
 
     subGraph.querySelectorAll(".g-edge").forEach(edge => {
-
-        const objectUrl = object.getAttribute("data");
         const predicate = edge.querySelector(`:scope > .g-predicate`);
+        let subject = target;
+        let object = edge.querySelector(".g-target");
+        let toRemove = object;
+        if (!object) {
+            object = target;
+            subject = edge.querySelector(".g-subject");
+            toRemove = subject;
+        }
+
+        const subjectUrl = subject.getAttribute("data");
+        const objectUrl = object.getAttribute("data");
         const edgeLabel = predicate.getAttribute("data");
         const existingNode = findMatchingNode(objectUrl, g);
         if (existingNode) {
@@ -46,7 +54,7 @@ function merge(subGraph, g) {
                 zone: zoneForPredicate(edgeLabel),
             });
             // remove its edge from the subgraph
-            object.closest(".g-edge").remove();
+            toRemove.closest(".g-edge").remove();
         }
     });
     return externalLines;
