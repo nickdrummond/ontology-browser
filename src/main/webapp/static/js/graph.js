@@ -19,8 +19,8 @@ function findMatchingNode(url, g) {
 function zoneForPredicate(edgeLabel) {
     const params = new URLSearchParams(window.location.search);
     const entries = params.entries();
-    for(const entry of entries) {
-        if (entry[1] === edgeLabel) {
+    for (const entry of entries) {
+        if (entry[1].split(",").includes(edgeLabel)) {
             return entry[0];
         }
     }
@@ -37,15 +37,15 @@ function merge(subGraph, g) {
         let object = edge.querySelector(".g-target");
         let toRemove = object;
         if (!object) {
-            object = target;
             subject = edge.querySelector(".g-subject");
+            object = target;
             toRemove = subject;
         }
 
         const subjectUrl = subject.getAttribute("data");
         const objectUrl = object.getAttribute("data");
         const edgeLabel = predicate.getAttribute("data");
-        const existingNode = findMatchingNode(objectUrl, g);
+        const existingNode = findMatchingNode(toRemove.getAttribute("data"), g);
         if (existingNode) {
             externalLines.push({
                 subject: subjectUrl,
@@ -134,7 +134,7 @@ function addLine(subject, predicate, object, zone) {
         size: 2,
         startSocket: zone,
         endSocket: getOpposite(zone),
-        startLabel: predicate,
+        endLabel: predicate,
     }));
 }
 

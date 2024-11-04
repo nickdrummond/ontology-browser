@@ -20,7 +20,6 @@ import java.util.List;
 // TODO scrolling in pane?
 // TODO nav/links from other pages
 // TODO controls for up/down/left/right
-// TODO secondary indivs and dynamic loading
 // TODO navigation with keyboard?
 @RestController
 @Profile("graph")
@@ -46,7 +45,7 @@ public class GraphController extends ApplicationController {
     @GetMapping(value = "/individuals/{individualId}")
     public ModelAndView individual(
             @PathVariable final String individualId,
-            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> top,
             @RequestParam(required = false, defaultValue = "") final List<String> bottom,
             @RequestParam(required = false, defaultValue = "") final List<String> left,
             @RequestParam(required = false, defaultValue = "") final List<String> right,
@@ -60,7 +59,7 @@ public class GraphController extends ApplicationController {
     @GetMapping(value = "/fragment/individuals/{individualId}")
     public ModelAndView individualFragment(
             @PathVariable final String individualId,
-            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> top,
             @RequestParam(required = false, defaultValue = "") final List<String> bottom,
             @RequestParam(required = false, defaultValue = "") final List<String> left,
             @RequestParam(required = false, defaultValue = "") final List<String> right,
@@ -78,7 +77,7 @@ public class GraphController extends ApplicationController {
     @GetMapping(value = "/fragment")
     public ModelAndView fragmentByIRI(
             @RequestParam final String iri,
-            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> top,
             @RequestParam(required = false, defaultValue = "") final List<String> bottom,
             @RequestParam(required = false, defaultValue = "") final List<String> left,
             @RequestParam(required = false, defaultValue = "") final List<String> right,
@@ -103,7 +102,7 @@ public class GraphController extends ApplicationController {
     @GetMapping(value = "/classes/{classId}")
     public ModelAndView cls(
             @PathVariable final String classId,
-            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> top,
             @RequestParam(required = false, defaultValue = "") final List<String> bottom,
             @RequestParam(required = false, defaultValue = "") final List<String> left,
             @RequestParam(required = false, defaultValue = "") final List<String> right,
@@ -118,7 +117,7 @@ public class GraphController extends ApplicationController {
     @GetMapping(value = "/fragment/classes/{classId}")
     public ModelAndView clsFragment(
             @PathVariable final String classId,
-            @RequestParam(required = false, defaultValue = "type") final List<String> top,
+            @RequestParam(required = false, defaultValue = "") final List<String> top,
             @RequestParam(required = false, defaultValue = "") final List<String> bottom,
             @RequestParam(required = false, defaultValue = "") final List<String> left,
             @RequestParam(required = false, defaultValue = "") final List<String> right,

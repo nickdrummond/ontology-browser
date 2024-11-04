@@ -13,11 +13,11 @@
 }
 
 .graph .right .g-th {
-    align-items: flex-start;
+    /*align-items: flex-start;*/
 }
 
 .graph .left .g-th {
-    align-items: flex-end;
+    /*align-items: flex-end;*/
 }
 
 .graph .top, .graph .bottom {
