@@ -1,14 +1,22 @@
 $(document).ready(function(){
+    LeaderLine.positionByWindowResize = false;
     document.querySelectorAll('.graph').forEach( graph => {
         init(graph);
     });
 });
 
 function init(g) {
+    elmWrapper = document.createElement("div");
+    elmWrapper.style.position = 'relative';
+    elmWrapper.style.height = '0';
+    elmWrapper.style.width = '0';
+    g.parentNode.append(elmWrapper);
+    console.log("elm", g, g.parentNode, elmWrapper);
     renderAllEdges(g);
     registerExpandClicks(g);
 }
 
+let elmWrapper = null;
 let currentLines = [];
 const externalLines = [];
 
@@ -61,6 +69,9 @@ function merge(subGraph, g) {
 }
 
 function clearLines() {
+    document.querySelectorAll('.leader-line').forEach(line => {
+        document.body.appendChild(line);
+    });
     currentLines.forEach(oldEdge => {
         oldEdge.remove();
     });
@@ -85,6 +96,7 @@ function handleResponse(response, g, th) {
 
 function registerExpandClicks(g) {
     g.onclick = (e) => {
+        console.log("click", e);
         const th = e.target.closest(".g-edge");
         const node = e.target.closest(".g-node");
         const entityIRI = node.getAttribute("data");
@@ -102,6 +114,27 @@ function registerExpandClicks(g) {
     };
 }
 
+function setupScroller() {
+    if (elmWrapper) {
+        console.log("Scroll", elmWrapper);
+
+        function position() {
+            elmWrapper.style.transform = 'none';
+            const rectWrapper = elmWrapper.getBoundingClientRect();
+            // Move to the origin of coordinates as the document
+            console.log("rect", rectWrapper.left, rectWrapper.top, scrollX, scrollY);
+            elmWrapper.style.transform = 'translate(' +
+                ((rectWrapper.left + scrollX) * -1) + 'px, ' +
+                ((rectWrapper.top + scrollY) * -1) + 'px)';
+        }
+
+        document.querySelectorAll('.leader-line').forEach(line => {
+            elmWrapper.appendChild(line);
+        });
+        position();
+    }
+}
+
 function renderAllEdges(g) {
     clearLines();
     g.querySelectorAll(".g-th").forEach(element => {
@@ -116,6 +149,7 @@ function renderAllEdges(g) {
         let objectNode = findMatchingNode(line.object, g);
         addLine(subjectNode, line.predicate, objectNode, line.zone);
     });
+    setupScroller();
 }
 
 function getOpposite(location) {
@@ -128,14 +162,15 @@ function getOpposite(location) {
 }
 
 function addLine(subject, predicate, object, zone) {
-    currentLines.push(new LeaderLine(subject, object, {
+    let line = new LeaderLine(subject, object, {
         path: 'fluid',
         color: '#418910',
         size: 2,
         startSocket: zone,
         endSocket: getOpposite(zone),
         endLabel: predicate,
-    }));
+    });
+    currentLines.push(line);
 }
 
 function renderEdge(edge, target, zone) {

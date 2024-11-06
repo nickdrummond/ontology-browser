@@ -1,5 +1,13 @@
+.graph-scroll {
+    overflow: scroll;
+    height: 100%;
+    width: 100%;
+}
+
 .graph {
-    width: fit-content;
+    width: 1200px;
+    height: 500px; /* must have height for lines + scroll to work */
+    position: relative;
 }
 
 .graph .g-th {
@@ -8,34 +16,11 @@
     align-items: center;
 }
 
-.graph .zone {
-    /*border: 1px solid #7caaef;*/
-}
-
-.graph .right .g-th {
-    /*align-items: flex-start;*/
-}
-
-.graph .left .g-th {
-    /*align-items: flex-end;*/
-}
-
 .graph .top, .graph .bottom {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
 }
-
-.graph .bottom {
-    /*align-items: flex-end;*/
-}
-
-/*.graph .g-lr {*/
-/*    display: flex;*/
-/*    flex-direction: row;*/
-/*    align-items: center;*/
-/*    margin: 0;*/
-/*}*/
 
 .graph ul {
     margin: 0;
@@ -58,10 +43,7 @@
     width: 2rem;
     border: 2px solid #4189a0;
     border-radius: 50%;
-    /*position: relative;*/
-    /*overflow: visible;*/
-    /*white-space: nowrap;*/
-    /*margin: 1em 5em;*/
+    margin: 1em 5em;
 }
 
 .graph .selected {
@@ -71,16 +53,10 @@
 .graph .g-node a {
     font-size: smaller;
     position: relative;
-    /*left: 2em;*/
-    /*top: 2em;*/
 }
 
 .graph .g-predicate {
     display: none;
-}
-
-.graph .g-target {
-    /*margin: 5rem;*/
 }
 
 .graph .left .g-target {

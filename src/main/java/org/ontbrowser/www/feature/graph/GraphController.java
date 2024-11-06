@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 // TODO darkmode
-// TODO scrolling in pane?
 // TODO nav/links from other pages
 // TODO controls for up/down/left/right
 // TODO navigation with keyboard?
