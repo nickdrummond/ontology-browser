@@ -1,9 +1,33 @@
 import {BUSY_IMAGE, getPlural} from "./util.js";
+import {entity} from "./entity.js";
 
 const ACTIVE_ENTITY = "active-entity";
 const MINIHIERARCHY = '.minihierarchy';
 
-export const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
+document.addEventListener("DOMContentLoaded", function(event) {
+
+    const entityPane = entity(() => {});
+
+    const primaryTree = document.querySelector(".owlselector.primary");
+    if (primaryTree) {
+        const primaryNav = tree(primaryTree, baseUrl, entityPane, rewriteLinks);
+
+        const secondaryTree = document.querySelector(".owlselector.secondary");
+        if (secondaryTree) {
+            const secondaryNav = tree(secondaryTree, baseUrl, entityPane, rewriteLinks);
+            secondaryNav.init();
+            primaryNav.init((entityId) => {
+                secondaryNav.reload(  "secondary");
+            });
+        }
+        else {
+            primaryNav.init();
+        }
+    }
+
+});
+
+const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
 
     // TODO when do we not rewrite links
 

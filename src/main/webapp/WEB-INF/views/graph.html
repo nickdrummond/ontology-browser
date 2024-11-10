@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <th:block  th:insert='~{base :: header (title=${title}, query=${false}, tree=${false}, rewriteLinks=${false})}'/>
+    <th:block  th:insert='~{base :: header (title=${title}, query=${false}, rewriteLinks=${false})}'/>
 
     <link rel='stylesheet' type='text/css' href="../../static/css/graph.css" th:href='@{/static/css/graph.css}'/>
     <script src="../../static/js/leader-line.min.js"

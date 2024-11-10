@@ -1,4 +1,3 @@
-import {tree} from './tree.js';
 import {characteristics} from './characteristics.js';
 import {dlquery} from "./dlquery.js";
 import {theme} from "./theme.js";
@@ -22,28 +21,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     initSearch();
 
-    const entityPane = entity(entityLoaded);
-
-    if (isTree) {
-        const primaryTree = document.querySelector(".owlselector.primary");
-        if (primaryTree) {
-            const primaryNav = tree(primaryTree, baseUrl, entityPane, rewriteLinks);
-
-            const secondaryTree = document.querySelector(".owlselector.secondary");
-            if (secondaryTree) {
-                const secondaryNav = tree(secondaryTree, baseUrl, entityPane, rewriteLinks);
-                secondaryNav.init();
-                primaryNav.init((entityId) => {
-                    secondaryNav.reload(  "secondary");
-                });
-            }
-            else {
-                primaryNav.init();
-            }
-        }
-    }
-
     if (isQuery) {
+        const entityPane = entity(entityLoaded);
         dlquery(baseUrl, entityPane).init();
     }
 

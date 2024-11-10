@@ -24,7 +24,6 @@
     <script type='text/javascript' th:inline='javascript'>
         const baseUrl = '/';
         const isQuery = [[${query}]];
-        const isTree = [[${tree}]];
         const rewriteLinks = [[${rewriteLinks}]] ?? false;
         const editingEnabled = [[${editingEnabled}]] ?? false;
         const THEME_ATTRIBUTE = "data-theme";
@@ -43,6 +42,12 @@
 
     <script type='text/javascript' src='../../static/js/bsn.AutoSuggest_2.1_multiword.js'
             th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
+</th:block>
+
+<th:block th:fragment="includeTree">
+    <script type='module' src='../../static/js/tree.js'
+            th:src='@{/static/js/tree.js}'>
+    </script>
 </th:block>
 
 <body>
