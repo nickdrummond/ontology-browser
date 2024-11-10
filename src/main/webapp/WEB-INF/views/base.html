@@ -23,7 +23,6 @@
 
     <script type='text/javascript' th:inline='javascript'>
         const baseUrl = '/';
-        const isQuery = [[${query}]];
         const rewriteLinks = [[${rewriteLinks}]] ?? false;
         const editingEnabled = [[${editingEnabled}]] ?? false;
         const THEME_ATTRIBUTE = "data-theme";
@@ -47,6 +46,16 @@
 <th:block th:fragment="includeTree">
     <script type='module' src='../../static/js/tree.js'
             th:src='@{/static/js/tree.js}'>
+    </script>
+</th:block>
+
+<th:block th:fragment="includeDLQuery">
+    <link rel='stylesheet' type='text/css' href='../../static/css/gaphu-0.0.9.css'
+          th:href='@{/static/css/gaphu-0.0.9.css}'/>
+    <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js'
+            th:src='@{/static/js/gaphu-0.0.9.js}'></script>
+    <script type='module' src='../../static/js/dlquery.js'
+            th:src='@{/static/js/dlquery.js}'>
     </script>
 </th:block>
 

@@ -1,6 +1,7 @@
 import {BUSY_IMAGE} from "./util.js";
+import {characteristics} from "./characteristics.js";
 
-export const entity = (entityLoadedCallback) => {
+export const entity = () => {
 
     function loadEntity(url, rewriteUrl) {
         fetch(url)
@@ -10,7 +11,7 @@ export const entity = (entityLoadedCallback) => {
                     throwaway.innerHTML = html;
                     let content = document.getElementById("content");
                     content.replaceWith(throwaway.firstElementChild);
-                    entityLoadedCallback();
+                    entityLoaded();
                 });
 
                 if (rewriteUrl) {
@@ -27,6 +28,11 @@ export const entity = (entityLoadedCallback) => {
             })
 
         document.getElementById("content").innerHTML = BUSY_IMAGE;
+    }
+
+
+    function entityLoaded() {
+        characteristics("#content").init(".characteristic, #metrics");
     }
 
     return {

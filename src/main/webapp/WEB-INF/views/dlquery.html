@@ -4,12 +4,9 @@
 
 <head>
     <!-- TODO use insert - see https://www.thymeleaf.org/doc/articles/layouts.html -->
-    <th:block th:replace='~{base :: header (title=${"DL query: " + expression}, query=${true}, rewriteLinks=${true})}'/>
+    <th:block th:replace='~{base :: header (title=${"DL query: " + expression}, rewriteLinks=${true})}'/>
 
-    <link rel='stylesheet' type='text/css' href='../../static/css/gaphu-0.0.9.css'
-          th:href='@{/static/css/gaphu-0.0.9.css}'/>
-    <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js'
-            th:src='@{/static/js/gaphu-0.0.9.js}'></script>
+    <th:block th:replace="~{base :: includeDLQuery}"/>
 </head>
 
 <body class="wrapper">

@@ -1,5 +1,3 @@
-import {characteristics} from './characteristics.js';
-import {dlquery} from "./dlquery.js";
 import {theme} from "./theme.js";
 import {edits} from "./edits.js";
 import {entity} from "./entity.js";
@@ -21,21 +19,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     initSearch();
 
-    if (isQuery) {
-        const entityPane = entity(entityLoaded);
-        dlquery(baseUrl, entityPane).init();
-    }
-
-    entityLoaded();
-});
-
-function entityLoaded() {
-    characteristics("#content").init(".characteristic, #metrics");
-
-    if (editingEnabled) {
+    entity();
+    if (editingEnabled) { // TODO when entity reloaded
         edits().init(".characteristic");
     }
-}
+});
 
 function openFullscreen() {
     if (document.requestFullscreen) {

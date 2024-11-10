@@ -1,7 +1,13 @@
 import {getValueOfElementByID, getParameter, getUrlWithParameter} from "./util.js";
 import {BUSY_IMAGE} from "./util.js";
+import {entity} from "./entity.js";
 
-export const dlquery = (baseUrl, entityPane) => {
+document.addEventListener("DOMContentLoaded", function(event) {
+    const entityPane = entity(() => {});
+    dlquery(baseUrl, entityPane).init();
+});
+
+const dlquery = (baseUrl, entityPane) => {
 
     const PARAM_QUERYTYPE = "query";
     const PARAM_EXPRESSION = "expression";
