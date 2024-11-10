@@ -3,37 +3,13 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title th:text='${projectInfo.name + ": " + title}'>Project Name: Page Name</title>
+    <th:block  th:insert='~{base :: header (title=${title}, query=${false}, tree=${false}, rewriteLinks=${false})}'/>
 
-    <meta charset='UTF-8'/>
-    <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>
-
-    <link rel='icon' type='image/x-icon' href='../../static/images/favicon.ico'
-          th:href='@{/static/images/favicon.ico}'/>
-    <link rel='apple-touch-icon-precomposed' href='../../static/images/splat-152-211412.png'
-          th:href='@{/static/images/splat-152-211412.png}'/>
-
-    <link rel='stylesheet' type='text/css' href='../../static/css/default.css' th:href='@{/static/css/default.css}'/>
     <link rel='stylesheet' type='text/css' href="../../static/css/graph.css" th:href='@{/static/css/graph.css}'/>
-
     <script src="../../static/js/leader-line.min.js"
             th:src='@{/static/js/leader-line.min.js}'></script>
-
-    <script type='text/javascript' th:inline='javascript'>
-        const baseUrl = '/';
-        const isQuery = false;
-        const isTree = false;
-        const rewriteLinks = false;
-    </script>
-    <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
-            th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
-
-    <script type='module' src='../../static/js/app.js'
-            th:src='@{/static/js/app.js}'>
-    </script>
-
     <script type='text/javascript' src='../../static/js/graph.js' th:src='@{/static/js/graph.js}'></script>
+
 </head>
 
 <body class="wrapper">
