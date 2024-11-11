@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -40,9 +41,9 @@ public class ReasonerService {
 
     public ReasonerService(
             @Autowired OWLHTMLKit kit,
-            @Autowired     ExecutorService es,
-            @Autowired     Map<DLQuery, Future<Set<OWLEntity>>> cache,
-            @Autowired     ReasonerFactoryService reasonerFactoryService) {
+            @Autowired ExecutorService es,
+            @Autowired Map<DLQuery, Future<Set<OWLEntity>>> cache,
+            @Autowired ReasonerFactoryService reasonerFactoryService) {
         this.kit = kit;
         this.es = es;
         this.cache = cache;
@@ -74,29 +75,30 @@ public class ReasonerService {
         return es.submit(() -> {
             long start = System.nanoTime();
 
-            OWLOntology reasoningOnt = getReasoningActiveOnt();
+            var reasoningOnt = getReasoningActiveOnt();
 
-            OWLReasoner r = reasonerFactoryService.getReasoner(reasoningOnt);
+            var r = reasonerFactoryService.getReasoner(reasoningOnt);
 
             Set<OWLEntity> results = getResults(query, r);
 
-            long t = TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-start);
+            long t = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 
-            logger.info(query.getQueryType() + " " + results.size() + " results in " + t + "ms: " + kit.render(query.getOwlClassExpression()));
+            logger.info(query.queryType() + " " + results.size() + " results in " + t + "ms: " + kit.render(query.owlClassExpression()));
 
             return results;
         });
     }
 
     private Set<OWLEntity> getResults(final DLQuery query, final OWLReasoner r) {
-        switch(query.getQueryType()){
-            case equivalents:  return ImmutableSet.copyOf(r.getEquivalentClasses(query.getOwlClassExpression()).getEntities());
-            case subclasses:   return ImmutableSet.copyOf(r.getSubClasses(query.getOwlClassExpression(), true).getFlattened());
-            case descendants:  return ImmutableSet.copyOf(r.getSubClasses(query.getOwlClassExpression(), false).getFlattened());
-            case superclasses: return ImmutableSet.copyOf(r.getSuperClasses(query.getOwlClassExpression(), true).getFlattened());
-            case ancestors:    return ImmutableSet.copyOf(r.getSuperClasses(query.getOwlClassExpression(), false).getFlattened());
-            case instances:    return ImmutableSet.copyOf(r.getInstances(query.getOwlClassExpression(), false).getFlattened());
-        }
-        throw new IllegalArgumentException("Unexpected query: " + query);
+        var clsExpr = query.owlClassExpression();
+        var entities = switch (query.queryType()) {
+            case equivalents -> r.getEquivalentClasses(clsExpr).getEntities();
+            case subclasses -> r.getSubClasses(clsExpr, true).getFlattened();
+            case descendants -> r.getSubClasses(clsExpr, false).getFlattened();
+            case superclasses -> r.getSuperClasses(clsExpr, true).getFlattened();
+            case ancestors -> r.getSuperClasses(clsExpr, false).getFlattened();
+            case instances -> r.getInstances(clsExpr, false).getFlattened();
+        };
+        return ImmutableSet.copyOf(entities);
     }
 }
