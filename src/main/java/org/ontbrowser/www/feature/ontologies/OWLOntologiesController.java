@@ -117,7 +117,7 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 
-        response.addHeader("title", projectInfo.getName() + ": " + title);
+        response.addHeader("title", projectInfo.name() + ": " + title);
 
         return new ModelAndView("owlentityfragment");
 

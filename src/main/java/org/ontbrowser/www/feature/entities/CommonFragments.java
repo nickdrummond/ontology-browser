@@ -71,7 +71,7 @@ public class CommonFragments {
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 
-        response.addHeader("title", projectInfo.getName() + ": " + title);
+        response.addHeader("title", projectInfo.name() + ": " + title);
         return new ModelAndView("owlentityfragment");
     }
 
@@ -190,11 +190,11 @@ public class CommonFragments {
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
         model.addAttribute("mos", owlRenderer);
 
-        if (projectInfo.getActiveProfiles().contains("graph")) {
+        if (projectInfo.activeProfiles().contains("graph")) {
             model.addAttribute("graphLink", new GraphURLScheme().getURLForOWLObject(owlIndividual));
         }
 
-        response.addHeader("title", projectInfo.getName() + ": " + title);
+        response.addHeader("title", projectInfo.name() + ": " + title);
 
         return new ModelAndView("owlentityfragment");
     }

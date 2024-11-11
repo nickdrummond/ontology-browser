@@ -105,7 +105,7 @@ public class OWLDatatypesController extends ApplicationController {
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 
-        response.addHeader("title", projectInfo.getName() + ": " + entityName);
+        response.addHeader("title", projectInfo.name() + ": " + entityName);
 
         return new ModelAndView("owlentityfragment");
 
