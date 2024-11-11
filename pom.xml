@@ -16,7 +16,6 @@
     <jfact.version>5.0.3</jfact.version>
     <spring.version>6.1.7</spring.version>
     <gaphu.version>0.0.9</gaphu.version>
-    <suggestor.version>1.0.0</suggestor.version>
     <thymeleaf.version>3.1.2.RELEASE</thymeleaf.version>
     <servlet.version>6.0.0</servlet.version>
 
@@ -98,12 +97,6 @@
       <groupId>uk.co.nickdrummond</groupId>
       <artifactId>gaphu</artifactId>
       <version>${gaphu.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.coode</groupId>
-      <artifactId>suggestor</artifactId>
-      <version>${suggestor.version}</version>
     </dependency>
 
     <dependency>
