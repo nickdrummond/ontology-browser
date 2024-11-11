@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
+
 @RestController
 @RequestMapping(value = "/relations/" + OWLPropertyRelationsController.PATH)
 public class OWLPropertyRelationsController extends ApplicationController {
@@ -193,7 +195,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
                 reasonerFactoryService.getToldReasoner(ont),
-                Comparator.comparing(o -> o.value.iterator().next()));
+                treeComparator());
 
         OWLReasoner reasoner = reasonerFactoryService.getToldReasoner(ont);
 

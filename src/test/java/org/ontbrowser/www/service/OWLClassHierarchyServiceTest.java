@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 
 import java.util.Comparator;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
 import static org.ontbrowser.www.service.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -41,8 +42,7 @@ public class OWLClassHierarchyServiceTest {
 
         ontology = mngr.createOntology();
         OWLReasoner reasoner = new StructuralReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
-        Comparator<? super Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-        service = new OWLClassHierarchyService(reasoner, comparator);
+        service = new OWLClassHierarchyService(reasoner, treeComparator());
 
         a = cls("a");
         a2 = cls("a2");

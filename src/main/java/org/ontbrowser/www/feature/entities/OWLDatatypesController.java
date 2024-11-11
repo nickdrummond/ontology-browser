@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
+
 @RestController
 @RequestMapping(value="/datatypes")
 public class OWLDatatypesController extends ApplicationController {
@@ -61,9 +63,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, ont);
 
-        Comparator<Tree<OWLDatatype>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(ont, comparator);
+        OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(ont, treeComparator());
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getPrunedTree(owlDatatype);
 
@@ -120,9 +120,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         OWLDatatype property = service.getOWLDatatypeFor(propertyId, ont);
 
-        Comparator<Tree<OWLDatatype>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(ont, comparator);
+        OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(ont, treeComparator());
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(property);
 

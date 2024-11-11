@@ -4,6 +4,7 @@ import org.semanticweb.owlapi.model.OWLObject;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Tree<T extends OWLObject> {
@@ -27,6 +28,10 @@ public class Tree<T extends OWLObject> {
         this.value = value;
         this.childCount = childCount;
         this.children = children;
+    }
+
+    public static <O extends OWLObject> Comparator<Tree<O>> treeComparator() {
+        return Comparator.comparing(o -> o.value.iterator().next());
     }
 
     @Override

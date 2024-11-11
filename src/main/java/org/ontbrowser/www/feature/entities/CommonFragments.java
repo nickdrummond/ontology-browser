@@ -24,6 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
+
 public class CommonFragments {
 
     private final OWLHTMLKit kit;
@@ -82,8 +84,7 @@ public class CommonFragments {
             final Stats stats,
             final Model model) {
 
-        Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
+        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, treeComparator());
         Tree<OWLClass> prunedTree = hierarchyService.getChildren(cls);
 
         model.addAttribute("t", prunedTree);
@@ -102,8 +103,7 @@ public class CommonFragments {
             final Stats stats,
             final Model model) {
 
-        Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
+        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, treeComparator());
         Tree<OWLClass> prunedTree = hierarchyService.getChildren(cls);
 
         model.addAttribute("stats", stats);

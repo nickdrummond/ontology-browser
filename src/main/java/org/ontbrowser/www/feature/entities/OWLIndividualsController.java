@@ -30,6 +30,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.IOException;
 import java.util.*;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
+
 @RestController
 @RequestMapping(value = "/individuals")
 public class OWLIndividualsController extends ApplicationController {
@@ -185,7 +187,7 @@ public class OWLIndividualsController extends ApplicationController {
 
     private IndividualsByTypeHierarchyService buildSecondaryHierarchy(Model model, OWLClass type, OWLReasoner r) {
         IndividualsByTypeHierarchyService individualsHierarchy =
-                new IndividualsByTypeHierarchyService(Comparator.comparing(o -> o.value.iterator().next()))
+                new IndividualsByTypeHierarchyService(treeComparator())
                         .withType(type, r);
 
         model.addAttribute("hierarchy2", individualsHierarchy.getClosedTree());
@@ -195,8 +197,7 @@ public class OWLIndividualsController extends ApplicationController {
     }
 
     private void buildPrimaryHierarchy(String statsName, Model model, OWLClass type, OWLReasoner r) throws NotFoundException {
-        Comparator<Tree<OWLClass>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, comparator);
+        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, treeComparator());
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(type);
 
         model.addAttribute("hierarchy", prunedTree);

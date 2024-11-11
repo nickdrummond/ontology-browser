@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
+
 @Service
 public class OWLDataPropertiesService implements PropertiesService<OWLDataProperty> {
 
@@ -61,7 +63,7 @@ public class OWLDataPropertiesService implements PropertiesService<OWLDataProper
     public OWLHierarchyService<OWLDataProperty> getHierarchyService(OWLOntology ont) {
         return new OWLDataPropertyHierarchyService(
                 reasonerFactoryService.getToldReasoner(ont),
-                Comparator.comparing(o -> o.value.iterator().next()));
+                treeComparator());
     }
 
     @Override

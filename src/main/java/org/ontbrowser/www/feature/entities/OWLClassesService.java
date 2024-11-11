@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
 import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
 
 @Service
@@ -47,7 +48,7 @@ public class OWLClassesService {
 
     public OWLHierarchyService<OWLClass> getHierarchyService(OWLOntology ont) {
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-        return new OWLClassHierarchyService(r, Comparator.comparing(o -> o.value.iterator().next()));
+        return new OWLClassHierarchyService(r, treeComparator());
     }
 
     public String getIdFor(final OWLClass owlClass) {

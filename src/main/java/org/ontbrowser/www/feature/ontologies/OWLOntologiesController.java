@@ -28,6 +28,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
+
 @RestController
 @RequestMapping(value = "/ontologies")
 public class OWLOntologiesController extends ApplicationController {
@@ -68,9 +70,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
-        Comparator<Tree<OWLOntology>> comparator = Comparator.comparing(o -> o.value.iterator().next());
-
-        OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), comparator);
+        OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), treeComparator());
 
         Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(ont);
 

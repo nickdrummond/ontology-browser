@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static org.ontbrowser.www.model.Tree.treeComparator;
+
 @Service
 public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnnotationProperty> {
 
@@ -44,12 +46,12 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
         if (orderByProperty != null) {
             return new AnnotationPropComparator(orderByProperty, ont);
         }
-        return Comparator.comparing(o -> o.value.iterator().next());
+        return treeComparator();
     }
 
     @Override
     public OWLHierarchyService<OWLAnnotationProperty> getHierarchyService(OWLOntology ont) {
-        return new OWLAnnotationPropertyHierarchyService(ont, Comparator.comparing(o -> o.value.iterator().next()));
+        return new OWLAnnotationPropertyHierarchyService(ont, treeComparator());
     }
 
     @Override
