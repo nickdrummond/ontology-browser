@@ -34,10 +34,10 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
                 .flatMap(InterestingFilter::findAxioms);
 
         Map<String, List<AxiomWithMetadata>> sortAndGroupByType = axiomsWithMetadata
-                .collect(groupingBy(AxiomWithMetadata::getType));
+                .collect(groupingBy(AxiomWithMetadata::type));
 
         Comparator<AxiomWithMetadata> compareByOWLObject = (a, b) ->
-                comparator.compare(a.getOWLObject(), b.getOWLObject());
+                comparator.compare(a.owlObject(), b.owlObject());
 
         Comparator<Characteristic> compareCharacteristics = (a, b) ->
                 getOrder().indexOf(a.getName()) - getOrder().indexOf(b.getName());

@@ -72,7 +72,7 @@ public class OWLEntitiesController extends ApplicationController {
         List<AxiomWithMetadata> results = service.findByAnnotation(search, optAnnot.orElse(null), ont);
 
         if (results.size() == 1) {
-            OWLObject owlObject = results.get(0).getOWLObject();
+            OWLObject owlObject = results.get(0).owlObject();
             if (owlObject instanceof OWLAnnotationAssertionAxiom ax) {
                 Optional<IRI> iri = ax.getSubject().asIRI();
                 OWLObject o = service.getEntities(iri.orElseThrow(), ont).iterator().next();

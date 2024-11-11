@@ -52,8 +52,8 @@ public class OntologyCharacteristicsBuilderTest {
 
         // With the wrapped OWLClass, along with axiom and ont
         AxiomWithMetadata axiomAndOnt = result.get(0).getObjects().get(0);
-        assertEquals(cls, axiomAndOnt.getOWLObject());
-        assertEquals(clsAssertionAxiom, axiomAndOnt.getOWLAxiom());
-        assertEquals(ont, axiomAndOnt.getOWLOntology());
+        assertEquals(cls, axiomAndOnt.owlObject());
+        assertEquals(clsAssertionAxiom, axiomAndOnt.owlAxiom());
+        assertEquals(ont, axiomAndOnt.owlOntology());
     }
 }

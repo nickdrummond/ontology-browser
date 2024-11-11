@@ -146,9 +146,9 @@
         <li class="asserted" th:each="object : ${ch.objects}">
 
             <span class="owlobject"
-                  th:with="data=${object.getOWLAxiom() != null ? object.getOWLAxiom() : object.getOWLObject()}"
+                  th:with="data=${object.owlAxiom() != null ? object.owlAxiom() : object.owlObject()}"
                   th:data="${kit.render(data)}"
-                  th:utext="${mos.render(object.getOWLObject())}">
+                  th:utext="${mos.render(object.owlObject())}">
                 <a href="../../classes/1934778517/" class='Class'
                    title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
                 <span class='keyword'>&equiv;</span>
@@ -162,15 +162,15 @@
             </span>
 
             <span class="source-ont"
-                  th:data="${T(org.ontbrowser.www.util.OWLUtils).ontIRI(object.getOWLOntology())}"
-                  th:utext="${mos.render(object.getOWLOntology())}"
+                  th:data="${T(org.ontbrowser.www.util.OWLUtils).ontIRI(object.owlOntology())}"
+                  th:utext="${mos.render(object.owlOntology())}"
             >
                 pizza.owl
             </span>
 
-            <ul th:if="${object.getOWLAxiom() != null and !object.getOWLAxiom().getAnnotations().isEmpty()}"
+            <ul th:if="${object.owlAxiom() != null and !object.owlAxiom().getAnnotations().isEmpty()}"
                 th:remove="all-but-first" class="axiom-annotations">
-                <li class="axiom-annotation" th:each="annot : ${object.getOWLAxiom().getAnnotations()}">
+                <li class="axiom-annotation" th:each="annot : ${object.owlAxiom().getAnnotations()}">
                     <span th:utext="${mos.render(annot)}"></span>
                 </li>
                 <li><span>seeAlso: "<a href="https://github.com/nickdrummond/star-wars-ontology">
@@ -305,9 +305,9 @@
         <li class="asserted"
             th:each="object : ${direct.objects}">
                 <span class="owlobject"
-                      th:with="data=${object.getOWLAxiom() != null ? object.getOWLAxiom() : object.getOWLObject()}"
+                      th:with="data=${object.owlAxiom() != null ? object.owlAxiom() : object.owlObject()}"
                       th:data="${kit.render(data)}"
-                      th:utext="${mos.render(object.getOWLObject())}">
+                      th:utext="${mos.render(object.owlObject())}">
                     individual
                 </span>
         </li>

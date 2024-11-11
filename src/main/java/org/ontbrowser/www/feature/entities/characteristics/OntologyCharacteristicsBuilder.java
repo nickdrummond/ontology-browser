@@ -51,7 +51,7 @@ public class OntologyCharacteristicsBuilder {
                 .toList();
 
         Comparator<AxiomWithMetadata> compareByOWLObject = (a, b) ->
-                c.compare(a.getOWLObject(), b.getOWLObject());
+                c.compare(a.owlObject(), b.owlObject());
 
         return Optional.of(PagingUtils.getCharacteristic(ont, with, defaultPageSize, compareByOWLObject, name, r));
     }
