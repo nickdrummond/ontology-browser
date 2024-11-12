@@ -33,9 +33,4 @@
         <session-timeout>10</session-timeout>
     </session-config>
 
-    <!-- TODO -->
-<!--    <error-page>-->
-<!--        <location>/error</location>-->
-<!--    </error-page>-->
-
 </web-app>

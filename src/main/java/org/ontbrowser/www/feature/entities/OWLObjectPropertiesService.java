@@ -7,15 +7,12 @@ import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.service.hierarchy.*;
-import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
-import org.ontbrowser.www.service.hierarchy.OWLObjectPropertyHierarchyService;
-import org.ontbrowser.www.service.hierarchy.PropComparator;
-import org.ontbrowser.www.service.hierarchy.RelationsHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
 

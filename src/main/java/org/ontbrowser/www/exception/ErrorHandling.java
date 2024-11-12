@@ -1,26 +1,34 @@
-package org.ontbrowser.www.controller;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
+package org.ontbrowser.www.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.model.ProjectInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.ModelAndView;
 
-@RestController
-public class CustomErrorController extends ApplicationController {
+@RestControllerAdvice
+public class ErrorHandling {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomErrorController.class);
+    @Autowired
+    private ProjectInfo projectInfo;
 
-    @GetMapping("/error")
+    private static final Logger log = LoggerFactory.getLogger(ErrorHandling.class);
+
+    @ExceptionHandler
     public ModelAndView handleError(
             HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse,
             Exception e,
             Model model) {
 
         // TODO if request for XML or fragment, don't spit out HTML
+
+        model.addAttribute("projectInfo", projectInfo);
 
         if (log.isDebugEnabled()) {
             httpRequest.getAttributeNames().asIterator().forEachRemaining(n -> {
@@ -38,11 +46,15 @@ public class CustomErrorController extends ApplicationController {
         }
 
         Object errorCode = httpRequest.getAttribute("jakarta.servlet.error.status_code");
-        if (errorCode instanceof Integer code) {
-            model.addAttribute("errorCode", code);
+        if (errorCode != null) {
+            if (errorCode instanceof Integer code) {
+                model.addAttribute("errorCode", code);
+            } else {
+                log.warn("Unknown error code {} : {}", errorCode.getClass(), errorCode);
+                model.addAttribute("errorCode", 0);
+            }
         }
         else {
-            log.warn("Unknown error code {} : {}", errorCode.getClass(), errorCode);
             model.addAttribute("errorCode", 0);
         }
 

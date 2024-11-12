@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan({
         "org.ontbrowser.www.feature.*",
         "org.ontbrowser.www.service",
-        "org.ontbrowser.www.controller"})
+        "org.ontbrowser.www.controller",
+        "org.ontbrowser.www.exception"})
 public class ApplicationConfig {
 
     @Bean
