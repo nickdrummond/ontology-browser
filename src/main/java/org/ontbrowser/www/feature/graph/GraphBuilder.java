@@ -1,9 +1,10 @@
 package org.ontbrowser.www.feature.graph;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -11,87 +12,25 @@ import java.util.*;
 // TODO could make the properties a list and use that order for display?
 public class GraphBuilder {
 
+    private static final Logger log = LoggerFactory.getLogger(GraphBuilder.class);
+
+    private final GraphDescriptor descr;
     private final OWLOntology ont;
     private final OWLDataFactory df;
     private ProxyBuilder proxyBuilder;
 
+    private final Map<Integer, Set<Graph.Edge>> edgesByDepth = new HashMap<>();
+
     private final Set<Graph.Edge> edges = new HashSet<>();
-    private final Set<OWLProperty> withProperties = new HashSet<>();
-    private final Set<OWLProperty> withInverseProperties = new HashSet<>();
-    private final Set<OWLProperty> withoutProperties = new HashSet<>();
-    private final Set<OWLNamedIndividual> individuals = new HashSet<>();
-    private final Set<OWLClass> classes = new HashSet<>();
     private boolean built = false;
-    private String name = "anon";
+    private final Set<OWLNamedIndividual> renderedIndividuals = new HashSet<>();
+    private final Set<OWLClass> renderedClasses = new HashSet<>();
 
-    public GraphBuilder(OWLOntology ont, ProxyBuilder proxyBuilder) {
-        this.ont = ont;
+    public GraphBuilder(ProxyBuilder proxyBuilder, GraphDescriptor descr) {
+        this.descr = descr;
         this.proxyBuilder = proxyBuilder;
+        this.ont = descr.getOntology();
         this.df = ont.getOWLOntologyManager().getOWLDataFactory();
-    }
-
-    public GraphBuilder withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public GraphBuilder withProperty(OWLProperty property) {
-        this.withProperties.add(property);
-        return this;
-    }
-
-    public GraphBuilder withProperties(OWLProperty... properties) {
-        this.withProperties.addAll(Arrays.asList(properties));
-        return this;
-    }
-
-    public GraphBuilder withProperties(Set<OWLProperty> properties) {
-        this.withProperties.addAll(properties);
-        return this;
-    }
-
-    public GraphBuilder withInverseProperties(Set<OWLProperty> invProps) {
-        this.withInverseProperties.addAll(invProps);
-        return this;
-    }
-
-    public GraphBuilder withoutProperty(OWLProperty property) {
-        this.withoutProperties.add(property);
-        return this;
-    }
-
-    public GraphBuilder withoutProperties(OWLProperty... properties) {
-        this.withoutProperties.addAll(Arrays.asList(properties));
-        return this;
-    }
-
-    public GraphBuilder withoutProperties(GraphBuilder... otherBuilders) {
-        Arrays.asList(otherBuilders).forEach(builder -> this.withoutProperties.addAll(builder.getProperties()));
-        return this;
-    }
-
-    private Set<OWLProperty> getProperties() {
-        return withProperties;
-    }
-
-    public GraphBuilder addEntity(OWLEntity entity) {
-        if (entity instanceof OWLNamedIndividual ind) {
-            return addIndividual(ind);
-        }
-        if (entity instanceof OWLClass cls) {
-            return addClass(cls);
-        }
-        throw new NotImplementedException("Unsupported graph type " + entity.getClass());
-    }
-
-    public GraphBuilder addIndividual(OWLNamedIndividual ind) {
-        this.individuals.add(ind);
-        return this;
-    }
-
-    public GraphBuilder addClass(OWLClass cls) {
-        this.classes.add(cls);
-        return this;
     }
 
     // Add arbitrary edges
@@ -102,99 +41,128 @@ public class GraphBuilder {
 
     public Graph build() {
         if (!built) {
-            individuals.forEach(this::buildInd);
-            classes.forEach(this::buildCls);
+            descr.getIndividuals().forEach(ind -> buildInd(ind, 0));
+            descr.getClasses().forEach(cls -> buildCls(cls, 0));
             built = true;
         }
         return new Graph(edges);
     }
 
-    private void buildInd(OWLNamedIndividual ind) {
-        ont.referencingAxioms(ind, Imports.INCLUDED).forEach(ax -> ax.accept(new OWLAxiomVisitor() {
-            @Override
-            public void visit(@Nonnull OWLObjectPropertyAssertionAxiom axiom) {
-                // Only named for now
-                if (axiom.getSubject().isNamed() && axiom.getProperty().isNamed() && axiom.getObject().isNamed()) {
-                    if (axiom.getSubject().equals(ind)) {
-                        addIfFilterAllows(
-                                0, axiom.getSubject().asOWLNamedIndividual(),
-                                axiom.getProperty().getNamedProperty(),
-                                axiom.getObject().asOWLNamedIndividual());
-                    }
-                    else {
-                        addInverseIfFilterAllows(
-                                0, axiom.getSubject().asOWLNamedIndividual(),
-                                axiom.getProperty().getNamedProperty(),
-                                axiom.getObject().asOWLNamedIndividual());
+    private void buildInd(OWLNamedIndividual ind, int depth) {
+        if (depth > descr.getMaxDepth()) {
+            return;
+        }
+
+        if (!renderedIndividuals.contains(ind)) {
+            renderedIndividuals.add(ind);
+            ont.referencingAxioms(ind, Imports.INCLUDED).forEach(ax -> ax.accept(new OWLAxiomVisitor() {
+                @Override
+                public void visit(@Nonnull OWLObjectPropertyAssertionAxiom axiom) {
+                    // Only named for now
+                    if (axiom.getSubject().isNamed() && axiom.getProperty().isNamed() && axiom.getObject().isNamed()) {
+                        if (axiom.getSubject().equals(ind)) {
+                            if (addIfFilterAllows(
+                                    depth, axiom.getSubject().asOWLNamedIndividual(),
+                                    axiom.getProperty().getNamedProperty(),
+                                    axiom.getObject().asOWLNamedIndividual())) {
+                                // follow
+                                buildInd(axiom.getObject().asOWLNamedIndividual(), depth + 1);
+                            }
+//                        else {
+//                            log.info("axiom ignored {}", axiom);
+//                        }
+                        } else {
+                            // only follow inverse for depth=0
+                            if (depth == 0 && addInverseIfFilterAllows(
+                                    depth, axiom.getSubject().asOWLNamedIndividual(),
+                                    axiom.getProperty().getNamedProperty(),
+                                    axiom.getObject().asOWLNamedIndividual())) {
+                                // follow
+                                buildInd(axiom.getSubject().asOWLNamedIndividual(), depth + 1);
+                            }
+//                        else {
+//                            log.info("inverse ignored {} depth {}", axiom, depth);
+//                        }
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void visit(OWLClassAssertionAxiom axiom) {
-                if (axiom.getIndividual().equals(ind)) {
+                @Override
+                public void visit(OWLClassAssertionAxiom axiom) {
+                    if (axiom.getIndividual().equals(ind)) {
 
-                    var cls = axiom.getClassExpression();
-                    if (cls.isNamed()) {
-                        addIfFilterAllows(
-                                0, axiom.getIndividual().asOWLNamedIndividual(),
-                                df.getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE),
-                                cls.asOWLClass()
-                        );
+                        var cls = axiom.getClassExpression();
+                        if (cls.isNamed()) {
+                            if (addIfFilterAllows(
+                                    depth, axiom.getIndividual().asOWLNamedIndividual(),
+                                    df.getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE),
+                                    cls.asOWLClass()
+                            )) {
+                                // follow
+                                buildCls(cls.asOWLClass(), depth + 1);
+                            }
+                        } else { // break down a class expression
+                            handleClassExpressionInd(ind, cls, 0);
+                        }
+                        // TODO inverses
                     }
-                    else { // break down a class expression
-                        handleClassExpressionInd(ind, cls, 0);
-                    }
-                    // TODO inverses
                 }
-            }
-        }));
+            }));
+        }
     }
 
     // TODO when superclass is svf (Jedi) or cls is filler of svf - eg pizza (SlicedTomatoTopping)
-    private void buildCls(OWLClass cls) {
-        ont.referencingAxioms(cls, Imports.INCLUDED).forEach(ax -> ax.accept(new OWLAxiomVisitor() {
+    private void buildCls(OWLClass cls, int depth) {
+        if (depth > descr.getMaxDepth()) {
+            return;
+        }
 
-            @Override
-            public void visit(OWLSubClassOfAxiom axiom) {
-                var supercls = axiom.getSuperClass();
-                var subcls = axiom.getSubClass();
-                if (subcls.equals(cls)) {
-                    if (supercls.isNamed()) {
-                        addIfFilterAllows(
-                                0, cls,
-                                df.getOWLObjectProperty(OWLRDFVocabulary.RDFS_SUBCLASS_OF),
-                                supercls.asOWLClass()
-                        );
-                    }
-                    else { // break down a class expression
-                        handleClassExpression(cls, supercls, 0);
+        if (!renderedClasses.contains(cls)) {
+            renderedClasses.add(cls);
+            ont.referencingAxioms(cls, Imports.INCLUDED).forEach(ax -> ax.accept(new OWLAxiomVisitor() {
+
+                @Override
+                public void visit(OWLSubClassOfAxiom axiom) {
+                    var supercls = axiom.getSuperClass();
+                    var subcls = axiom.getSubClass();
+                    if (subcls.equals(cls)) {
+                        if (supercls.isNamed()) {
+                            addIfFilterAllows(
+                                    depth, cls,
+                                    df.getOWLObjectProperty(OWLRDFVocabulary.RDFS_SUBCLASS_OF),
+                                    supercls.asOWLClass()
+                            );
+                        } else { // break down a class expression
+                            handleClassExpression(cls, supercls, depth);
+                        }
+                    } else {
+                        if (subcls.isNamed() && supercls.isNamed()) {
+                            addIfFilterAllows(
+                                    depth, subcls.asOWLClass(),
+                                    df.getOWLObjectProperty(OWLRDFVocabulary.RDFS_SUBCLASS_OF),
+                                    cls
+                            );
+                        } else {
+                            handleClassExpression(cls, subcls, depth);
+                        }
                     }
                 }
-                else {
-                    if (subcls.isNamed() && supercls.isNamed()) {
-                        addIfFilterAllows(
-                                0, subcls.asOWLClass(),
-                                df.getOWLObjectProperty(OWLRDFVocabulary.RDFS_SUBCLASS_OF),
-                                cls
-                        );
-                    }
-                    else {
-                        handleClassExpression(cls, subcls, 0);
-                    }
-                }
-            }
-        }));
+            }));
+        }
     }
 
     private void handleClassExpressionInd(OWLEntity subject, OWLClassExpression cls, int depth) {
+        if (depth > descr.getMaxDepth()) {
+            return;
+        }
+
         cls.accept(new OWLClassExpressionVisitor() {
 
             @Override
             public void visit(OWLObjectSomeValuesFrom ce) {
                 getNamedNodeFromFiller(ce.getFiller()).ifPresent(cls -> {
                     var proxy = proxyBuilder.createAnonNode(cls);
-                    handleClassExpressionInd(proxy, ce.getFiller(), depth+1);
+                    handleClassExpressionInd(proxy, ce.getFiller(), depth + 1);
                     addIfFilterAllows(
                             depth, subject,
                             ce.getProperty().asOWLObjectProperty(),
@@ -205,7 +173,7 @@ public class GraphBuilder {
 
             @Override
             public void visit(OWLObjectHasValue ce) {
-                addIfFilterAllows( depth,
+                addIfFilterAllows(depth,
                         subject,
                         ce.getProperty().asOWLObjectProperty(),
                         ce.getFiller().asOWLNamedIndividual()
@@ -214,18 +182,22 @@ public class GraphBuilder {
 
             @Override
             public void visit(OWLObjectIntersectionOf ce) {
-                ce.operands().forEach(op -> handleClassExpressionInd(subject, op, depth+1));
+                ce.operands().forEach(op -> handleClassExpressionInd(subject, op, depth + 1));
             }
         });
     }
 
     private void handleClassExpression(OWLEntity subject, OWLClassExpression cls, int depth) {
+        if (depth > descr.getMaxDepth()) {
+            return;
+        }
+
         cls.accept(new OWLClassExpressionVisitor() {
 
             @Override
             public void visit(OWLObjectSomeValuesFrom ce) {
                 getNamedNodeFromFiller(ce.getFiller()).ifPresent(cls -> {
-                    handleClassExpression(cls, ce.getFiller(), depth+1);
+                    handleClassExpression(cls, ce.getFiller(), depth + 1);
                     addIfFilterAllows(
                             depth, subject,
                             ce.getProperty().asOWLObjectProperty(),
@@ -236,7 +208,7 @@ public class GraphBuilder {
 
             @Override
             public void visit(OWLObjectIntersectionOf ce) {
-                ce.operands().forEach(op -> handleClassExpression(subject, op, depth+1));
+                ce.operands().forEach(op -> handleClassExpression(subject, op, depth + 1));
             }
         });
     }
@@ -266,23 +238,41 @@ public class GraphBuilder {
         });
     }
 
-    private void addIfFilterAllows(int depth, OWLEntity subject, OWLProperty property, OWLEntity object) {
-        if (depth > 0 || isAllowedProperty(property)) {
-            add(new Graph.Edge(subject, property, object));
+    private boolean addIfFilterAllows(int depth, OWLEntity subject, OWLProperty property, OWLEntity object) {
+        var newEdge = new Graph.Edge(subject, property, object);
+        var edgesAtDepth = edgesByDepth.getOrDefault(depth, new HashSet<>());
+        if (descr.isFollowProperty(property)) {
+            if (edgesAtDepth.contains(newEdge)) {
+                return false;
+            }
+            edgesAtDepth.add(newEdge);
+            edges.add(newEdge);
+            return true;
         }
-    }
-
-    private void addInverseIfFilterAllows(int depth, OWLEntity subject, OWLProperty property, OWLEntity object) {
-        if (depth > 0 || isAllowedInverseProperty(property)) {
-            add(new Graph.Edge(subject, property, object));
+        if (descr.isAllowedProperty(property)) {
+            edgesAtDepth.add(newEdge);
+            edges.add(newEdge);
+            return true;
         }
+        return false;
     }
 
-    private boolean isAllowedProperty(OWLProperty property) {
-        return withProperties.contains(property) && !withoutProperties.contains(property);
-    }
-
-    private boolean isAllowedInverseProperty(OWLProperty property) {
-        return withInverseProperties.contains(property) && !withoutProperties.contains(property);
+    private boolean addInverseIfFilterAllows(int depth, OWLEntity subject, OWLProperty property, OWLEntity object) {
+        var newEdge = new Graph.Edge(subject, property, object);
+        var edgesAtDepth = edgesByDepth.getOrDefault(depth, new HashSet<>());
+        if (descr.isFollowProperty(property)) {
+            if (edges.contains(newEdge)) {
+                return false;
+            }
+            edgesAtDepth.add(newEdge);
+            edges.add(newEdge);
+            return true;
+        }
+        if (descr.isAllowedInverseProperty(property)) {
+            edgesAtDepth.add(newEdge);
+            edges.add(newEdge);
+            return true;
+        }
+        return false;
     }
 }

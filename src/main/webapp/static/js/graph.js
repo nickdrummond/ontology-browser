@@ -1,4 +1,4 @@
-$(document).ready(function(){
+document.addEventListener('DOMContentLoaded', function(){
     LeaderLine.positionByWindowResize = false;
     document.querySelectorAll('.graph').forEach( graph => {
         init(graph);

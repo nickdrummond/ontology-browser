@@ -3,12 +3,17 @@ package org.ontbrowser.www.configuration;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitImpl;
 import org.ontbrowser.www.io.OntologyLoader;
+import org.ontbrowser.www.renderer.MOSRenderer;
 import org.ontbrowser.www.renderer.OntologyShortFormProvider;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.io.OWLObjectRenderer;
+import org.semanticweb.owlapi.io.ToStringRenderer;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +50,18 @@ public class KitConfig {
         }
         OWLHTMLKit kit = new OWLHTMLKitImpl(mngr, ont, ontologyShortFormProvider());
         kit.setLabelParams(labelURI, labelLang);
+        ToStringRenderer.setRenderer(() -> new OWLObjectRenderer(){
+
+            @Override
+            public void setShortFormProvider(ShortFormProvider shortFormProvider) {
+                // do nothing
+            }
+
+            @Override
+            public String render(OWLObject owlObject) {
+                return kit.render(owlObject);
+            }
+        });
         return kit;
     }
 

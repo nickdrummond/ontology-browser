@@ -191,7 +191,7 @@ public class CommonFragments {
         model.addAttribute("mos", owlRenderer);
 
         if (projectInfo.activeProfiles().contains("graph")) {
-            model.addAttribute("graphLink", new GraphURLScheme().getURLForOWLObject(owlIndividual));
+            model.addAttribute("graphLink", new GraphURLScheme(kit.getShortFormProvider()).getURLForOWLObject(owlIndividual));
         }
 
         response.addHeader("title", projectInfo.name() + ": " + title);

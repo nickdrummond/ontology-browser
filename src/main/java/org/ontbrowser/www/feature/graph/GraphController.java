@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.ui.Model;
@@ -22,7 +23,7 @@ import java.util.List;
 // TODO navigation with keyboard?
 @RestController
 @Profile("graph")
-@RequestMapping(value = "/graph")
+@RequestMapping(value = "/graph-old")
 public class GraphController extends ApplicationController {
 
     private final GraphService graphService;
@@ -139,7 +140,8 @@ public class GraphController extends ApplicationController {
             final List<String> right,
             OWLOntology ont, Model model) {
 
-        var shortForm = kit.getShortFormProvider().getShortForm(entity);
+        var sfp = kit.getShortFormProvider();
+        var shortForm = sfp.getShortForm(entity);
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
         var zoneDescriptors = new ZoneDescriptors(top, bottom, left, right);
         var proxyBuilder = new ProxyBuilder(df);
@@ -149,8 +151,8 @@ public class GraphController extends ApplicationController {
         model.addAttribute("subject", entity);
         model.addAttribute("proxies", proxyBuilder);
         model.addAttribute("zones", zones);
-        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new GraphURLScheme()));
-        model.addAttribute("sfp", kit.getShortFormProvider());
+        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new GraphURLScheme(sfp)));
+        model.addAttribute("sfp", sfp);
 
         return new ModelAndView("graphfragment :: startnode");
     }

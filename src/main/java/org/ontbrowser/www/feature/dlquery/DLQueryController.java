@@ -152,7 +152,7 @@ public class DLQueryController extends ApplicationController {
         }
     }
 
-    @GetMapping(value = "/ac", produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "/ac")//, produces = MediaType.APPLICATION_XML_VALUE)
     public String autocompleteOWLClassExpression(
             @RequestParam String expression) {
 
@@ -165,7 +165,7 @@ public class DLQueryController extends ApplicationController {
     }
 
     // TODO return the actual ParseResult or an XML rendering of the parse exception
-    @GetMapping(value = "/parse", produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "/parse")//, produces = MediaType.APPLICATION_XML_VALUE)
     public String parseOWLClassExpression(
             @RequestParam String expression) {
 

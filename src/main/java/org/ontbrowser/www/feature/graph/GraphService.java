@@ -17,28 +17,32 @@ import java.util.stream.Collectors;
 public class GraphService {
 
     public Zones createZones(OWLEntity entity, ZoneDescriptors zones, OWLOntology ont, OWLEntityFinder finder, ProxyBuilder proxyBuilder) {
-        var top = createGraph("top", entity, zones.top(), zones.bottom(), ont, finder, proxyBuilder);
-        var left = createGraph("left", entity, zones.left(), zones.right(), ont, finder, proxyBuilder);
-        var right = createGraph("right", entity, zones.right(), zones.left(), ont, finder, proxyBuilder);
+        var top = createGraph("top", entity, zones.top(), zones.bottom(), ont, finder);
+        var left = createGraph("left", entity, zones.left(), zones.right(), ont, finder);
+        var right = createGraph("right", entity, zones.right(), zones.left(), ont, finder);
         var bottom = zones.bottom().isEmpty() // default to all others if not specified
-                ? new GraphBuilder(ont, proxyBuilder).withoutProperties(top, left, right).addEntity(entity)
-                : createGraph("bottom", entity, zones.bottom(), zones.top(), ont, finder, proxyBuilder);
-        return new Zones(top.build(), bottom.build(), left.build(), right.build());
+                ? new GraphDescriptor(ont).withoutProperties(top, left, right).addEntity(entity)
+                : createGraph("bottom", entity, zones.bottom(), zones.top(), ont, finder);
+
+        return new Zones(
+                new GraphBuilder(proxyBuilder, top).build(),
+                new GraphBuilder(proxyBuilder, bottom).build(),
+                new GraphBuilder(proxyBuilder, left).build(),
+                new GraphBuilder(proxyBuilder, right).build());
     }
 
-    private GraphBuilder createGraph(
+    private GraphDescriptor createGraph(
             String name,
             OWLEntity entity,
             List<String> propNames,
             List<String> invPropNames,
             OWLOntology ont,
-            OWLEntityFinder finder,
-            ProxyBuilder proxyBuilder) {
+            OWLEntityFinder finder) {
 
         Set<OWLProperty> props = getProps(propNames, ont, finder);
         Set<OWLProperty> invProps = getProps(invPropNames, ont, finder);
 
-        var builder = new GraphBuilder(ont, proxyBuilder).withName(name);
+        var builder = new GraphDescriptor(ont).withName(name);
         if (!props.isEmpty() || !invProps.isEmpty()) {
             builder.addEntity(entity).withProperties(props).withInverseProperties(invProps);
         }

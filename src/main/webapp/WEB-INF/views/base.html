@@ -32,15 +32,15 @@
         // Set dark mode early to avoid flicker
         document.documentElement.setAttribute(THEME_ATTRIBUTE, sessionStorage.getItem(THEME_KEY) || THEME_DEFAULT);
     </script>
-    <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
-            th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
+    <script type='text/javascript' src='../../static/js/libs/jquery-1.4.3.min.js'
+            th:src="@{/static/js/libs/jquery-1.4.3.min.js}"></script>
 
     <script type='module' src='../../static/js/app.js'
             th:src='@{/static/js/app.js}'>
     </script>
 
-    <script type='text/javascript' src='../../static/js/bsn.AutoSuggest_2.1_multiword.js'
-            th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
+    <script type='text/javascript' src='../../static/js/libs/bsn.AutoSuggest_2.1_multiword.js'
+            th:src="@{/static/js/libs/bsn.AutoSuggest_2.1_multiword.js}"></script>
 </th:block>
 
 <th:block th:fragment="includeTree">
