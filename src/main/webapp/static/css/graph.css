@@ -10,6 +10,11 @@
     position: relative;
 }
 
+.graph-controls form {
+    display: flex;
+    flex-direction: column;
+}
+
 [data-theme="dark"] .graph {
     filter: invert(1);
 }
