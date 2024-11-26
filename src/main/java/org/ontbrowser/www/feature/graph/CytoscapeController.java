@@ -47,7 +47,7 @@ public class CytoscapeController extends ApplicationController {
             @RequestParam(required = false) final List<String> indivs,
             @RequestParam(required = false) final String query,
             @RequestParam(required = false, defaultValue = "") final List<String> props,
-            @RequestParam(required = false, defaultValue = "") final List<String> compound,
+            @RequestParam(required = false, defaultValue = "") final List<String> parents,
             @RequestParam(required = false, defaultValue = "") final List<String> follow,
             @RequestParam(required = false, defaultValue = "1") final int depth,
             @ModelAttribute final OWLOntology ont
@@ -55,7 +55,7 @@ public class CytoscapeController extends ApplicationController {
         var proxyBuilder = new ProxyBuilder(ont.getOWLOntologyManager().getOWLDataFactory());
         var finder = kit.getFinder();
 
-        var compoundProperties = getProps(compound, ont, finder);
+        var parentProperties = getProps(parents, ont, finder);
         var followProperties = getProps(follow, ont, finder);
         var properties = props.isEmpty()
                 ? ont.getObjectPropertiesInSignature(Imports.INCLUDED)
@@ -65,13 +65,13 @@ public class CytoscapeController extends ApplicationController {
         GraphDescriptor descr = new GraphDescriptor(ont)
                 .addEntities(individuals)
                 .withProperties(properties)
-                .withProperties(compoundProperties)
-                .withInverseProperties(compoundProperties)
+                .withProperties(parentProperties)
+                .withInverseProperties(parentProperties)
                 .withFollow(followProperties)
                 .withDepth(depth);
         var graph = new GraphBuilder(proxyBuilder, descr).build();
 
-        return new CytoscapeGraph(graph, kit.getShortFormProvider(), compoundProperties, individuals);
+        return new CytoscapeGraph(graph, kit.getShortFormProvider(), parentProperties, individuals);
     }
 
     private Set<OWLNamedIndividual> getInds(String query) {

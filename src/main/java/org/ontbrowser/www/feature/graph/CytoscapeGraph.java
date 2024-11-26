@@ -26,16 +26,16 @@ public class CytoscapeGraph {
     public CytoscapeGraph(
             Graph graph,
             ShortFormProvider sfp,
-            Set<? extends OWLProperty> compoundRelations,
+            Set<? extends OWLProperty> parentProperties,
             Set<OWLNamedIndividual> individuals
     ) {
-        var childrenNodes = compoundRelations.stream().<Element>mapMulti((rel, consumer) ->
+        var childrenNodes = parentProperties.stream().<Element>mapMulti((rel, consumer) ->
             graph.getEdgesWithPredicate(rel).forEach(edge -> consumer.accept(childFromEntity(sfp, edge.subject(), edge.object(), individuals.contains(edge.subject()))))
         ).distinct();
 
         var nodes = graph.edges().stream().<Element>mapMulti((edge, consumer) -> {
             consumer.accept(nodeFromEntity(sfp, edge.object(), individuals.contains(edge.object())));
-            if (!compoundRelations.contains(edge.predicate())) {
+            if (!parentProperties.contains(edge.predicate())) {
                 consumer.accept(nodeFromEntity(sfp, edge.subject(),individuals.contains(edge.subject())));
             }
         }).distinct();
@@ -43,7 +43,7 @@ public class CytoscapeGraph {
         // TODO replace any nodes that have a child with a
 
         var edges = graph.edges().stream()
-                .filter(edge -> !compoundRelations.contains(edge.predicate()))
+                .filter(edge -> !parentProperties.contains(edge.predicate()))
                 .map(edge -> transformEdge(edge, sfp));
 
         elements = Streams.concat(childrenNodes, nodes, edges).toList();

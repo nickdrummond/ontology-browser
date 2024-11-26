@@ -4,8 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
         name: 'fcose',
         quality: 'default',
         animate: true,
+        animationDuration: 2000,
         fit: true,
         idealEdgeLength: 100,
+        numIter: 5000,
     }
 
     let style = [
@@ -53,43 +55,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let cy = null;
 
-    let urlParams = new URLSearchParams(window.location.search);
+    function setupControls() {
+        setupControl("type", (newValue) => {
+            layout.name = newValue;
+            cy.layout(layout).run();
+        });
+        setupControl("space", (newValue) => {
+            layout.idealEdgeLength = parseInt(newValue);
 
-    setupControl("type", (newValue) => {
-        layout.name = newValue;
-        cy.layout(layout).run();
-    });
+            console.log("space", layout);
 
-    setupControl("depth", newValue => {
-        reload();
-    });
+            cy.layout(layout).run();
+        });
+
+        setupControl("depth", newValue => reload());
+        setupControl("query", newValue => reload());
+        setupControl("indivs", newValue => reload());
+        setupControl("props", newValue => reload());
+        setupControl("follow", newValue => reload());
+        setupControl("parents", newValue => reload());
+    }
 
     function reload() {
-        console.log("Reloading");
+        console.log("loading graph data...");
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
-        fetch('/graph/data?' + urlParams.toString(), {
+        let url = '/graph/data?' + new URLSearchParams(window.location.search).toString();
+        console.log(url);
+        fetch(url, {
             headers: myHeaders,
         })
             .then(response => {
                 response.json().then(json => {
+                    console.log("elements", json.elements.length);
                     buildGraph(json.elements);
                 });
             });
     }
 
     function setupControl(name, changed) {
-        const typeControl = document.getElementById(name);
-        if (typeControl) {
-            const type = urlParams.get(name);
+        const ctrl = document.getElementById(name);
+        if (ctrl) {
+            const type = new URLSearchParams(window.location.search).get(name);
             if (type) {
-                typeControl.value = type;
+                ctrl.value = type;
             }
-            typeControl.addEventListener('change', function () {
+            ctrl.addEventListener('change', function () {
                 const params = new URLSearchParams(window.location.search);
                 params.set(name, this.value);
                 window.history.pushState({}, '', window.location.pathname + '?' + params);
-
                 if (cy) {
                     changed(this.value);
                 }
@@ -98,18 +112,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function buildGraph(elements) {
-        // if (cy == null) {
-            cy = cytoscape({
-                container: document.querySelector('.graph'), // container to render in
-                elements: elements,
-                style: style,
-                layout: layout,
-            });
-        // }
-        // else {
-        //     cy.elements = elements;
-        // }
+        cy = cytoscape({
+            container: document.querySelector('.graph'), // container to render in
+            elements: elements,
+            style: style,
+            layout: layout,
+        });
     }
 
     reload();
+    setupControls();
 });

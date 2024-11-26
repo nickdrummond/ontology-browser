@@ -102,7 +102,7 @@ public class GraphBuilder {
                                 buildCls(cls.asOWLClass(), depth + 1);
                             }
                         } else { // break down a class expression
-                            handleClassExpressionInd(ind, cls, 0);
+                            handleClassExpressionInd(ind, cls, depth + 1);
                         }
                         // TODO inverses
                     }
@@ -113,9 +113,9 @@ public class GraphBuilder {
 
     // TODO when superclass is svf (Jedi) or cls is filler of svf - eg pizza (SlicedTomatoTopping)
     private void buildCls(OWLClass cls, int depth) {
-        if (depth > descr.getMaxDepth()) {
-            return;
-        }
+//        if (depth > descr.getMaxDepth()) {
+//            return;
+//        }
 
         if (!renderedClasses.contains(cls)) {
             renderedClasses.add(cls);
@@ -152,9 +152,9 @@ public class GraphBuilder {
     }
 
     private void handleClassExpressionInd(OWLEntity subject, OWLClassExpression cls, int depth) {
-        if (depth > descr.getMaxDepth()) {
-            return;
-        }
+//        if (depth > descr.getMaxDepth()) {
+//            return;
+//        }
 
         cls.accept(new OWLClassExpressionVisitor() {
 
@@ -162,7 +162,7 @@ public class GraphBuilder {
             public void visit(OWLObjectSomeValuesFrom ce) {
                 getNamedNodeFromFiller(ce.getFiller()).ifPresent(cls -> {
                     var proxy = proxyBuilder.createAnonNode(cls);
-                    handleClassExpressionInd(proxy, ce.getFiller(), depth + 1);
+                    handleClassExpressionInd(proxy, ce.getFiller(), depth); // at same level
                     addIfFilterAllows(
                             depth, subject,
                             ce.getProperty().asOWLObjectProperty(),
@@ -182,22 +182,22 @@ public class GraphBuilder {
 
             @Override
             public void visit(OWLObjectIntersectionOf ce) {
-                ce.operands().forEach(op -> handleClassExpressionInd(subject, op, depth + 1));
+                ce.operands().forEach(op -> handleClassExpressionInd(subject, op, depth)); // at same level
             }
         });
     }
 
     private void handleClassExpression(OWLEntity subject, OWLClassExpression cls, int depth) {
-        if (depth > descr.getMaxDepth()) {
-            return;
-        }
+//        if (depth > descr.getMaxDepth()) {
+//            return;
+//        }
 
         cls.accept(new OWLClassExpressionVisitor() {
 
             @Override
             public void visit(OWLObjectSomeValuesFrom ce) {
                 getNamedNodeFromFiller(ce.getFiller()).ifPresent(cls -> {
-                    handleClassExpression(cls, ce.getFiller(), depth + 1);
+                    handleClassExpression(cls, ce.getFiller(), depth); // at same level
                     addIfFilterAllows(
                             depth, subject,
                             ce.getProperty().asOWLObjectProperty(),
@@ -208,7 +208,7 @@ public class GraphBuilder {
 
             @Override
             public void visit(OWLObjectIntersectionOf ce) {
-                ce.operands().forEach(op -> handleClassExpression(subject, op, depth + 1));
+                ce.operands().forEach(op -> handleClassExpression(subject, op, depth)); // at same level
             }
         });
     }
