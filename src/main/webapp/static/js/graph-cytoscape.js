@@ -15,6 +15,10 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'node',
             style: {
                 'background-color': '#2B65EC',
+                'background-opacity': 0,
+                'border-width': 1,
+                'border-style': 'solid',
+                'border-color': '#666',
                 'label': 'data(label)'
             }
         },
@@ -41,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'node:selected',
             style: {
                 'background-color': '#F08080',
+                'border-width': 2,
                 'border-color': 'red'
             }
         },

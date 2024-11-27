@@ -13,6 +13,12 @@
 .graph-controls form {
     display: flex;
     flex-direction: column;
+    margin: 1em;
+}
+
+.graph-controls input, .graph-controls select {
+    width: 20em;
+    margin-bottom: 1em;
 }
 
 [data-theme="dark"] .graph {
