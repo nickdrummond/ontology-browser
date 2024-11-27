@@ -1,14 +1,35 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    let layout = {
+    let currentLayout;
+
+    const defaultLayout = {
         name: 'fcose',
         quality: 'default',
         animate: true,
-        animationDuration: 2000,
+        animationDuration: 1000,
         fit: true,
         idealEdgeLength: 100,
         numIter: 5000,
     }
+
+    const layouts = {
+        'concentric': {
+            name: 'concentric',
+            minNodeSpacing: 100,
+            concentric: function (node) { // returns numeric value for each node, placing higher nodes in levels towards the centre
+                return node.degree();
+            }
+        },
+        'circle': {
+            name: 'circle',
+            spacingFactor: 1,
+        },
+        'grid': {
+            name: 'grid',
+            avoidOverlap: true,
+            avoidOverlapPadding: 10,
+        }
+    };
 
     let style = [
         {
@@ -60,17 +81,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let cy = null;
 
+    function getLayout(type) {
+        if (!type) {
+            return {...defaultLayout};
+        }
+
+        if (layouts.hasOwnProperty(type)) {
+            const layout = layouts[type];
+            return {...defaultLayout, ...layout}
+        }
+
+        return {...defaultLayout, ...{name: type}};
+    }
+
+    function setLengthProp(newValue) {
+        switch(currentLayout.name) {
+            case 'fcose': currentLayout.idealEdgeLength = newValue * 2; break;
+            case 'euler': currentLayout.springLength = 100 + (newValue * 2); break;
+            case 'cola': currentLayout.edgeLength = 50 + (newValue * 2); break;
+            case 'concentric': currentLayout.minNodeSpacing = newValue; break;
+            case 'dagre': currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue/50)); break;
+            case 'circle': currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue/50)); break;
+            case 'grid': currentLayout.avoidOverlapPadding = newValue * 2; break;
+        }
+    }
+
     function setupControls() {
         setupControl("type", (newValue) => {
-            layout.name = newValue;
-            cy.layout(layout).run();
+            currentLayout = getLayout(newValue);
+            cy.layout(currentLayout).run();
         });
         setupControl("space", (newValue) => {
-            layout.idealEdgeLength = parseInt(newValue);
-
-            console.log("space", layout);
-
-            cy.layout(layout).run();
+            setLengthProp(parseInt(newValue));
+            cy.layout(currentLayout).run();
         });
 
         setupControl("depth", newValue => reload());
@@ -85,17 +128,17 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("loading graph data...");
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
-        let url = '/graph/data?' + new URLSearchParams(window.location.search).toString();
-        console.log(url);
+        let urlSearchParams = new URLSearchParams(window.location.search);
+        let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
         })
-            .then(response => {
-                response.json().then(json => {
-                    console.log("elements", json.elements.length);
-                    buildGraph(json.elements);
-                });
+        .then(response => {
+            response.json().then(json => {
+                const type = urlSearchParams.get("type");
+                buildGraph(type, json.elements);
             });
+        });
     }
 
     function setupControl(name, changed) {
@@ -116,12 +159,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function buildGraph(elements) {
+    function buildGraph(type, elements) {
+        currentLayout = getLayout(type);
+        const spaceCtrl = document.getElementById("space");
+        setLengthProp(parseInt(spaceCtrl.value));
         cy = cytoscape({
             container: document.querySelector('.graph'), // container to render in
             elements: elements,
             style: style,
-            layout: layout,
+            layout: currentLayout,
         });
     }
 
