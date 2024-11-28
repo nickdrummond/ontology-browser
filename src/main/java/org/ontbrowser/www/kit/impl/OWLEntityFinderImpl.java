@@ -5,6 +5,7 @@ import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -30,6 +31,11 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
                                OWLDataFactory df) {
         this.cache = cache;
         this.df = df;
+    }
+
+    @Override
+    public ShortFormProvider getShortFormProvider() {
+        return cache;
     }
 
     public Set<OWLClass> getOWLClasses (String str){

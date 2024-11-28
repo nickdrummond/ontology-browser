@@ -95,7 +95,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         String title = sfp.getShortForm(ont) + " (Ontology)";
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(ont);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(ont);
 
         final IRI iri = ont.getOntologyID().getOntologyIRI().orElse(IRI.create("Anonymous"));
 

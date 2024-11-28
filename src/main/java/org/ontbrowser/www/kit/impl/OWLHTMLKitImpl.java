@@ -44,6 +44,8 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     private String labelLang;
 
+    private MOSStringRenderer stringRenderer;
+
     public OWLHTMLKitImpl(
             final OWLOntologyManager mngr,
             final OWLOntology rootOntology,
@@ -112,10 +114,14 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     @Override
     public String render(OWLObject owlObject) {
-        StringWriter writer = new StringWriter();
-        MOSRenderer ren = new MOSRenderer(writer, getFinder(), getShortFormProvider(), rootOntology);
-        owlObject.accept(ren);
-        return writer.toString();
+        return getStringRenderer().render(owlObject);
+    }
+
+    private MOSStringRenderer getStringRenderer() {
+        if (stringRenderer == null) {
+            stringRenderer = new MOSStringRenderer(getFinder(), rootOntology);
+        }
+        return stringRenderer;
     }
 
     public OntologyIRIShortFormProvider getOntologySFP() {

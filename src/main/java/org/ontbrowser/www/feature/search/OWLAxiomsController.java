@@ -46,8 +46,8 @@ public class OWLAxiomsController extends ApplicationController {
         });
 
         ElementRenderer<OWLObject> owlRenderer = search
-                .map(s -> getHighlightRenderer(s, rendererFactory.getRenderer(ont)))
-                .orElse(rendererFactory.getRenderer(ont));
+                .map(s -> getHighlightRenderer(s, rendererFactory.getHTMLRenderer(ont)))
+                .orElse(rendererFactory.getHTMLRenderer(ont));
 
         Characteristic axioms = search
                 .map(s -> axiomService.findAxioms(search.get(), ont, kit.getShortFormProvider(), start, pageSize))

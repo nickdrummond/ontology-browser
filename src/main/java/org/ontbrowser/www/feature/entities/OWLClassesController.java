@@ -90,7 +90,7 @@ public class OWLClassesController extends ApplicationController {
             final HttpServletResponse response) throws NotFoundException {
 
         OWLClass owlClass = service.getOWLClassFor(classId, ont);
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlClass);
         return getCommon().getOWLClassFragment(service, owlClass, ont, owlRenderer, with, model, request, response);
     }
 
@@ -105,7 +105,7 @@ public class OWLClassesController extends ApplicationController {
         OWLClass owlClass = service.getOWLClassFor(classId, ont);
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);
         Stats stats = statsService.getClassStats(statsName, r);
 
         return getCommon().getClassChildren(owlClass, r, owlRenderer, stats, model);

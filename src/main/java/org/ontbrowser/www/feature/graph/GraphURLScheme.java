@@ -1,18 +1,19 @@
 package org.ontbrowser.www.feature.graph;
 
+import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.URLScheme;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectVisitorEx;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 
 public class GraphURLScheme implements URLScheme {
 
     public static final String ROOT_PATH = "/graph";
-    private final ShortFormProvider sfp;
+    private final MOSStringRenderer mos;
 
-    public GraphURLScheme(ShortFormProvider sfp) {
-        this.sfp = sfp;
+    public GraphURLScheme(MOSStringRenderer mos) {
+        this.mos = mos;
     }
 
     @Override
@@ -20,7 +21,15 @@ public class GraphURLScheme implements URLScheme {
         return owlObject.accept(new OWLObjectVisitorEx<String>() {
             @Override
             public String visit(OWLNamedIndividual individual) {
-                return ROOT_PATH + "?indivs=" + sfp.getShortForm(individual);
+                return ROOT_PATH + "?indivs=" + mos.render(individual);
+            }
+
+            @Override
+            public <T> String doDefault(T object) {
+                if (object instanceof OWLClassExpression expr) {
+                    return ROOT_PATH + "?depth=0&query=" + mos.render(expr);
+                }
+                return OWLObjectVisitorEx.super.doDefault(object);
             }
         });
     }

@@ -4,11 +4,12 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.OWLClassesService;
 import org.ontbrowser.www.feature.entities.OWLIndividualsService;
+import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.ui.Model;
@@ -143,15 +144,19 @@ public class GraphController extends ApplicationController {
         var sfp = kit.getShortFormProvider();
         var shortForm = sfp.getShortForm(entity);
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
+        var finder = kit.getFinder();
+
         var zoneDescriptors = new ZoneDescriptors(top, bottom, left, right);
         var proxyBuilder = new ProxyBuilder(df);
-        var zones = graphService.createZones(entity, zoneDescriptors, ont, kit.getFinder(), proxyBuilder);
+        var zones = graphService.createZones(entity, zoneDescriptors, ont, finder, proxyBuilder);
+        var urlScheme = new GraphURLScheme(new MOSStringRenderer(finder, ont));
+        var mos = rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme);
 
         model.addAttribute("title", shortForm + " (graph)");
         model.addAttribute("subject", entity);
         model.addAttribute("proxies", proxyBuilder);
         model.addAttribute("zones", zones);
-        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new GraphURLScheme(sfp)));
+        model.addAttribute("mos", mos);
         model.addAttribute("sfp", sfp);
 
         return new ModelAndView("graphfragment :: startnode");

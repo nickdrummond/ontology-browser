@@ -81,7 +81,7 @@ public class OWLEntitiesController extends ApplicationController {
             }
         }
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);
 
         String propLabel = optProp.orElse("All annotations");
 

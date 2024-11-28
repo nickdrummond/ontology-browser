@@ -145,7 +145,7 @@ public class CommonRelations<T extends OWLProperty> {
             activeObjects.add(individual);
         }
 
-        return rendererFactory.getRenderer(relationsHierarchyService.getOnt())
+        return rendererFactory.getHTMLRenderer(relationsHierarchyService.getOnt())
                 .withActiveObjects(activeObjects)
                 .withURLScheme(urlScheme);
     }

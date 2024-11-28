@@ -1,7 +1,9 @@
 package org.ontbrowser.www.feature.dlquery;
 
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.feature.graph.GraphURLScheme;
 import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
@@ -17,7 +19,6 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -61,8 +62,9 @@ public class DLQueryController extends ApplicationController {
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker checker = kit.getOWLEntityChecker();
 
+        OWLClassExpression owlClassExpression = null;
         if (!expression.isEmpty()) {
-            OWLClassExpression owlClassExpression = parserService.getOWLClassExpression(expression, df, checker);
+            owlClassExpression = parserService.getOWLClassExpression(expression, df, checker);
             reasonerService.asyncQuery(new DLQuery(owlClassExpression, queryType));
         }
 
@@ -70,11 +72,11 @@ public class DLQueryController extends ApplicationController {
             reasonerService.asyncQuery(new DLQuery(parserService.getOWLClassExpression(minus, df, checker), queryType));
         }
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
+        OWLHTMLRenderer htmlRenderer = rendererFactory.getHTMLRenderer(ont);
 
         model.addAttribute("reasonerName", reasonerService.getReasoner().getReasonerName());
         model.addAttribute("reasoningOntology", reasonerService.getReasoningActiveOnt());
-        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("mos", htmlRenderer);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("expression", expression);
         model.addAttribute("minus", minus);
@@ -82,6 +84,11 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("query", queryType);
         model.addAttribute("queries", QueryType.values());
         model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+
+        if (projectInfo.activeProfiles().contains("graph") && owlClassExpression != null) {
+            var mos = new MOSStringRenderer(kit.getFinder(), ont);
+            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlClassExpression));
+        }
 
         return new ModelAndView("dlquery");
     }
@@ -132,7 +139,7 @@ public class DLQueryController extends ApplicationController {
             Characteristic resultsCharacteristic = buildCharacteristic(queryType.name(), results, c, start, pageSize);
 
             // TODO update scheme to render links with the entity as a param
-            OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
+            OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);
 
             // Target links to parent page for fragment
             UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequest()

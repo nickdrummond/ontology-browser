@@ -4,10 +4,12 @@ import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import javax.annotation.Nonnull;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Set;
 
@@ -21,9 +23,8 @@ public class MOSRenderer extends ManchesterOWLSyntaxObjectRenderer {
 
     public MOSRenderer(Writer writer,
                        OWLEntityFinder finder,
-                       ShortFormProvider entityShortFormProvider,
                        OWLOntology ont) {
-        super(writer, entityShortFormProvider);
+        super(writer, finder.getShortFormProvider());
         this.finder = finder;
         this.ont = ont;
     }

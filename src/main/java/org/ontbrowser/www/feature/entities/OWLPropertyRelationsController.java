@@ -26,7 +26,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
@@ -200,7 +199,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         OWLReasoner reasoner = reasonerFactoryService.getToldReasoner(ont);
 
         model.addAttribute("t", hierarchyService.getChildren(property));
-        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(new RelationPropertyURLScheme()));
+        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(new RelationPropertyURLScheme()));
         model.addAttribute("stats", statsService.getPropertyStats(statsName, reasoner));
         model.addAttribute("statsName", statsName);
 
@@ -229,7 +228,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
                 .withQuery(request.getQueryString());
 
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
-        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
+        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme));
         model.addAttribute("stats", statsService.getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService));
         model.addAttribute("statsName", "treeStats"); // TODO not used
 

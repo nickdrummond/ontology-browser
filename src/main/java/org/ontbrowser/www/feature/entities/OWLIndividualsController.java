@@ -173,7 +173,7 @@ public class OWLIndividualsController extends ApplicationController {
         if (ind != null) {
             activeObjects.add(ind);
         }
-        return rendererFactory.getRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
+        return rendererFactory.getHTMLRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
     }
 
     private OWLHTMLRenderer getRenderer(OWLClass type, OWLOntology ont, HttpServletRequest request) {
@@ -182,7 +182,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         Set<OWLObject> activeObjects = new HashSet<>();
         activeObjects.add(type);
-        return rendererFactory.getRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
+        return rendererFactory.getHTMLRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
     }
 
     private IndividualsByTypeHierarchyService buildSecondaryHierarchy(Model model, OWLClass type, OWLReasoner r) {
@@ -236,7 +236,7 @@ public class OWLIndividualsController extends ApplicationController {
         OWLNamedIndividual owlIndividual = individualsService.getOWLIndividualFor(individualId, ont);
 
         // TODO custom renderer - linked to tree (see relations)
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlIndividual);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlIndividual);
         return getCommon().getOWLIndividualFragment(individualsService, owlIndividual, inferred, with, ont, owlRenderer, model, request, response);
     }
 
@@ -252,7 +252,7 @@ public class OWLIndividualsController extends ApplicationController {
         OWLClass owlClass = owlClassesService.getOWLClassFor(classId, ont);
 
         // TODO custom renderer
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlClass);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlClass);
         return getCommon().getOWLClassFragment(owlClassesService, owlClass, ont, owlRenderer, with, model, request, response);
     }
 

@@ -77,7 +77,7 @@ public class RootController extends ApplicationController implements Application
             model.addAttribute("ontologies", ontologies);
             model.addAttribute("cloud", cloudModel);
             model.addAttribute("helper", helper);
-            model.addAttribute("mos", rendererFactory.getRenderer(ont));
+            model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
 
             return new ModelAndView("index");
         }

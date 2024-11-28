@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
@@ -92,7 +91,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDatatype);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlDatatype);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlDatatype);
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -124,7 +123,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(property);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);
 
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);

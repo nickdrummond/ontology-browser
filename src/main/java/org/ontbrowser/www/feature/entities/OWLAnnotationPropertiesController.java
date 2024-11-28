@@ -88,7 +88,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlAnnotationProperty);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(owlAnnotationProperty);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlAnnotationProperty);
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -118,7 +118,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         OWLAnnotationProperty prop = service.getPropertyFor(propertyId, ont);
 
         model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
-        model.addAttribute("mos", rendererFactory.getRenderer(ont));
+        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
 
         return new ModelAndView("base::children");
     }

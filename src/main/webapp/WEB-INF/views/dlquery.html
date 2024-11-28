@@ -41,6 +41,8 @@
                     </li>
                 </ul>
                 <input id="dlQuerySubmit" type='submit' value='query' />
+                <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
+
             </div>
         </form>
 

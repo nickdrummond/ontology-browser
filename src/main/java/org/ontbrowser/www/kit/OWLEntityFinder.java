@@ -1,6 +1,7 @@
 package org.ontbrowser.www.kit;
 
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.util.Optional;
 import java.util.Set;
@@ -13,6 +14,8 @@ import java.util.Set;
  * - partial string match (for search)
  */
 public interface OWLEntityFinder {
+
+    ShortFormProvider getShortFormProvider();
 
     Set<OWLClass> getOWLClasses(String str);
 

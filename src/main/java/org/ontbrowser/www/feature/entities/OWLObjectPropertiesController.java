@@ -82,7 +82,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(property);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getRenderer(ont).withActiveObject(property);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(property);
 
         List<With> withOrEmpty = with == null ? List.of() : with;
 
@@ -112,7 +112,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
         OWLObjectProperty prop = service.getPropertyFor(propertyId, ont);
 
         model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
-        model.addAttribute("mos", rendererFactory.getRenderer(ont));
+        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
 
         return new ModelAndView("base::children");
     }

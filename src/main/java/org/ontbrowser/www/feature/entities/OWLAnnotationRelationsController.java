@@ -178,7 +178,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property)
                 .withQuery(request.getQueryString());
 
-        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme).withActiveObject(property));
+        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme).withActiveObject(property));
 
         return new ModelAndView(CommonRelations.BASE_TREE);
     }
@@ -205,7 +205,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
                 .withQuery(request.getQueryString());
 
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
-        model.addAttribute("mos", rendererFactory.getRenderer(ont).withURLScheme(urlScheme));
+        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme));
         model.addAttribute("stats", statsService.getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService));
         model.addAttribute("statsName", "treeStats"); // TODO not used
 

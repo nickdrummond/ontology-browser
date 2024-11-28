@@ -8,6 +8,7 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
@@ -150,7 +151,7 @@ public class CommonFragments {
             final boolean inferred,
             List<With> with,
             final OWLOntology ont,
-            final OWLHTMLRenderer owlRenderer,
+            final OWLHTMLRenderer owlHtmlRenderer,
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response) {
@@ -188,10 +189,11 @@ public class CommonFragments {
         model.addAttribute("iri", owlIndividual.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
-        model.addAttribute("mos", owlRenderer);
+        model.addAttribute("mos", owlHtmlRenderer);
 
         if (projectInfo.activeProfiles().contains("graph")) {
-            model.addAttribute("graphLink", new GraphURLScheme(kit.getShortFormProvider()).getURLForOWLObject(owlIndividual));
+            var mos = new MOSStringRenderer(kit.getFinder(), ont);
+            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlIndividual));
         }
 
         response.addHeader("title", projectInfo.name() + ": " + title);

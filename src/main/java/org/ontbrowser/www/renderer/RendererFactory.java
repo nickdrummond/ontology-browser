@@ -26,7 +26,7 @@ public class RendererFactory {
         this.finder = finder;
     }
 
-    public OWLHTMLRenderer getRenderer(final OWLOntology ont) {
+    public OWLHTMLRenderer getHTMLRenderer(final OWLOntology ont) {
         return new OWLHTMLRenderer(sfp, ontSfp, urlScheme, ont, finder);
     }
 }
