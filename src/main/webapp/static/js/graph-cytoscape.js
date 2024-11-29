@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const defaultLayout = {
         name: 'fcose',
         quality: 'default',
-        animate: true,
+        animate: false,
         animationDuration: 1000,
         fit: true,
         idealEdgeLength: 100,
-        numIter: 5000,
+        numIter: 2500,
     }
 
     const layouts = {
