@@ -77,7 +77,7 @@ public class GraphBuilder {
 
             @Override
             public void doDefault(Object object) {
-                log.warn("Ignoring axiom {} ", object);
+                log.debug("Ignoring axiom {} ", object);
             }
         }));
     }
@@ -113,7 +113,7 @@ public class GraphBuilder {
             }
         }
         else {
-            log.warn("axiom ignored as anon {}", axiom);
+            log.debug("axiom ignored as anon {}", axiom);
         }
     }
 
