@@ -1,91 +1,24 @@
-.graph-scroll {
-    overflow: scroll;
-    height: 100%;
-    width: 100%;
-}
-
+/* must have height for lines + scroll to work */
+/* do not set to 100% as it infinitely expands */
 .graph {
-    width: 100%;
-    height: 100%; /* must have height for lines + scroll to work */
-    position: relative;
+    flex-grow: 2;
+    margin: 1rem;
+    height: 40rem;
+    background-color: #fefefe;
+    border: 1px solid black;
 }
 
 .graph-controls form {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     margin: 1em;
 }
 
 .graph-controls input, .graph-controls select {
-    width: 20em;
     margin-bottom: 1em;
 }
 
 [data-theme="dark"] .graph {
     filter: invert(1);
-}
-
-.graph .g-th {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    align-items: center;
-}
-
-.graph .top, .graph .bottom {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
-
-.graph ul {
-    margin: 0;
-    padding: 0;
-}
-
-.graph ul li {
-    list-style: none;
-    padding-left: 0;
-}
-
-.graph .g-edge {
-    margin-bottom: 2em;
-}
-
-.graph .g-node {
-    display: block;
-    justify-self: center;
-    height: 2rem;
-    width: 2rem;
-    border: 2px solid #4189a0;
-    border-radius: 50%;
-    margin: 1em 5em;
-}
-
-.graph .selected {
-    background-color: rgba(65, 137, 160, 0.07);
-}
-
-.graph .g-node a {
-    font-size: smaller;
-    position: relative;
-}
-
-.graph .g-predicate {
-    display: none;
-}
-
-.graph .left .g-target {
-    margin: 1rem 5rem 1rem 0;
-}
-
-.graph .right .g-target {
-    margin: 1rem 0 1rem 5rem;
-}
-
-.graph .top .g-target {
-    margin: 0 1rem 5rem 1rem;
-}
-
-.graph .bottom .g-target {
-    margin: 5rem 1rem 0 1rem;
 }
