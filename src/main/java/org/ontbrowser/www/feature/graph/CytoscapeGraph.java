@@ -3,10 +3,8 @@ package org.ontbrowser.www.feature.graph;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Streams;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLProperty;
-import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.ontbrowser.www.renderer.MOSStringRenderer;
+import org.semanticweb.owlapi.model.*;
 
 import java.util.List;
 import java.util.Set;
@@ -14,58 +12,74 @@ import java.util.Set;
 @JsonSerialize
 public class CytoscapeGraph {
 
+    private final MOSStringRenderer mos;
+
     private interface Data{}
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private record EdgeData(String label, String source, String target) implements Data {}
-    private record NodeData(String id, String label) implements Data {}
+    private record NodeData(String id, String label, String type) implements Data {}
     private record ChildData(String id, String label, String parent) implements Data {}
     private record Element(String group, Data data, boolean selected){}
 
-    private List<Element> elements ;
+    private final List<Element> elements ;
 
     public CytoscapeGraph(
             Graph graph,
-            ShortFormProvider sfp,
+            MOSStringRenderer mos,
             Set<? extends OWLProperty> parentProperties,
-            Set<OWLNamedIndividual> individuals
+            Set<? extends OWLObject> owlObjects
     ) {
+        this.mos = mos;
+
         var childrenNodes = parentProperties.stream().<Element>mapMulti((rel, consumer) ->
-            graph.getEdgesWithPredicate(rel).forEach(edge -> consumer.accept(childFromEntity(sfp, edge.subject(), edge.object(), individuals.contains(edge.subject()))))
+            graph.getEdgesWithPredicate(rel).forEach(edge ->
+                    consumer.accept(childFrom(edge.subject(), edge.object(), owlObjects.contains(edge.subject()))))
         ).distinct();
 
         var nodes = graph.edges().stream().<Element>mapMulti((edge, consumer) -> {
-            consumer.accept(nodeFromEntity(sfp, edge.object(), individuals.contains(edge.object())));
+            consumer.accept(nodeFromEntity(edge.object(), owlObjects.contains(edge.object())));
             if (!parentProperties.contains(edge.predicate())) {
-                consumer.accept(nodeFromEntity(sfp, edge.subject(),individuals.contains(edge.subject())));
+                consumer.accept(nodeFromEntity(edge.subject(),owlObjects.contains(edge.subject())));
             }
         }).distinct();
 
-        // TODO replace any nodes that have a child with a
-
         var edges = graph.edges().stream()
                 .filter(edge -> !parentProperties.contains(edge.predicate()))
-                .map(edge -> transformEdge(edge, sfp));
+                .map(this::transformEdge);
 
         elements = Streams.concat(childrenNodes, nodes, edges).toList();
     }
 
-    private Element transformEdge(Graph.Edge edge, ShortFormProvider sfp) {
-        String label = sfp.getShortForm(edge.predicate());
-        return new Element("edges", new EdgeData(label, getId(edge.subject()), getId(edge.object())), false);
+    private Element transformEdge(Graph.Edge edge) {
+        EdgeData data = new EdgeData(mos.render(edge.predicate()), getId(edge.subject()), getId(edge.object()));
+        return new Element("edges", data, false);
     }
 
-    private static Element nodeFromEntity(ShortFormProvider sfp, OWLEntity subject, boolean selected) {
-        String label = sfp.getShortForm(subject);
-        return new Element("nodes", new NodeData(getId(subject), label), selected);
+    private Element nodeFromEntity(OWLObject subject, boolean selected) {
+        String label = mos.render(subject);
+        return new Element("nodes", new NodeData(getId(subject), label, typeFor(subject)), selected);
     }
 
-    private static Element childFromEntity(ShortFormProvider sfp, OWLEntity subject, OWLEntity parent, boolean selected) {
-        String label = sfp.getShortForm(subject);
+    private String typeFor(OWLObject subject) {
+        if (subject instanceof OWLNamedIndividual) {
+            return "individual";
+        }
+        else if (subject instanceof OWLClass) {
+            return "class";
+        }
+        return "expression";
+    }
+
+    private Element childFrom(OWLObject subject, OWLObject parent, boolean selected) {
+        String label = mos.render(subject);
         return new Element("nodes", new ChildData(getId(subject), label, getId(parent)), selected);
     }
 
-    private static String getId(OWLEntity subject) {
-        return subject.getIRI().toString();
+    private String getId(OWLObject subject) {
+        if (subject instanceof OWLEntity entity) {
+            return entity.getIRI().toString();
+        }
+        return mos.render(subject);
     }
 
     public List<Element> getElements() {

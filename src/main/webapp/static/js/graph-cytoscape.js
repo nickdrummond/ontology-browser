@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'border-width': 1,
                 'border-style': 'solid',
                 'border-color': '#666',
-                'label': 'data(label)'
+                'label': 'data(label)',
             }
         },
 
@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setupControl("query", newValue => reload());
         setupControl("indivs", newValue => reload());
         setupControl("props", newValue => reload());
+        setupControl("without", newValue => reload());
         setupControl("follow", newValue => reload());
         setupControl("parents", newValue => reload());
     }
@@ -159,12 +160,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function getShape(node) {
+        return "circle";
+    }
+
     function buildGraph(type, elements) {
         currentLayout = getLayout(type);
         const spaceCtrl = document.getElementById("space");
         setLengthProp(parseInt(spaceCtrl.value));
         cy = cytoscape({
             container: document.querySelector('.graph'), // container to render in
+            ready: function() {
+                this.nodes().forEach(function (node) {
+                    let size = Math.min(10 + (node.degree() * 10), 100);
+                    node.css("width", size);
+                    node.css("height", size);
+                    node.css("shape", getShape(node));
+                });
+            },
             elements: elements,
             style: style,
             layout: currentLayout,

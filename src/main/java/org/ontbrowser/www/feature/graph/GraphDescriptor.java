@@ -1,11 +1,12 @@
 package org.ontbrowser.www.feature.graph;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 // TODO could make the properties a list and use that order for display?
 public class GraphDescriptor {
@@ -20,29 +21,12 @@ public class GraphDescriptor {
 
     private final Set<OWLProperty> withInverseProperties = new HashSet<>();
     private final Set<OWLProperty> withoutProperties = new HashSet<>();
-    private final Set<OWLNamedIndividual> individuals = new HashSet<>();
-    private final Set<OWLClass> classes = new HashSet<>();
+    private final Set<OWLObject> owlObjects = new HashSet<>();
     private int depth = 1;
-    private String name = "anon";
 
     public GraphDescriptor(OWLOntology ont) {
         this.ont = ont;
         this.df = ont.getOWLOntologyManager().getOWLDataFactory();
-    }
-
-    public GraphDescriptor withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public GraphDescriptor withProperty(OWLProperty property) {
-        this.withProperties.add(property);
-        return this;
-    }
-
-    public GraphDescriptor withProperties(OWLProperty... properties) {
-        this.withProperties.addAll(Arrays.asList(properties));
-        return this;
     }
 
     public GraphDescriptor withProperties(Set<? extends OWLProperty> properties) {
@@ -55,18 +39,9 @@ public class GraphDescriptor {
         return this;
     }
 
-    public GraphDescriptor withoutProperty(OWLProperty property) {
-        this.withoutProperties.add(property);
-        return this;
-    }
 
-    public GraphDescriptor withoutProperties(OWLProperty... properties) {
-        this.withoutProperties.addAll(Arrays.asList(properties));
-        return this;
-    }
-
-    public GraphDescriptor withoutProperties(GraphDescriptor... others) {
-        Arrays.asList(others).forEach(descriptor -> this.withoutProperties.addAll(descriptor.getProperties()));
+    public GraphDescriptor withoutProperties(Set<OWLProperty> properties) {
+        this.withoutProperties.addAll(properties);
         return this;
     }
 
@@ -80,30 +55,16 @@ public class GraphDescriptor {
         return withProperties;
     }
 
-    public GraphDescriptor addEntity(OWLEntity entity) {
-        if (entity instanceof OWLNamedIndividual ind) {
-            return addIndividual(ind);
-        }
-        if (entity instanceof OWLClass cls) {
-            return addClass(cls);
-        }
-        throw new NotImplementedException("Unsupported graph type " + entity.getClass());
-    }
-
-    public GraphDescriptor addEntities(Set<OWLNamedIndividual> individuals) {
-        this.individuals.addAll(individuals);
+    public GraphDescriptor addObject(OWLClass cls) {
+        this.owlObjects.add(cls);
         return this;
     }
 
-    public GraphDescriptor addIndividual(OWLNamedIndividual ind) {
-        this.individuals.add(ind);
+    public GraphDescriptor addObjects(Set<? extends OWLObject> owlObjects) {
+        this.owlObjects.addAll(owlObjects);
         return this;
     }
 
-    public GraphDescriptor addClass(OWLClass cls) {
-        this.classes.add(cls);
-        return this;
-    }
 
     public GraphDescriptor withDepth(int depth) {
         this.depth = depth;
@@ -122,12 +83,8 @@ public class GraphDescriptor {
         return followProperties.contains(property);
     }
 
-    public Set<OWLNamedIndividual> getIndividuals() {
-        return individuals;
-    }
-
-    public Set<OWLClass> getClasses() {
-        return classes;
+    public Set<OWLObject> getOwlObjects() {
+        return owlObjects;
     }
 
     public int getMaxDepth() {

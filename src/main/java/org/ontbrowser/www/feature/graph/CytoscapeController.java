@@ -4,6 +4,7 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.ParserService;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,36 +44,51 @@ public class CytoscapeController extends ApplicationController {
         return new ModelAndView("cytoscape");
     }
 
+    // TODO if no query or indivs, get all with property
     @GetMapping(value = "/data", produces = MediaType.APPLICATION_JSON_VALUE)
     public CytoscapeGraph individualJson(
-            @RequestParam(required = false) final List<String> indivs,
+            @RequestParam(required = false, defaultValue = "") final List<String> indivs,
             @RequestParam(required = false) final String query,
             @RequestParam(required = false, defaultValue = "") final List<String> props,
             @RequestParam(required = false, defaultValue = "") final List<String> parents,
             @RequestParam(required = false, defaultValue = "") final List<String> follow,
+            @RequestParam(required = false, defaultValue = "") final List<String> without,
             @RequestParam(required = false, defaultValue = "1") final int depth,
             @ModelAttribute final OWLOntology ont
     ) {
-        var proxyBuilder = new ProxyBuilder(ont.getOWLOntologyManager().getOWLDataFactory());
         var finder = kit.getFinder();
 
         var parentProperties = getProps(parents, ont, finder);
         var followProperties = getProps(follow, ont, finder);
+        var withoutProperties = getProps(without, ont, finder);
         var properties = props.isEmpty()
                 ? ont.getObjectPropertiesInSignature(Imports.INCLUDED)
                 : getProps(props, ont, finder);
-        var individuals = query != null ? getInds(query) : getInds(indivs, finder);
-        // getInds(props, compound, follow) // TODO if no query or indivs, get all with property
+
+        //
+        Set<OWLObject> objects = new HashSet<>();
+        if (query != null && !query.isBlank()) {
+            objects.addAll(getInds(query));
+        }
+        if (indivs != null && !indivs.isEmpty()) {
+            objects.addAll(getInds(indivs, finder));
+        }
+        if (objects.isEmpty()) {
+            objects.addAll(properties);
+        }
+
         GraphDescriptor descr = new GraphDescriptor(ont)
-                .addEntities(individuals)
+                .addObjects(objects)
                 .withProperties(properties)
                 .withProperties(parentProperties)
                 .withInverseProperties(parentProperties)
                 .withFollow(followProperties)
+                .withoutProperties(withoutProperties)
                 .withDepth(depth);
-        var graph = new GraphBuilder(proxyBuilder, descr).build();
 
-        return new CytoscapeGraph(graph, kit.getShortFormProvider(), parentProperties, individuals);
+        var graph = new GraphBuilder(descr).build();
+
+        return new CytoscapeGraph(graph, new MOSStringRenderer(kit.getFinder(), ont), parentProperties, objects);
     }
 
     private Set<OWLNamedIndividual> getInds(String query) {

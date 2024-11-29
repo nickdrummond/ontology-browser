@@ -1,7 +1,5 @@
 package org.ontbrowser.www.feature.graph;
 
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLProperty;
 
@@ -12,7 +10,7 @@ import java.util.function.Predicate;
 
 public record Graph(Set<Edge> edges) {
 
-    public List<Edge> getEdgesWithSubject(OWLEntity entity) {
+    public List<Edge> getEdgesWithSubject(OWLObject entity) {
         return getEdgesMatching(edge -> edge.subject.equals(entity));
     }
 
@@ -20,7 +18,7 @@ public record Graph(Set<Edge> edges) {
         return getEdgesMatching(edge -> edge.predicate.equals(entity));
     }
 
-    public List<Edge> getEdgesWithObject(OWLEntity entity) {
+    public List<Edge> getEdgesWithObject(OWLObject entity) {
         return getEdgesMatching(edge -> edge.object.equals(entity));
     }
 
@@ -28,6 +26,6 @@ public record Graph(Set<Edge> edges) {
         return edges.stream().filter(filter).sorted(Comparator.comparing(e -> e.predicate)).toList();
     }
 
-    public record Edge(OWLEntity subject, OWLProperty predicate, OWLEntity object) {
+    public record Edge(OWLObject subject, OWLProperty predicate, OWLObject object) {
     }
 }
