@@ -3,16 +3,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentLayout;
 
     const defaultLayout = {
-        name: 'fcose',
-        quality: 'default',
-        animate: false,
-        animationDuration: 1000,
-        fit: true,
-        idealEdgeLength: 100,
-        numIter: 2500,
+        name: 'cola',
     }
 
     const layouts = {
+        'fcose': {
+            name: 'fcose',
+            idealEdgeLength: 50,
+        },
         'concentric': {
             name: 'concentric',
             minNodeSpacing: 100,
@@ -28,7 +26,10 @@ document.addEventListener('DOMContentLoaded', function () {
             name: 'grid',
             avoidOverlap: true,
             avoidOverlapPadding: 10,
-        }
+        },
+        'cola': {
+            name: 'cola',
+        },
     };
 
     let style = [
@@ -41,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'border-style': 'solid',
                 'border-color': '#666',
                 'label': 'data(label)',
+                'font-size': '10',
             }
         },
 
@@ -48,7 +50,8 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: ':parent',
             style: {
                 'background-opacity': 0.02,
-                'border-color': '#2B65EC'
+                'border-color': '#2B65EC',
+                'font-size': '12',
             }
         },
 
@@ -56,9 +59,10 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'edge',
             style: {
                 'line-color': 'rgba(175,175,175,0.12)',
-                'width': 10,
-                'curve-style': 'straight-triangle',
-                'label': 'data(label)'
+                'width': 1,
+                'curve-style': 'bezier',//'straight-triangle',
+                'label': 'data(label)',
+                'font-size': '8',
             }
         },
 
@@ -107,26 +111,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setupControls() {
-        setupControl("type", (newValue) => {
+        setupControl("type", defaultLayout.name, (newValue) => {
             currentLayout = getLayout(newValue);
             cy.layout(currentLayout).run();
         });
-        setupControl("space", (newValue) => {
+        setupControl("space", null, (newValue) => {
             setLengthProp(parseInt(newValue));
             cy.layout(currentLayout).run();
         });
 
-        setupControl("depth", newValue => reload());
-        setupControl("query", newValue => reload());
-        setupControl("indivs", newValue => reload());
-        setupControl("props", newValue => reload());
-        setupControl("without", newValue => reload());
-        setupControl("follow", newValue => reload());
-        setupControl("parents", newValue => reload());
+        setupControl("depth", null, newValue => reload());
+        setupControl("query", null, newValue => reload());
+        setupControl("indivs", null, newValue => reload());
+        setupControl("props", null, newValue => reload());
+        setupControl("without", null, newValue => reload());
+        setupControl("follow", null, newValue => reload());
+        setupControl("parents", null, newValue => reload());
     }
 
     function reload() {
-        console.log("loading graph data...");
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
@@ -142,12 +145,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function setupControl(name, changed) {
+    function setupControl(name, defaultValue, changed) {
         const ctrl = document.getElementById(name);
         if (ctrl) {
             const type = new URLSearchParams(window.location.search).get(name);
             if (type) {
                 ctrl.value = type;
+            }
+            else if (defaultValue) {
+                ctrl.value = defaultValue;
             }
             ctrl.addEventListener('change', function () {
                 const params = new URLSearchParams(window.location.search);
@@ -161,7 +167,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function getShape(node) {
-        return "circle";
+        switch(node.data().type) {
+            case 'individual': return "diamond";
+            case 'class': return "ellipse";
+        }
     }
 
     function buildGraph(type, elements) {
