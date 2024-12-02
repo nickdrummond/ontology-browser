@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             selector: 'node',
             style: {
-                'background-color': '#2B65EC',
+                'background-color': '#999',
                 'background-opacity': 0,
                 'border-width': 1,
                 'border-style': 'solid',
-                'border-color': '#666',
+                'border-color': '#999',
                 'label': 'data(label)',
                 'font-size': '10',
             }
@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'curve-style': 'bezier',//'straight-triangle',
                 'label': 'data(label)',
                 'font-size': '8',
+                'color': 'rgba(175,175,175,0.12)',
             }
         },
 
@@ -127,6 +128,39 @@ document.addEventListener('DOMContentLoaded', function () {
         setupControl("without", null, newValue => reload());
         setupControl("follow", null, newValue => reload());
         setupControl("parents", null, newValue => reload());
+
+        const refocus = document.getElementById("refocus");
+        refocus.onclick = (e) => {
+            const sel = cy.$(':selected').map(s => s.data().label).join(',');
+            const indivs = document.getElementById("indivs");
+            indivs.value = sel;
+            update("indivs", indivs, () => reload());
+        }
+    }
+
+    function update(name, ctrl, changed) {
+        const params = new URLSearchParams(window.location.search);
+        params.set(name, ctrl.value);
+        window.history.pushState({}, '', window.location.pathname + '?' + params);
+        if (cy) {
+            changed(ctrl.value);
+        }
+    }
+
+    function setupControl(name, defaultValue, changed) {
+        const ctrl = document.getElementById(name);
+        if (ctrl) {
+            const type = new URLSearchParams(window.location.search).get(name);
+            if (type) {
+                ctrl.value = type;
+            }
+            else if (defaultValue) {
+                ctrl.value = defaultValue;
+            }
+            ctrl.addEventListener('change', function () {
+                update(name, ctrl, changed);
+            });
+        }
     }
 
     function reload() {
@@ -145,32 +179,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function setupControl(name, defaultValue, changed) {
-        const ctrl = document.getElementById(name);
-        if (ctrl) {
-            const type = new URLSearchParams(window.location.search).get(name);
-            if (type) {
-                ctrl.value = type;
-            }
-            else if (defaultValue) {
-                ctrl.value = defaultValue;
-            }
-            ctrl.addEventListener('change', function () {
-                const params = new URLSearchParams(window.location.search);
-                params.set(name, this.value);
-                window.history.pushState({}, '', window.location.pathname + '?' + params);
-                if (cy) {
-                    changed(this.value);
-                }
-            });
+    function getShape(node) {
+        switch(node.data().type) {
+            case 'individual': return "ellipse";
+            case 'class': return "rectangle";
+            case 'expression': return "octagon";
         }
     }
 
-    function getShape(node) {
-        switch(node.data().type) {
-            case 'individual': return "diamond";
-            case 'class': return "ellipse";
+    function render(node) {
+        let size = 10
+        if (node.data().type === 'individual') {
+            size = Math.min(size + (node.degree() * 10), 100);
+            // node.css('background-opacity', 1);
         }
+        node.css("width", size);
+        node.css("height", size);
+        node.css("shape", getShape(node));
     }
 
     function buildGraph(type, elements) {
@@ -181,10 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
             container: document.querySelector('.graph'), // container to render in
             ready: function() {
                 this.nodes().forEach(function (node) {
-                    let size = Math.min(10 + (node.degree() * 10), 100);
-                    node.css("width", size);
-                    node.css("height", size);
-                    node.css("shape", getShape(node));
+                    render(node);
                 });
             },
             elements: elements,

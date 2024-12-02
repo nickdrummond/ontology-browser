@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -67,13 +68,12 @@ public class GraphBuilder {
                 buildRelation(axiom, entity, depth);
             }
 
-//            @Override
-//            public void visit(OWLClassAssertionAxiom axiom) {
-//                if (axiom.getIndividual().equals(entity)) {
-//                    handleClassExpressionInd(entity, axiom.getClassExpression(), depth + 1);
-//                    // TODO inverses
-//                }
-//            }
+            @Override
+            public void visit(OWLClassAssertionAxiom axiom) {
+                if (axiom.getIndividual().equals(entity)) {
+                    handleClassExpressionInd(entity, axiom.getClassExpression(), depth);
+                }
+            }
 
             @Override
             public void doDefault(Object object) {
@@ -117,64 +117,38 @@ public class GraphBuilder {
         }
     }
 
-//
-//    private void handleClassExpressionInd(OWLEntity subject, OWLClassExpression expression, int depth) {
-//
-//        expression.accept(new OWLClassExpressionVisitor() {
-//
-//            @Override
-//            public void visit(OWLObjectIntersectionOf ce) {
-//                ce.operands().forEach(op -> handleClassExpressionInd(subject, op, depth)); // at same level
-//            }
-//
-//            @Override
-//            public void visit(OWLObjectSomeValuesFrom ce) {
-//                getNamedNodeFromFiller(ce.getFiller()).ifPresent(cls -> {
-//                    handleClassExpressionInd(proxy, ce.getFiller(), depth); // at same level
-//                    addIfFilterAllows(
-//                            depth, subject,
-//                            ce.getProperty().asOWLObjectProperty(),
-//                            proxy
-//                    );
-//                });
-//            }
-//
-//            @Override
-//            public void visit(OWLObjectHasValue ce) {
-//                addIfFilterAllows(depth,
-//                        subject,
-//                        ce.getProperty().asOWLObjectProperty(),
-//                        ce.getFiller().asOWLNamedIndividual()
-//                );
-//            }
-//        });
-//    }
-//
-//
-//    private Optional<OWLClass> getNamedNodeFromFiller(OWLClassExpression filler) {
-//        return filler.accept(new OWLClassExpressionVisitorEx<>() {
-//            @Override
-//            public Optional<OWLClass> visit(OWLObjectIntersectionOf ce) {
-//                return ce.operands().filter(IsAnonymous::isNamed).findFirst().map(AsOWLClass::asOWLClass);
-//            }
-//
-//            @Override
-//            public Optional<OWLClass> visit(OWLClass ce) {
-//                return Optional.of(ce);
-//            }
-//
-//            @Override
-//            public Optional<OWLClass> visit(OWLObjectSomeValuesFrom ce) {
-//                return Optional.of(df.getOWLThing());
-//            }
-//
-//            @Override
-//            public <T> Optional<OWLClass> doDefault(T object) {
-//                log.warn("Cannot find named node from {}", object);
-//                return Optional.empty();
-//            }
-//        });
-//    }
+
+    private void handleClassExpressionInd(OWLObject subject, OWLClassExpression expression, int depth) {
+
+        expression.accept(new OWLClassExpressionVisitor() {
+
+            @Override
+            public void visit(OWLObjectIntersectionOf ce) {
+                ce.operands().forEach(op -> handleClassExpressionInd(subject, op, depth)); // at same level
+            }
+
+            @Override
+            public void visit(OWLObjectSomeValuesFrom ce) {
+                handleClassExpressionInd(ce.getFiller(), ce.getFiller(), depth); // at same level
+                addIfFilterAllows(
+                        subject,
+                        ce.getProperty().asOWLObjectProperty(),
+                        ce.getFiller(),
+                        descr::isAllowedProperty
+                );
+            }
+
+            @Override
+            public void visit(OWLObjectHasValue ce) {
+                addIfFilterAllows(
+                        subject,
+                        ce.getProperty().asOWLObjectProperty(),
+                        ce.getFiller(),
+                        descr::isAllowedProperty
+                );
+            }
+        });
+    }
 
     private boolean addIfFilterAllows(
             OWLObject subject,

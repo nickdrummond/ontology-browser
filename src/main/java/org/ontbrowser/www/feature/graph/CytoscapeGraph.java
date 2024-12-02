@@ -5,14 +5,20 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.Streams;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @JsonSerialize
 public class CytoscapeGraph {
 
+    private static final Logger log = LoggerFactory.getLogger(CytoscapeGraph.class);
+
     private final MOSStringRenderer mos;
+    private final OWLDataFactory df;
 
     private interface Data{}
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,11 +31,13 @@ public class CytoscapeGraph {
 
     public CytoscapeGraph(
             Graph graph,
+            OWLDataFactory df,
             MOSStringRenderer mos,
             Set<? extends OWLProperty> parentProperties,
             Set<? extends OWLObject> owlObjects
     ) {
         this.mos = mos;
+        this.df =df;
 
         var childrenNodes = parentProperties.stream().<Element>mapMulti((rel, consumer) ->
             graph.getEdgesWithPredicate(rel).forEach(edge ->
@@ -37,9 +45,9 @@ public class CytoscapeGraph {
         ).distinct();
 
         var nodes = graph.edges().stream().<Element>mapMulti((edge, consumer) -> {
-            consumer.accept(nodeFromEntity(edge.object(), owlObjects.contains(edge.object())));
+            consumer.accept(nodeFrom(edge.object(), owlObjects.contains(edge.object())));
             if (!parentProperties.contains(edge.predicate())) {
-                consumer.accept(nodeFromEntity(edge.subject(),owlObjects.contains(edge.subject())));
+                consumer.accept(nodeFrom(edge.subject(),owlObjects.contains(edge.subject())));
             }
         }).distinct();
 
@@ -55,9 +63,23 @@ public class CytoscapeGraph {
         return new Element("edges", data, false);
     }
 
-    private Element nodeFromEntity(OWLObject subject, boolean selected) {
-        String label = mos.render(subject);
+    private Element nodeFrom(OWLObject subject, boolean selected) {
+        var label = getLabel(subject);
         return new Element("nodes", new NodeData(getId(subject), label, typeFor(subject)), selected);
+    }
+
+    private String getLabel(OWLObject subject) {
+        String label = null;
+        if (subject instanceof OWLObjectIntersectionOf intersection) {
+            var namedCls = getNamedNodeFromFiller(intersection);
+            if (namedCls.isPresent()) {
+                label = mos.render(namedCls.get());
+            }
+        }
+        if (label == null) {
+            label = mos.render(subject);
+        }
+        return label;
     }
 
     private String typeFor(OWLObject subject) {
@@ -84,5 +106,24 @@ public class CytoscapeGraph {
 
     public List<Element> getElements() {
         return elements;
+    }
+
+    private Optional<OWLClass> getNamedNodeFromFiller(OWLClassExpression filler) {
+        return filler.accept(new OWLClassExpressionVisitorEx<>() {
+            @Override
+            public Optional<OWLClass> visit(OWLObjectIntersectionOf ce) {
+                return ce.operands().filter(IsAnonymous::isNamed).findFirst().map(AsOWLClass::asOWLClass);
+            }
+
+            @Override
+            public Optional<OWLClass> visit(OWLClass ce) {
+                return Optional.of(ce);
+            }
+
+            @Override
+            public <T> Optional<OWLClass> doDefault(T object) {
+                return Optional.of(df.getOWLThing());
+            }
+        });
     }
 }

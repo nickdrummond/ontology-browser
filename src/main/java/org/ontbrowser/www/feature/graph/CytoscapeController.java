@@ -77,7 +77,7 @@ public class CytoscapeController extends ApplicationController {
             objects.addAll(properties);
         }
 
-        GraphDescriptor descr = new GraphDescriptor(ont)
+        var descr = new GraphDescriptor(ont)
                 .addObjects(objects)
                 .withProperties(properties)
                 .withProperties(parentProperties)
@@ -88,7 +88,9 @@ public class CytoscapeController extends ApplicationController {
 
         var graph = new GraphBuilder(descr).build();
 
-        return new CytoscapeGraph(graph, new MOSStringRenderer(kit.getFinder(), ont), parentProperties, objects);
+        var df = ont.getOWLOntologyManager().getOWLDataFactory();
+        var renderer = new MOSStringRenderer(kit.getFinder(), ont);
+        return new CytoscapeGraph(graph, df, renderer, parentProperties, objects);
     }
 
     private Set<OWLNamedIndividual> getInds(String query) {
