@@ -73,7 +73,7 @@ public class CytoscapeController extends ApplicationController {
         if (indivs != null && !indivs.isEmpty()) {
             objects.addAll(getInds(indivs, finder));
         }
-        if (objects.isEmpty()) {
+        if (objects.isEmpty() && !props.isEmpty()) {
             objects.addAll(properties);
         }
 

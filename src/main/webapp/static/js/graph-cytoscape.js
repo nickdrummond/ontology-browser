@@ -131,11 +131,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const refocus = document.getElementById("refocus");
         refocus.onclick = (e) => {
+            e.preventDefault();
             const sel = cy.$(':selected').map(s => s.data().label).join(',');
             const indivs = document.getElementById("indivs");
             indivs.value = sel;
             update("indivs", indivs, () => reload());
         }
+
+        const expand = document.getElementById("expand");
+        expand.onclick = (e) => {
+            e.preventDefault();
+            const sel = cy.$(':selected').map(s => s.data().label).join(',');
+            const indivs = document.getElementById("indivs");
+            indivs.value = indivs.value.concat(",", sel);
+            append(sel);
+        }
+
     }
 
     function update(name, ctrl, changed) {
@@ -177,6 +188,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 buildGraph(type, json.elements);
             });
         });
+    }
+
+    function append(individual) {
+        const myHeaders = new Headers();
+        myHeaders.append("Accept", "application/json");
+        let url = '/graph/data?indivs=' + individual;
+        fetch(url, {
+            headers: myHeaders,
+        })
+            .then(response => {
+                response.json().then(json => {
+                    const eles = cy.add(json.elements);
+                    eles.layout(currentLayout).run();
+                });
+            });
     }
 
     function getShape(node) {
