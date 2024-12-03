@@ -59,8 +59,8 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'edge',
             style: {
                 'line-color': 'rgba(175,175,175,0.12)',
-                'width': 1,
-                'curve-style': 'bezier',//'straight-triangle',
+                'width': 5,
+                'curve-style': 'straight-triangle',
                 'label': 'data(label)',
                 'font-size': '8',
                 'color': 'rgba(175,175,175,0.12)',
@@ -199,8 +199,9 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => {
                 response.json().then(json => {
-                    const eles = cy.add(json.elements);
-                    eles.layout(currentLayout).run();
+                    let eles = cy.add(json.elements);
+                    // TODO remove duplicate edges
+                    cy.layout(currentLayout).run();
                 });
             });
     }
