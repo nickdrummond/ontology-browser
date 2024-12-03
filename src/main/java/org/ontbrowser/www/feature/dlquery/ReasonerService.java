@@ -59,6 +59,10 @@ public class ReasonerService {
         return setFuture;
     }
 
+    public synchronized Set<OWLEntity> query(@NonNull final DLQuery query) throws ExecutionException, InterruptedException {
+        return asyncQuery(query).get();
+    }
+
     public Set<OWLEntity> getCachedResults(final DLQuery query) throws ExecutionException, InterruptedException, TimeoutException {
         return cache.get(query).get(10, TimeUnit.SECONDS);
     }

@@ -1,7 +1,9 @@
 package org.ontbrowser.www.feature.graph;
 
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.dlquery.ParserService;
+import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
@@ -19,6 +21,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,7 +58,7 @@ public class CytoscapeController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "") final List<String> without,
             @RequestParam(required = false, defaultValue = "1") final int depth,
             @ModelAttribute final OWLOntology ont
-    ) {
+    ) throws ExecutionException, InterruptedException {
         var finder = kit.getFinder();
 
         var parentProperties = getProps(parents, ont, finder);
@@ -93,11 +96,12 @@ public class CytoscapeController extends ApplicationController {
         return new CytoscapeGraph(graph, df, renderer, parentProperties, objects);
     }
 
-    private Set<OWLNamedIndividual> getInds(String query) {
+    private Set<OWLNamedIndividual> getInds(String query) throws ExecutionException, InterruptedException {
         var df = kit.getOWLOntologyManager().getOWLDataFactory();
         var owlEntityChecker = kit.getOWLEntityChecker();
         var clsEpr = parserService.getOWLClassExpression(query, df, owlEntityChecker);
-        return reasonerService.getReasoner().getInstances(clsEpr).getFlattened();
+        var dlQuery = new DLQuery(clsEpr, QueryType.instances);
+        return reasonerService.query(dlQuery).stream().map(OWLEntity::asOWLNamedIndividual).collect(Collectors.toSet());
     }
 
     private Set<OWLNamedIndividual> getInds(List<String> names, OWLEntityFinder finder) {
