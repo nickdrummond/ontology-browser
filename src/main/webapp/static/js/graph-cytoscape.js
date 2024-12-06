@@ -58,12 +58,16 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             selector: 'edge',
             style: {
-                'line-color': 'rgba(175,175,175,0.12)',
+                'color': '#888',
+                'line-color': '#000',
+                'line-opacity': 0.12,
                 'width': 5,
                 'curve-style': 'straight-triangle',
                 'label': 'data(label)',
+                // 'target-label': 'data(label)',
+                // 'target-text-offset': 20,
                 'font-size': '8',
-                'color': 'rgba(175,175,175,0.12)',
+                'text-opacity': 1,
             }
         },
 

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -43,6 +42,7 @@ public class GraphBuilder {
     }
 
     private void build(OWLObject owlObject, int depth) {
+
         if (depth > descr.getMaxDepth()) {
             return;
         }

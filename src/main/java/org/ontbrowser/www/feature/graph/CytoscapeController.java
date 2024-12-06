@@ -84,7 +84,7 @@ public class CytoscapeController extends ApplicationController {
                 .addObjects(objects)
                 .withProperties(properties)
                 .withProperties(parentProperties)
-                .withInverseProperties(parentProperties)
+                //.withInverseProperties(parentProperties) // adding this "fills" parents with their children
                 .withFollow(followProperties)
                 .withoutProperties(withoutProperties)
                 .withDepth(depth);
