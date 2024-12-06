@@ -77,7 +77,9 @@ public class GraphBuilder {
 
             @Override
             public void doDefault(Object object) {
-                log.debug("Ignoring axiom {} ", object);
+                if (!(object instanceof OWLDeclarationAxiom)) {
+                    log.debug("Ignoring axiom {} ", object);
+                }
             }
         }));
     }
