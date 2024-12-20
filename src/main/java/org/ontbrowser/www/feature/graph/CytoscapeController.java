@@ -1,5 +1,6 @@
 package org.ontbrowser.www.feature.graph;
 
+import com.google.common.collect.Streams;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.dlquery.ParserService;
@@ -65,7 +66,7 @@ public class CytoscapeController extends ApplicationController {
         var followProperties = getProps(follow, ont, finder);
         var withoutProperties = getProps(without, ont, finder);
         var properties = props.isEmpty()
-                ? ont.getObjectPropertiesInSignature(Imports.INCLUDED)
+                ? getAllProps(ont)
                 : getProps(props, ont, finder);
 
         //
@@ -96,6 +97,11 @@ public class CytoscapeController extends ApplicationController {
         return new CytoscapeGraph(graph, df, renderer, parentProperties, objects);
     }
 
+    private Set<? extends OWLProperty> getAllProps(OWLOntology ont) {
+        return Streams.concat(ont.objectPropertiesInSignature(Imports.INCLUDED),
+                ont.dataPropertiesInSignature(Imports.INCLUDED)).collect(Collectors.toSet());
+    }
+
     private Set<OWLNamedIndividual> getInds(String query) throws ExecutionException, InterruptedException {
         var df = kit.getOWLOntologyManager().getOWLDataFactory();
         var owlEntityChecker = kit.getOWLEntityChecker();
@@ -122,11 +128,15 @@ public class CytoscapeController extends ApplicationController {
                 .collect(Collectors.toSet());
     }
 
-    private Set<OWLObjectProperty> getProps(String name, OWLEntityFinder finder, OWLOntology ont) {
+    private Set<? extends OWLProperty> getProps(String name, OWLEntityFinder finder, OWLOntology ont) {
         if (name.equals("type")){
             var type = ont.getOWLOntologyManager().getOWLDataFactory().getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE);
             return Set.of(type);
         }
-        return finder.getOWLObjectProperties(name);
+        Set<? extends OWLProperty> props = finder.getOWLObjectProperties(name);
+        if (props.isEmpty()) {
+            props = finder.getOWLDataProperties(name);
+        }
+        return props;
     }
 }

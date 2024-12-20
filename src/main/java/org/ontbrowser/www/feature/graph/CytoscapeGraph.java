@@ -89,6 +89,9 @@ public class CytoscapeGraph {
         else if (subject instanceof OWLClass) {
             return "class";
         }
+        else if (subject instanceof OWLLiteral) {
+            return "literal";
+        }
         return "expression";
     }
 

@@ -69,6 +69,11 @@ public class GraphBuilder {
             }
 
             @Override
+            public void visit(@Nonnull OWLDataPropertyAssertionAxiom axiom) {
+                buildDataRelation(axiom);
+            }
+
+            @Override
             public void visit(OWLClassAssertionAxiom axiom) {
                 if (axiom.getIndividual().equals(entity)) {
                     handleClassExpressionInd(entity, axiom.getClassExpression(), depth);
@@ -82,6 +87,13 @@ public class GraphBuilder {
                 }
             }
         }));
+    }
+
+    private void buildDataRelation(OWLDataPropertyAssertionAxiom axiom) {
+        if (axiom.getProperty() instanceof OWLDataProperty dataProperty) {
+            var newEdge = new Graph.Edge(axiom.getSubject(), dataProperty, axiom.getObject());
+            edges.add(newEdge);
+        }
     }
 
     private void buildRelation(OWLObjectPropertyAssertionAxiom axiom, OWLEntity entity, int depth) {
