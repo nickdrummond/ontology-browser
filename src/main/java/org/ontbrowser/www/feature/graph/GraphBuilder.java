@@ -35,7 +35,7 @@ public class GraphBuilder {
 
     public Graph build() {
         if (!built) {
-            descr.getOwlObjects().forEach(owlObject -> build(owlObject, descr.getMaxDepth()));
+            descr.getOwlObjects().forEach(owlObject -> build(owlObject, 0));
             built = true;
         }
         return new Graph(edges);
@@ -91,8 +91,10 @@ public class GraphBuilder {
 
     private void buildDataRelation(OWLDataPropertyAssertionAxiom axiom) {
         if (axiom.getProperty() instanceof OWLDataProperty dataProperty) {
-            var newEdge = new Graph.Edge(axiom.getSubject(), dataProperty, axiom.getObject());
-            edges.add(newEdge);
+            if (descr.isAllowedProperty(dataProperty)) {
+                var newEdge = new Graph.Edge(axiom.getSubject(), dataProperty, axiom.getObject());
+                edges.add(newEdge);
+            }
         }
     }
 

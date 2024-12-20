@@ -4,9 +4,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const defaultLayout = {
         name: 'cola',
+        animationDuration: 10000,
     }
 
     const layouts = {
+        'breadthfirst': {
+            name: 'breadthfirst',
+            directed: true,
+            circle: true,
+        },
         'fcose': {
             name: 'fcose',
             idealEdgeLength: 50,
@@ -30,6 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
         'cola': {
             name: 'cola',
         },
+        'dagre' : {
+            name: 'dagre',
+            rankDir : 'RL',
+        },
     };
 
     let style = [
@@ -37,10 +47,10 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'node',
             style: {
                 'background-color': '#999',
-                'background-opacity': 0,
-                'border-width': 1,
-                'border-style': 'solid',
-                'border-color': '#999',
+                // 'background-opacity': 0,
+                // 'border-width': 1,
+                // 'border-style': 'solid',
+                // 'border-color': '#999',
                 'label': 'data(label)',
                 'font-size': '10',
             }
@@ -75,15 +85,16 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'node:selected',
             style: {
                 'background-color': '#F08080',
-                'border-width': 2,
-                'border-color': 'red'
+                // 'border-width': 2,
+                // 'border-color': 'red'
             }
         },
 
         {
             selector: 'edge:selected',
             style: {
-                'line-color': '#F08080'
+                'line-color': '#F08080',
+                'line-opacity': 1,
             }
         }
     ];
@@ -111,6 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
             case 'concentric': currentLayout.minNodeSpacing = newValue; break;
             case 'dagre': currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue/50)); break;
             case 'circle': currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue/50)); break;
+            case 'breadthfirst': currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue/50)); break;
             case 'grid': currentLayout.avoidOverlapPadding = newValue * 2; break;
         }
     }

@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @JsonSerialize
 public class CytoscapeGraph {
@@ -42,20 +44,42 @@ public class CytoscapeGraph {
         var childrenNodes = parentProperties.stream().<Element>mapMulti((rel, consumer) ->
             graph.getEdgesWithPredicate(rel).forEach(edge ->
                     consumer.accept(childFrom(edge.subject(), edge.object(), owlObjects.contains(edge.subject()))))
-        ).distinct();
+        );
 
         var nodes = graph.edges().stream().<Element>mapMulti((edge, consumer) -> {
             consumer.accept(nodeFrom(edge.object(), owlObjects.contains(edge.object())));
             if (!parentProperties.contains(edge.predicate())) {
                 consumer.accept(nodeFrom(edge.subject(),owlObjects.contains(edge.subject())));
             }
-        }).distinct();
+        });
 
         var edges = graph.edges().stream()
                 .filter(edge -> !parentProperties.contains(edge.predicate()))
                 .map(this::transformEdge);
 
-        elements = Streams.concat(childrenNodes, nodes, edges).toList();
+//        // If any of the nodes are numeric, add a relation
+//        Stream<Element> numericEdges = IntStream.range(-32, 35)
+//                .mapToObj(this::numericEdge)
+//                .flatMap(this::fillInNumericNodes);
+//
+        elements = Streams.concat(
+                childrenNodes,
+                nodes,
+                edges
+//                numericEdges
+        ).distinct().toList();
+    }
+
+    private Stream<Element> fillInNumericNodes(EdgeData edgeData) {
+        return Stream.of(
+                new Element("edges", edgeData, false),
+                new Element("nodes", new NodeData(edgeData.source, edgeData.source, "literal"), false),
+                new Element("nodes", new NodeData(edgeData.target, edgeData.target, "literal"), false)
+        );
+    }
+
+    private EdgeData numericEdge(int i) {
+        return new EdgeData("after", String.valueOf(i), String.valueOf(i - 1));
     }
 
     private Element transformEdge(Graph.Edge edge) {
