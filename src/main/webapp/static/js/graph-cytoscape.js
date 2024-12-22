@@ -190,6 +190,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function getValue(name) {
+        const ctrl = document.getElementById(name);
+        return ctrl.value;
+    }
+
     function reload() {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
@@ -209,7 +214,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function append(individual) {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
-        let url = '/graph/data?depth=1&indivs=' + individual;
+        let urlSearchParams = new URLSearchParams(window.location.search);
+        urlSearchParams.set("indivs", individual);
+        urlSearchParams.set("depth", 0);
+        let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
         })
@@ -218,6 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     let eles = cy.add(json.elements);
                     // TODO remove duplicate edges
                     cy.layout(currentLayout).run();
+                    cy.ready();
                 });
             });
     }
