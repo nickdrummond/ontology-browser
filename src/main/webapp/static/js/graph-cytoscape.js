@@ -172,6 +172,23 @@ document.addEventListener('DOMContentLoaded', function () {
             openBase64InNewTab(png64, 'image/png');
             // document.querySelector('#png-eg').setAttribute('src', png64);
         };
+
+        const save = document.getElementById("save");
+        save.onclick = (e) => {
+            e.preventDefault();
+            const params = new URLSearchParams(window.location.search);
+            localStorage.setItem(params.toString(), JSON.stringify(cy.json()));
+        };
+
+        const recover = document.getElementById("recover");
+        recover.onclick = (e) => {
+            e.preventDefault();
+            const params = new URLSearchParams(window.location.search);
+            const saved = localStorage.getItem(params.toString());
+            if (saved != null) {
+                cy.json(JSON.parse(saved));
+            }
+        }
     }
 
     function openBase64InNewTab (data, mimeType) {

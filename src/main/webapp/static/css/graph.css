@@ -19,6 +19,22 @@
     margin-bottom: 1em;
 }
 
+.graph-controls .graph-actions {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding-left: 1rem;
+}
+
+.graph-controls .graph-actions button {
+    background: none;
+    border: none;
+}
+
+.graph-controls .graph-actions button:hover {
+    cursor: pointer;
+}
+
 [data-theme="dark"] .graph {
     filter: invert(1);
 }
