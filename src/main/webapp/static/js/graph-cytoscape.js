@@ -265,6 +265,25 @@ document.addEventListener('DOMContentLoaded', function () {
             style: style,
             layout: currentLayout,
         });
+        const doubleClickDelayMs = 300;
+        let previousTapStamp;
+        cy.on('tap', function(e) {
+            const currentTapStamp = e.timeStamp;
+            const msFromLastTap = currentTapStamp - previousTapStamp;
+
+            if (msFromLastTap < doubleClickDelayMs) {
+                e.target.trigger('doubleTap', e);
+            }
+            previousTapStamp = currentTapStamp;
+        });
+
+        cy.on('doubleTap', 'node', function(event, originalEvent) {
+            const node = originalEvent.target;
+            const sel = node.data().label;
+            const indivs = document.getElementById("indivs");
+            indivs.value = indivs.value.concat(",", sel);
+            append(sel);
+        });
     }
 
     reload();
