@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const indivs = document.getElementById("indivs");
             indivs.value = sel;
             update("indivs", indivs, () => reload());
-        }
+        };
 
         const expand = document.getElementById("expand");
         expand.onclick = (e) => {
@@ -161,8 +161,29 @@ document.addEventListener('DOMContentLoaded', function () {
             const indivs = document.getElementById("indivs");
             indivs.value = indivs.value.concat(",", sel);
             append(sel);
-        }
+        };
 
+        const png = document.getElementById("png");
+        png.onclick = (e) => {
+            e.preventDefault();
+            let png64 = cy.png({
+                output: 'base64'
+            });
+            openBase64InNewTab(png64, 'image/png');
+            // document.querySelector('#png-eg').setAttribute('src', png64);
+        };
+    }
+
+    function openBase64InNewTab (data, mimeType) {
+        var byteCharacters = atob(data);
+        var byteNumbers = new Array(byteCharacters.length);
+        for (var i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        var byteArray = new Uint8Array(byteNumbers);
+        var file = new Blob([byteArray], { type: mimeType + ';base64' });
+        var fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
     }
 
     function update(name, ctrl, changed) {
