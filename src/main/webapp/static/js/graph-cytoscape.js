@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function append(individual) {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
-        let url = '/graph/data?indivs=' + individual;
+        let url = '/graph/data?depth=1&indivs=' + individual;
         fetch(url, {
             headers: myHeaders,
         })

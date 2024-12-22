@@ -2,6 +2,7 @@ package org.ontbrowser.www.feature.graph;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,19 +140,33 @@ public class GraphBuilder {
         expression.accept(new OWLClassExpressionVisitor() {
 
             @Override
+            public void visit(OWLClass ce) {
+                if (subject instanceof OWLNamedIndividual) { // don't show for blank nodes
+                    // add type
+                    addIfFilterAllows(subject,
+                            df.getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE.getIRI()),
+                            ce,
+                            descr::isAllowedProperty
+                    );
+                }
+            }
+
+            @Override
             public void visit(OWLObjectIntersectionOf ce) {
                 ce.operands().forEach(op -> handleClassExpressionInd(subject, op, depth)); // at same level
             }
 
             @Override
             public void visit(OWLObjectSomeValuesFrom ce) {
-                handleClassExpressionInd(ce.getFiller(), ce.getFiller(), depth); // at same level
-                addIfFilterAllows(
+                var added = addIfFilterAllows(
                         subject,
                         ce.getProperty().asOWLObjectProperty(),
                         ce.getFiller(),
                         descr::isAllowedProperty
                 );
+                if (added) {
+                    handleClassExpressionInd(ce.getFiller(), ce.getFiller(), depth); // at same level
+                }
             }
 
             @Override

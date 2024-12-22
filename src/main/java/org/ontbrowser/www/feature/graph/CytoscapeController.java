@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @Profile("graph")
@@ -98,8 +99,11 @@ public class CytoscapeController extends ApplicationController {
     }
 
     private Set<? extends OWLProperty> getAllProps(OWLOntology ont) {
-        return Streams.concat(ont.objectPropertiesInSignature(Imports.INCLUDED),
-                ont.dataPropertiesInSignature(Imports.INCLUDED)).collect(Collectors.toSet());
+        return Streams.concat(
+                Stream.of(ont.getOWLOntologyManager().getOWLDataFactory().getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE.getIRI())),
+                ont.objectPropertiesInSignature(Imports.INCLUDED),
+                ont.dataPropertiesInSignature(Imports.INCLUDED)
+        ).collect(Collectors.toSet());
     }
 
     private Set<OWLNamedIndividual> getInds(String query) throws ExecutionException, InterruptedException {
