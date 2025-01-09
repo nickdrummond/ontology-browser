@@ -1,0 +1,95 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert='~{base :: header (title=${title}, rewriteLinks=${false})}'/>
+
+     <link rel='stylesheet' type='text/css' href="../../static/css/graph.css" th:href='@{/static/css/graph.css}'/>
+
+    <!-- TODO only load necessary layout -->
+    <script src='../../static/js/libs/cytoscape.min.js' th:src="@{/static/js/libs/cytoscape.min.js}"></script>
+
+    <script src='../../static/js/libs/layout-base.js' th:src="@{/static/js/libs/layout-base.js}"></script>
+    <script src='../../static/js/libs/cose-base.js' th:src="@{/static/js/libs/cose-base.js}"></script>
+    <script src='../../static/js/libs/cytoscape-layout-utilities.js' th:src="@{/static/js/libs/cytoscape-layout-utilities.js}"></script>
+    <script src='../../static/js/libs/cytoscape-fcose.js' th:src="@{/static/js/libs/cytoscape-fcose.js}"></script>
+
+    <script src='../../static/js/libs/cola.min.js' th:src="@{/static/js/libs/cola.min.js}"></script>
+    <script src='../../static/js/libs/cytoscape-cola.js' th:src="@{/static/js/libs/cytoscape-cola.js}"></script>
+
+    <script src='../../static/js/libs/cytoscape-euler.js' th:src="@{/static/js/libs/cytoscape-euler.js}"></script>
+
+    <script src='../../static/js/libs/dagre.js' th:src="@{/static/js/libs/dagre.js}"></script>
+    <script src='../../static/js/libs/cytoscape-dagre.js' th:src="@{/static/js/libs/cytoscape-dagre.js}"></script>
+
+    <script src='../../static/js/libs/klay.js' th:src="@{/static/js/libs/klay.js}"></script>
+    <script src='../../static/js/libs/cytoscape-klay.js' th:src="@{/static/js/libs/cytoscape-klay.js}"></script>
+
+    <script src='../../static/js/graph-cytoscape.js' th:src='@{/static/js/graph-cytoscape.js}'></script>
+
+</head>
+
+<body class="wrapper">
+
+<div th:replace='~{base :: title}'></div>
+
+<div th:replace='~{base :: menu}'></div>
+
+<div id="main">
+    <div class="graph-controls">
+        <form>
+            <label for="type">Graph Type</label>
+            <select id="type">
+                <option value="fcose">fcose</option>
+                <option value="cola">cola</option>
+                <option value="dagre">dagre</option>
+                <option value="breadthfirst">breadthfirst</option>
+                <option value="euler">euler</option>
+                <option value="klay">klay</option>
+                <option value="circle">circle</option>
+                <option value="concentric">concentric</option>
+                <option value="grid">grid</option>
+            </select>
+
+            <label for="depth">Depth</label>
+            <input id="depth" type="range" min="0" max="100" value="50" class="slider"/>
+
+            <label for="space">Space</label>
+            <input id="space" type="range" min="0" max="100" value="50" class="slider"/>
+
+            <label for="query">Query</label>
+            <input id="query" type="text"/>
+
+            <label for="indivs">Individuals</label>
+            <input id="indivs" type="text"/>
+
+            <label for="props">Properties</label>
+            <input id="props" type="text"/>
+
+            <label for="without">Without</label>
+            <input id="without" type="text"/>
+
+            <label for="follow">Follow</label>
+            <input id="follow" type="text"/>
+
+            <label for="parents">Group by</label>
+            <input id="parents" type="text"/>
+
+        </form>
+        <ul class="graph-actions">
+            <li><button id="refocus">refocus</button></li>
+            <li><button id="expand">expand</button></li>
+            <li><button id="png">png</button></li>
+            <li><button id="save">save</button></li>
+            <li><button id="recover">recover</button></li>
+        </ul>
+    </div>
+
+    <div class="graph"></div>
+</div>
+
+<div th:replace='~{base :: footer}'></div>
+
+</body>
+</html>

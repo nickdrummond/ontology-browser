@@ -6,7 +6,8 @@
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     xmlns:example="https://nickdrummond.github.io/ontology-browser/example.owl#">
+     xmlns:example="https://nickdrummond.github.io/ontology-browser/example.owl#"
+     xmlns:ontologies="https://nickdrummond.github.io/star-wars-ontology/ontologies#">
     <owl:Ontology rdf:about="https://nickdrummond.github.io/ontology-browser/example.owl">
         <rdfs:comment xml:lang="en">This is a simple example ontology bundled with the Ontology Browser.
 
@@ -14,6 +15,31 @@ To configure the browser to point at your own ontology, set the following enviro
 ONTOLOGY_ROOT_LOCATION=&lt;your ontology URL&gt;
 REASONING_ROOT_IRI=&lt;IRI of the ontology to be reasoned with&gt;</rdfs:comment>
     </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#ASubAnnotationProperty -->
+
+    <owl:AnnotationProperty rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#ASubAnnotationProperty">
+        <rdfs:subPropertyOf rdf:resource="https://nickdrummond.github.io/star-wars-ontology/ontologies#AnAnnotationProperty"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#AnAnnotationProperty -->
+
+    <owl:AnnotationProperty rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#AnAnnotationProperty"/>
     
 
 
@@ -34,6 +60,34 @@ REASONING_ROOT_IRI=&lt;IRI of the ontology to be reasoned with&gt;</rdfs:comment
     
 
 
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#ASubObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#ASubObjectProperty">
+        <rdfs:subPropertyOf rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#AnObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#AnObjectPropertyWithAllCharacteristics -->
+
+    <owl:ObjectProperty rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#AnObjectPropertyWithAllCharacteristics">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AsymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ReflexiveProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#AnotherObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#AnotherObjectProperty"/>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -51,6 +105,22 @@ REASONING_ROOT_IRI=&lt;IRI of the ontology to be reasoned with&gt;</rdfs:comment
     
 
 
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#AFunctionalDataProperty -->
+
+    <owl:DatatypeProperty rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#AFunctionalDataProperty">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#ASubDataPRoperty -->
+
+    <owl:DatatypeProperty rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#ASubDataPRoperty">
+        <rdfs:subPropertyOf rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#ADataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -65,14 +135,52 @@ REASONING_ROOT_IRI=&lt;IRI of the ontology to be reasoned with&gt;</rdfs:comment
     <!-- https://nickdrummond.github.io/ontology-browser/example.owl#AndAnotherClass -->
 
     <owl:Class rdf:about="https://nickdrummond.github.io/ontology-browser/example.owl#AndAnotherClass">
-        <rdfs:subClassOf rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClass"/>
+        <rdfs:subClassOf rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClassWithInstances"/>
     </owl:Class>
     
 
 
-    <!-- https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClass -->
+    <!-- https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClassWithInstances -->
 
-    <owl:Class rdf:about="https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClass"/>
+    <owl:Class rdf:about="https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClassWithInstances"/>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#AnEquivalentClass -->
+
+    <owl:Class rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#AnEquivalentClass">
+        <owl:equivalentClass rdf:resource="https://nickdrummond.github.io/star-wars-ontology/ontologies#EquivalentToThis"/>
+        <rdfs:subClassOf rdf:resource="https://nickdrummond.github.io/star-wars-ontology/ontologies#HereAreSomeEquivalentClasses"/>
+    </owl:Class>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#AnnotatedClasses -->
+
+    <owl:Class rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#AnnotatedClasses"/>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#EquivalentToThis -->
+
+    <owl:Class rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#EquivalentToThis">
+        <rdfs:subClassOf rdf:resource="https://nickdrummond.github.io/star-wars-ontology/ontologies#HereAreSomeEquivalentClasses"/>
+    </owl:Class>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#HereAreSomeEquivalentClasses -->
+
+    <owl:Class rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#HereAreSomeEquivalentClasses"/>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#SimpleComment -->
+
+    <owl:Class rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#SimpleComment">
+        <rdfs:subClassOf rdf:resource="https://nickdrummond.github.io/star-wars-ontology/ontologies#AnnotatedClasses"/>
+        <rdfs:comment>this is a comment</rdfs:comment>
+    </owl:Class>
     
 
 
@@ -87,20 +195,70 @@ REASONING_ROOT_IRI=&lt;IRI of the ontology to be reasoned with&gt;</rdfs:comment
     
 
 
-    <!-- https://nickdrummond.github.io/ontology-browser/example.owl#AndAnInstance -->
+    <!-- https://nickdrummond.github.io/ontology-browser/example.owl#andAnInstance -->
 
-    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/ontology-browser/example.owl#AndAnInstance">
-        <rdf:type rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClass"/>
+    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/ontology-browser/example.owl#andAnInstance">
+        <rdf:type rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClassWithInstances"/>
     </owl:NamedIndividual>
     
 
 
-    <!-- https://nickdrummond.github.io/ontology-browser/example.owl#AnotherInstance -->
+    <!-- https://nickdrummond.github.io/ontology-browser/example.owl#anotherInstance -->
 
-    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/ontology-browser/example.owl#AnotherInstance">
-        <rdf:type rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClass"/>
-        <example:AnObjectProperty rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#AndAnInstance"/>
+    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/ontology-browser/example.owl#anotherInstance">
+        <rdf:type rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#ThisIsAClassWithInstances"/>
+        <example:AnObjectProperty rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#andAnInstance"/>
     </owl:NamedIndividual>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#aLabelInstance -->
+
+    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#aLabelInstance"/>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#anExampleOfSameAs -->
+
+    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#anExampleOfSameAs">
+        <owl:sameAs rdf:resource="https://nickdrummond.github.io/star-wars-ontology/ontologies#theOtherSameAs"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#theOtherSameAs -->
+
+    <rdf:Description rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#theOtherSameAs"/>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#anInstanceWithRelations -->
+
+    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#anInstanceWithRelations">
+        <example:AnObjectProperty rdf:resource="https://nickdrummond.github.io/ontology-browser/example.owl#anotherInstance"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#annotatedWithAnotherInstanceAsValue -->
+
+    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#annotatedWithAnotherInstanceAsValue">
+        <rdfs:label rdf:resource="https://nickdrummond.github.io/star-wars-ontology/ontologies#aLabelInstance"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#instanceOfEquiv -->
+
+    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#instanceOfEquiv">
+        <rdf:type rdf:resource="https://nickdrummond.github.io/star-wars-ontology/ontologies#AnEquivalentClass"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- https://nickdrummond.github.io/star-wars-ontology/ontologies#theOtherSameAs -->
+
+    <owl:NamedIndividual rdf:about="https://nickdrummond.github.io/star-wars-ontology/ontologies#theOtherSameAs"/>
 </rdf:RDF>
 
 

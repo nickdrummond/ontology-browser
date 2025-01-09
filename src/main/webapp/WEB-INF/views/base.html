@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:fragment='header (title, query, tree, rewriteLinks)'>
+<th:block th:fragment='header'>
 
     <title th:text='${projectInfo.name + ": " + title}'>Project Name: Page Name</title>
 
@@ -18,59 +18,65 @@
 
     <link rel='stylesheet' type='text/css' href='../../static/css/autosuggest_inquisitor.css'
           th:href='@{/static/css/autosuggest_inquisitor.css}'/>
-    <link rel='stylesheet' type='text/css' href='../../static/css/gaphu-0.0.9.css'
-          th:href='@{/static/css/gaphu-0.0.9.css}'/>
     <link rel='stylesheet' type='text/css' href='../../static/css/default.css'
           th:href='@{/static/css/default.css}'/>
 
     <script type='text/javascript' th:inline='javascript'>
         const baseUrl = '/';
-        const isQuery = [[${query}]];
-        const isTree = [[${tree}]];
         const rewriteLinks = [[${rewriteLinks}]] ?? false;
+        const editingEnabled = [[${editingEnabled}]] ?? false;
+        const THEME_ATTRIBUTE = "data-theme";
+        const THEME_KEY = "theme";
+        const THEME_DEFAULT = "light";
+
+        // Set dark mode early to avoid flicker
+        document.documentElement.setAttribute(THEME_ATTRIBUTE, sessionStorage.getItem(THEME_KEY) || THEME_DEFAULT);
     </script>
-    <script type='text/javascript' src='../../static/js/jquery-1.4.3.min.js'
-            th:src='@{/static/js/jquery-1.4.3.min.js}'></script>
+    <script type='text/javascript' src='../../static/js/libs/jquery-1.4.3.min.js'
+            th:src="@{/static/js/libs/jquery-1.4.3.min.js}"></script>
 
     <script type='module' src='../../static/js/app.js'
             th:src='@{/static/js/app.js}'>
     </script>
 
-    <script type='text/javascript' src='../../static/js/bsn.AutoSuggest_2.1_multiword.js'
-            th:src='@{/static/js/bsn.AutoSuggest_2.1_multiword.js}'></script>
+    <script type='text/javascript' src='../../static/js/libs/bsn.AutoSuggest_2.1_multiword.js'
+            th:src="@{/static/js/libs/bsn.AutoSuggest_2.1_multiword.js}"></script>
+</th:block>
+
+<th:block th:fragment="includeTree">
+    <script type='module' src='../../static/js/tree.js'
+            th:src='@{/static/js/tree.js}'>
+    </script>
+</th:block>
+
+<th:block th:fragment="includeDLQuery">
+    <link rel='stylesheet' type='text/css' href='../../static/css/gaphu-0.0.9.css'
+          th:href='@{/static/css/gaphu-0.0.9.css}'/>
     <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js'
             th:src='@{/static/js/gaphu-0.0.9.js}'></script>
-</head>
+    <script type='module' src='../../static/js/dlquery.js'
+            th:src='@{/static/js/dlquery.js}'>
+    </script>
+</th:block>
 
 <body>
 
-<div id='title' th:fragment="title (search)">
+<div id='title' th:fragment="title">
     <h1><img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
         <a th:href='@{/}' th:text="${projectInfo.name}">Project Name</a></h1>
-    <a style='display: none;' href='#content'>skip to content</a>
+    <a class="skip-nav" href='#content'>skip to content</a>
     <div id="entityfinder" th:fragment="entityfinder">
-        <form id='findForm' method='get'>
-            <input id='find' class='autocomplete' type='text' name='search' placeholder='search...'/>
-            <input th:if="${search}" class="search-icon" type='submit' value="" />
+        <form id='findForm' action="/axioms/" method='get'>
+            <a id="burger">&#8801;</a>
+            <input type='text' id='search' class='autocomplete' name='search' placeholder='search...' autofocus/>
+            <input type='submit' class="search-icon icon" value="" />
         </form>
-
-        <script type='text/javascript'>
-            var options = {
-                script: baseUrl + 'entities/?',
-                varname: 'name',
-                cache: false,
-                callback: function (obj) {
-                    window.location = obj.id;
-                }
-            };
-            var as = new AutoSuggest("find", options);
-        </script>
     </div>
 </div>
 
 <div id='menu' th:fragment="menu">
 
-    <div th:replace='base :: tabs'>Tabs</div>
+    <ul th:replace='~{base :: tabs}'>Tabs</ul>
 
 </div> <!-- menu -->
 
@@ -78,15 +84,15 @@
     <li><a th:href='@{/ontologies/}'>Ontologies</a></li>
     <li><a th:href='@{/classes/}'>Classes</a></li>
     <li>Individuals:
-        <a th:href='@{/individuals/}'>by Type</a> /
-        <a th:href='@{/relations/onproperty/}'>by Relation</a> /
-        <a th:href='@{/relations/onannotationproperty/}'>by Annotation</a></li>
+        <a th:href='@{/individuals/}'>by&nbsp;Type</a> /
+        <a th:href='@{/relations/onproperty/}'>by&nbsp;Relation</a> /
+        <a th:href='@{/relations/onannotationproperty/}'>by&nbsp;Annotation</a></li>
     <li>Properties: <a th:href='@{/objectproperties/}'>Object</a> /
         <a th:href='@{/dataproperties/}'>Data</a> /
         <a th:href='@{/annotationproperties/}'>Annotation</a></li>
     <li><a th:href='@{/datatypes/}'>Datatypes</a></li>
     <li><a th:href='@{/axioms/}'>Axioms</a></li>
-    <li><a th:href='@{/dlquery/}'>DL Query</a></li>
+    <li><a th:href='@{/dlquery/}'>DL&nbsp;Query</a></li>
 
     <li>Usage:
         <a th:href='@{/clouds/classes}'>cl</a> /
@@ -101,7 +107,7 @@
 
 <div id='content' th:replace='${doclet}.jsp'>Doclet content</div>
 
-<div class="results" th:fragment="results" th:replace="::characteristic (${results})">
+<div class="results" th:fragment="results" th:replace="~{base::characteristic (${results})}">
 </div>
 
 <!-- paging -->
@@ -128,29 +134,43 @@
 </span>
 
 
-<div th:with='name=${T(org.coode.www.util.PagingUtils).getIdFor(ch.name)}'
-     th:class='${"characteristic " + name}' th:fragment="characteristic (ch)">
+<div th:fragment="characteristic (ch)"
+     th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(ch.name)}'
+     th:class='${"characteristic " + name}'>
 
-    <h4 th:text='${ch.name}'>Some Characteristic</h4>
-    <span th:replace="base::paged (${ch.getPageData()}, ${name})">(2)</span>
-    <ul th:remove="all-but-first">
+    <h4>
+        <span th:text='${ch.name}'>Some Characteristic</span>
+        <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
+    </h4>
+    <ul th:remove="all-but-first" th:class="${cls}">
         <li class="asserted" th:each="object : ${ch.objects}">
-            <span class="owlobject" th:utext="${mos.render(object.getOWLObject())}">
-            <a href="../../classes/1934778517/" class='Class'
-               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
-            <span class='keyword'>&equiv;</span>
-            <a href="../../classes/140023861/" class='Class'
-               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza">Pizza</a>
-            <span class='keyword'>and</span>
-            <span class='active-entity Object Property'>hasBase</span>
-            <span class='only'>only</span>
-            <a href="../../classes/677040734/" class='Class'
-               title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
+
+            <span class="owlobject"
+                  th:with="data=${object.owlAxiom() != null ? object.owlAxiom() : object.owlObject()}"
+                  th:data="${kit.render(data)}"
+                  th:utext="${mos.render(object.owlObject())}">
+                <a href="../../classes/1934778517/" class='Class'
+                   title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
+                <span class='keyword'>&equiv;</span>
+                <a href="../../classes/140023861/" class='Class'
+                   title="http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza">Pizza</a>
+                <span class='keyword'>and</span>
+                <span class='active-entity Object Property'>hasBase</span>
+                <span class='only'>only</span>
+                <a href="../../classes/677040734/" class='Class'
+                   title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyBase">BaseFinaEQuebradica</a>
             </span>
-            <span class="source-ont" th:utext="${mos.render(object.getOWLOntology())}">pizza.owl</span>
-            <ul th:if="${object.getOWLAxiom() != null and !object.getOWLAxiom().getAnnotations().isEmpty()}"
+
+            <span class="source-ont"
+                  th:data="${T(org.ontbrowser.www.util.OWLUtils).ontIRI(object.owlOntology())}"
+                  th:utext="${mos.render(object.owlOntology())}"
+            >
+                pizza.owl
+            </span>
+
+            <ul th:if="${object.owlAxiom() != null and !object.owlAxiom().getAnnotations().isEmpty()}"
                 th:remove="all-but-first" class="axiom-annotations">
-                <li class="axiom-annotation" th:each="annot : ${object.getOWLAxiom().getAnnotations()}">
+                <li class="axiom-annotation" th:each="annot : ${object.owlAxiom().getAnnotations()}">
                     <span th:utext="${mos.render(annot)}"></span>
                 </li>
                 <li><span>seeAlso: "<a href="https://github.com/nickdrummond/star-wars-ontology">
@@ -210,38 +230,54 @@
        th:src="${url}" src="/notfound.mp3"
        autostart="true" style="display:none"></EMBED>
 
-<li th:fragment="tree (t)" th:if="${t != null}">
-    <span th:if='${t.childCount != 0}' class="node expandable">+</span>
+<li th:fragment="tree" th:if="${t != null}">
+    <span th:if='${t.childCount != 0}' class="node expandable" th:data="${statsName}">+</span>
     <span th:if='${t.childCount == 0}' class="node">-</span>
-    <span th:each="synonym,iteratorStatus : ${t.value}" th:remove="tag">
-        <span th:if="${iteratorStatus.index != 0}" class="keyword">&equiv;</span>
-        <span th:utext="${mos.render(synonym)}" th:remove="tag">a thing</span>
-    </span>
+    <div class="tree-node">
+        <span th:each="synonym,iteratorStatus : ${t.value}" th:remove="tag">
+            <span th:if="${iteratorStatus.index != 0}" class="keyword">&equiv;</span>
+            <span th:utext="${mos.render(synonym)}" th:remove="tag">a thing</span>
+        </span>
 
-    <span class='child-count' th:if="${t.childCount != 0}" th:utext='${"(" + t.childCount + ")"}'>(0)</span>
+        <span class='child-count'
+              th:if="${stats != null}"
+              th:with="stat=${stats.getStats(t.value.getRepresentativeElement())},
+                       pStat=${parent != null ? stats.getStats(parent.value.getRepresentativeElement()) : 0},
+                       percent=${pStat > 0 ? (stat*100)/pStat : T(java.lang.Math).min(stat,100)}"
+              th:styleappend="${stat > 0 ? 'width: ' + (6 + (2 * percent)) + 'px;' : ''}"
+              th:utext='${stat > 0 ? stat : ""}'>10</span>
+    </div>
 
-    <ul th:if="${!t.children.isEmpty()}">
-        <div class="removeme" th:each="child : ${t.children}" th:remove="tag">
-            <li th:replace="base::tree(${child})"></li>
-        </div>
-    </ul>
+    <ul th:replace="~{base::children(${t})}">no children</ul>
 </li>
+
+<ul th:fragment="children (t)"
+    th:if="${!t.children.isEmpty()}">
+    <div class="removeme" th:each="child : ${t.children}" th:remove="tag">
+        <li th:replace="~{base::tree(t=${child}, parent=${t})}"></li>
+    </div>
+</ul>
 
 <div class='owlselector primary' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
     <h4 th:text="${title}">Title</h4>
     <ul class="minihierarchy" th:classappend="${title}">
-        <li th:replace="base::tree(${hierarchy})">Top Thing</li>
+        <li th:replace="~{base::tree(t=${hierarchy})}">Top Thing</li>
     </ul>
 </div>
 
-<div class='owlselector secondary' th:fragment="secondaryhierarchy (title, hierarchy, inverse)" th:if="${hierarchy != null}">
-    <h4>
+<div class='owlselector secondary'
+     th:fragment="secondaryhierarchy"
+     th:if="${hierarchy2 != null}">
+
+    <h4 th:if="${inverse == null}" th:text="${type2}"></h4>
+    <h4 th:if="${inverse != null}">
         <span th:if="${inverse}" class="keyword">InverseOf</span>
-        <a th:href="'.?inverse=' + ${!inverse}" th:text="${title}">Title</a>
+        <a th:href="'.?inverse=' + ${!inverse}" th:text="${type2}">Title</a>
     </h4>
-    <ul class="minihierarchy" th:classappend="${title}" th:if="${!hierarchy.children.isEmpty()}">
-        <div class="removeme" th:each="child : ${hierarchy.children}" th:remove="tag">
-            <li th:replace="base::tree(${child})"></li>
+
+    <ul class="minihierarchy" th:classappend="${type2}" th:if="${!hierarchy2.children.isEmpty()}">
+        <div class="removeme" th:each="child : ${hierarchy2.children}" th:remove="tag">
+            <li th:replace="~{base::tree(t=${child}, parent=${hierarchy2}, stats=${stats2}, statsName=${statsName2})}"></li>
         </div>
     </ul>
 </div>
@@ -255,39 +291,28 @@
     </ul>
 </div>
 
+<div id='direct' th:fragment="secondary"
+     th:if="${direct != null}"
+     class="owlselector secondary">
 
-<div id='content' th:fragment="owlentity">
-    <h2 th:text="${title}">An OWLClass</h2>
-    <div class="iri">
-        <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
-    </div>
+    <h4 th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(direct.name)}'>
+        <span th:text='${direct.name}'>Some Characteristic</span>
+        <span th:replace="~{base::paged (${direct.getPageData()}, ${name})}">(2)</span>
+    </h4>
 
-    <div th:replace="base :: image (${image})">
-        Possibly an image
-    </div>
-
-    <div th:replace="base :: sound (${sound})">
-        Possibly a sound
-    </div>
-
-    <div th:replace="base :: map (${geo})">
-        Possibly a map
-    </div>
-
-    <div class="characteristics">
-        <div th:replace="base :: metrics (${metrics})">
-            Possibly some metrics
-        </div>
-
-        <div th:each="ch : ${characteristics}" th:remove="tag">
-            <div th:replace="base :: characteristic (${ch})">
-                A characteristic
-            </div>
-        </div>
-    </div>
-
+    <ul th:remove="all-but-first"
+        th:class="minihierarchy">
+        <li class="asserted"
+            th:each="object : ${direct.objects}">
+                <span class="owlobject"
+                      th:with="data=${object.owlAxiom() != null ? object.owlAxiom() : object.owlObject()}"
+                      th:data="${kit.render(data)}"
+                      th:utext="${mos.render(object.owlObject())}">
+                    individual
+                </span>
+        </li>
+    </ul>
 </div>
-
 
 <p class='footer' th:fragment='footer'>
     <a href="#" id="darkmode" class="light">darkmode</a>

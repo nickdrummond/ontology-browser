@@ -2,14 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<!-- TODO use insert - see https://www.thymeleaf.org/doc/articles/layouts.html -->
-<head th:replace='base :: header (title=${"DL query: " + expression}, query=${true}, tree=${false}, rewriteLinks=${true})'></head>
+<head>
+    <!-- TODO use insert - see https://www.thymeleaf.org/doc/articles/layouts.html -->
+    <th:block th:replace='~{base :: header (title=${"DL query: " + expression}, rewriteLinks=${true})}'/>
+
+    <th:block th:replace="~{base :: includeDLQuery}"/>
+</head>
 
 <body class="wrapper">
 
-<div th:replace='base :: title'></div>
+<div th:replace='~{base :: title}'></div>
 
-<div th:replace='base :: menu'></div>
+<div th:replace='~{base :: menu}'></div>
 
 <div id="main">
 
@@ -37,17 +41,10 @@
                     </li>
                 </ul>
                 <input id="dlQuerySubmit" type='submit' value='query' />
+                <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
+
             </div>
         </form>
-
-        <script type="text/javascript">
-            var options = {
-              parser : baseUrl + 'dlquery/parse',
-              autocomplete: baseUrl + 'dlquery/ac'
-            };
-            new ExpressionEditor("dlQuery", options);
-            new ExpressionEditor("dlQuery2", options);
-        </script>
 
         <div id='resultsForm'>
             <!-- results will go here -->
@@ -63,7 +60,7 @@
     </div>
 </div>
 
-<div th:replace='base :: footer'></div>
+<div th:replace='~{base :: footer}'></div>
 
 </body>
 </html>

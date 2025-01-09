@@ -15,23 +15,27 @@ html {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-.dark {
-    color-scheme: dark;
-    color: #b4b392;
-}
-
-.dark a {
-    color: #dad6cd;
-}
-
-.dark a:hover {
-    color: #dad6cd;
-}
-
 body {
     font-size: 1rem;
     margin: 0;
     padding: 0;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+    color: #b4b392;
+}
+
+[data-theme="dark"] a {
+    color: #dad6cd;
+}
+
+[data-theme="dark"] a:hover {
+    color: #dad6cd;
+}
+
+[data-theme="dark"] .autosuggest {
+    background-color: black;
 }
 
 h1 {
@@ -105,13 +109,17 @@ li {
     margin: 1rem 0.5rem;
 }
 
+.skip-nav {
+    display: none;
+}
+
 .owlselector {
-    margin: 0.5rem;
-    margin-top: 1rem;
+    margin: 1rem 0.5rem 0.5rem;
 }
 
 #main {
     width: 100%;
+    overflow: hidden;
 }
 
 #metrics {
@@ -143,6 +151,14 @@ li {
     font-size: 1.5rem;
     margin: 1rem auto 1rem auto;
     text-align: center;
+}
+
+.entity-header {
+
+}
+
+.graph-button {
+    font-size: 1.8rem;
 }
 
 .error {
@@ -270,23 +286,34 @@ td.key{
     overflow: auto;
 }
 
-#find {
+#search {
     height: 2rem;
     border-radius: 1rem;
 }
 
-#find, .autosuggest li {
+#search, .autosuggest li {
     width: 98%;
     padding-left: 10px;
 }
 
+#burger {
+    margin-right: 0.5rem;
+    font-size: 2.5rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 #tabs {
     color: rgba(125, 125, 125, 0.8);
-    margin-bottom: 16px;
+    margin: 0 0.5rem;
+    padding: 0;
 }
 
 #tabs li {
     list-style: none;
+    border-top: solid 1px;
+    border-radius: 0.5rem;
+    padding: 0.1rem 0.5rem;
 }
 
 #tabs a, #tabs span.currentpage {
@@ -303,7 +330,7 @@ td.key{
     margin: 0.2rem;
 }
 
-/* Let the cloud spans determine the color */
+/* Let the model spans determine the color */
 .cloud a.Class,
 .cloud a.Object.property,
 .cloud a.Data.property,
@@ -313,12 +340,12 @@ td.key{
     color: inherit;
 }
 
-.dark .cloud a.Class,
-.dark .cloud a.Object.property,
-.dark .cloud a.Data.property,
-.dark .cloud a.Annotation.property,
-.dark .cloud a.Named.individual,
-.dark .cloud a.Datatype{
+[data-theme="dark"] .cloud a.Class,
+[data-theme="dark"] .cloud a.Object.property,
+[data-theme="dark"] .cloud a.Data.property,
+[data-theme="dark"] .cloud a.Annotation.property,
+[data-theme="dark"] .cloud a.Named.individual,
+[data-theme="dark"] .cloud a.Datatype{
     filter: invert(100%);
 }
 
@@ -344,6 +371,7 @@ ul.minihierarchy {
     -webkit-border-radius: 6px;
     overflow: auto;
     height: 200px;
+    margin-top: 5px;
     padding-left: 10px;
 }
 
@@ -351,16 +379,44 @@ ul.minihierarchy {
     padding-left: 15px;
 }
 
-.minihierarchy ul li {
+.minihierarchy li {
     white-space: nowrap;
 }
 
-.minihierarchy .node{
+.minihierarchy .tree-node {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.minihierarchy li .node{
     font-family: monospace;
 }
 
-.minihierarchy .node.expandable{
+.minihierarchy li .node{
     cursor: pointer;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    padding: 0 0.5rem;
+}
+
+.minihierarchy li .child-count {
+    display: inline-block;
+    background-color: #a7d4e3;
+    font-size: x-small;
+}
+
+/* hide the dummy nodes for annotations */
+.minihierarchy.Annotation.Properties > li > .node,
+.minihierarchy.Annotation.Properties > li > .tree-node,
+.minihierarchy.Annotations.on > li > .node,
+.minihierarchy.Annotations.on > li > .tree-node {
+    display: none;
+}
+
+[data-theme="dark"] .minihierarchy li .child-count {
+    background-color: #671d16;
 }
 
 img.busy {
@@ -448,6 +504,7 @@ form#load {
 
 .iri h3 {
     margin-left: 0;
+    font-weight: normal;
 }
 
 .googlemaps{
@@ -457,14 +514,14 @@ form#load {
     margin-bottom: 12px;
 }
 
-img.icon {
+.icon {
     position: relative;
     top: 2px;
     width: 24px;
     height: 24px;
 }
 
-.dark img.icon {
+[data-theme="dark"] .icon {
     filter: invert(100%);
 }
 
@@ -536,6 +593,7 @@ img.thumb{
     background-image: url("../../static/images/search-svgrepo-com.svg");
     position: relative;
     left: -3em;
+    cursor: pointer;
 }
 
 .paging {
@@ -554,9 +612,37 @@ img.thumb{
     text-decoration: none;
 }
 
+.edit {
+    margin: 0 5px;
+    display: none;
+}
 
+.edit.active {
+    display: block;
+}
+
+#edit {
+    display: flex;
+    flex-direction: row;
+}
+
+#edit-axiom {
+    flex-grow: 2;
+}
+
+#edit-ontology {
+    float: right;
+}
+
+.debug {
+    background-color: rgba(120, 150, 255, 0.2);
+}
 
 @media screen and (max-width: 800px) and (max-height: 450px) {
+
+    #burger {
+        display: none;
+    }
 
     ul.minihierarchy {
         width: 70%;
@@ -568,8 +654,17 @@ img.thumb{
         height: 100vh;
     }
 
+    #burger {
+        display: none;
+    }
+
     .wrapper {
         height: 100vh;
+    }
+
+    .minihierarchy li .node{
+        font-size: inherit;
+        margin-right: inherit;
     }
 }
 
@@ -577,6 +672,10 @@ img.thumb{
 
     .wrapper {
       flex-flow: column;
+    }
+
+    #burger {
+        display: none;
     }
 
     #title {
@@ -641,7 +740,7 @@ img.thumb{
         flex: 0 1 auto;
     }
 
-    #find, .autosuggest li {
+    #search, .autosuggest li {
         line-height: 24px;
         font-size: 1.5rem;
     }

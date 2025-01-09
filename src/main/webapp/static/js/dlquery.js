@@ -1,8 +1,13 @@
 import {getValueOfElementByID, getParameter, getUrlWithParameter} from "./util.js";
-import {loadEntity} from "./entity.js";
 import {BUSY_IMAGE} from "./util.js";
+import {entity} from "./entity.js";
 
-export const dlquery = (baseUrl, entityLoadedCallback) => {
+document.addEventListener("DOMContentLoaded", function(event) {
+    const entityPane = entity(() => {});
+    dlquery(baseUrl, entityPane).init();
+});
+
+const dlquery = (baseUrl, entityPane) => {
 
     const PARAM_QUERYTYPE = "query";
     const PARAM_EXPRESSION = "expression";
@@ -17,6 +22,14 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
     function init() {
+
+        const options = {
+            parser : baseUrl + 'dlquery/parse',
+            autocomplete: baseUrl + 'dlquery/ac'
+        };
+        new ExpressionEditor("dlQuery", options).initialise();
+        new ExpressionEditor("dlQuery2", options).initialise();
+
         if (document.getElementById('dlQuery')) {
             sendQuery();
         }
@@ -24,13 +37,13 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
         const individual = getParameter("individual");
         if (individual) {
             const url = baseUrl + "individuals/" + individual + "/fragment";
-            loadEntity(url, null, entityLoadedCallback);
+            entityPane.loadEntity(url);
         }
 
         const cls = getParameter("class");
         if (cls) {
             const url = baseUrl + "classes/" + cls + "/fragment";
-            loadEntity(url, null, entityLoadedCallback);
+            entityPane.loadEntity(url);
         }
     }
 
@@ -59,10 +72,13 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 
     function sendSubQuery(expression, minus, order, syntax, queryType, start, pageSize, retry) {
 
+        expression = expression.replaceAll(" ", "+");
+
         let req = queryURL + "?" + PARAM_QUERYTYPE + "=" + queryType + "&" +
             PARAM_EXPRESSION + "=" + expression;
 
         if (minus) {
+            minus = minus.replaceAll(" ", "+");
             req = req + "&" + PARAM_MINUS + "=" + minus;
         }
         if (order) {
@@ -78,14 +94,16 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
 
+        console.log("req = ", req);
+
         fetch(req, {
             signal: controller.signal
         }).then(response => {
             clearTimeout(timeoutId);
             response.text().then(html => {
                 resultsForm.innerHTML = html;
-                rewriteLinks("Class", "classes"); // note Capitalised
-                rewriteLinks("individual", "individuals");
+                rewriteLinks("Class"); // note Capitalised
+                rewriteLinks("individual");
             });
         }).catch(err => {
             if (err.name === "AbortError") {
@@ -101,7 +119,6 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
                 }
             }
             else {
-                console.log(err);
                 resultWrite(queryType + ": error!", "error fetching" + ": " + err);
             }
         });
@@ -117,8 +134,8 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
 
 ///////////////////////
 
-// TODO the links should be set correctly in the backend
-    function rewriteLinks(type, pluralType) {
+// TODO single event handler like tree
+    function rewriteLinks(type) {
         document.querySelectorAll(`#resultsForm a.${type}`).forEach(link => {
             let originalUrl = link.getAttribute("href");
             let entityId = originalUrl.split("/")[2];
@@ -128,7 +145,7 @@ export const dlquery = (baseUrl, entityLoadedCallback) => {
             // but only refresh the entity part of the page
             link.onclick = function (e) {
                 e.preventDefault();
-                loadEntity(originalUrl + "fragment", newUrl, entityLoadedCallback);
+                entityPane.loadEntity(originalUrl + "fragment", newUrl);
             }
         });
     }

@@ -1,0 +1,40 @@
+/* must have height for lines + scroll to work */
+/* do not set to 100% as it infinitely expands */
+.graph {
+    flex-grow: 2;
+    margin: 1rem;
+    height: 40rem;
+    background-color: #fefefe;
+    border: 1px solid black;
+}
+
+.graph-controls form {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 1em;
+}
+
+.graph-controls input, .graph-controls select {
+    margin-bottom: 1em;
+}
+
+.graph-controls .graph-actions {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding-left: 1rem;
+}
+
+.graph-controls .graph-actions button {
+    background: none;
+    border: none;
+}
+
+.graph-controls .graph-actions button:hover {
+    cursor: pointer;
+}
+
+[data-theme="dark"] .graph {
+    filter: invert(1);
+}

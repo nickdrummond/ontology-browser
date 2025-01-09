@@ -2,34 +2,46 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace='base :: header (title=${title}, query=${false}, tree=${true}, rewriteLinks=${true})'></head>
+<head>
+    <th:block th:replace='~{base :: header (title=${title}, rewriteLinks=${true})}'/>
+
+    <th:block th:replace="~{base :: includeTree}"/>
+</head>
 
 <body class="wrapper">
 
-<div th:replace='base :: title'></div>
+<div th:replace='~{base :: title}'></div>
 
-<div th:replace='base :: menu'></div>
+<div th:replace='~{base :: menu}'></div>
 
 <div id="main">
 
-    <div id='entities' th:replace="base :: list(${type}, ${entities})">
+    <div id='entities' th:replace="~{base :: list(${type}, ${entities})}">
         A list
     </div>
 
-    <div id='hierarchy'  th:replace="base :: hierarchy(${type}, ${hierarchy})">
+    <div id='hierarchy'  th:replace="~{base :: hierarchy(${type}, ${hierarchy})}">
         A hierarchy
     </div>
 
-    <div id='hierarchy2'  th:replace="base :: secondaryhierarchy(${type2}, ${hierarchy2}, ${inverse})">
+    <div id='hierarchy2'
+         th:if="${hierarchy2 != null}"
+         th:replace="~{base :: secondaryhierarchy}">
         Another hierarchy
     </div>
 
-    <div th:replace="base :: owlentity">
+    <div id='list'
+         th:if="${entities2 != null}"
+         th:replace="~{base :: list(${type2}, ${entities2})}">
+        A list of entities
+    </div>
+
+    <div th:replace="~{owlentityfragment :: owlentity}">
         An entity
     </div>
 </div>
 
-<div th:replace='base :: footer'></div>
+<div th:replace='~{base :: footer}'></div>
 
 </body>
 </html>

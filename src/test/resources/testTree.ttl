@@ -1,0 +1,592 @@
+@prefix : <http://null.org/ontology/tree/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://null.org/ontology/tree/> .
+
+<http://scibite.com/ontologies/test.owl> rdf:type owl:Ontology ;
+                                          rdfs:comment "An ontology with plenty of test cases in it" .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://null.org/ontology/tree/aFlag
+:aFlag rdf:type owl:AnnotationProperty .
+
+
+###  http://www.geneontology.org/formats/oboInOwl#hasDbXref
+<http://www.geneontology.org/formats/oboInOwl#hasDbXref> rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://null.org/ontology/tree/p
+:p rdf:type owl:ObjectProperty .
+
+
+###  http://null.org/ontology/tree/partOfOne
+:partOfOne rdf:type owl:ObjectProperty .
+
+
+###  http://null.org/ontology/tree/partOfTwo
+:partOfTwo rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/BFO_0000050
+<http://purl.obolibrary.org/obo/BFO_0000050> rdf:type owl:ObjectProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://null.org/ontology/tree/AClass
+:AClass rdf:type owl:Class ;
+        rdfs:subClassOf :ClassesWithAxiomAnnotations ;
+        :aFlag "true"^^xsd:boolean .
+
+[ rdf:type owl:Axiom ;
+   owl:annotatedSource :AClass ;
+   owl:annotatedProperty :aFlag ;
+   owl:annotatedTarget "true"^^xsd:boolean ;
+   rdfs:comment "we annotated this annotation :)"
+ ] .
+
+
+###  http://null.org/ontology/tree/ARouteToRoot
+:ARouteToRoot rdf:type owl:Class ;
+              rdfs:subClassOf :PathsFromRoot .
+
+
+###  http://null.org/ontology/tree/ASubclass
+:ASubclass rdf:type owl:Class ;
+           rdfs:subClassOf :AClass .
+
+[ rdf:type owl:Axiom ;
+   owl:annotatedSource :ASubclass ;
+   owl:annotatedProperty rdfs:subClassOf ;
+   owl:annotatedTarget :AClass ;
+   rdfs:comment "this is a subclass comment"
+ ] .
+
+
+###  http://null.org/ontology/tree/B
+:B rdf:type owl:Class ;
+   rdfs:subClassOf :RootA ,
+                   :RootB ,
+                   :RootC ,
+                   :RootD ,
+                   :RootE ,
+                   :RootF ,
+                   :RootG ,
+                   :RootH ,
+                   :RootI ,
+                   :RootJ ,
+                   :RootK ,
+                   :RootL ,
+                   :RootM ,
+                   :RootN ,
+                   :RootO ,
+                   :RootP ,
+                   :RootQ ,
+                   :RootR ,
+                   :RootS ,
+                   :RootT ,
+                   :RootU ,
+                   :RootV ,
+                   :RootW ,
+                   :RootX ,
+                   :RootY ,
+                   :RootZ ,
+                   :RootZ1 ,
+                   :RootZ2 ,
+                   :RootZ3 ,
+                   :RootZ4 ,
+                   :RootZ5 ,
+                   :RootZ6 .
+
+
+###  http://null.org/ontology/tree/BClass
+:BClass rdf:type owl:Class ;
+        rdfs:subClassOf :ClassesWithAxiomAnnotations ,
+                        _:genid3 .
+
+_:genid3 rdf:type owl:Restriction ;
+          owl:onProperty :p ;
+          owl:someValuesFrom :AClass .
+
+[ rdf:type owl:Axiom ;
+   owl:annotatedSource :BClass ;
+   owl:annotatedProperty rdfs:subClassOf ;
+   owl:annotatedTarget _:genid3 ;
+   rdfs:comment "and a comment about a property assertion"
+ ] .
+
+
+###  http://null.org/ontology/tree/BRouteToRoot
+:BRouteToRoot rdf:type owl:Class ;
+              rdfs:subClassOf :PathsFromRoot .
+
+
+###  http://null.org/ontology/tree/ClassesWithAxiomAnnotations
+:ClassesWithAxiomAnnotations rdf:type owl:Class ;
+                             rdfs:subClassOf :TestClasses .
+
+
+###  http://null.org/ontology/tree/DefaultPartonomy
+:DefaultPartonomy rdf:type owl:Class ;
+                  rdfs:subClassOf :Partonomy ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty <http://purl.obolibrary.org/obo/BFO_0000050> ;
+                                    owl:someValuesFrom :PartParentA
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty <http://purl.obolibrary.org/obo/BFO_0000050> ;
+                                    owl:someValuesFrom :PartParentB
+                                  ] .
+
+
+###  http://null.org/ontology/tree/EquivA
+:EquivA rdf:type owl:Class ;
+        owl:equivalentClass :EquivB ;
+        rdfs:subClassOf :EquivalencyTests .
+
+
+###  http://null.org/ontology/tree/EquivB
+:EquivB rdf:type owl:Class ;
+        rdfs:subClassOf :EquivalencyTests .
+
+
+###  http://null.org/ontology/tree/EquivalencyTests
+:EquivalencyTests rdf:type owl:Class ;
+                  rdfs:subClassOf :TreeTestClasses .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_A
+:MoreThan30Siblings_A rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_B
+:MoreThan30Siblings_B rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_C
+:MoreThan30Siblings_C rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_D
+:MoreThan30Siblings_D rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_E
+:MoreThan30Siblings_E rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_F
+:MoreThan30Siblings_F rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_G
+:MoreThan30Siblings_G rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_H
+:MoreThan30Siblings_H rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_I
+:MoreThan30Siblings_I rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_J
+:MoreThan30Siblings_J rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_K
+:MoreThan30Siblings_K rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_L
+:MoreThan30Siblings_L rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_M
+:MoreThan30Siblings_M rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_N
+:MoreThan30Siblings_N rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_O
+:MoreThan30Siblings_O rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_P
+:MoreThan30Siblings_P rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Q
+:MoreThan30Siblings_Q rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_R
+:MoreThan30Siblings_R rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_S
+:MoreThan30Siblings_S rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_T
+:MoreThan30Siblings_T rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_U
+:MoreThan30Siblings_U rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_V
+:MoreThan30Siblings_V rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_W
+:MoreThan30Siblings_W rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_X
+:MoreThan30Siblings_X rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Y
+:MoreThan30Siblings_Y rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z
+:MoreThan30Siblings_Z rdf:type owl:Class ;
+                      rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z1
+:MoreThan30Siblings_Z1 rdf:type owl:Class ;
+                       rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z2
+:MoreThan30Siblings_Z2 rdf:type owl:Class ;
+                       rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z3
+:MoreThan30Siblings_Z3 rdf:type owl:Class ;
+                       rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z4
+:MoreThan30Siblings_Z4 rdf:type owl:Class ;
+                       rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z5
+:MoreThan30Siblings_Z5 rdf:type owl:Class ;
+                       rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z6
+:MoreThan30Siblings_Z6 rdf:type owl:Class ;
+                       rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z7
+:MoreThan30Siblings_Z7 rdf:type owl:Class ;
+                       rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Siblings_Z8
+:MoreThan30Siblings_Z8 rdf:type owl:Class ;
+                       rdfs:subClassOf :TestMoreThan30Children .
+
+
+###  http://null.org/ontology/tree/MoreThan30Superclasses
+:MoreThan30Superclasses rdf:type owl:Class ;
+                        rdfs:subClassOf :MoreThan30Siblings_A ,
+                                        :MoreThan30Siblings_B ,
+                                        :MoreThan30Siblings_C ,
+                                        :MoreThan30Siblings_D ,
+                                        :MoreThan30Siblings_E ,
+                                        :MoreThan30Siblings_F ,
+                                        :MoreThan30Siblings_G ,
+                                        :MoreThan30Siblings_H ,
+                                        :MoreThan30Siblings_I ,
+                                        :MoreThan30Siblings_J ,
+                                        :MoreThan30Siblings_K ,
+                                        :MoreThan30Siblings_L ,
+                                        :MoreThan30Siblings_M ,
+                                        :MoreThan30Siblings_N ,
+                                        :MoreThan30Siblings_O ,
+                                        :MoreThan30Siblings_P ,
+                                        :MoreThan30Siblings_Q ,
+                                        :MoreThan30Siblings_R ,
+                                        :MoreThan30Siblings_S ,
+                                        :MoreThan30Siblings_T ,
+                                        :MoreThan30Siblings_U ,
+                                        :MoreThan30Siblings_V ,
+                                        :MoreThan30Siblings_W ,
+                                        :MoreThan30Siblings_X ,
+                                        :MoreThan30Siblings_Y ,
+                                        :MoreThan30Siblings_Z ,
+                                        :MoreThan30Siblings_Z1 ,
+                                        :MoreThan30Siblings_Z2 ,
+                                        :MoreThan30Siblings_Z3 ,
+                                        :MoreThan30Siblings_Z4 ,
+                                        :MoreThan30Siblings_Z5 ,
+                                        :MoreThan30Siblings_Z6 ,
+                                        :MoreThan30Siblings_Z7 ,
+                                        :MoreThan30Siblings_Z8 .
+
+
+###  http://null.org/ontology/tree/MultipleDifferentPartOfProperties
+:MultipleDifferentPartOfProperties rdf:type owl:Class ;
+                                   rdfs:subClassOf :TreeTestClasses .
+
+
+###  http://null.org/ontology/tree/PartOfA
+:PartOfA rdf:type owl:Class ;
+         rdfs:subClassOf :MultipleDifferentPartOfProperties .
+
+
+###  http://null.org/ontology/tree/PartOfB
+:PartOfB rdf:type owl:Class ;
+         rdfs:subClassOf :MultipleDifferentPartOfProperties ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :partOfOne ;
+                           owl:someValuesFrom :PartOfC
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :partOfTwo ;
+                           owl:someValuesFrom :PartOfA
+                         ] .
+
+
+###  http://null.org/ontology/tree/PartOfC
+:PartOfC rdf:type owl:Class ;
+         rdfs:subClassOf :MultipleDifferentPartOfProperties .
+
+
+###  http://null.org/ontology/tree/PartParentA
+:PartParentA rdf:type owl:Class ;
+             rdfs:subClassOf :Partonomy .
+
+
+###  http://null.org/ontology/tree/PartParentB
+:PartParentB rdf:type owl:Class ;
+             rdfs:subClassOf :Partonomy .
+
+
+###  http://null.org/ontology/tree/Partonomy
+:Partonomy rdf:type owl:Class ;
+           rdfs:subClassOf :TreeTestClasses .
+
+
+###  http://null.org/ontology/tree/PathsFromRoot
+:PathsFromRoot rdf:type owl:Class ;
+               rdfs:subClassOf :TreeTestClasses .
+
+
+###  http://null.org/ontology/tree/RootA
+:RootA rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootB
+:RootB rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootC
+:RootC rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootD
+:RootD rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootE
+:RootE rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootF
+:RootF rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootG
+:RootG rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootH
+:RootH rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootI
+:RootI rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootJ
+:RootJ rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootK
+:RootK rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootL
+:RootL rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootM
+:RootM rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootN
+:RootN rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootO
+:RootO rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootP
+:RootP rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootQ
+:RootQ rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootR
+:RootR rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootS
+:RootS rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootT
+:RootT rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootU
+:RootU rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootV
+:RootV rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootW
+:RootW rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootX
+:RootX rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootY
+:RootY rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootZ
+:RootZ rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootZ1
+:RootZ1 rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootZ2
+:RootZ2 rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootZ3
+:RootZ3 rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootZ4
+:RootZ4 rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootZ5
+:RootZ5 rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/RootZ6
+:RootZ6 rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/TargetOfPathsFromRoot
+:TargetOfPathsFromRoot rdf:type owl:Class ;
+                       rdfs:subClassOf :ARouteToRoot ,
+                                       :BRouteToRoot .
+
+
+###  http://null.org/ontology/tree/TestClasses
+:TestClasses rdf:type owl:Class .
+
+
+###  http://null.org/ontology/tree/TestMoreThan30Children
+:TestMoreThan30Children rdf:type owl:Class ;
+                        rdfs:subClassOf :TreeTestClasses .
+
+
+###  http://null.org/ontology/tree/TreeTestClasses
+:TreeTestClasses rdf:type owl:Class ;
+                 rdfs:subClassOf :TestClasses .
+
+
+###  http://null.org/ontology/tree/WithMappingsToEFO
+:WithMappingsToEFO rdf:type owl:Class ;
+                   rdfs:subClassOf :TestClasses ;
+                   <http://www.geneontology.org/formats/oboInOwl#hasDbXref> "http://null.org/ontology#not_loaded" ,
+                                                                            "http://purl.obolibrary.org/obo/UBERON_0002048" ,
+                                                                            "http://www.ebi.ac.uk/efo/EFO_0000786" .
+
+
+###  http://null.org/ontology/tree/EquivC
+<http://null.org/ontology/tree/EquivC> rdf:type owl:Class ;
+                                                                      owl:equivalentClass <http://null.org/ontology/tree/EquivD> ;
+                                                                      rdfs:subClassOf :EquivalencyTests .
+
+
+###  http://null.org/ontology/tree/EquivD
+<http://null.org/ontology/tree/EquivD> rdf:type owl:Class .
+
+
+###  Generated by the OWL API (version 4.5.25.2023-02-15T19:15:49Z) https://github.com/owlcs/owlapi

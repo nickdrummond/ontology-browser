@@ -2,13 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace='base :: header (title=${title}, query=${false}, tree=${false}, rewriteLinks=${true})'></head>
+<head>
+    <th:block  th:replace='~{base :: header (title=${title}, rewriteLinks=${true})}'/>
+</head>
 
 <body class="wrapper">
 
-<div th:replace='base :: title(search=${true})'></div>
+<div th:replace='~{base :: title}'></div>
 
-<div th:replace='base :: menu'></div>
+<div th:replace='~{base :: menu}'></div>
 
 <div id="main">
 
@@ -16,23 +18,14 @@
 
         <h2 th:text="${title}">Title</h2>
 
-        <div th:replace="base :: characteristic (${axioms})">
+        <div th:replace="~{base :: characteristic (${axioms})}">
             A characteristic
         </div>
 
     </div>
 </div>
 
-<div th:replace='base :: footer'></div>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        const search = new URLSearchParams(window.location.search).get('search');
-        if (search) {
-            document.getElementById('find').setAttribute("value", search);
-        }
-    });
-</script>
+<div th:replace='~{base :: footer}'></div>
 
 </body>
 </html>

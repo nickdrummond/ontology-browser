@@ -34,3 +34,15 @@ export function getUrlWithParameter(key, value) {
     params.set(key, value);
     return window.location.pathname + '?' + params;
 }
+
+export function getPlural(type) {
+    switch (type) {
+        case "Class": return "classes";
+        case "Named individual": return "individuals";
+        case "Object property": return "objectproperties";
+        case "Data property": return "dataproperties";
+        case "Annotation property": return "annotationproperties";
+        case "Datatype": return "datatypes";
+        case "ontology-uri": return "ontologies";
+    }
+}

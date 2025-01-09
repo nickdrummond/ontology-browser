@@ -23,6 +23,17 @@ renders it for easy navigation.
 
 ## Run
 
+### Profiles
+
+The following profiles are supported
+* **dev** for turning off caching and other local options
+* **reasoners** enable scanning for various DL reasoners (eg Pellet, JFact) on startup for use in DL Query, otherwise simple structural reasoner is used
+
+Use the following java option on run to enable the profile
+```
+-Dspring.profiles.active=dev,reasoners
+```
+
 ### Maven
 
 `mvn clean jetty:run`
@@ -55,6 +66,7 @@ To load your own, set the root ontology location and reasoner root ontology IRI 
     PROJECT_URL=<Project documentation url>
     PROJECT_TAGLINE=<Project tagline text>
     PROJECT_CONTACT=<Email address of contact>
+    INDEX_TYPE=<CLASSES_USAGE_CLOUD|INDIVIDUALS_USAGE_CLOUD|OBJECT_PROPERTIES_USAGE_CLOUD>
     LABEL_IRI=<IRI of the annotation property to use for rendering>
     RESTART_SECRET=<used for /restart endpoint secret param>
 

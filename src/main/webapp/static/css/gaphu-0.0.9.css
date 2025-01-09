@@ -41,7 +41,7 @@ div.autocomplete li{
 
 /* The style of the matched text in autocompleter when highlightResults is on */
 div.autocomplete li span.match{
-    color: black;
+    color: #11aa11;
 }
 
 div.autocomplete li.selected{
@@ -88,13 +88,13 @@ div.errormessage {
     font-size: 0.8rem;
 }
 
-.dark div.autocomplete {
+[data-theme="dark"] div.autocomplete {
     background-color: #000022;
     color: #ddddff;
 }
 
 div.autocomplete li {
-    color: #ddddff;
+    color: #777;
 }
 
 div.autocomplete li.selected {
@@ -102,10 +102,14 @@ div.autocomplete li.selected {
     transition: ease-out 0.2s;
 }
 
-.dark div.autocomplete li span.match {
+[data-theme="dark"] div.autocomplete li span.match {
     color: #33ff33;
 }
 
-.dark div.errormessage {
+[data-theme="dark"] div.autocomplete li {
+    color: #ddddff;
+}
+
+[data-theme="dark"] div.errormessage {
     background-color: #000022;
 }
