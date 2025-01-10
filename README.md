@@ -18,6 +18,8 @@ renders it for easy navigation.
 * Axioms view (and search)
 * Paging
 * Dark mode
+* Graphs (graph profile)
+* Git history (git profile)
 
 ![Image of Ontology browser - dark mode](docs/obi-wan.png)
 
@@ -28,6 +30,8 @@ renders it for easy navigation.
 The following profiles are supported
 * **dev** for turning off caching and other local options
 * **reasoners** enable scanning for various DL reasoners (eg Pellet, JFact) on startup for use in DL Query, otherwise simple structural reasoner is used
+* **graph** show graphs for individuals (experimental)
+* **git** show a history for the ontology if it is stored in a git repo (experimental)
 
 Use the following java option on run to enable the profile
 ```
@@ -69,6 +73,8 @@ To load your own, set the root ontology location and reasoner root ontology IRI 
     INDEX_TYPE=<CLASSES_USAGE_CLOUD|INDIVIDUALS_USAGE_CLOUD|OBJECT_PROPERTIES_USAGE_CLOUD>
     LABEL_IRI=<IRI of the annotation property to use for rendering>
     RESTART_SECRET=<used for /restart endpoint secret param>
+    GIT_LOCAL=<the root of the git directory>
+    GIT_REMOTE=<remote git repository>
 
 ## SKOS/SKOS-XL support
 
