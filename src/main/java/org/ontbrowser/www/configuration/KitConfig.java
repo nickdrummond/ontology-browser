@@ -3,7 +3,6 @@ package org.ontbrowser.www.configuration;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitImpl;
 import org.ontbrowser.www.io.OntologyLoader;
-import org.ontbrowser.www.renderer.MOSRenderer;
 import org.ontbrowser.www.renderer.OntologyShortFormProvider;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -32,8 +31,8 @@ public class KitConfig {
     protected final Logger logger = LoggerFactory.getLogger(KitConfig.class);
 
     @Bean
-    public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}")   URI root,
-                                 @Value("${renderer.annotation.uri}")  URI labelURI,
+    public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}") URI root,
+                                 @Value("${renderer.annotation.uri}") URI labelURI,
                                  @Value("${renderer.annotation.lang}") String labelLang) throws OWLOntologyCreationException {
         OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
         OntologyLoader loader = new OntologyLoader();

@@ -1,0 +1,41 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace='~{base :: header (title=${"History"}, rewriteLinks=${false})}'/>
+</head>
+
+<body class="wrapper">
+
+<div th:replace='~{base :: title}'></div>
+
+<div th:replace='~{base :: menu}'></div>
+
+<div id="main">
+    <div id="content">
+
+        <h2>History</h2>
+
+        <div class="characteristic commits">
+            <h4>
+                <span>Commits</span>
+                <span th:replace="~{base::paged (${pageData}, '')}"></span>
+            </h4>
+            <ul>
+                <li th:each="commit : ${commits}" class="commit">
+                    <span class="commit-message" th:text="${commit.getFullMessage()}"></span>
+
+                    <span class="commit-date"
+                          th:text="${#dates.format(commit.getAuthorIdent().getWhen(), 'dd-MM-yyyy')}"></span>
+                    <span class="commit-author" th:text="${commit.getAuthorIdent().getName()}"></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div th:replace='~{base :: footer}'></div>
+
+</body>
+</html>
