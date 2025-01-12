@@ -44,9 +44,7 @@ public class GitService {
         this.remote = remote;
         this.local = new File(local);
 
-        if (!this.local.exists()) {
-            throw new RuntimeException("git repo does not exist: " + this.local.getAbsolutePath() + " - specify correct GIT_LOCAL in ENV");
-        }
+        this.local.mkdirs();
 
         if (!this.local.isDirectory()) {
             throw new RuntimeException("git repo must be a directory: " + this.local.getAbsolutePath() + " - specify correct GIT_LOCAL in ENV");
@@ -117,7 +115,7 @@ public class GitService {
         return branchRef.getObjectId().getName();
     }
 
-    record RevStatus(int ahead, int behind){}
+    record RevStatus(List<RevCommit> ahead, List<RevCommit> behind){}
 
     public RevStatus calculateDivergence(Git git, Ref local, Ref tracking) throws IOException {
         var localRepo = git.getRepository();
@@ -130,9 +128,9 @@ public class GitService {
             RevCommit mergeBase = walk.next();
             walk.reset();
             walk.setRevFilter(RevFilter.ALL);
-            int aheadCount = RevWalkUtils.count(walk, localCommit, mergeBase);
-            int behindCount = RevWalkUtils.count(walk, trackingCommit, mergeBase);
-            return new RevStatus(aheadCount, behindCount);
+            var aheadCommits = RevWalkUtils.find(walk, localCommit, mergeBase);
+            var behindCommits = RevWalkUtils.find(walk, trackingCommit, mergeBase);
+            return new RevStatus(aheadCommits, behindCommits);
         }
     }
 
@@ -144,8 +142,4 @@ public class GitService {
     private Git open() throws IOException {
         return Git.open(local);
     }
-
-//    public void getStatus(Git git) {
-//        git.
-//    }
 }

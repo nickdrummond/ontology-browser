@@ -1,0 +1,19 @@
+<div th:fragment="commits(title, commits, pageData)" class="characteristic commits">
+    <h4>
+        <span th:text="${title}"></span>
+        <span th:if="${pageData != null}">
+      <span th:replace="~{base::paged (${pageData}, '')}"></span>
+    </span>
+    </h4>
+    <ul>
+        <li th:each="commit : ${commits}">
+            <div class="commit">
+                <span class="commit-message" th:text="${commit.getFullMessage()}"></span>
+                <span class="commit-author" th:text="${commit.getAuthorIdent().getName()}"></span>
+                <span class="commit-date"
+                      th:text="${#dates.format(commit.getAuthorIdent().getWhen(), 'dd MMM yy HH:mm')}">
+                </span>
+            </div>
+        </li>
+    </ul>
+</div>

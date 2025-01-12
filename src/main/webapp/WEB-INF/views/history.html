@@ -15,33 +15,23 @@
 <div id="main">
     <div id="content">
 
-        <h2>History</h2>
-
-        <h4 th:text="${status}">status</h4>
-        <p th:if="${divergence != null}">
-            ahead <span th:text="${divergence.ahead()}">0</span>
-            behind <span th:text="${divergence.behind()}">0</span>
+        <h2>Git</h2>
+        <p class="git-summary">
+            Branch <span class="branch-name" th:text="${local.getName()}">local</span>
+            <span th:if="${remote != null}" th:text="${' is tracking a remote branch'}">remote</span>
+            <span th:text="${' with ' + status + '.'}">status</span>
         </p>
 
-        <h4>
-            branch <span th:text="${local.getName()}">local</span>
-            <span th:if="${remote != null}" th:text="${' &#8680; ' + remote.getName()}">remote</span>
-        </h4>
+        <th:block th:if="${divergence != null}">
+            <th:block th:if="${!divergence.ahead().isEmpty()}">
+                <div th:replace="~{git :: commits('Local changes', ${divergence.ahead()}, null)}">Ahead</div>
+            </th:block>
+            <th:block th:if="${!divergence.behind().isEmpty()}">
+                <div th:replace="~{git :: commits('Remote changes', ${divergence.behind()}, null)}">Behind</div>
+            </th:block>
+        </th:block>
 
-        <div class="characteristic commits">
-            <h4>
-                <span>Commits</span>
-                <span th:replace="~{base::paged (${pageData}, '')}"></span>
-            </h4>
-            <ul>
-                <li th:each="commit : ${commits}" class="commit">
-                    <span class="commit-message" th:text="${commit.getFullMessage()}"></span>
-
-                    <span class="commit-date"
-                          th:text="${#dates.format(commit.getAuthorIdent().getWhen(), 'dd-MM-yyyy')}"></span>
-                    <span class="commit-author" th:text="${commit.getAuthorIdent().getName()}"></span>
-                </li>
-            </ul>
+        <div th:replace="~{git :: commits('History', ${commits}, ${pageData})}">
         </div>
     </div>
 </div>

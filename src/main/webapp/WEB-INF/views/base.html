@@ -82,6 +82,9 @@
 
 <ul id='tabs' th:fragment='tabs'>
     <li><a th:href='@{/ontologies/}'>Ontologies</a></li>
+    <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'git')}">
+        <li><a th:href="@{/git/history}">Git</a></li>
+    </th:block>
     <li><a th:href='@{/classes/}'>Classes</a></li>
     <li>Individuals:
         <a th:href='@{/individuals/}'>by&nbsp;Type</a> /
