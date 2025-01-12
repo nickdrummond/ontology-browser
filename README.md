@@ -73,8 +73,6 @@ To load your own, set the root ontology location and reasoner root ontology IRI 
     INDEX_TYPE=<CLASSES_USAGE_CLOUD|INDIVIDUALS_USAGE_CLOUD|OBJECT_PROPERTIES_USAGE_CLOUD>
     LABEL_IRI=<IRI of the annotation property to use for rendering>
     RESTART_SECRET=<used for /restart endpoint secret param>
-    GIT_LOCAL=<the root of the git directory>
-    GIT_REMOTE=<remote git repository>
 
 ## SKOS/SKOS-XL support
 
@@ -92,6 +90,17 @@ Concept "C" will be rendered as "C Label" if the conventional SKOS-XL reified la
     l Type skosxl:Label
     C -> skosxl:prefLabel -> l
     l -> skosxl:literalForm -> "C Label"
+
+### Git support
+Instead of just referencing a local OWL file, the browser can be set to track ontologies from a git repo.
+This enables a browsable history of the ontology repo in the browser.
+And, if the repo is tracking, with a remote specified, it will show if the ontologies have been updated remotely since they were loaded.
+
+If you have the "git" profile enabled, you must either supply a local repo or a remote repo (which will be cloned).
+
+    GIT_LOCAL=<the root of the git directory> (default = data/) # should be aligned with ONTOLOGY_ROOT_LOCATION
+    GIT_REMOTE=<remote git repository>
+    GIT_BRANCH=<branch> (default = master)
 
 ## Implementation
 
