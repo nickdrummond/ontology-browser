@@ -17,6 +17,17 @@
 
         <h2>History</h2>
 
+        <h4 th:text="${status}">status</h4>
+        <p th:if="${divergence != null}">
+            ahead <span th:text="${divergence.ahead()}">0</span>
+            behind <span th:text="${divergence.behind()}">0</span>
+        </p>
+
+        <h4>
+            branch <span th:text="${local.getName()}">local</span>
+            <span th:if="${remote != null}" th:text="${' &#8680; ' + remote.getName()}">remote</span>
+        </h4>
+
         <div class="characteristic commits">
             <h4>
                 <span>Commits</span>

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @Profile("git")
@@ -34,10 +35,30 @@ public class GitController extends ApplicationController {
             Model model,
             HttpServletRequest request
     ) {
-        List<RevCommit> commits = gitService.getCommits(start, pageSize);
-        model.addAttribute("commits", commits);
-        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
-        model.addAttribute("pageData", new PageData(start, pageSize, Integer.MAX_VALUE));
+        gitService.withGit(git -> {
+            var local = gitService.getLocal(git);
+            var commits = gitService.getCommits(git, start, pageSize);
+
+            var remote = gitService.getRemote(git);
+            var status = "not tracking remote";
+            if (remote.isPresent()) {
+                model.addAttribute("remote", remote.get());
+
+                if (Objects.equals(gitService.getRev(local), gitService.getRev(remote.get()))) {
+                    status = "up to date";
+                }
+                else {
+                    status = "updates available";
+                    var divergence = gitService.calculateDivergence(git, local, remote.get());
+                    model.addAttribute("divergence", divergence);
+                }
+            }
+            model.addAttribute("status", status);
+            model.addAttribute("local", local);
+            model.addAttribute("commits", commits);
+            model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+            model.addAttribute("pageData", new PageData(start, pageSize, Integer.MAX_VALUE));
+        });
         return new ModelAndView("history");
     }
 }
