@@ -1,0 +1,28 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert='~{base :: header (title=${"Admin"}, rewriteLinks=${false})}'/>
+</head>
+
+<body class="wrapper">
+
+<div th:replace='~{base :: title}'></div>
+
+<div th:replace='~{base :: menu}'></div>
+
+<div id='main'>
+
+    <div class="admin">
+        <p>
+            Admin
+        </p>
+    </div>
+
+</div>
+
+<div th:replace='~{base :: footer}'></div>
+
+</body>
+</html>

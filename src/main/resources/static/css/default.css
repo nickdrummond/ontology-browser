@@ -590,7 +590,7 @@ img.thumb{
     background-size: contain;
     background-color: inherit;
     background-repeat: no-repeat;
-    background-image: url("../../static/images/search-svgrepo-com.svg");
+    background-image: url("/images/search-svgrepo-com.svg");
     position: relative;
     left: -3em;
     cursor: pointer;

@@ -3,6 +3,7 @@ package org.ontbrowser.www.configuration;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitImpl;
 import org.ontbrowser.www.io.OntologyLoader;
+import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.MOSRenderer;
 import org.ontbrowser.www.renderer.OntologyShortFormProvider;
 import org.ontbrowser.www.renderer.RendererFactory;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.FileNotFoundException;
 import java.net.URI;
 
 @Configuration
@@ -32,8 +34,17 @@ public class KitConfig {
     protected final Logger logger = LoggerFactory.getLogger(KitConfig.class);
 
     @Bean
-    public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}")   URI root,
-                                 @Value("${renderer.annotation.uri}")  URI labelURI,
+    public ProjectInfo projectInfo(@Value("${project.name}")    String name,
+                                   @Value("${project.contact}") String contact,
+                                   @Value("${project.url}") String url,
+                                   @Value("${project.tagline}") String tagline,
+                                   @Value("${spring.profiles.active:}") String activeProfiles) {
+        return new ProjectInfo(name, contact, url, tagline, activeProfiles);
+    }
+
+    @Bean
+    public OWLHTMLKit owlhtmlKit(@Value("${ontology.root.location}") String root,
+                                 @Value("${renderer.annotation.uri}") URI labelURI,
                                  @Value("${renderer.annotation.lang}") String labelLang) throws OWLOntologyCreationException {
         OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
         OntologyLoader loader = new OntologyLoader();

@@ -1,4 +1,4 @@
-export const BUSY_IMAGE = "<img class='busy' alt='Loading...' src='" + baseUrl + "static/images/busy.gif" + "' />";
+export const BUSY_IMAGE = "<img class='busy' alt='Loading...' src='" + baseUrl + "images/busy.gif" + "' />";
 
 // just shorthand for below
 export function getValueOfElementByID(id) {

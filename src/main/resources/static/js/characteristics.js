@@ -1,7 +1,7 @@
 export const characteristics = (parentSelector) => {
 
     const HIDDEN = "hidden characteristics";
-    const ICON_HTML = "<img class=\"min\" src=\"" + baseUrl + "static/images/min.png\" width=\"16\" height=\"16\"/>";
+    const ICON_HTML = "<img class='min' src='" + "/images/min.png' width='16' height='16'/>";
     const VALUES_SELECTOR = "ul, table";
 
     const parentElement = document.querySelector(parentSelector);
