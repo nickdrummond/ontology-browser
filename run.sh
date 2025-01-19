@@ -1,3 +1,0 @@
-
-
-java -DGIT_LOCAL='/Users/drummondn1/IdeaProjects/star-wars-ontology/' -DGIT_REMOTE='https://github.com/nickdrummond/star-wars-ontology.git' -DLABEL_IRI='https://nickdrummond.github.io/star-wars-ontology/util#editorLabel' -DONTOLOGY_ROOT_LOCATION='file:///Users/drummondn1/IdeaProjects/star-wars-ontology/ontologies/all.owl.ttl' -DPROJECT_CONTACT='nickdrummond@yahoo.com' -DPROJECT_NAME='Star Wars Ontology' -DPROJECT_TAGLINE='Project Convor - building Star Wars in OWL' -DPROJECT_URL='https://nickdrummond.github.io/star-wars-ontology/' -DREASONING_ROOT_IRI='https://nickdrummond.github.io/star-wars-ontology/ontologies/events.owl.ttl' -DADMIN_PASSWORD='admin' -jar ontology-browser-4.0.0.jar
