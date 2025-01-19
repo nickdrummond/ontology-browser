@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @RestController
-public class RootController extends ApplicationController implements ApplicationContextAware {
+public class RootController extends ApplicationController { //} implements ApplicationContextAware {
 
     enum IndexType {
         CLASSES_USAGE_CLOUD, INDIVIDUALS_USAGE_CLOUD, OBJECT_PROPERTIES_USAGE_CLOUD
@@ -39,7 +39,7 @@ public class RootController extends ApplicationController implements Application
     @Value("${INDEX_TYPE:CLASSES_USAGE_CLOUD}")
     private IndexType indexType;
 
-    private XmlWebApplicationContext applicationContext;
+//    private XmlWebApplicationContext applicationContext;
 
     // Entry point
     @GetMapping("/")
@@ -83,24 +83,24 @@ public class RootController extends ApplicationController implements Application
         }
     }
 
-    @GetMapping("/restart")
-    public void reload(
-            @RequestParam(required=false) final String redirect,
-            @RequestParam final String secret,
-            HttpServletResponse response) throws NotAuthorisedException, IOException {
+//    @GetMapping("/restart")
+//    public void reload(
+//            @RequestParam(required=false) final String redirect,
+//            @RequestParam final String secret,
+//            HttpServletResponse response) throws NotAuthorisedException, IOException {
+//
+//        if (!Objects.equals(secret, restartSecret)) {
+//            throw new NotAuthorisedException();
+//        }
+//
+//        // Shouldn't do this - https://www.baeldung.com/java-restart-spring-boot-app
+//        applicationContext.refresh();
+//
+//        response.sendRedirect((redirect != null) ? redirect : "/");
+//    }
 
-        if (!Objects.equals(secret, restartSecret)) {
-            throw new NotAuthorisedException();
-        }
-
-        // Shouldn't do this - https://www.baeldung.com/java-restart-spring-boot-app
-        applicationContext.refresh();
-
-        response.sendRedirect((redirect != null) ? redirect : "/");
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = (XmlWebApplicationContext)applicationContext;
-    }
+//    @Override
+//    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+//        this.applicationContext = (XmlWebApplicationContext)applicationContext;
+//    }
 }

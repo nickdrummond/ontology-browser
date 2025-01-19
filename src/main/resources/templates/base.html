@@ -11,15 +11,15 @@
     <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>
 
-    <link rel='icon' type='image/x-icon' href='../../static/images/favicon.ico'
-          th:href='@{/static/images/favicon.ico}'/>
-    <link rel='apple-touch-icon-precomposed' href='../../static/images/splat-152-211412.png'
-          th:href='@{/static/images/splat-152-211412.png}'/>
+    <link rel='icon' type='image/x-icon' href='/images/favicon.ico'
+          th:href='@{/images/favicon.ico}'/>
+    <link rel='apple-touch-icon-precomposed' href='/images/splat-152-211412.png'
+          th:href='@{/images/splat-152-211412.png}'/>
 
-    <link rel='stylesheet' type='text/css' href='../../static/css/autosuggest_inquisitor.css'
-          th:href='@{/static/css/autosuggest_inquisitor.css}'/>
-    <link rel='stylesheet' type='text/css' href='../../static/css/default.css'
-          th:href='@{/static/css/default.css}'/>
+    <link rel='stylesheet' type='text/css' href='/css/autosuggest_inquisitor.css'
+          th:href='@{/css/autosuggest_inquisitor.css}'/>
+    <link rel='stylesheet' type='text/css' href='/css/default.css'
+          th:href='@{/css/default.css}'/>
 
     <script type='text/javascript' th:inline='javascript'>
         const baseUrl = '/';
@@ -32,37 +32,37 @@
         // Set dark mode early to avoid flicker
         document.documentElement.setAttribute(THEME_ATTRIBUTE, sessionStorage.getItem(THEME_KEY) || THEME_DEFAULT);
     </script>
-    <script type='text/javascript' src='../../static/js/libs/jquery-1.4.3.min.js'
-            th:src="@{/static/js/libs/jquery-1.4.3.min.js}"></script>
+    <script type='text/javascript' src='/js/libs/jquery-1.4.3.min.js'
+            th:src="@{/js/libs/jquery-1.4.3.min.js}"></script>
 
-    <script type='module' src='../../static/js/app.js'
-            th:src='@{/static/js/app.js}'>
+    <script type='module' src='/js/app.js'
+            th:src='@{/js/app.js}'>
     </script>
 
-    <script type='text/javascript' src='../../static/js/libs/bsn.AutoSuggest_2.1_multiword.js'
-            th:src="@{/static/js/libs/bsn.AutoSuggest_2.1_multiword.js}"></script>
+    <script type='text/javascript' src='/js/libs/bsn.AutoSuggest_2.1_multiword.js'
+            th:src="@{/js/libs/bsn.AutoSuggest_2.1_multiword.js}"></script>
 </th:block>
 
 <th:block th:fragment="includeTree">
-    <script type='module' src='../../static/js/tree.js'
-            th:src='@{/static/js/tree.js}'>
+    <script type='module' src='/js/tree.js'
+            th:src='@{/js/tree.js}'>
     </script>
 </th:block>
 
 <th:block th:fragment="includeDLQuery">
-    <link rel='stylesheet' type='text/css' href='../../static/css/gaphu-0.0.9.css'
-          th:href='@{/static/css/gaphu-0.0.9.css}'/>
-    <script type='text/javascript' src='../../static/js/gaphu-0.0.9.js'
-            th:src='@{/static/js/gaphu-0.0.9.js}'></script>
-    <script type='module' src='../../static/js/dlquery.js'
-            th:src='@{/static/js/dlquery.js}'>
+    <link rel='stylesheet' type='text/css' href='/css/gaphu-0.0.9.css'
+          th:href='@{/css/gaphu-0.0.9.css}'/>
+    <script type='text/javascript' src='/js/gaphu-0.0.9.js'
+            th:src='@{/js/gaphu-0.0.9.js}'></script>
+    <script type='module' src='/js/dlquery.js'
+            th:src='@{/js/dlquery.js}'>
     </script>
 </th:block>
 
 <body>
 
 <div id='title' th:fragment="title">
-    <h1><img class='icon' src='../../static/images/splat-24-211412.png' th:src='@{/static/images/splat-24-211412.png}'/>
+    <h1><img class='icon' src='/images/splat-24-211412.png' th:src='@{/images/splat-24-211412.png}'/>
         <a th:href='@{/}' th:text="${projectInfo.name}">Project Name</a></h1>
     <a class="skip-nav" href='#content'>skip to content</a>
     <div id="entityfinder" th:fragment="entityfinder">

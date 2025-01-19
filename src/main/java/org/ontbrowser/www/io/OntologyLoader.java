@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashSet;
@@ -17,10 +20,10 @@ public class OntologyLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(OntologyLoader.class);
 
-    public OWLOntology loadOntologies(OWLOntologyManager mngr, URI physicalURI) throws OWLOntologyCreationException {
+    public OWLOntology loadOntologies(OWLOntologyManager mngr, String location) throws OWLOntologyCreationException {
 
         // check if already loaded
-        IRI iri = IRI.create(physicalURI);
+        IRI iri = IRI.create(location);
         for (OWLOntology ont : mngr.getOntologies()) {
             if (mngr.getOntologyDocumentIRI(ont).equals(iri)) {
                 return ont;
@@ -44,17 +47,18 @@ public class OntologyLoader {
         };
         mngr.addOntologyLoaderListener(ontLoadListener);
 
-        handleCommonBaseMappers(mngr, physicalURI);
-
-        if (!physicalURI.isAbsolute()) {
-            ClassLoader classLoader = getClass().getClassLoader();
-            InputStream ontAsStream = classLoader.getResourceAsStream(physicalURI.getPath());
-            if (ontAsStream == null) {
-                throw new RuntimeException("Cannot load: " + physicalURI + " from classpath: " + classLoader.getResource("/"));
+        if (location.startsWith("/")) {
+            handleCommonBaseMappers(mngr, URI.create("file://" + location));
+            try (InputStream ontAsStream = new FileInputStream(location)) {
+                return mngr.loadOntologyFromOntologyDocument(ontAsStream);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Cannot load: " + location);
+            } catch (IOException e) {
+                throw new RuntimeException("Cannot load: " + location);
             }
-            return mngr.loadOntologyFromOntologyDocument(ontAsStream);
         }
         else {
+            handleCommonBaseMappers(mngr, URI.create(location));
             return mngr.loadOntologyFromOntologyDocument(iri);
         }
     }
