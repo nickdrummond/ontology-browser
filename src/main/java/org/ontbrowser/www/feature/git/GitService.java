@@ -7,6 +7,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.RevWalkUtils;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
+import org.ontbrowser.www.BeforeLoad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,15 +23,13 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 // TODO
-// Should not load ontology until REPO is cloned!!!
-// warning if the repo is behind
 // pull and reload
 // allow switch version????
 // Periodic refresh (fetch)
 
 @Profile("git")
 @Service
-public class GitService {
+public class GitService implements BeforeLoad {
 
     private static final Logger log = LoggerFactory.getLogger(GitService.class);
 
