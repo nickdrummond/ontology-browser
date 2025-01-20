@@ -82,6 +82,9 @@
 
 <ul id='tabs' th:fragment='tabs'>
     <li><a th:href='@{/ontologies/}'>Ontologies</a></li>
+    <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'git')}">
+        <li><a th:href="@{/git/history}">Git</a></li>
+    </th:block>
     <li><a th:href='@{/classes/}'>Classes</a></li>
     <li>Individuals:
         <a th:href='@{/individuals/}'>by&nbsp;Type</a> /
@@ -122,8 +125,9 @@
             <span th:case="${false}">&#8678;</span>
         </span>
 
-        <span th:with="end=${T(java.lang.Math).min(data.total, data.start + data.pageSize-1)}"
-                th:text='${"(" + data.start + "-" + end + " of " + data.total + ")"}'>(1-20 of 100)</span>
+        <span th:with="end=${T(java.lang.Math).min(data.total, data.start + data.pageSize-1)},
+                       total=${T(java.lang.Integer).MAX_VALUE == data.total ? '' : ' of ' + data.total}"
+                th:text='${"(" + data.start + "-" + end + total + ")"}'>(1-20 of 100)</span>
 
         <span class="paging-arrow" th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
             <a th:case="${true}" rel="nofollow"

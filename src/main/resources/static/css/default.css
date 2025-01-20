@@ -638,6 +638,31 @@ img.thumb{
     background-color: rgba(120, 150, 255, 0.2);
 }
 
+.git-summary {
+    margin-left: 5px;
+}
+
+.commit {
+    display: flex;
+}
+
+.commit span {
+    margin: 0 0.3em;
+}
+
+.commit-message {
+    flex-grow: 10;
+}
+
+.commit-author, .commit-date {
+    color: gray;
+    white-space: nowrap;
+}
+
+.branch-name {
+    font-weight: bold;
+}
+
 @media screen and (max-width: 800px) and (max-height: 450px) {
 
     #burger {

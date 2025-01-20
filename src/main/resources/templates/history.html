@@ -1,0 +1,42 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace='~{base :: header (title=${"History"}, rewriteLinks=${false})}'/>
+</head>
+
+<body class="wrapper">
+
+<div th:replace='~{base :: title}'></div>
+
+<div th:replace='~{base :: menu}'></div>
+
+<div id="main">
+    <div id="content">
+
+        <h2>Git</h2>
+        <p class="git-summary">
+            Branch <span class="branch-name" th:text="${local.getName()}">local</span>
+            <span th:if="${remote != null}" th:text="${' is tracking a remote branch'}">remote</span>
+            <span th:text="${' with ' + status + '.'}">status</span>
+        </p>
+
+        <th:block th:if="${divergence != null}">
+            <th:block th:if="${!divergence.ahead().isEmpty()}">
+                <div th:replace="~{git :: commits('Local changes', ${divergence.ahead()}, null)}">Ahead</div>
+            </th:block>
+            <th:block th:if="${!divergence.behind().isEmpty()}">
+                <div th:replace="~{git :: commits('Remote changes', ${divergence.behind()}, null)}">Behind</div>
+            </th:block>
+        </th:block>
+
+        <div th:replace="~{git :: commits('History', ${commits}, ${pageData})}">
+        </div>
+    </div>
+</div>
+
+<div th:replace='~{base :: footer}'></div>
+
+</body>
+</html>
