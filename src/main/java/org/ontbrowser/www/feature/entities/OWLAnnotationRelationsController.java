@@ -1,5 +1,7 @@
 package org.ontbrowser.www.feature.entities;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLHTMLKit;
@@ -20,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -155,6 +155,8 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
         common.buildPrimaryTree(property, primaryHierarchy, "Annotations on", model);
         common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
+
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
 
         return new ModelAndView(RELATION_TEMPLATE);
     }

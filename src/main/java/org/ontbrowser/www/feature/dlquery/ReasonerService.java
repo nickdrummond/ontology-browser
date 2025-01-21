@@ -3,7 +3,9 @@ package org.ontbrowser.www.feature.dlquery;
 import com.google.common.collect.ImmutableSet;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.reasoner.ReasonerFactoryService;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -87,7 +88,8 @@ public class ReasonerService {
 
             long t = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 
-            logger.info(query.queryType() + " " + results.size() + " results in " + t + "ms: " + kit.render(query.owlClassExpression()));
+            logger.info(query.queryType() + " " + results.size() + " results in " + t + "ms: "
+                    + kit.getStringRenderer().render(query.owlClassExpression()));
 
             return results;
         });

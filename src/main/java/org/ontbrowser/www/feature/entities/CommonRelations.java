@@ -71,6 +71,7 @@ public class CommonRelations<T extends OWLProperty> {
         List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ont, comparator, with, pageSize);
 
         model.addAttribute("characteristics", characteristics);
+        model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, with));
 
         return individual;

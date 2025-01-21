@@ -78,6 +78,7 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("reasoningOntology", reasonerService.getReasoningActiveOnt());
         model.addAttribute("mos", htmlRenderer);
         model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("expression", expression);
         model.addAttribute("minus", minus);
         model.addAttribute("order", order);

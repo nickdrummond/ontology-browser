@@ -1,8 +1,12 @@
 package org.ontbrowser.www.kit;
 
+import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
@@ -35,7 +39,7 @@ public interface OWLHTMLKit {
 
     ShortFormProvider getShortFormProvider();
 
-    String render(OWLObject owlObject);
+    MOSStringRenderer getStringRenderer();
 
     OntologyIRIShortFormProvider getOntologySFP();
 

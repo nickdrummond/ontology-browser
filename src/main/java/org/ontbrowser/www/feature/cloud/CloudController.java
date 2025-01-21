@@ -113,6 +113,7 @@ public class CloudController extends ApplicationController {
 
         model.addAttribute("title", title);
         model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("helper", helper);
         model.addAttribute("mos", owlRenderer);
 

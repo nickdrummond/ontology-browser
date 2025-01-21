@@ -191,7 +191,7 @@ public class OWLIndividualsController extends ApplicationController {
                         .withType(type, r);
 
         model.addAttribute("hierarchy2", individualsHierarchy.getClosedTree());
-        model.addAttribute("type2", kit.render(type));
+        model.addAttribute("type2", kit.getStringRenderer().render(type));
 
         return individualsHierarchy;
     }

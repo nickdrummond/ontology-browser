@@ -18,10 +18,10 @@
 
             <!--            <label for="edit-ontology">Ontology</label>-->
             <select name="ontology" id="edit-ontology">
-                <option th:each="ont : ${kit.getOntologies()}"
+                <option th:each="ont : ${ontologies}"
                         class="ontology-uri"
                         th:value='${T(org.ontbrowser.www.util.OWLUtils).ontIRI(ont)}'
-                        th:text="${kit.getOntologySFP().getShortForm(ont)}">ontology</option>
+                        th:text="${ontologiesSfp.getShortForm(ont)}">ontology</option>
             </select>
         </form>
     </div>

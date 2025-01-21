@@ -8,17 +8,11 @@ import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.OntologyShortFormProvider;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.io.OWLObjectRenderer;
-import org.semanticweb.owlapi.io.ToStringRenderer;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,8 +53,7 @@ public class KitConfig {
 
         beforeLoad.forEach(bl -> logger.info("Before load: {}", bl.getClass().getSimpleName()));
 
-        OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
-
+        var mngr = OWLManager.createOWLOntologyManager();
         OWLOntology ont;
         if (redirectRoot == null) {
             // Only load the ontologies if we don't have a redirect
@@ -71,20 +64,8 @@ public class KitConfig {
             logger.info("Not loading ontologies as redirect in place");
             ont = mngr.createOntology();
         }
-        OWLHTMLKit kit = new OWLHTMLKitImpl(mngr, ont, ontologyShortFormProvider());
+        OWLHTMLKit kit = new OWLHTMLKitImpl(ont, ontologyShortFormProvider());
         kit.setLabelParams(labelURI, labelLang);
-        ToStringRenderer.setRenderer(() -> new OWLObjectRenderer(){
-
-            @Override
-            public void setShortFormProvider(ShortFormProvider shortFormProvider) {
-                // do nothing
-            }
-
-            @Override
-            public String render(OWLObject owlObject) {
-                return kit.render(owlObject);
-            }
-        });
         return kit;
     }
 

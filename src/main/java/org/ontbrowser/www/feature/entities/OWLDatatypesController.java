@@ -101,6 +101,8 @@ public class OWLDatatypesController extends ApplicationController {
         model.addAttribute("type", "Datatypes");
         model.addAttribute("iri", owlDatatype.getIRI());
         model.addAttribute("characteristics", characteristics);
+        model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 

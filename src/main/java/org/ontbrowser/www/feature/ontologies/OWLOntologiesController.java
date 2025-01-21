@@ -112,6 +112,8 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", iri);
         model.addAttribute("characteristics", characteristics);
+        model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("metrics", service.getMetrics(ont));
         model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);

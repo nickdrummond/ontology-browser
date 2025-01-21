@@ -1,16 +1,18 @@
 package org.ontbrowser.www.feature.entities;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.renderer.RendererFactory;
-import org.ontbrowser.www.service.stats.StatsService;
-import org.ontbrowser.www.url.URLScheme;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLObjectPropertyHierarchyService;
+import org.ontbrowser.www.service.stats.StatsService;
+import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
@@ -22,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -148,6 +148,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
         model.addAttribute("stats", statsService.getPropertyStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
 
         common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
 
@@ -177,6 +178,8 @@ public class OWLPropertyRelationsController extends ApplicationController {
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
         common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
+
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
 
         return new ModelAndView("owlentityfragment");
     }

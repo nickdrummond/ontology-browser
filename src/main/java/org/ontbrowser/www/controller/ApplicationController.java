@@ -28,9 +28,4 @@ public abstract class ApplicationController {
     public ProjectInfo getProjectInfo() {
         return projectInfo;
     }
-
-    // TODO remove this from the model
-    @ModelAttribute("kit")
-    public OWLHTMLKit getKit() { return kit; }
-
 }

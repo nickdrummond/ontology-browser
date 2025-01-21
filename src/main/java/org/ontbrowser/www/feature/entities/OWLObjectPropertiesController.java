@@ -92,6 +92,8 @@ public class OWLObjectPropertiesController extends ApplicationController {
         model.addAttribute("type", "Object Properties");
         model.addAttribute("iri", property.getIRI());
         model.addAttribute("characteristics", characteristics);
+        model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 

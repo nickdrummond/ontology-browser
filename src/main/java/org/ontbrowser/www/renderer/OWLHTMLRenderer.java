@@ -16,12 +16,15 @@ import java.util.Set;
 public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
 
     private final OWLHTMLVisitor rendererVisitor;
+    private final MOSStringRenderer stringRenderer;
 
     public OWLHTMLRenderer(final ShortFormProvider sfp,
                            final OntologyIRIShortFormProvider ontSfp,
                            final URLScheme urlScheme,
                            final OWLOntology ont,
                            final OWLEntityFinder finder) {
+
+        stringRenderer = new MOSStringRenderer(finder, ont);
         rendererVisitor = new OWLHTMLVisitor(
                 sfp,
                 ontSfp,
@@ -58,5 +61,9 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
         return iri.getIRIString()
                 .replaceAll("/(?=[^/])", "/<wbr>")
                 .replace("#", "#<wbr>");
+    }
+
+    public String renderAsPlainString(final OWLObject obj) {
+        return stringRenderer.render(obj);
     }
 }

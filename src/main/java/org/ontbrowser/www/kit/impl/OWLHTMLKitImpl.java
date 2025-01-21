@@ -1,20 +1,20 @@
 package org.ontbrowser.www.kit.impl;
 
+import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.*;
 import org.ontbrowser.www.url.RestURLScheme;
 import org.ontbrowser.www.url.URLScheme;
-import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.util.OWLObjectComparator;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.util.VocabUtils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
+import org.semanticweb.owlapi.io.ToStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.Optional;
@@ -47,12 +47,12 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     private MOSStringRenderer stringRenderer;
 
     public OWLHTMLKitImpl(
-            final OWLOntologyManager mngr,
             final OWLOntology rootOntology,
             final OntologyIRIShortFormProvider ontologySFP) {
-        this.mngr = mngr;
+        this.mngr = rootOntology.getOWLOntologyManager();
         this.rootOntology = rootOntology;
         this.ontologySFP = ontologySFP;
+        ToStringRenderer.setRenderer(this::getStringRenderer);
     }
 
     @Override
@@ -112,12 +112,7 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
         return getNameCache();
     }
 
-    @Override
-    public String render(OWLObject owlObject) {
-        return getStringRenderer().render(owlObject);
-    }
-
-    private MOSStringRenderer getStringRenderer() {
+    public MOSStringRenderer getStringRenderer() {
         if (stringRenderer == null) {
             stringRenderer = new MOSStringRenderer(getFinder(), rootOntology);
         }

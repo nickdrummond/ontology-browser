@@ -71,6 +71,8 @@ public class CommonFragments {
         model.addAttribute("type", "Classes");
         model.addAttribute("iri", owlClass.getIRI());
         model.addAttribute("characteristics", characteristics);
+        model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 
@@ -188,6 +190,8 @@ public class CommonFragments {
         model.addAttribute("type", "Individuals");
         model.addAttribute("iri", owlIndividual.getIRI());
         model.addAttribute("characteristics", characteristics);
+        model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
         model.addAttribute("mos", owlHtmlRenderer);
 

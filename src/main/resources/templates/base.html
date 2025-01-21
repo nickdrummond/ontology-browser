@@ -151,7 +151,7 @@
 
             <span class="owlobject"
                   th:with="data=${object.owlAxiom() != null ? object.owlAxiom() : object.owlObject()}"
-                  th:data="${kit.render(data)}"
+                  th:data="${mos.renderAsPlainString(data)}"
                   th:utext="${mos.render(object.owlObject())}">
                 <a href="../../classes/1934778517/" class='Class'
                    title="http://www.co-ode.org/ontologies/pizza/pizza.owl#ThinAndCrispyPizza">ThinAndCrispyPizza</a>
@@ -310,7 +310,7 @@
             th:each="object : ${direct.objects}">
                 <span class="owlobject"
                       th:with="data=${object.owlAxiom() != null ? object.owlAxiom() : object.owlObject()}"
-                      th:data="${kit.render(data)}"
+                      th:data="${mos.renderAsPlainString(data)}"
                       th:utext="${mos.render(object.owlObject())}">
                     individual
                 </span>

@@ -1,13 +1,17 @@
 package org.ontbrowser.www.feature.editing;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.BadRequestException;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.feature.dlquery.ParserService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.co.nickdrummond.parsejs.ParseException;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import uk.co.nickdrummond.parsejs.ParseResult;
 
 import java.io.IOException;
@@ -164,7 +165,7 @@ public class EditController extends ApplicationController {
 
         try {
             // TODO this needs to be tidier - return the Axiom and let the OK be the response status
-            return new ParseResult(kit.render(editService.parseAxiom(expression, df, checker)), "OK").toString();
+            return new ParseResult(kit.getStringRenderer().render(editService.parseAxiom(expression, df, checker)), "OK").toString();
         } catch (ParseException e) {
             return e.toString();
         }
