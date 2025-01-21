@@ -1,5 +1,10 @@
 # properties
 
+logging:
+    level:
+        ROOT: WARN
+        org.ontbrowser: INFO
+
 project:
   name: ${PROJECT_NAME:Ontology Browser}
   url: ${PROJECT_URL:https://github.com/nickdrummond/ontology-browser#readme}
