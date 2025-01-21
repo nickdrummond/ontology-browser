@@ -1,0 +1,83 @@
+# properties
+
+project:
+  name: ${PROJECT_NAME:Ontology Browser}
+  url: ${PROJECT_URL:https://github.com/nickdrummond/ontology-browser#readme}
+  contact: ${PROJECT_CONTACT:unknown@null.com}
+  tagline: ${PROJECT_TAGLINE:Testing}
+
+# Actuator endpoints not exposed by default
+management:
+  endpoints:
+    enabled-by-default: false
+
+admin:
+  username: ${ADMIN_USERNAME:admin}
+  password: ${ADMIN_PASSWORD}
+
+restart:
+  secret: ${RESTART_SECRET:#{null}}
+  root: ${REDIRECT_ROOT:#{null}}
+
+redirect:
+    root: ${REDIRECT_ROOT:#{null}}
+
+git:
+  local: ${GIT_LOCAL:data/}
+  remote: ${GIT_REMOTE:#{null}}
+  branch: ${GIT_BRANCH:master}
+
+# IRI for the ontology used to import everything
+ontology:
+  root:
+    location: ${ONTOLOGY_ROOT_LOCATION:example.owl}
+
+reasoning:
+  threads: 2
+  root:
+    iri: ${REASONING_ROOT_IRI:null}
+  cache:
+    count: 100
+
+cache:
+  location : caches/
+
+geo:
+  latitude: http://www.w3.org/2003/01/geo/wgs84_pos#lat
+  longitude: http://www.w3.org/2003/01/geo/wgs84_pos#long
+  point: http://www.georss.org/georss/point
+
+cloud:
+  threshold:
+    default: 1
+  zoom:
+    default: 8
+
+renderer:
+  annotation:
+    uri: ${LABEL_IRI:http://www.w3.org/2000/01/rdf-schema#label}
+    lang: ${LABEL_LANG:en}
+
+# Reasoner implementations that will be searched for at startup
+reasoner:
+  structural:
+    label: Structural
+    cls: org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory
+  jfact:
+    label: JFact
+    cls: uk.ac.manchester.cs.jfact.JFactFactory
+  hermit:
+    label: HermiT
+    cls: org.semanticweb.HermiT.Reasoner$ReasonerFactory
+  owllink:
+    label: OWLlink
+    cls: org.semanticweb.owlapi.owllink.OWLlinkHTTPXMLReasonerFactory
+  factpp:
+    label: FaCT++
+    cls: uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory
+  pellet:
+    label: Pellet
+    cls: com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory
+  openllet:
+    label: Openllet
+    cls: openllet.owlapi.OpenlletReasonerFactory
