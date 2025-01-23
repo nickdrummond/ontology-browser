@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ApplicationEntry {
+public class OntologyBrowser {
     public static void main(String[] args) {
-        SpringApplication.run(ApplicationEntry.class, args);
+        SpringApplication.run(OntologyBrowser.class, args);
     }
 }

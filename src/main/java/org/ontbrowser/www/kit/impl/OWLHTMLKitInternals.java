@@ -1,5 +1,6 @@
 package org.ontbrowser.www.kit.impl;
 
+import org.ontbrowser.www.kit.Config;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.*;
@@ -14,13 +15,13 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import java.net.URI;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 
-public class OWLHTMLKitImpl implements OWLHTMLKit {
+public class OWLHTMLKitInternals implements OWLHTMLKit {
 
     private final OWLOntologyManager mngr;
 
@@ -40,19 +41,28 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
 
     protected URLScheme urlScheme;
 
-    private URI labelURI;
-
-    private String labelLang;
+    private Config config;
 
     private MOSStringRenderer stringRenderer;
 
-    public OWLHTMLKitImpl(
+    public OWLHTMLKitInternals(
             final OWLOntology rootOntology,
-            final OntologyIRIShortFormProvider ontologySFP) {
+            final Config config
+    ) {
         this.mngr = rootOntology.getOWLOntologyManager();
         this.rootOntology = rootOntology;
-        this.ontologySFP = ontologySFP;
+        this.config = config;
         ToStringRenderer.setRenderer(this::getStringRenderer);
+    }
+
+    @Override
+    public void restart() {
+        throw new RuntimeException("Cannot restart the internal implementation");
+    }
+
+    @Override
+    public Config getConfig() {
+        return config;
     }
 
     @Override
@@ -61,12 +71,6 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
             urlScheme = new RestURLScheme();
         }
         return urlScheme;
-    }
-
-    @Override
-    public void setLabelParams(URI labelURI, String labelLang) {
-        this.labelURI = labelURI;
-        this.labelLang = labelLang;
     }
 
     public Optional<OWLOntology> getOntologyForIRI(final IRI iri) {
@@ -120,6 +124,9 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     }
 
     public OntologyIRIShortFormProvider getOntologySFP() {
+        if (ontologySFP == null){
+            ontologySFP = new OntologyShortFormProvider(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+        }
         return ontologySFP;
     }
 
@@ -130,14 +137,14 @@ public class OWLHTMLKitImpl implements OWLHTMLKit {
     private ShortFormProvider getInternalSFP() {
         if (shortFormProvider == null){
             OWLDataFactory df = mngr.getOWLDataFactory();
-            OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(IRI.create(labelURI));
+            OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(config.labelIRI());
             if (VocabUtils.isSkosXLLabelAnnotation(labelAnnotationProperty)) {
                 shortFormProvider = new SkosXLShortFormProvider(
-                        labelLang, getOntologies(), new FixedSimpleShortFormProvider());
+                        config.labelLang(), getOntologies(), new FixedSimpleShortFormProvider());
             }
             else {
                 shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
-                        labelLang, getOntologies(), new FixedSimpleShortFormProvider());
+                        config.labelLang(), getOntologies(), new FixedSimpleShortFormProvider());
             }
         }
         return shortFormProvider;

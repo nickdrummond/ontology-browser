@@ -2,15 +2,15 @@ package org.ontbrowser.www.configuration;
 
 import org.ontbrowser.www.BeforeLoad;
 import org.ontbrowser.www.io.OntologyLoader;
+import org.ontbrowser.www.kit.Config;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.impl.OWLHTMLKitImpl;
+import org.ontbrowser.www.kit.impl.DelegatingOWLHTMLKit;
+import org.ontbrowser.www.kit.impl.OWLHTMLKitInternals;
 import org.ontbrowser.www.model.ProjectInfo;
-import org.ontbrowser.www.renderer.OntologyShortFormProvider;
 import org.ontbrowser.www.renderer.RendererFactory;
-import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,40 +38,25 @@ public class KitConfig {
     }
 
     @Bean
-    public OntologyLoader loader() {
-        return new OntologyLoader();
+    public Config config(
+            @Value("${ontology.root.location}") String root,
+            @Value("${renderer.annotation.uri}") URI labelURI,
+            @Value("${renderer.annotation.lang}") String labelLang
+    ) {
+        return new Config(root, IRI.create(labelURI), labelLang);
     }
 
     @Bean
     public OWLHTMLKit owlhtmlKit(
             List<BeforeLoad> beforeLoad,
-            OntologyLoader loader,
-            @Value("${ontology.root.location}") String root,
-            @Value("${renderer.annotation.uri}") URI labelURI,
-            @Value("${renderer.annotation.lang}") String labelLang
+            Config config
     ) throws OWLOntologyCreationException {
 
         beforeLoad.forEach(bl -> logger.info("Before load: {}", bl.getClass().getSimpleName()));
+        OWLOntology ont = new OntologyLoader().loadOntologies(config.root());
+        var internals = new OWLHTMLKitInternals(ont, config);
 
-        var mngr = OWLManager.createOWLOntologyManager();
-        OWLOntology ont;
-        if (redirectRoot == null) {
-            // Only load the ontologies if we don't have a redirect
-            logger.info("Loading {}", root);
-            ont = loader.loadOntologies(mngr, root);
-        }
-        else {
-            logger.info("Not loading ontologies as redirect in place");
-            ont = mngr.createOntology();
-        }
-        OWLHTMLKit kit = new OWLHTMLKitImpl(ont, ontologyShortFormProvider());
-        kit.setLabelParams(labelURI, labelLang);
-        return kit;
-    }
-
-    @Bean
-    public OntologyShortFormProvider ontologyShortFormProvider() {
-        return new OntologyShortFormProvider(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+        return new DelegatingOWLHTMLKit(internals);
     }
 
     @Bean

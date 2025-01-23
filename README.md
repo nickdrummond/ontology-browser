@@ -38,27 +38,11 @@ Use the following java option on run to enable the profile
 -Dspring.profiles.active=dev,reasoners
 ```
 
-### Maven
-
-`mvn clean jetty:run`
-
-Then navigate to http://localhost:8080
-
-This will give you a browser with a tiny example ontology.
-
-### Docker
-
-Run the Dockerfile, which will build from github by default and create an image
-based on [Jetty 10](https://hub.docker.com/_/jetty/)  Alpine
-
-Run the image and navigate to http://localhost:8080
-
 ## Deploy
 
-### railway.app
-
-You can deploy this on [railway.app](https://railway.app) with the button below and be up and running with just a few config variables.
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/hI-_yx?referralCode=-eh5ht)
+Ontology Browser is a Spring Boot application and can be deployed to any servlet container.
+For adviice on this, please see the Spring docs
+https://docs.spring.io/spring-boot/how-to/deployment/index.html
 
 ### Configuration
 
@@ -72,7 +56,6 @@ To load your own, set the root ontology location and reasoner root ontology IRI 
     PROJECT_CONTACT=<Email address of contact>
     INDEX_TYPE=<CLASSES_USAGE_CLOUD|INDIVIDUALS_USAGE_CLOUD|OBJECT_PROPERTIES_USAGE_CLOUD>
     LABEL_IRI=<IRI of the annotation property to use for rendering>
-    RESTART_SECRET=<used for /restart endpoint secret param>
 
 ## SKOS/SKOS-XL support
 
@@ -104,7 +87,7 @@ If you have the "git" profile enabled, you must either supply a local repo or a 
 
 ## Implementation
 
-This is implemented using Java 20, Spring MVC, [OWLAPI](https://github.com/owlcs/owlapi) and Thymeleaf.
+This is implemented using Java 20, Spring Boot, [OWLAPI](https://github.com/owlcs/owlapi) and Thymeleaf.
 
 Some dependencies are local (in /repo) as they do not exist on any mvn repo.
 

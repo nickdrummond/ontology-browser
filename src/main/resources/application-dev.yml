@@ -7,6 +7,9 @@ logging:
 
 # Actuator
 management:
+  endpoint:
+    env:
+      show-values: always
   endpoints:
     enabled-by-default: true
     web:

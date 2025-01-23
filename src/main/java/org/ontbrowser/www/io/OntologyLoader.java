@@ -3,6 +3,7 @@ package org.ontbrowser.www.io;
 import com.google.common.collect.Maps;
 import org.ontbrowser.www.kit.impl.BaseURIMapper;
 import org.ontbrowser.www.util.OWLUtils;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +19,15 @@ import java.util.Map;
 
 public class OntologyLoader {
 
+    private OWLOntologyManager mngr;
+
     private static final Logger logger = LoggerFactory.getLogger(OntologyLoader.class);
 
-    public OWLOntology loadOntologies(OWLOntologyManager mngr, String location) throws OWLOntologyCreationException {
+    public OntologyLoader() {
+        mngr = OWLManager.createOWLOntologyManager();
+    }
+
+    public OWLOntology loadOntologies(String location) throws OWLOntologyCreationException {
 
         // check if already loaded
         IRI iri = IRI.create(location);

@@ -1,32 +1,35 @@
 package org.ontbrowser.www.feature.ontologies;
 
 import com.google.common.net.HttpHeaders;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.OWLAxiomService;
 import org.ontbrowser.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLDocumentFormat;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
 
@@ -35,15 +38,12 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 public class OWLOntologiesController extends ApplicationController {
 
     private final OWLOntologiesService service;
-    private final OntologyIRIShortFormProvider sfp;
     private final OWLAxiomService axiomService;
 
     public OWLOntologiesController(
             @Autowired OWLOntologiesService service,
-            @Autowired OntologyIRIShortFormProvider sfp,
             @Autowired OWLAxiomService axiomService) {
         this.service = service;
-        this.sfp = sfp;
         this.axiomService = axiomService;
     }
 
@@ -93,7 +93,8 @@ public class OWLOntologiesController extends ApplicationController {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
-        String title = sfp.getShortForm(ont) + " (Ontology)";
+        var ontologySFP = kit.getOntologySFP();
+        String title = ontologySFP.getShortForm(ont) + " (Ontology)";
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(ont);
 
@@ -113,7 +114,7 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("iri", iri);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
-        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
+        model.addAttribute("ontologiesSfp", ontologySFP);
         model.addAttribute("metrics", service.getMetrics(ont));
         model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
