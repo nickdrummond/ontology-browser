@@ -5,6 +5,13 @@ logging:
     ROOT: WARN
     org.ontbrowser: DEBUG
 
+spring:
+  thymeleaf: # Thymeleaf
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: file:src/main/resources/templates/
+
 # Actuator
 management:
   endpoint:
