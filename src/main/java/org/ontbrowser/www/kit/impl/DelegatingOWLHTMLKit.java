@@ -2,6 +2,7 @@ package org.ontbrowser.www.kit.impl;
 
 import org.ontbrowser.www.io.OntologyLoader;
 import org.ontbrowser.www.kit.Config;
+import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
@@ -11,14 +12,14 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 // Delegate pattern allows the implementation to be switched out
 public class DelegatingOWLHTMLKit implements OWLHTMLKit {
 
     private OWLHTMLKit delegate;
+
+    private final List<RestartListener> listeners = new ArrayList<>();
 
     public DelegatingOWLHTMLKit(OWLHTMLKit delegate) {
         this.delegate = delegate;
@@ -30,6 +31,12 @@ public class DelegatingOWLHTMLKit implements OWLHTMLKit {
         var ont = new OntologyLoader().loadOntologies(config.root());
         // only switches the implementation if the loading was successful
         delegate = new OWLHTMLKitInternals(ont, config);
+        listeners.forEach(RestartListener::onRestart);
+    }
+
+    @Override
+    public void registerListener(RestartListener listener) {
+        listeners.add(listener);
     }
 
     @Override

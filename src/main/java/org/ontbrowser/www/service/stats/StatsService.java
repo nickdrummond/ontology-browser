@@ -2,16 +2,21 @@ package org.ontbrowser.www.service.stats;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.service.hierarchy.OWLAnnotationPropertyHierarchyService;
+import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.kit.Restartable;
 import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.stereotype.Service;
 
 @Service
-public class StatsService {
+public class StatsService implements RestartListener {
 
-    private LRUMap<StatsMemo, Stats> cache = new LRUMap<>(20);
+    private final LRUMap<StatsMemo, Stats> cache = new LRUMap<>(20);
+
+    public StatsService(Restartable restartable) {
+        restartable.registerListener(this);
+    }
 
     public Stats<OWLClass> getClassStats(String type, OWLReasoner reasoner) throws NotFoundException {
         return switch (type) {
@@ -47,8 +52,11 @@ public class StatsService {
     }
 
     public <T extends OWLObject> Stats<T> getTreeStats(StatsMemo memo, OWLHierarchyService<T> hierarchyService) {
-        return cache.computeIfAbsent(memo, m -> {
-            return new TreeStats<>(hierarchyService);
-        });
+        return cache.computeIfAbsent(memo, m -> new TreeStats<>(hierarchyService));
+    }
+
+    @Override
+    public void onRestart() {
+        cache.clear();
     }
 }

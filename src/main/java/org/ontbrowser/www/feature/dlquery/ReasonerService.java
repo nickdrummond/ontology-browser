@@ -1,6 +1,7 @@
 package org.ontbrowser.www.feature.dlquery;
 
 import com.google.common.collect.ImmutableSet;
+import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.semanticweb.owlapi.model.IRI;
@@ -19,7 +20,7 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 @Service
-public class ReasonerService {
+public class ReasonerService implements RestartListener {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -46,6 +47,7 @@ public class ReasonerService {
             @Autowired Map<DLQuery, Future<Set<OWLEntity>>> cache,
             @Autowired ReasonerFactoryService reasonerFactoryService) {
         this.kit = kit;
+        kit.registerListener(this);
         this.es = es;
         this.cache = cache;
         this.reasonerFactoryService = reasonerFactoryService;
@@ -88,8 +90,10 @@ public class ReasonerService {
 
             long t = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 
-            logger.info(query.queryType() + " " + results.size() + " results in " + t + "ms: "
-                    + kit.getStringRenderer().render(query.owlClassExpression()));
+            if (logger.isInfoEnabled()) {
+                String expr = kit.getStringRenderer().render(query.owlClassExpression());
+                logger.info("{} {} results in {} ms: {}", query.queryType(), results.size(), t, expr);
+            }
 
             return results;
         });
@@ -106,5 +110,11 @@ public class ReasonerService {
             case instances -> r.getInstances(clsExpr, false).getFlattened();
         };
         return ImmutableSet.copyOf(entities);
+    }
+
+    @Override
+    public void onRestart() {
+        cache.clear();
+        reasonerFactoryService.clear();
     }
 }

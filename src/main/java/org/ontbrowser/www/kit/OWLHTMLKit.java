@@ -11,9 +11,11 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 
-public interface OWLHTMLKit {
+public interface OWLHTMLKit extends Restartable {
 
     Config getConfig();
+
+    void restart() throws OWLOntologyCreationException;
 
     URLScheme getURLScheme();
 
@@ -42,6 +44,4 @@ public interface OWLHTMLKit {
     OntologyIRIShortFormProvider getOntologySFP();
 
     OWLOntology getRootOntology();
-
-    void restart() throws OWLOntologyCreationException;
 }

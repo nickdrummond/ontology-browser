@@ -59,7 +59,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         this.common = new CommonRelations<>(
                 PATH,
-                kit.getShortFormProvider(),
+                kit,
                 propertiesService,
                 individualsService,
                 rendererFactory,

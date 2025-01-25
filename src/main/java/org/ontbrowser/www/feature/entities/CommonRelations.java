@@ -3,6 +3,8 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -14,34 +16,35 @@ import org.ontbrowser.www.service.stats.StatsService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.ui.Model;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class CommonRelations<T extends OWLProperty> {
+public class CommonRelations<T extends OWLProperty> implements RestartListener {
 
     public static final String BASE_TREE = "base::children";
 
     private final String path;
-    private final ShortFormProvider sfp;
+    private final OWLHTMLKit kit;
     private final PropertiesService<T> propertiesService;
     private final OWLIndividualsService individualsService;
     private final RendererFactory rendererFactory;
     private final StatsService statsService;
+
     private final Map<StatsMemo, AbstractRelationsHierarchyService<T>> hierarchyCache = new HashMap<>();
 
     public CommonRelations(
             String path,
-            ShortFormProvider sfp,
+            OWLHTMLKit kit,
             PropertiesService<T> propertiesService,
             OWLIndividualsService individualsService,
             @Nonnull RendererFactory rendererFactory,
             StatsService statsService) {
         this.path = path;
-        this.sfp = sfp;
+        this.kit = kit;
+        kit.registerListener(this);
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.rendererFactory = rendererFactory;
@@ -49,7 +52,7 @@ public class CommonRelations<T extends OWLProperty> {
     }
 
     public void renderEntity(OWLEntity entity, Model model) {
-        String shortForm = sfp.getShortForm(entity);
+        String shortForm = kit.getShortFormProvider().getShortForm(entity);
         String type = entity.getEntityType().getPrintName();
         model.addAttribute("title", shortForm + " (" + type + ")");
         model.addAttribute("iri", entity.getIRI());
@@ -87,7 +90,6 @@ public class CommonRelations<T extends OWLProperty> {
 
         Comparator<Tree<OWLNamedIndividual>> comparator = propertiesService.getComparator(orderByProperty, ont);
 
-        // TODO central cache
         StatsMemo memo = new StatsMemo(property.getIRI().toString(), String.valueOf(inverse), ont.getOntologyID().toString());
 
         if (hierarchyCache.containsKey(memo)) {
@@ -123,7 +125,7 @@ public class CommonRelations<T extends OWLProperty> {
                 relationsHierarchyService.getPrunedTree(individual) :
                 relationsHierarchyService.getClosedTree();
 
-        model.addAttribute("type2", sfp.getShortForm(property));
+        model.addAttribute("type2", kit.getShortFormProvider().getShortForm(property));
         model.addAttribute("inverse", relationsHierarchyService.isInverse());
         model.addAttribute("mos", getRenderer(relationsHierarchyService, property, individual, request));
         model.addAttribute("hierarchy2", relationsTree);
@@ -166,5 +168,10 @@ public class CommonRelations<T extends OWLProperty> {
                 hierarchyService.getProperty().toString(),
                 hierarchyService.getOnt().getOntologyID().toString(),
                 Boolean.toString(hierarchyService.isInverse()));
+    }
+
+    @Override
+    public void onRestart() {
+        hierarchyCache.clear();
     }
 }

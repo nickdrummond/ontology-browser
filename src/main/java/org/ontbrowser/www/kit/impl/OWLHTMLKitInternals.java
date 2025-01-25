@@ -1,6 +1,7 @@
 package org.ontbrowser.www.kit.impl;
 
 import org.ontbrowser.www.kit.Config;
+import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.*;
@@ -58,6 +59,11 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     @Override
     public void restart() {
         throw new RuntimeException("Cannot restart the internal implementation");
+    }
+
+    @Override
+    public void registerListener(RestartListener listener) {
+        throw new RuntimeException("Cannot register listeners on the internal implementation");
     }
 
     @Override

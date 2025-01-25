@@ -54,7 +54,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         this.kit = kit;
         this.common = new CommonRelations<>(
                 PATH,
-                kit.getShortFormProvider(),
+                kit,
                 propertiesService,
                 individualsService,
                 rendererFactory,
