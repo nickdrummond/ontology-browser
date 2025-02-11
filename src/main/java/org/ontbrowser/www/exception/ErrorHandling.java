@@ -6,10 +6,12 @@ import org.ontbrowser.www.model.ProjectInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class ErrorHandling {
@@ -25,6 +27,11 @@ public class ErrorHandling {
             HttpServletResponse httpResponse,
             Exception e,
             Model model) {
+
+        if (e instanceof NoResourceFoundException) {
+            httpResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            return null;
+        }
 
         // TODO if request for XML or fragment, don't spit out HTML
 
