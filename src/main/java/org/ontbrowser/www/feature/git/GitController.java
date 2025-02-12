@@ -1,12 +1,13 @@
 package org.ontbrowser.www.feature.git;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.eclipse.jgit.revwalk.RevCommit;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
+import java.io.IOException;
+import java.security.Principal;
 import java.util.Objects;
 
 @RestController
@@ -28,12 +30,21 @@ public class GitController extends ApplicationController {
         this.gitService = gitService;
     }
 
+    @GetMapping("/update")
+    public void update(
+            HttpServletResponse response
+    ) throws IOException {
+        gitService.pull();
+        response.sendRedirect("/git/history");
+    }
+
     @GetMapping("/history")
     public ModelAndView history(
             @RequestParam(defaultValue = "0") int start,
             @RequestParam(defaultValue = "20") int pageSize,
             Model model,
-            HttpServletRequest request
+            HttpServletRequest request,
+            Principal principal
     ) {
         gitService.withGit(git -> {
             var local = gitService.getLocal(git);
@@ -53,6 +64,10 @@ public class GitController extends ApplicationController {
                     model.addAttribute("divergence", divergence);
                 }
             }
+            if (isAdmin(principal)) {
+                model.addAttribute("refresh", true);
+            }
+
             model.addAttribute("status", status);
             model.addAttribute("local", local);
             model.addAttribute("commits", commits);
@@ -60,5 +75,15 @@ public class GitController extends ApplicationController {
             model.addAttribute("pageData", new PageData(start, pageSize, Integer.MAX_VALUE));
         });
         return new ModelAndView("history");
+    }
+
+    private boolean isAdmin(Principal principal) {
+        if (principal instanceof UsernamePasswordAuthenticationToken token) {
+            var authorities = token.getAuthorities();
+            if (!authorities.isEmpty()) {
+                return authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+            }
+        }
+        return false;
     }
 }

@@ -25,10 +25,13 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/admin/**").authenticated()
+                        .requestMatchers("/git/update").authenticated()
                         .anyRequest().permitAll()
                 )
                 .httpBasic(withDefaults())
-                .formLogin(withDefaults());
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll());
         return http.build();
     }
 
@@ -51,7 +54,7 @@ public class SecurityConfig {
         UserDetails user = User.withDefaultPasswordEncoder()
                 .username(username)
                 .password(password)
-                .roles("USER")
+                .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user);
     }

@@ -20,6 +20,7 @@
             Branch <span class="branch-name" th:text="${local.getName()}">local</span>
             <span th:if="${remote != null}" th:text="${' is tracking a remote branch'}">remote</span>
             <span th:text="${' with ' + status + '.'}">status</span>
+            <a th:if="${remote != null && refresh == true && divergence != null && !divergence.behind().isEmpty()}" href="./update">Update</a>
         </p>
 
         <th:block th:if="${divergence != null}">

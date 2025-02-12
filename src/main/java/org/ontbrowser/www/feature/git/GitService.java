@@ -95,6 +95,20 @@ public class GitService implements BeforeLoad {
                 .findFirst();
     }
 
+    public void pull() {
+        withGit(git -> {
+            var remote = getRemote(git);
+            remote.ifPresent(r -> {
+                try {
+                    log.info("Pulling from remote");
+                    git.pull().call();
+                } catch (GitAPIException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        });
+    }
+
     @FunctionalInterface
     public interface CheckedConsumer<T> {
         void accept(T t) throws Exception;
