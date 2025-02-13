@@ -31,6 +31,7 @@ git:
   local: ${GIT_LOCAL:data/}
   remote: ${GIT_REMOTE:#{null}}
   branch: ${GIT_BRANCH:master}
+  refresh: ${GIT_REFRESH:PT5M} # 5 minutes
 
 # IRI for the ontology used to import everything
 ontology:

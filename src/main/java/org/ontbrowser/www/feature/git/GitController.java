@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,8 +34,9 @@ public class GitController extends ApplicationController {
     @GetMapping("/update")
     public void update(
             HttpServletResponse response
-    ) throws IOException {
+    ) throws IOException, OWLOntologyCreationException {
         gitService.pull();
+        kit.restart();
         response.sendRedirect("/git/history");
     }
 
@@ -69,7 +71,7 @@ public class GitController extends ApplicationController {
             }
 
             model.addAttribute("status", status);
-            model.addAttribute("local", local);
+            model.addAttribute("local", local.getName());
             model.addAttribute("commits", commits);
             model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
             model.addAttribute("pageData", new PageData(start, pageSize, Integer.MAX_VALUE));

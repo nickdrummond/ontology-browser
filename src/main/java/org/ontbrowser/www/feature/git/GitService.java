@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -23,9 +24,7 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 // TODO
-// pull and reload
 // allow switch version????
-// Periodic refresh (fetch)
 
 @Profile("git")
 @Service
@@ -62,9 +61,6 @@ public class GitService implements BeforeLoad {
             log.info("Found git repo at {}", this.local.getAbsolutePath());
             log.info("Fetching...");
             git.fetch().call();
-            log.info("Checking out {}", branch);
-            var ref = git.checkout().setName(branch).call();
-            log.info("Checked out {}", ref.getName());
             foundRemote = getRemoteURL(git).orElse(null);
             if (foundRemote != null) {
                 if (remote != null && !Objects.equals(remote, foundRemote)) {
@@ -85,6 +81,11 @@ public class GitService implements BeforeLoad {
             throw new RuntimeException(e);
         }
         this.remote = foundRemote;
+    }
+
+    @Scheduled(fixedRateString = "${git.refresh}")
+    private void fetch() {
+        withGit(git -> git.fetch().call());
     }
 
     // Work out the remote from the local repo
