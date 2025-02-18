@@ -21,4 +21,9 @@ public class HighlightingHTMLRenderer<O> implements ElementRenderer<O> {
     public String render(O object) {
         return highlighter.highlight(delegate.render(object));
     }
+
+    @Override
+    public String renderAsPlainString(O object) {
+        return delegate.renderAsPlainString(object);
+    }
 }
