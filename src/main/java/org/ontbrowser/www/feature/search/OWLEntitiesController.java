@@ -6,6 +6,9 @@ import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -20,6 +23,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value="/entities")
 public class OWLEntitiesController extends ApplicationController {
+    private static final Logger log = LoggerFactory.getLogger(OWLEntitiesController.class);
 
     private final SearchService service;
     private final NameService nameService;
@@ -69,13 +73,13 @@ public class OWLEntitiesController extends ApplicationController {
             throw new OntServerException("Unknown property: " + property);
         }
 
-        List<AxiomWithMetadata> results = service.findByAnnotation(search, optAnnot.orElse(null), ont);
+        List<AxiomWithMetadata> results = service.findByAnnotation(search, optAnnot.orElse(null), kit);
 
         if (results.size() == 1) {
             OWLObject owlObject = results.get(0).owlObject();
             if (owlObject instanceof OWLAnnotationAssertionAxiom ax) {
                 Optional<IRI> iri = ax.getSubject().asIRI();
-                OWLObject o = service.getEntities(iri.orElseThrow(), ont).iterator().next();
+                OWLObject o = ont.getEntitiesInSignature(iri.orElseThrow(), Imports.INCLUDED).iterator().next();
                 response.sendRedirect(kit.getURLScheme().getURLForOWLObject(o));
                 return new ModelAndView("");
             }

@@ -69,6 +69,7 @@ function initSearch() {
     new AutoSuggest("search", {
         script: baseUrl + 'entities/?',
         varname: 'name',
+        timeout: 5000,
         cache: false,
         callback: function (obj) {
             window.location = obj.id;

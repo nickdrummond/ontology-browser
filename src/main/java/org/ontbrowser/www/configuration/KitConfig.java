@@ -1,5 +1,7 @@
 package org.ontbrowser.www.configuration;
 
+import org.apache.lucene.store.ByteBuffersDirectory;
+import org.apache.lucene.store.Directory;
 import org.ontbrowser.www.BeforeLoad;
 import org.ontbrowser.www.io.OntologyLoader;
 import org.ontbrowser.www.kit.Config;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.net.URI;
 import java.util.List;
@@ -65,5 +68,11 @@ public class KitConfig {
                                    kit.getOntologySFP(),
                                    kit.getURLScheme(),
                                    kit.getFinder());
+    }
+
+    @Profile("lucene")
+    @Bean
+    public Directory luceneDirectory() {
+        return new ByteBuffersDirectory();
     }
 }
