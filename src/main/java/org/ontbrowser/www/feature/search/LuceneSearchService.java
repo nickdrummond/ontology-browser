@@ -172,8 +172,13 @@ public class LuceneSearchService implements SearchService, RestartListener {
         builder.add(wholeThing, BooleanClause.Occur.SHOULD);
 
         // or fuzzy match any word
-        for (String word : input.split(" ")) {
-            var wordQuery = new FuzzyQuery(new Term(LABEL_FIELD, word), 2);
+        var words = input.split(" ");
+        var boost = 1f; // earlier words are higher priority
+        var boostDecr = 0.1f;
+        for (String word : words) {
+            var wordQuery = new BoostQuery(new FuzzyQuery(new Term(LABEL_FIELD, word), 2), boost);
+            if (boost > boostDecr)
+                boost -= boostDecr;
             builder.add(wordQuery, BooleanClause.Occur.SHOULD);
         }
         return builder.build();
