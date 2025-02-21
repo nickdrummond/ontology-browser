@@ -94,7 +94,7 @@ public class LuceneSearchService implements SearchService, RestartListener {
         conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE); // overwrite index
 
         try (var writer = new IndexWriter(directory, conf)) {
-            OWLOntology ont = kit.getRootOntology();
+            var ont = kit.getRootOntology();
 
             Streams.concat(
                             ont.classesInSignature(Imports.INCLUDED),
@@ -123,22 +123,22 @@ public class LuceneSearchService implements SearchService, RestartListener {
         Document doc = new Document();
         doc.add(new StringField(IRI_FIELD, entity.getIRI().getIRIString(), YES));
         doc.add(new StringField(TYPE_FIELD, entity.getEntityType().getName(), YES));
-        doc.add(new TextField(SHORTFORM_FIELD, kit.getShortFormProvider().getShortForm(entity), YES));
-        doc.add(new TextField(LABEL_FIELD, sfp.getShortForm(entity), YES));
+        doc.add(new TextField(SHORTFORM_FIELD, kit.getShortFormProvider().getShortForm(entity).toLowerCase(), YES));
+        doc.add(new TextField(LABEL_FIELD, sfp.getShortForm(entity).toLowerCase(), YES));
         return doc;
     }
 
     @Override
-    public List<OWLEntity> findByName(String input, OWLHTMLKit kit) {
+    public List<OWLEntity> findByName(String input, int size, OWLHTMLKit kit) {
         try (var reader = DirectoryReader.open(directory)) {
 
             var searcher = new IndexSearcher(reader);
 
-            var q = buildQuery(input);
+            var q = buildQuery(input.toLowerCase());
 
             log.debug("Lucene search {}", q);
 
-            var results = searcher.search(q, 20, Sort.RELEVANCE);
+            var results = searcher.search(q, size, Sort.RELEVANCE);
 
             return toOwlEntities(results, reader);
         } catch (IOException e) {
@@ -165,20 +165,18 @@ public class LuceneSearchService implements SearchService, RestartListener {
 
     private Query buildQuery(String input) {
 
-        // whole shortform
-        var wholeThing = new PrefixQuery(new Term(SHORTFORM_FIELD, input));
+        var builder = new BooleanQuery.Builder();
 
-        var words = input.split(" ");
+        // whole shortform
+        var wholeThing = new BoostQuery(new PrefixQuery(new Term(SHORTFORM_FIELD, input)), 2f);
+        builder.add(wholeThing, BooleanClause.Occur.SHOULD);
 
         // or fuzzy match any word
-        var builder = new BooleanQuery.Builder();
-        for (String word : words) {
+        for (String word : input.split(" ")) {
             var wordQuery = new FuzzyQuery(new Term(LABEL_FIELD, word), 2);
             builder.add(wordQuery, BooleanClause.Occur.SHOULD);
         }
-        var any = builder.build();
-
-        return new DisjunctionMaxQuery(List.of(wholeThing, any), 0.5f);
+        return builder.build();
     }
 
     private OWLEntity getEntityFromString(String type, IRI iri, EntityProvider df) {

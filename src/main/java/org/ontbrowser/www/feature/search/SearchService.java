@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface SearchService {
 
-    List<OWLEntity> findByName(String input, OWLHTMLKit kit);
+    List<OWLEntity> findByName(String input, int size, OWLHTMLKit kit);
 
     List<AxiomWithMetadata> findByAnnotation(@Nonnull String value,
                                              OWLAnnotationProperty searchProp,

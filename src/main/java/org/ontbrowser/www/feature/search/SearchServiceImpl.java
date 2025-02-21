@@ -23,7 +23,7 @@ public class SearchServiceImpl implements SearchService {
     private final String wildcard = "*";
 
     // TODO get Kit out of here
-    public List<OWLEntity> findByName(final String input, final OWLHTMLKit kit) {
+    public List<OWLEntity> findByName(final String input, int size, final OWLHTMLKit kit) {
 
         if ((input == null) || (input.isEmpty())) {
             return Collections.emptyList();
@@ -55,7 +55,7 @@ public class SearchServiceImpl implements SearchService {
             }
         };
 
-        return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).toList();
+        return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).limit(size).toList();
     }
 
     @Override

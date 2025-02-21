@@ -38,7 +38,8 @@ public class OWLEntitiesController extends ApplicationController {
     @GetMapping(value="/", produces = MediaType.APPLICATION_XML_VALUE)
     public SearchResults find(
             @ModelAttribute final OWLOntology ont,
-            @RequestParam final String name) {
+            @RequestParam final String name,
+            @RequestParam(defaultValue = "20") final int size) {
 
         SearchResults results = new SearchResults();
 
@@ -46,7 +47,7 @@ public class OWLEntitiesController extends ApplicationController {
 
         // Minimum search length of 2
         if (name.length() > 1) {
-            List<OWLEntity> entities = service.findByName(name, kit);
+            List<OWLEntity> entities = service.findByName(name, size, kit);
             for (OWLEntity owlEntity : entities) {
                 results.addResult(new SearchResult(kit.getURLScheme().getURLForOWLObject(owlEntity), "", nameService.getName(owlEntity, kit)));
             }
