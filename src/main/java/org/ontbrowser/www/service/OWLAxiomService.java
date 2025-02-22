@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.StringWriter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -107,10 +109,13 @@ public class OWLAxiomService implements RestartListener {
     }
 
     private void ensureCache(OWLOntology ont, ShortFormProvider sfp) {
+        axiomsRenderingsByOntology.computeIfAbsent(ont, key -> cacheAxiomRenderings(key, sfp));
+    }
+
+    private Map<OWLAxiom, String> cacheAxiomRenderings(OWLOntology ont, ShortFormProvider sfp) {
         log.info("Building axiom cache for {}", ont.getOntologyID());
-        axiomsRenderingsByOntology.putIfAbsent(ont,
-                ont.getAxioms(Imports.EXCLUDED).stream()
-                        .collect(Collectors.toMap(ax -> ax, ax -> render(ax, sfp))));
+        return ont.getAxioms(Imports.EXCLUDED).stream()
+                        .collect(Collectors.toMap(ax -> ax, ax -> render(ax, sfp)));
     }
 
     private String render(final OWLAxiom axiom, final ShortFormProvider sfp) {
