@@ -22,7 +22,7 @@ import java.util.concurrent.*;
 @Service
 public class ReasonerService implements RestartListener {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private final OWLHTMLKit kit;
 
@@ -90,9 +90,9 @@ public class ReasonerService implements RestartListener {
 
             long t = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 
-            if (logger.isInfoEnabled()) {
+            if (log.isInfoEnabled()) {
                 String expr = kit.getStringRenderer().render(query.owlClassExpression());
-                logger.info("{} {} results in {} ms: {}", query.queryType(), results.size(), t, expr);
+                log.info("{} {} results in {} ms: {}", query.queryType(), results.size(), t, expr);
             }
 
             return results;
@@ -114,6 +114,7 @@ public class ReasonerService implements RestartListener {
 
     @Override
     public void onRestart() {
+        log.info("Clearing DL results cache");
         cache.clear();
         reasonerFactoryService.clear();
     }

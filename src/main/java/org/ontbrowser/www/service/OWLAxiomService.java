@@ -1,6 +1,8 @@
 package org.ontbrowser.www.service;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
@@ -8,6 +10,9 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.StringWriter;
@@ -17,9 +22,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class OWLAxiomService {
+public class OWLAxiomService implements RestartListener {
+
+    private static final Logger log = LoggerFactory.getLogger(OWLAxiomService.class);
 
     private final Map<OWLOntology, Map<OWLAxiom, String>> axiomsRenderingsByOntology = new HashMap<>();
+
+    public OWLAxiomService(@Autowired OWLHTMLKit kit) {
+        kit.registerListener(this);
+    }
 
     public Characteristic getAxioms(
             OWLOntology ont,
@@ -96,6 +107,7 @@ public class OWLAxiomService {
     }
 
     private void ensureCache(OWLOntology ont, ShortFormProvider sfp) {
+        log.info("Building axiom cache for {}", ont.getOntologyID());
         axiomsRenderingsByOntology.putIfAbsent(ont,
                 ont.getAxioms(Imports.EXCLUDED).stream()
                         .collect(Collectors.toMap(ax -> ax, ax -> render(ax, sfp))));
@@ -117,5 +129,11 @@ public class OWLAxiomService {
 
     private Stream<AxiomWithMetadata> wrappedWithOntology(Stream<OWLAxiom> axioms, OWLOntology ont) {
         return axioms.map(a -> new AxiomWithMetadata("Axioms", a, a, ont));
+    }
+
+    @Override
+    public void onRestart() {
+        log.info("Clearing axiom cache");
+        axiomsRenderingsByOntology.clear();
     }
 }

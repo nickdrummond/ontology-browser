@@ -7,7 +7,6 @@ import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.service.stats.StatsService;
@@ -33,8 +32,8 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
     public static final String PATH = "onannotationproperty";
     public static final String RELATION_TEMPLATE = "relation";
+
     private final OWLAnnotationPropertiesService propertiesService;
-    private final ReasonerFactoryService reasonerFactoryService;
     private final StatsService statsService;
     private final CommonRelations<OWLAnnotationProperty> common;
 
@@ -45,10 +44,8 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @Autowired OWLHTMLKit kit,
             @Autowired ProjectInfo projectInfo,
             @Autowired RendererFactory rendererFactory,
-            @Autowired ReasonerFactoryService reasonerFactoryService,
             @Autowired StatsService statsService) {
         this.propertiesService = propertiesService;
-        this.reasonerFactoryService = reasonerFactoryService;
         this.statsService = statsService;
         this.projectInfo = projectInfo;
         this.kit = kit;

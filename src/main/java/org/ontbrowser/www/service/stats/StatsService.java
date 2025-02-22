@@ -2,20 +2,24 @@ package org.ontbrowser.www.service.stats;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.ontbrowser.www.exception.NotFoundException;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
-import org.ontbrowser.www.kit.Restartable;
 import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StatsService implements RestartListener {
 
+    private static final Logger log = LoggerFactory.getLogger(StatsService.class);
+
     private final LRUMap<StatsMemo, Stats> cache = new LRUMap<>(20);
 
-    public StatsService(Restartable restartable) {
-        restartable.registerListener(this);
+    public StatsService(OWLHTMLKit kit) {
+        kit.registerListener(this);
     }
 
     public Stats<OWLClass> getClassStats(String type, OWLReasoner reasoner) throws NotFoundException {
@@ -57,6 +61,7 @@ public class StatsService implements RestartListener {
 
     @Override
     public void onRestart() {
+        log.info("Clearing stats cache");
         cache.clear();
     }
 }

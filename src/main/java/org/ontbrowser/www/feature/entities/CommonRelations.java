@@ -16,6 +16,8 @@ import org.ontbrowser.www.service.stats.StatsService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
 
 import javax.annotation.Nonnull;
@@ -23,6 +25,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class CommonRelations<T extends OWLProperty> implements RestartListener {
+
+    private static final Logger log = LoggerFactory.getLogger(CommonRelations.class);
 
     public static final String BASE_TREE = "base::children";
 
@@ -172,6 +176,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
 
     @Override
     public void onRestart() {
+        log.info("Clearing hierarchy cache");
         hierarchyCache.clear();
     }
 }

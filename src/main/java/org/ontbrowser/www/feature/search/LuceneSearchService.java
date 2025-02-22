@@ -57,6 +57,7 @@ public class LuceneSearchService implements SearchService, RestartListener {
             @Autowired OWLHTMLKit kit) {
         this.directory = directory;
         this.kit = kit;
+        kit.registerListener(this);
         this.analyzer = new DelegatingAnalyzerWrapper(PER_FIELD_REUSE_STRATEGY) {
             private final Analyzer defaultAnalyzer = new StandardAnalyzer();
             private final Analyzer keywordAnalyzer = new KeywordAnalyzer();
@@ -185,16 +186,18 @@ public class LuceneSearchService implements SearchService, RestartListener {
     }
 
     private OWLEntity getEntityFromString(String type, IRI iri, EntityProvider df) {
+        return getEntityType(type).buildEntity(iri, df);
+    }
+
+    private static EntityType<?> getEntityType(String type) {
         return EntityType.values().stream()
                 .filter(t -> t.getName().equals(type))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Unknown "))
-                .buildEntity(iri, df);
+                .orElseThrow(() -> new RuntimeException("Unknown "));
     }
 
     @Override
     public List<AxiomWithMetadata> findByAnnotation(@Nonnull String value, OWLAnnotationProperty searchProp, @Nonnull OWLHTMLKit kit) {
         throw new NotImplementedException("Find by annotation not implemented");
     }
-
 }

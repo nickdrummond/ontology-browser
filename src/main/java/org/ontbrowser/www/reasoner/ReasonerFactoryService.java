@@ -13,7 +13,7 @@ import java.util.*;
 
 public class ReasonerFactoryService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReasonerFactoryService.class);
+    private static final Logger log = LoggerFactory.getLogger(ReasonerFactoryService.class);
 
     private final String defaultToldReasoner;
     private final String defaultInferredReasoner;
@@ -34,18 +34,20 @@ public class ReasonerFactoryService {
             try {
                 final OWLReasonerFactory fac = (OWLReasonerFactory) Class.forName(momento.getCls()).getDeclaredConstructor().newInstance();
                 facsByName.put(label, fac);
-                logger.info("Reasoner installed: {}", label);
+                log.info("Reasoner installed: {}", label);
             }
             catch (Throwable e){
-                logger.info("skipping: {}", label);
+                log.info("skipping: {}", label);
             }
         }
     }
 
     public void clear() {
-        Collection<OWLReasoner> reasoners = reasonerByName.values();
+        log.info("Clearing reasoner cache");
+        var reasoners = reasonerByName.values();
         reasonerByName.clear();
-        for (OWLReasoner reasoner: reasoners) {
+        for (var reasoner: reasoners) {
+            log.info("Disposing reasoner {}", reasoner.getReasonerName());
             reasoner.dispose();
         }
     }
@@ -76,7 +78,7 @@ public class ReasonerFactoryService {
             OWLReasonerFactory fac = getFactoryFor(name);
             if (fac != null) {
                 String ontName = OWLUtils.ontIRI(ont.getOntologyID());
-                logger.warn("Creating {} reasoner for {}", name, ontName);
+                log.warn("Creating {} reasoner for {}", name, ontName);
                 r = new SynchronizedOWLReasoner(fac.createNonBufferingReasoner(ont, new SimpleConfiguration()));
                 reasonerByName.put(key, r);
             }
