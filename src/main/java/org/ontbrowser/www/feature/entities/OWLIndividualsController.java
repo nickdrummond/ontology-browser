@@ -40,7 +40,6 @@ public class OWLIndividualsController extends ApplicationController {
 
     private final OWLIndividualsService individualsService;
     private final OWLClassesService owlClassesService;
-    private final MediaService mediaService;
     private final ReasonerFactoryService reasonerFactoryService;
     private final ReasonerService reasonerService;
     private final StatsService statsService;
@@ -48,13 +47,11 @@ public class OWLIndividualsController extends ApplicationController {
     public OWLIndividualsController(
             @Autowired OWLIndividualsService individualsService,
             @Autowired OWLClassesService owlClassesService,
-            @Autowired MediaService mediaService,
             @Autowired ReasonerFactoryService reasonerFactoryService,
             @Autowired ReasonerService reasonerService,
             @Autowired StatsService statsService) {
         this.individualsService = individualsService;
         this.owlClassesService = owlClassesService;
-        this.mediaService = mediaService;
         this.reasonerFactoryService = reasonerFactoryService;
         this.reasonerService = reasonerService;
         this.statsService = statsService;
@@ -73,18 +70,22 @@ public class OWLIndividualsController extends ApplicationController {
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{individualId}")
-    public void getOWLIndividual(
+    public ModelAndView getOWLIndividual(
             @PathVariable final String individualId,
             @ModelAttribute final OWLOntology ont,
-            final HttpServletResponse response) throws NotFoundException, IOException {
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws NotFoundException {
 
         OWLNamedIndividual owlIndividual = individualsService.getOWLIndividualFor(individualId, ont);
         OWLClass firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
                 .orElse(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
 
-        response.sendRedirect(
-                "/individuals/by/type/" + owlClassesService.getIdFor(firstType) +
-                        "/withindividual/" + individualId);
+        return byType(
+                owlClassesService.getIdFor(firstType),
+                individualId,
+                "inferredInstances", List.of(), ont, model, request, response);
     }
 
     @GetMapping(value = "/by/type/")
@@ -117,12 +118,12 @@ public class OWLIndividualsController extends ApplicationController {
     }
 
     private OWLClass buildNav(
-            String classId,
-            String statsName,
-            List<With> with,
-            OWLOntology ont,
-            Model model,
-            HttpServletRequest request
+            final String classId,
+            final String statsName,
+            final List<With> with,
+            final OWLOntology ont,
+            final Model model,
+            final HttpServletRequest request
     ) throws NotFoundException {
         OWLClass type = owlClassesService.getOWLClassFor(classId, ont);
 

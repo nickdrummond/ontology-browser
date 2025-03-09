@@ -57,8 +57,7 @@ public class RestURLScheme implements URLScheme {
         String code;
         StringBuilder sb = new StringBuilder("/"); // relative URLs
 
-        if (owlObject instanceof OWLEntity){
-            OWLEntity owlEntity = (OWLEntity) owlObject;
+        if (owlObject instanceof OWLEntity owlEntity){
             type = getTypeForEntity(owlEntity);
             code = getIdForEntity(owlEntity);
         }
