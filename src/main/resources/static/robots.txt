@@ -1,6 +1,7 @@
 User-agent: *
 Disallow: /relations/
 Disallow: /axioms/
+Disallow: /graph
 User-agent: SemrushBot
 Disallow: /
 User-agent: AhrefsBot
