@@ -1,6 +1,5 @@
 package org.ontbrowser.www.io;
 
-import com.google.common.collect.Maps;
 import org.ontbrowser.www.kit.impl.BaseURIMapper;
 import org.ontbrowser.www.util.OWLUtils;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -14,12 +13,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Map;
 
 public class OntologyLoader {
 
-    private OWLOntologyManager mngr;
+    private final OWLOntologyManager mngr;
 
     private static final Logger logger = LoggerFactory.getLogger(OntologyLoader.class);
 
@@ -55,7 +52,7 @@ public class OntologyLoader {
         mngr.addOntologyLoaderListener(ontLoadListener);
 
         if (location.startsWith("/")) {
-            handleCommonBaseMappers(mngr, URI.create("file://" + location));
+            addBaseMapperFor("file://" + location);
             try (InputStream ontAsStream = new FileInputStream(location)) {
                 return mngr.loadOntologyFromOntologyDocument(ontAsStream);
             } catch (FileNotFoundException e) {
@@ -65,24 +62,15 @@ public class OntologyLoader {
             }
         }
         else {
-            handleCommonBaseMappers(mngr, URI.create(location));
+            addBaseMapperFor(location);
             return mngr.loadOntologyFromOntologyDocument(iri);
         }
     }
 
-    // create a set of CommonBaseURIMappers for finding ontologies
-    // using the base of explicitly loaded ontologies as a hint
-    private void handleCommonBaseMappers(OWLOntologyManager mngr, URI physicalURI) {
-        final StringBuilder baseURIStr = new StringBuilder();
-        final String[] uriParts = physicalURI.toString().split("/");
-        for (int i=0; i<uriParts.length-1; i++){
-            baseURIStr.append(uriParts[i]).append("/");
-        }
-        URI baseURI = URI.create(baseURIStr.toString());
-
-        final Map<URI, OWLOntologyIRIMapper> baseMapper = Maps.newHashMap();
-        final BaseURIMapper mapper = new BaseURIMapper(baseURI);
-        baseMapper.put(baseURI, mapper);
-        mngr.setIRIMappers(new HashSet<>(baseMapper.values()));
+    // using the location of explicitly loaded ontologies as a hint for loading imports
+    private void addBaseMapperFor(String physicalURI) {
+        URI baseURI = URI.create(physicalURI.substring(0, physicalURI.lastIndexOf("/")+1));
+        logger.info("Loading imports from {}", baseURI);
+        mngr.getIRIMappers().add(new BaseURIMapper(baseURI));
     }
 }
