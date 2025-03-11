@@ -17,3 +17,20 @@
         </li>
     </ul>
 </div>
+
+<div th:fragment="changed()" th:if="${!changedOntologies.isEmpty()}" class="characteristic uncommitted">
+    <h4>File changes</h4>
+    <ul>
+        <li th:each="changedOntology : ${changedOntologies}">
+            <div class="changed-ontology">
+
+                <span
+                      th:data="${changedOntology.key}"
+                      th:utext="${changedOntology.key}">pizza.owl</span>
+                <span class="source-ont" th:text="${changedOntology.value}">Change type</span>
+            </div>
+        </li>
+    </ul>
+</div>
+
+

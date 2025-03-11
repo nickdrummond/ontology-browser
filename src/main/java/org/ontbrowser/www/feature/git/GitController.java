@@ -57,11 +57,13 @@ public class GitController extends ApplicationController {
             if (remote.isPresent()) {
                 model.addAttribute("remote", remote.get());
 
+                var changedOntologies = gitService.getChangedOntologies(git, kit.getOWLOntologyManager().ontologies());
+                model.addAttribute("changedOntologies", changedOntologies);
+
                 if (Objects.equals(gitService.getRev(local), gitService.getRev(remote.get()))) {
-                    status = "up to date";
-                }
-                else {
-                    status = "updates available";
+                    status = "that is up to date";
+                } else {
+                    status = "with updates available";
                     var divergence = gitService.calculateDivergence(git, local, remote.get());
                     model.addAttribute("divergence", divergence);
                 }

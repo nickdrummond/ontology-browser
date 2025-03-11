@@ -1,13 +1,19 @@
 package org.ontbrowser.www.feature.git;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.RevWalkUtils;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.eclipse.jgit.treewalk.FileTreeIterator;
 import org.ontbrowser.www.BeforeLoad;
+import org.ontbrowser.www.util.OWLUtils;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 // TODO
@@ -73,8 +81,7 @@ public class GitService implements BeforeLoad {
             if (remote != null) {
                 clone(remote, this.local, branch);
                 foundRemote = remote;
-            }
-            else {
+            } else {
                 throw new RuntimeException("No remote found - specify GIT_REMOTE in ENV");
             }
         } catch (GitAPIException e) {
@@ -110,6 +117,33 @@ public class GitService implements BeforeLoad {
         });
     }
 
+
+    public Map<String, DiffEntry.ChangeType> getChangedOntologies(
+            Git git,
+            Stream<OWLOntology> ontologies
+    ) throws GitAPIException, IOException {
+
+        List<DiffEntry> diffEntries = localChanges(git);
+
+        return ontologies
+                .map(ont -> new ImmutablePair<>(OWLUtils.ontIRI(ont), getDiff(ont, diffEntries)))
+                .filter(pair -> pair.getRight().isPresent())
+                .collect(Collectors.toMap(
+                        ImmutablePair::getLeft,
+                        pair -> pair.getRight().get().getChangeType())
+                );
+
+    }
+
+    private Optional<DiffEntry> getDiff(OWLOntology ont, List<DiffEntry> diffEntries) {
+        var docURI = ont.getOWLOntologyManager().getOntologyDocumentIRI(ont).toString();
+        if (docURI.startsWith("file:///")) {
+            docURI = docURI.substring(7);
+        }
+        File file = new File(docURI);
+        return isChanged(file, diffEntries);
+    }
+
     @FunctionalInterface
     public interface CheckedConsumer<T> {
         void accept(T t) throws Exception;
@@ -128,7 +162,7 @@ public class GitService implements BeforeLoad {
                 .setURI(remote)
                 .setDirectory(local)
                 .setBranch(branch)
-                .call()){
+                .call()) {
             log.info("Cloned remote git repo {} to {}", remote, local.getAbsolutePath());
             log.info("Checking out {}", branch);
             var ref = git.checkout().setName(branch).call();
@@ -168,7 +202,8 @@ public class GitService implements BeforeLoad {
         return branchRef.getObjectId().getName();
     }
 
-    record RevStatus(List<RevCommit> ahead, List<RevCommit> behind){}
+    record RevStatus(List<RevCommit> ahead, List<RevCommit> behind) {
+    }
 
     public RevStatus calculateDivergence(Git git, Ref local, Ref tracking) throws IOException {
         var localRepo = git.getRepository();
@@ -185,6 +220,39 @@ public class GitService implements BeforeLoad {
             var behindCommits = RevWalkUtils.find(walk, trackingCommit, mergeBase);
             return new RevStatus(aheadCommits, behindCommits);
         }
+    }
+
+    public List<DiffEntry> localChanges(Git git) throws GitAPIException, IOException {
+        // Create the HEAD tree iterator
+        var reader = git.getRepository().newObjectReader();
+        var oldTreeIter = new CanonicalTreeParser();
+        var headTree = git.getRepository().resolve("HEAD^{tree}");
+        oldTreeIter.reset(reader, headTree);
+
+        // Create the working tree iterator
+        var newTreeIter = new FileTreeIterator(git.getRepository());
+        // Either: call the diff command
+        return git.diff()
+                .setOldTree(oldTreeIter)
+                .setNewTree(newTreeIter)
+                .call();
+    }
+
+    public Optional<DiffEntry> isChanged(File file, List<DiffEntry> diff) {
+        String localFile = getPathRelativeTo(file, this.local);
+//        log.info("Checking for changes to {}", localFile);
+        return diff.stream()
+                .filter(d -> d.getNewPath().equals(localFile) || d.getOldPath().equals(localFile))
+                .findFirst();
+    }
+
+    private String getPathRelativeTo(File file, File local) {
+        var path = file.getAbsolutePath();
+        var localPath = local.getAbsolutePath();
+        if (path.startsWith(localPath)) {
+            return path.substring(localPath.length() + 1);
+        }
+        return path;
     }
 
     public List<RevCommit> getCommits(Git git, int from, int size) throws GitAPIException {

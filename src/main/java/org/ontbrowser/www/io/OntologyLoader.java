@@ -8,10 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 public class OntologyLoader {
@@ -52,14 +48,9 @@ public class OntologyLoader {
         mngr.addOntologyLoaderListener(ontLoadListener);
 
         if (location.startsWith("/")) {
-            addBaseMapperFor("file://" + location);
-            try (InputStream ontAsStream = new FileInputStream(location)) {
-                return mngr.loadOntologyFromOntologyDocument(ontAsStream);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Cannot load: " + location);
-            } catch (IOException e) {
-                throw new RuntimeException("Cannot load: " + location);
-            }
+            var physicalURI = "file://" + location;
+            addBaseMapperFor(physicalURI);
+            return mngr.loadOntologyFromOntologyDocument(IRI.create(physicalURI));
         }
         else {
             addBaseMapperFor(location);
