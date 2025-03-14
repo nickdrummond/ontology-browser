@@ -41,8 +41,33 @@ Use the following java option on run to enable the profile
 ## Deploy
 
 Ontology Browser is a Spring Boot application and can be deployed to any servlet container.
-For adviice on this, please see the Spring docs
+For advice on this, please see the Spring docs
 https://docs.spring.io/spring-boot/how-to/deployment/index.html
+
+### Docker
+
+Create your own docker image with your ontology - your Dockerfile would look something like this:
+```dockerfile
+FROM nickdrummond/ontology-browser:latest
+COPY ./ontologies /ontologies
+ENV SPRING_PROFILES_ACTIVE="reasoners,graph,lucene"
+ENV ONTOLOGY_ROOT_LOCATION=""/examples/pizza.owl"
+ENV REASONING_ROOT_IRI="http://www.co-ode.org/ontologies/pizza"
+ENV LABEL_IRI="http://www.w3.org/2000/01/rdf-schema#label"
+ENV PROJECT_NAME="Pizza"
+ENV PROJECT_TAGLINE="The Pizza Ontology"
+ENV PROJECT_URL="https://github.com/owlcs/pizza-ontology"
+```
+
+Or, build the browser docker image yourself
+```shell
+mvn spring-boot:build-image
+```
+
+And then run it using a local ontology file
+```shell
+docker run --env-file ./examples/pizza.env --mount type=bind,source=./examples,target=/examples -p 8080:8080 nickdrummond/ontology-browser
+```
 
 ### Configuration
 

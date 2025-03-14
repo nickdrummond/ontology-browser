@@ -168,6 +168,11 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <image>
+            <name>nickdrummond/ontology-browser</name>
+          </image>
+        </configuration>
       </plugin>
     </plugins>
   </build>
