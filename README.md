@@ -46,6 +46,8 @@ https://docs.spring.io/spring-boot/how-to/deployment/index.html
 
 ### Docker
 
+Docker Hub repo https://hub.docker.com/repository/docker/nickdrummond/ontology-browser/general
+
 Create your own docker image with your ontology - your Dockerfile would look something like this:
 ```dockerfile
 FROM nickdrummond/ontology-browser:latest
