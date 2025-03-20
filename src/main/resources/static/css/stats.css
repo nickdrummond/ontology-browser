@@ -1,0 +1,9 @@
+.statsHolder {
+    display: flex;
+    flex-direction: row;
+}
+
+.statsHolder canvas {
+    height: 20rem;
+    width: 20rem;
+}

@@ -6,6 +6,7 @@ import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -15,10 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,19 +42,40 @@ public class OWLAxiomService implements RestartListener {
             Imports imports,
             int start,
             int pageSize) {
+        Function<OWLOntology, Stream<OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.axioms(Imports.EXCLUDED);
+        return getAxioms(ont, imports, start, pageSize, getAxiomsForOntology);
+    }
 
+    public Characteristic getAxioms(
+            OWLOntology ont,
+            Imports imports,
+            int start,
+            int pageSize,
+            @Nonnull AxiomType<OWLAxiom> axiomType) {
+        Function<OWLOntology, Stream<OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.axioms(axiomType, Imports.EXCLUDED);
+        return getAxioms(ont, imports, start, pageSize, getAxiomsForOntology);
+    }
+
+    private Characteristic getAxioms(
+            OWLOntology ont,
+            Imports imports,
+            int start,
+            int pageSize,
+            Function<OWLOntology, Stream<OWLAxiom>> getAxiomsForOntology) {
         Stream<OWLOntology> ontologies = imports == Imports.INCLUDED ? ont.importsClosure() : Stream.of(ont);
         List<AxiomWithMetadata> results = ontologies
-                .flatMap(o -> wrappedWithOntology(o.axioms(Imports.EXCLUDED), o))
+                .flatMap(o -> wrappedWithOntology(getAxiomsForOntology.apply(o), o))
                 .toList();
 
-        List<AxiomWithMetadata> paged = results.stream().skip(start-1L).limit(pageSize).toList();
+        List<AxiomWithMetadata> paged = results.stream().skip(start - 1L).limit(pageSize).toList();
 
         return new Characteristic(null, "Axioms",
                 paged,
                 new PageData(start, paged.size(), results.size()));
+
     }
 
+    // TODO by type
     public Characteristic findAxioms(
             final String search,
             final OWLOntology ont,
@@ -85,7 +109,7 @@ public class OWLAxiomService implements RestartListener {
             start = 1;
         }
 
-        List<AxiomWithMetadata> paged = results.stream().skip(start-1L).limit(pageSize).toList();
+        List<AxiomWithMetadata> paged = results.stream().skip(start - 1L).limit(pageSize).toList();
 
         return new Characteristic(null, "Axioms containing \"" + search + "\"",
                 paged,
@@ -115,7 +139,7 @@ public class OWLAxiomService implements RestartListener {
     private Map<OWLAxiom, String> cacheAxiomRenderings(OWLOntology ont, ShortFormProvider sfp) {
         log.info("Building axiom cache for {}", ont.getOntologyID());
         return ont.getAxioms(Imports.EXCLUDED).stream()
-                        .collect(Collectors.toMap(ax -> ax, ax -> render(ax, sfp)));
+                .collect(Collectors.toMap(ax -> ax, ax -> render(ax, sfp)));
     }
 
     private String render(final OWLAxiom axiom, final ShortFormProvider sfp) {
