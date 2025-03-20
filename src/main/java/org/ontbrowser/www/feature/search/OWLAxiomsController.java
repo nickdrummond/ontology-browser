@@ -24,7 +24,6 @@ public class OWLAxiomsController extends ApplicationController {
 
     private static final String MODEL_KEY_AXIOMS = "axioms";
     private static final String LOGICAL_AXIOMS_TYPE = "logicalAxioms";
-    public static final String MODEL_KEY_TITLE = "title";
 
     private final OWLAxiomService axiomService;
 
@@ -49,34 +48,54 @@ public class OWLAxiomsController extends ApplicationController {
             model.addAttribute("mos", getHighlightRenderer(search, rendererFactory.getHTMLRenderer(ont)));
             ShortFormProvider sfp = kit.getShortFormProvider();
             if (type == null) {
-                model.addAttribute(MODEL_KEY_TITLE, "Search Axioms: " + search);
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findAxioms(search, ont, sfp, start, pageSize));
             } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {
-                model.addAttribute(MODEL_KEY_TITLE, "Search Logical Axioms");
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findLogicalAxioms(search, ont, sfp, start, pageSize));
             } else {
                 var axiomType = getAxiomType(type);
-                model.addAttribute(MODEL_KEY_TITLE, "Search " + type + " Axioms");
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findAxiomsByType(search, ont, sfp, start, pageSize, axiomType));
             }
         } else {
             model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
             if (type == null) {
-                model.addAttribute(MODEL_KEY_TITLE, "Axioms");
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getAxioms(ont, Imports.INCLUDED, start, pageSize));
             } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {
-                model.addAttribute(MODEL_KEY_TITLE, "Logical Axioms");
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getLogicalAxioms(ont, Imports.INCLUDED, start, pageSize));
             } else {
                 var axiomType = getAxiomType(type);
-                model.addAttribute(MODEL_KEY_TITLE, type + " Axioms");
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getAxiomsOfType(ont, Imports.INCLUDED, start, pageSize, axiomType));
             }
         }
 
+        model.addAttribute("title", getTitle(search, type, ont));
         model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
 
         return new ModelAndView("axioms");
+    }
+
+    private String getTitle(String search, String type, OWLOntology ont) {
+
+        var sb = new StringBuilder();
+        sb.append(kit.getOntologySFP().getShortForm(ont));
+        sb.append(" - ");
+
+        if (search != null) {
+            sb.append("search ");
+        }
+        if (type == null) {
+            sb.append("axioms");
+        } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {
+            sb.append("logical axioms");
+        } else {
+            sb.append(type);
+            sb.append(" axioms");
+        }
+        if (search != null) {
+            sb.append(": ");
+            sb.append(search);
+        }
+
+        return sb.toString();
     }
 
     // Prevent injection attacks
