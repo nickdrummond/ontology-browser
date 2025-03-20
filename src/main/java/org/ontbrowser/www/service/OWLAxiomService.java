@@ -42,17 +42,26 @@ public class OWLAxiomService implements RestartListener {
             Imports imports,
             int start,
             int pageSize) {
-        Function<OWLOntology, Stream<OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.axioms(Imports.EXCLUDED);
+        Function<OWLOntology, Stream<? extends OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.axioms(Imports.EXCLUDED);
         return getAxioms(ont, imports, start, pageSize, getAxiomsForOntology);
     }
 
-    public Characteristic getAxioms(
+    public Characteristic getAxiomsOfType(
             OWLOntology ont,
             Imports imports,
             int start,
             int pageSize,
             @Nonnull AxiomType<OWLAxiom> axiomType) {
-        Function<OWLOntology, Stream<OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.axioms(axiomType, Imports.EXCLUDED);
+        Function<OWLOntology, Stream<? extends OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.axioms(axiomType, Imports.EXCLUDED);
+        return getAxioms(ont, imports, start, pageSize, getAxiomsForOntology);
+    }
+
+    public Characteristic getLogicalAxioms(
+            OWLOntology ont,
+            Imports imports,
+            int start,
+            int pageSize) {
+        Function<OWLOntology, Stream<? extends OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.logicalAxioms(Imports.EXCLUDED);
         return getAxioms(ont, imports, start, pageSize, getAxiomsForOntology);
     }
 
@@ -61,7 +70,7 @@ public class OWLAxiomService implements RestartListener {
             Imports imports,
             int start,
             int pageSize,
-            Function<OWLOntology, Stream<OWLAxiom>> getAxiomsForOntology) {
+            Function<OWLOntology, Stream<? extends OWLAxiom>> getAxiomsForOntology) {
         Stream<OWLOntology> ontologies = imports == Imports.INCLUDED ? ont.importsClosure() : Stream.of(ont);
         List<AxiomWithMetadata> results = ontologies
                 .flatMap(o -> wrappedWithOntology(getAxiomsForOntology.apply(o), o))
@@ -75,7 +84,6 @@ public class OWLAxiomService implements RestartListener {
 
     }
 
-    // TODO by type
     public Characteristic findAxioms(
             final String search,
             final OWLOntology ont,
@@ -85,8 +93,39 @@ public class OWLAxiomService implements RestartListener {
 
         String stripped = normalise(search);
 
-        Predicate<Map.Entry<OWLAxiom, String>> contains = e ->
-                e.getValue().contains(stripped);
+        Predicate<Map.Entry<OWLAxiom, String>> contains = entry ->
+                entry.getValue().contains(stripped);
+
+        return resultsCharacteristic(search, ont, sfp, contains, start, pageSize);
+    }
+
+    public Characteristic findLogicalAxioms(
+            final String search,
+            final OWLOntology ont,
+            final ShortFormProvider sfp,
+            int start,
+            int pageSize) {
+
+        String stripped = normalise(search);
+
+        Predicate<Map.Entry<OWLAxiom, String>> contains = entry ->
+                entry.getKey().isLogicalAxiom() && entry.getValue().contains(stripped);
+
+        return resultsCharacteristic(search, ont, sfp, contains, start, pageSize);
+    }
+
+    public Characteristic findAxiomsByType(
+            @Nonnull final String search,
+            final OWLOntology ont,
+            final ShortFormProvider sfp,
+            int start,
+            int pageSize,
+            @Nonnull final AxiomType<? extends OWLAxiom> entityType) {
+
+        String stripped = normalise(search);
+
+        Predicate<Map.Entry<OWLAxiom, String>> contains = entry ->
+                entry.getKey().getAxiomType().equals(entityType) && entry.getValue().contains(stripped);
 
         return resultsCharacteristic(search, ont, sfp, contains, start, pageSize);
     }
@@ -156,7 +195,7 @@ public class OWLAxiomService implements RestartListener {
                 .toLowerCase();
     }
 
-    private Stream<AxiomWithMetadata> wrappedWithOntology(Stream<OWLAxiom> axioms, OWLOntology ont) {
+    private Stream<AxiomWithMetadata> wrappedWithOntology(Stream<? extends OWLAxiom> axioms, OWLOntology ont) {
         return axioms.map(a -> new AxiomWithMetadata("Axioms", a, a, ont));
     }
 

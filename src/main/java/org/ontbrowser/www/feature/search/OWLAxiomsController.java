@@ -2,27 +2,29 @@ package org.ontbrowser.www.feature.search;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.renderer.ElementRenderer;
 import org.ontbrowser.www.service.OWLAxiomService;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Optional;
+import javax.annotation.Nonnull;
 
 import static org.ontbrowser.www.feature.search.HighlightingHTMLRenderer.getHighlightRenderer;
 
 @RestController
 @RequestMapping(value = "/axioms")
 public class OWLAxiomsController extends ApplicationController {
+
+    private static final String MODEL_KEY_AXIOMS = "axioms";
+    private static final String LOGICAL_AXIOMS_TYPE = "logicalAxioms";
+    public static final String MODEL_KEY_TITLE = "title";
 
     private final OWLAxiomService axiomService;
 
@@ -34,44 +36,54 @@ public class OWLAxiomsController extends ApplicationController {
     @GetMapping(value = "/")
     public ModelAndView axioms(
             final Model model,
-            @RequestParam(required = false) Optional<String> search,
+            @RequestParam(required = false) String search,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false) String type,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
             HttpServletRequest request
     ) {
-        validateSearch(search);
 
-        ElementRenderer<OWLObject> owlRenderer = search
-                .map(s -> getHighlightRenderer(s, rendererFactory.getHTMLRenderer(ont)))
-                .orElse(rendererFactory.getHTMLRenderer(ont));
+        if (search != null) {
+            validateSearch(search);
+            model.addAttribute("mos", getHighlightRenderer(search, rendererFactory.getHTMLRenderer(ont)));
+            ShortFormProvider sfp = kit.getShortFormProvider();
+            if (type == null) {
+                model.addAttribute(MODEL_KEY_TITLE, "Search Axioms: " + search);
+                model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findAxioms(search, ont, sfp, start, pageSize));
+            } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {
+                model.addAttribute(MODEL_KEY_TITLE, "Search Logical Axioms");
+                model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findLogicalAxioms(search, ont, sfp, start, pageSize));
+            } else {
+                var axiomType = getAxiomType(type);
+                model.addAttribute(MODEL_KEY_TITLE, "Search " + type + " Axioms");
+                model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findAxiomsByType(search, ont, sfp, start, pageSize, axiomType));
+            }
+        } else {
+            model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
+            if (type == null) {
+                model.addAttribute(MODEL_KEY_TITLE, "Axioms");
+                model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getAxioms(ont, Imports.INCLUDED, start, pageSize));
+            } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {
+                model.addAttribute(MODEL_KEY_TITLE, "Logical Axioms");
+                model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getLogicalAxioms(ont, Imports.INCLUDED, start, pageSize));
+            } else {
+                var axiomType = getAxiomType(type);
+                model.addAttribute(MODEL_KEY_TITLE, type + " Axioms");
+                model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getAxiomsOfType(ont, Imports.INCLUDED, start, pageSize, axiomType));
+            }
+        }
 
-        // TODO all logical axioms
-        var axiomType = getAxiomType(type);
-
-        Characteristic axioms = search
-                .map(s -> axiomService.findAxioms(search.get(), ont, kit.getShortFormProvider(), start, pageSize))
-                .orElse(axiomType == null ?
-                        axiomService.getAxioms(ont, Imports.INCLUDED, start, pageSize) :
-                        axiomService.getAxioms(ont, Imports.INCLUDED, start, pageSize, axiomType)
-                );
-
-        model.addAttribute("title", type == null ? "Axioms" : type + " Axioms");
-        model.addAttribute("axioms", axioms);
-        model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
 
         return new ModelAndView("axioms");
     }
 
-    private static void validateSearch(Optional<String> search) {
-        search.ifPresent(s -> {
-            // Prevent injection attacks
-            if (s.contains("<") || s.contains(">") || s.contains("%")) {
-                throw new IllegalArgumentException("Search terms may be text only");
-            }
-        });
+    // Prevent injection attacks
+    private static void validateSearch(@Nonnull String search) {
+        if (search.contains("<") || search.contains(">") || search.contains("%")) {
+            throw new IllegalArgumentException("Search terms may be text only");
+        }
     }
 
     private AxiomType<OWLAxiom> getAxiomType(String type) {
