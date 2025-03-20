@@ -1,34 +1,105 @@
-let Chart = require('./libs/chart.umd.js');
-
 document.addEventListener('DOMContentLoaded', function () {
 
-    console.log("stats");
+    const defaultOptions = {
+        circumference: 360,
+        rotation: 270,
+        showLegend: true,
+        infoPosition: "top",
+        getURL: (label) => "/" + label.toLowerCase() + "/",
+        isLog: false,
+    }
 
-    function render(stats) {
-        console.log("render");
+    function createPie(selector, title, labels, data, options) {
+        const canvas = document.getElementById(selector);
 
-        const labels = stats.entityCounts.keys;
-        console.log("labels", labels);
-        const data = stats.entityCounts.values;
-        console.log("data", data);
+        options = {...defaultOptions, ...options};
 
-        new Chart(document.getElementById('stats'),
+        let displayData = data;
+
+        if (options.isLog) {
+            data = data.map(x => x === 0 ? 0 : Math.log(x));
+        }
+
+        const chart = new Chart(canvas,
             {
                 type: "doughnut",
                 data: {
                     labels: labels,
                     datasets: [{
-                        backgroundColor: ["#FF6384", "#36A2EB", "#64d197", "#4BC0C0", "#532304",  "#FFCE56"],
                         data: data,
                     }],
                 },
                 options: {
-                    title: {
-                        display: true,
-                        text: "Entity types"
-                    }
+                    // ...options, could but then have to nest
+                    responsive: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: title,
+                            position: options.infoPosition,
+                        },
+                        legend: {
+                            display: options.showLegend,
+                            position: options.infoPosition,
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return displayData[context.dataIndex];
+                                }
+                            }
+                        },
+                    },
+                    rotation: options.rotation,
+                    circumference: options.circumference,
                 }
             });
+
+        canvas.onclick = function (evt) {
+            const activePoints = chart.getElementsAtEventForMode(evt, 'nearest', {intersect: true}, true)[0];
+            const index = labels[activePoints.index];
+            window.location.href = options.getURL(index);
+        };
+
+        canvas.onmousemove = function (evt) {
+            const activePoints = chart.getElementsAtEventForMode(evt, 'nearest', {intersect: true}, true)[0];
+            if (activePoints) {
+                canvas.style.cursor = 'pointer';
+            } else {
+                canvas.style.cursor = 'default';
+            }
+        }
+    }
+
+    function render(stats) {
+        let entityCounts = stats.entityCounts;
+        const labels = Object.keys(entityCounts);
+        const data = Object.values(entityCounts);
+        createPie("classVsInst", "Class or instance", labels.slice(0, 2), data.slice(0, 2), {
+            circumference: 180,
+        });
+        createPie("properties", "Property types", labels.slice(2, 5), data.slice(2, 5), {
+            circumference: 180,
+            rotation: 90, // upside-down
+            infoPosition: "bottom",
+        });
+
+        let axiomCounts = stats.axiomCounts;
+        createPie("axiomTypes", "Axiom types", Object.keys(axiomCounts), Object.values(axiomCounts), {
+            circumference: 180,
+            getURL: (label) => "/axioms/?type=" + label,
+        });
+
+        let axiomTypeCounts = stats.axiomTypeCounts.counts;
+        createPie("axiomTypeCounts", "Logical axiom types", Object.keys(axiomTypeCounts), Object.values(axiomTypeCounts), {
+            showLegend: false,
+            infoPosition: "bottom",
+            getURL: (label) => "/axioms/?type=" + label,
+            isLog: true,
+        });
+
+        // let childCountDistribution = stats.classChildCountDistribution;
+        // createScatter("classChildCount", "Class child count", childCountDistribution);
     }
 
     function reload() {
@@ -46,6 +117,35 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
             });
     }
+
+
+    // function createScatter(selector, title, coords) {
+    //     const canvas = document.getElementById(selector);
+    //     const chart = new Chart(canvas,
+    //         {
+    //             type: "scatter",
+    //             data: {
+    //                 datasets: [{
+    //                     label: title,
+    //                     data: coords,
+    //                 }],
+    //             },
+    //             options: {
+    //                 responsive: false,
+    //                 plugins: {
+    //                     title: {
+    //                         display: true,
+    //                         text: title,
+    //                     },
+    //                     legend: {
+    //                         display: false,
+    //                         // position: "bottom",
+    //                     }
+    //                 },
+    //             }
+    //         }
+    //     );
+    // }
 
     reload();
 });
