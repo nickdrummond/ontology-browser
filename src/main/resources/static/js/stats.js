@@ -1,27 +1,52 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    let content = document.getElementById("main");
+    const charts = [];
+
+    const DEFAULT_IMPORTS = "EXCLUDED";
+
+    const renderToggle = (ontId, statsHolder, importsIncluded) => {
+        const included = "<label for='imports-included'>included</label><input id='imports-included' class='imports-selector' type='radio' name='imports' value='INCLUDED' checked='" + (importsIncluded === "INCLUDED") + "'/>";
+        const excluded = "<label for='imports-excluded'>excluded</label><input id='imports-excluded' class='imports-selector' type='radio' name='imports' value='EXCLUDED' checked='" + (importsIncluded === "EXCLUDED") + "'/>";
+        const html = "<span>imports " + included + excluded + "</span>";
+
+        statsHolder.insertAdjacentHTML("beforeBegin", html);
+        document.querySelectorAll(".imports-selector").forEach(element => {
+            element.onclick = (e) => {
+                let importsIncluded = e.target.value;
+                const searchParams = new URLSearchParams(window.location.search);
+                searchParams.set("imports", importsIncluded);
+                window.history.pushState({}, "", "?" + searchParams.toString());
+                load(ontId, importsIncluded);
+            }
+        });
+    }
+
+    const init = () => {
+        const statsHolder = document.querySelector(".stats-holder");
+        if (statsHolder) {
+            const path = window.location.href.split("/");
+            const ontId = path.at(-2);
+            const importsIncluded = new URLSearchParams(window.location.search).get('imports') ?? DEFAULT_IMPORTS;
+            renderToggle(ontId, statsHolder, importsIncluded);
+            load(ontId, importsIncluded);
+        }
+    }
+
+    const content = document.getElementById("main");
     new MutationObserver((mutationList, observer) => {
         for (const mutation of mutationList) {
             if (mutation.type === "childList") {
-                const statsHolder = document.querySelector(".stats-holder");
-                if (statsHolder) {
-                    reload();
-                }
+                init();
             }
         }}).observe(content, {childList: true});
 
+    const clear = () => {
+        charts.forEach(chart => chart.destroy());
+    };
 
-    const reload = () => {
-        let path = window.location.href.split("/");
-        const ontId = path.at(-2);
-        const importsIncluded = new URLSearchParams(window.location.search).get('imports') ?? "INCLUDED";
-        load(ontId, importsIncluded);
-    }
-
-    // TODO
     // ontId is not defined = doesn't work for / (as we need to explicitly create in the page - which is back to horrid)
     const load = (ontId, importsIncluded) => {
+        clear();
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let url = '/stats?imports=' + importsIncluded + "&" + getOntIdQuery(ontId);
@@ -43,9 +68,9 @@ document.addEventListener('DOMContentLoaded', function () {
         infoPosition: "top",
         isLog: false,
         getURL: (label) => "/" + label.toLowerCase() + "/?" + getOntIdQuery(),
-    }
+    };
 
-    function render(stats, ontId) {
+    const render = (stats, ontId) => {
         let entityCounts = stats.entityCounts;
         const labels = Object.keys(entityCounts);
         const data = Object.values(entityCounts);
@@ -74,17 +99,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // let childCountDistribution = stats.classChildCountDistribution;
         // createScatter("classChildCount", "Class child count", childCountDistribution);
-    }
+    };
 
-    function getOntIdQuery(ontId) {
+    const getOntIdQuery = (ontId) => {
         if (ontId) {
             return "ontId=" + ontId;
         }
         return "";
-    }
+    };
 
 
-    function createPie(selector, title, labels, data, options) {
+    const createPie = (selector, title, labels, data, options) => {
         const canvas = document.getElementById(selector);
 
         options = {...defaultOptions, ...options};
@@ -144,6 +169,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 canvas.style.cursor = 'default';
             }
         }
+
+        charts.push(chart);
     }
 
     // function createScatter(selector, title, coords) {
@@ -174,5 +201,5 @@ document.addEventListener('DOMContentLoaded', function () {
     //     );
     // }
 
-    reload();
+    init();
 });
