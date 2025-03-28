@@ -9,28 +9,12 @@
         </div>
     </div>
 
-    <div th:replace="~{base :: image (${image})}">
-        Possibly an image
-    </div>
-
-    <div th:replace="~{base :: sound (${sound})}">
-        Possibly a sound
-    </div>
-
-    <div th:replace="~{base :: map (${geo})}">
-        Possibly a map
-    </div>
-
     <div th:if="${editingEnabled}"
          th:replace='~{edits :: axiom(${""}, ${""})}'>
         Edit this axiom
     </div>
 
     <div class="characteristics">
-        <div th:replace="~{base :: metrics (${metrics})}">
-            Possibly some metrics
-        </div>
-
         <div th:each="ch : ${characteristics}" th:remove="tag">
             <div th:replace="~{base :: characteristic (${ch})}">
                 A characteristic

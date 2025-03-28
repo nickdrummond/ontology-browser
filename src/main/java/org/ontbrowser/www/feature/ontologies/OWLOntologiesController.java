@@ -18,7 +18,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -78,7 +77,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         getOntologyFragment(ontId, with, model, request, response);
 
-        return new ModelAndView("owlentity");
+        return new ModelAndView("ontology");
     }
 
 
@@ -103,15 +102,10 @@ public class OWLOntologiesController extends ApplicationController {
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
         List<Characteristic> characteristics = service.getCharacteristics(ont, withOrEmpty, DEFAULT_PAGE_SIZE, kit);
 
-        With axiomPaging = With.getOrDefault("axioms", withOrEmpty);
-        Characteristic axioms = axiomService.getAxioms(ont, Imports.EXCLUDED, axiomPaging.start(), axiomPaging.pageSize());
-        if (!axioms.getObjects().isEmpty()) {
-            characteristics.add(axioms);
-        }
-
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", iri);
+        model.addAttribute("ontId", ontId);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", ontologySFP);
@@ -122,7 +116,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         response.addHeader("title", projectInfo.name() + ": " + title);
 
-        return new ModelAndView("owlentityfragment");
+        return new ModelAndView("ontologyfragment");
 
     }
 

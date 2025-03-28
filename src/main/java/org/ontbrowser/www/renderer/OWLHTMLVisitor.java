@@ -95,9 +95,6 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public void visit(@Nonnull OWLOntology ontology) {
         String link = urlScheme.getURLForOWLObject(ontology);
         String cssClass = CSS_ONTOLOGY_URI;
-        if (ontology.equals(ont)){
-            cssClass = CSS_ACTIVE_ONTOLOGY_URI;
-        }
 
         if (activeObjects.contains(ontology)){
             cssClass = CSS_ACTIVE_ENTITY + SPACE + cssClass;

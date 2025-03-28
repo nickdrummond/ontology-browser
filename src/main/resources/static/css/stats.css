@@ -1,12 +1,12 @@
 .stats-holder {
     display: flex;
     flex-direction: row;
-    gap: 3rem;
+    justify-content: space-evenly;
 }
 
 .stats-holder canvas {
-    height: 20rem;
-    width: 20rem;
+    height: 15rem;
+    width: 15rem;
 }
 
 .stats-vertical {

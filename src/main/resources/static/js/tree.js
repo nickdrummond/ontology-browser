@@ -6,7 +6,7 @@ const MINIHIERARCHY = '.minihierarchy';
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
-    const entityPane = entity(() => {});
+    const entityPane = entity();
 
     const primaryTree = document.querySelector(".owlselector.primary");
     if (primaryTree) {

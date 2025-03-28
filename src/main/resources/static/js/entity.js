@@ -35,6 +35,8 @@ export const entity = () => {
         characteristics("#content").init(".characteristic, #metrics");
     }
 
+    entityLoaded();
+
     return {
         loadEntity: loadEntity,
     }

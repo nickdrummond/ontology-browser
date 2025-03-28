@@ -1,6 +1,5 @@
 import {theme} from "./theme.js";
 import {edits} from "./edits.js";
-import {entity} from "./entity.js";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     initSearch();
 
-    entity();
     if (editingEnabled) { // TODO when entity reloaded
         edits().init(".characteristic");
     }

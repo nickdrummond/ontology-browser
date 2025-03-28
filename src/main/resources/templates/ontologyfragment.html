@@ -1,0 +1,35 @@
+<div id='content' th:fragment="ontology">
+    <div class="entity-header">
+        <h2 th:text="${title}">An Ontology</h2>
+
+        <div class="iri">
+            <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
+        </div>
+    </div>
+
+    <div class="characteristics">
+
+        <div th:each="ch : ${characteristics}" th:remove="tag">
+            <div th:replace="~{base :: characteristic (${ch})}">
+                A characteristic
+            </div>
+        </div>
+
+        <div th:replace="~{base :: metrics (${metrics})}">
+            Possibly some metrics
+        </div>
+
+        <!-- TODO create these in the script?-->
+        <div class="stats-holder">
+            <div class="stats-vertical">
+                <canvas id="classVsInst"></canvas>
+                <canvas id="properties"></canvas>
+            </div>
+            <div class="stats-vertical">
+                <canvas id="axiomTypes"></canvas>
+                <canvas id="axiomTypeCounts"></canvas>
+            </div>
+        </div>
+
+    </div>
+</div>
