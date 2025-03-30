@@ -18,7 +18,6 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +63,6 @@ public class OWLOntologiesController extends ApplicationController {
     public ModelAndView getOntology(
         @PathVariable final String ontId,
         @RequestParam(required = false) List<With> with,
-        @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
         final Model model,
         final HttpServletRequest request,
         final HttpServletResponse response) throws NotFoundException {
@@ -76,9 +74,8 @@ public class OWLOntologiesController extends ApplicationController {
         Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(ont);
 
         model.addAttribute("hierarchy", ontologyTree);
-        model.addAttribute("imports", imports);
 
-        getOntologyFragment(ontId, with, imports, model, request, response);
+        getOntologyFragment(ontId, with, model, request, response);
 
         return new ModelAndView("ontology");
     }
@@ -89,7 +86,6 @@ public class OWLOntologiesController extends ApplicationController {
     public ModelAndView getOntologyFragment(
         @PathVariable final String ontId,
         @RequestParam(required = false) List<With> with,
-        @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
         final Model model,
         final HttpServletRequest request,
         final HttpServletResponse response) throws NotFoundException {
@@ -114,7 +110,6 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", ontologySFP);
         model.addAttribute("metrics", service.getMetrics(ont));
-        model.addAttribute("imports", imports);
         model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));

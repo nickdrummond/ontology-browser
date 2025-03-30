@@ -10,17 +10,17 @@ export const entity = () => {
                     const throwaway = document.createElement('span');
                     throwaway.innerHTML = html;
                     let content = document.getElementById("content");
+
+                    if (rewriteUrl) {
+                        window.history.pushState({}, '', rewriteUrl); // make sure URL follows
+                    }
+
                     content.replaceWith(throwaway.firstElementChild);
+                    if (response.headers.has("title")) {
+                        window.document.title = response.headers.get("title");
+                    }
                     entityLoaded();
                 });
-
-                if (rewriteUrl) {
-                    window.history.pushState({}, '', rewriteUrl); // make sure URL follows
-                }
-
-                if (response.headers.has("title")) {
-                    window.document.title = response.headers.get("title");
-                }
             })
             .catch((err) => {
                 console.log(err);

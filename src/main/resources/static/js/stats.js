@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const DEFAULT_IMPORTS = "EXCLUDED";
 
     const renderToggle = (ontId, statsHolder, importsIncluded) => {
-        const included = "<label for='imports-included'>included</label><input id='imports-included' class='imports-selector' type='radio' name='imports' value='INCLUDED' checked='" + (importsIncluded === "INCLUDED") + "'/>";
-        const excluded = "<label for='imports-excluded'>excluded</label><input id='imports-excluded' class='imports-selector' type='radio' name='imports' value='EXCLUDED' checked='" + (importsIncluded === "EXCLUDED") + "'/>";
+        const included = "<label for='imports-included'>included</label><input id='imports-included' class='imports-selector' type='radio' name='imports' value='INCLUDED'" + ((importsIncluded === "INCLUDED") ? " checked" : "") + "/>";
+        const excluded = "<label for='imports-excluded'>excluded</label><input id='imports-excluded' class='imports-selector' type='radio' name='imports' value='EXCLUDED'" + ((importsIncluded === "EXCLUDED") ? " checked" : "") + "/>";
         const html = "<span>imports " + included + excluded + "</span>";
 
         statsHolder.insertAdjacentHTML("beforeBegin", html);

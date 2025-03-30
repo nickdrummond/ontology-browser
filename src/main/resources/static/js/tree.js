@@ -92,7 +92,8 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
     function entitySelected(e, link) {
         e.preventDefault();
 
-        const originalUrl = link.getAttribute("href");
+        const searchParams = new URLSearchParams(window.location.search);
+        const originalUrl = link.getAttribute("href") + "?" + searchParams.toString();
         const entityId = getEntityId(originalUrl);
         const pluralType = getPlural(link.className);
 
@@ -103,8 +104,8 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
         updateSelection(link);
 
         // TODO move url gen out
-        const url = "/" + pluralType + "/" + entityId + "/fragment";
-        entityPane.loadEntity(url, originalUrl);
+        const fragmentUrl = "/" + pluralType + "/" + entityId + "/fragment";
+        entityPane.loadEntity(fragmentUrl, originalUrl);
         if (selectedEntityCallback) {
             selectedEntityCallback(entityId);
         }
