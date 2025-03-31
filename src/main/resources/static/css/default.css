@@ -173,6 +173,7 @@ li {
 .characteristics {
     vertical-align: top;
     padding-right: 5px; /* enough space for the scroller */
+    padding-left: 1rem;
 }
 
 .characteristic {

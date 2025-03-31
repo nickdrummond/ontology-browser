@@ -24,8 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const init = () => {
         const statsHolder = document.querySelector(".stats-holder");
         if (statsHolder) {
-            const path = window.location.href.split("/");
-            const ontId = path.at(-2);
+            const ontId = statsHolder.getAttribute("data-ont-id");
             const importsIncluded = new URLSearchParams(window.location.search).get('imports') ?? DEFAULT_IMPORTS;
             renderToggle(ontId, statsHolder, importsIncluded);
             load(ontId, importsIncluded);
@@ -74,23 +73,23 @@ document.addEventListener('DOMContentLoaded', function () {
         let entityCounts = stats.entityCounts;
         const labels = Object.keys(entityCounts);
         const data = Object.values(entityCounts);
-        createPie("classVsInst", "Class or instance", labels.slice(0, 2), data.slice(0, 2), {
+        createPie(".pie-class-vs-inst", "Class or instance", labels.slice(0, 2), data.slice(0, 2), {
             circumference: 180,
         });
-        createPie("properties", "Property types", labels.slice(2, 5), data.slice(2, 5), {
+        createPie(".pie-properties", "Property types", labels.slice(2, 5), data.slice(2, 5), {
             circumference: 180,
             rotation: 90, // upside-down
             infoPosition: "bottom",
         });
 
         let axiomCounts = stats.axiomCounts;
-        createPie("axiomTypes", "Axiom types", Object.keys(axiomCounts), Object.values(axiomCounts), {
+        createPie(".pie-axiom-types", "Axiom types", Object.keys(axiomCounts), Object.values(axiomCounts), {
             circumference: 180,
             getURL: (label) => "/axioms/?" + getOntIdQuery(ontId) + "&type=" + label, // TODO needs the ontID
         });
 
         let axiomTypeCounts = stats.axiomTypeCounts.counts;
-        createPie("axiomTypeCounts", "Logical axiom types", Object.keys(axiomTypeCounts), Object.values(axiomTypeCounts), {
+        createPie(".pie-axiom-type-counts", "Logical axiom types", Object.keys(axiomTypeCounts), Object.values(axiomTypeCounts), {
             showLegend: false,
             infoPosition: "bottom",
             getURL: (label) => "/axioms/?" + getOntIdQuery(ontId) + "&type=" + label, // TODO needs the ontID
@@ -110,7 +109,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     const createPie = (selector, title, labels, data, options) => {
-        const canvas = document.getElementById(selector);
+        const canvas = document.querySelector(selector);
+        if (canvas === null) {
+            console.error("Cannot find canvas for chart: " + selector);
+            return;
+        }
 
         options = {...defaultOptions, ...options};
 

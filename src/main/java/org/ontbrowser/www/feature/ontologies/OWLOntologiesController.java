@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
@@ -55,7 +54,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         String id = service.getIdFor(rootOntology);
 
-        response.sendRedirect("/ontologies/" + id);
+        response.sendRedirect("/ontologies/" + id + "/?imports=INCLUDED");
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -65,7 +64,7 @@ public class OWLOntologiesController extends ApplicationController {
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws NotFoundException {
+        final HttpServletResponse response) {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -88,7 +87,7 @@ public class OWLOntologiesController extends ApplicationController {
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws NotFoundException {
+        final HttpServletResponse response) {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -125,7 +124,7 @@ public class OWLOntologiesController extends ApplicationController {
         @PathVariable final String ontId,
         final HttpServletResponse response,
         final Writer writer
-    ) throws NotFoundException {
+    ) {
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 

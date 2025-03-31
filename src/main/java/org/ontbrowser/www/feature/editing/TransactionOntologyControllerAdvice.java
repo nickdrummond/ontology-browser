@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.editing;
 
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.ontologies.OWLOntologiesService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.IRI;
@@ -32,13 +31,13 @@ public class TransactionOntologyControllerAdvice {
     public OWLOntology injectParent(
             @RequestParam(required = false) final String ontId,
             @RequestParam(required = false) String transaction,
-            Model model) throws NotFoundException {
+            Model model) {
         model.addAttribute("editingEnabled", true);
         model.addAttribute("transaction", transaction);
         return getDefaultOntology(ontId, transaction);
     }
 
-    private OWLOntology getDefaultOntology(String ontId, String transaction) throws NotFoundException {
+    private OWLOntology getDefaultOntology(String ontId, String transaction) {
         if (transaction != null) {
             IRI ontIRI = TransactionUtils.iriForTransaction(transaction);
             // TODO if the transaction is not known, we should redirect to strip the param out

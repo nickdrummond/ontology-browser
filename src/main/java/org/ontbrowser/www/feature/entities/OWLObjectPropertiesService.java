@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.entities;
 
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ObjectPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.model.Tree;
@@ -10,11 +9,13 @@ import org.ontbrowser.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OWLObjectPropertiesService implements PropertiesService<OWLObjectProperty> {
@@ -23,7 +24,7 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
     private ReasonerFactoryService reasonerFactoryService;
 
     @Override
-    public OWLObjectProperty getPropertyFor(String propertyId, OWLOntology ont) throws NotFoundException {
+    public OWLObjectProperty getPropertyFor(String propertyId, OWLOntology ont) {
         //TODO this should be cached
         OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
 
@@ -43,7 +44,7 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
                 }
             }
         }
-        throw new NotFoundException("OWLObjectProperty", propertyId);
+        throw new ResponseStatusException(NOT_FOUND, "OWLObjectProperty not found: " + propertyId);
     }
 
     @Override

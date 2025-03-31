@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.entities;
 
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.IndividualCharacteristicsBuilder;
 import org.ontbrowser.www.model.AxiomWithMetadata;
@@ -10,25 +9,29 @@ import org.semanticweb.owlapi.model.parameters.AxiomAnnotations;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.semanticweb.owlapi.model.AxiomType.CLASS_ASSERTION;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OWLIndividualsService {
 
     public OWLNamedIndividual getOWLIndividualFor(
             final String propertyId,
-            final OWLOntology ont) throws NotFoundException {
+            final OWLOntology ont) {
 
         for (OWLNamedIndividual owlIndividual: ont.getIndividualsInSignature(Imports.INCLUDED)) {
             if (getIdFor(owlIndividual).equals(propertyId)) {
                 return owlIndividual;
             }
         }
-        throw new NotFoundException("OWLIndividual", propertyId);
+        throw new ResponseStatusException(NOT_FOUND, "OWLIndividual not found: " + propertyId);
     }
 
     public String getIdFor(final OWLIndividual owlIndividual) {

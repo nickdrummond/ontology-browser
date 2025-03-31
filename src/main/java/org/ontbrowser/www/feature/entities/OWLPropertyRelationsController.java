@@ -3,7 +3,6 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
@@ -87,7 +86,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @RequestParam(defaultValue = "relationsCount") final String statsName,
         final Model model,
         HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         var property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -112,7 +111,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
             @RequestParam final @Nullable String orderBy,
             final Model model,
             HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         var property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -135,7 +134,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @ModelAttribute final OWLOntology ont,
         final Model model,
         HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -167,7 +166,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             final Model model,
             HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -191,7 +190,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @RequestParam(defaultValue = "relationsCount") final String statsName,
         @ModelAttribute final OWLOntology ont,
         final Model model
-    ) throws NotFoundException {
+    ) {
 
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -218,7 +217,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         @ModelAttribute final OWLOntology ont,
         final Model model,
         HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
         OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);

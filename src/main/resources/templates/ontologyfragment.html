@@ -19,14 +19,14 @@
             Possibly some metrics
         </div>
 
-        <div class="stats-holder">
+        <div class="stats-holder" th:data-ont-id="${ontId}">
             <div class="stats-vertical">
-                <canvas id="classVsInst"></canvas>
-                <canvas id="properties"></canvas>
+                <canvas class="pie-class-vs-inst"></canvas>
+                <canvas class="pie-properties"></canvas>
             </div>
             <div class="stats-vertical">
-                <canvas id="axiomTypes"></canvas>
-                <canvas id="axiomTypeCounts"></canvas>
+                <canvas class="pie-axiom-types"></canvas>
+                <canvas class="pie-axiom-type-counts"></canvas>
             </div>
         </div>
 
