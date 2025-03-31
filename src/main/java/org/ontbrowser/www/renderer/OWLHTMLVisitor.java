@@ -26,7 +26,6 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     private static final String CSS_ACTIVE_ENTITY = "active-entity";
     private static final String CSS_KEYWORD = "keyword";
     private static final String CSS_ONTOLOGY_URI = "ontology-uri";
-    private static final String CSS_ACTIVE_ONTOLOGY_URI = "active-ontology-uri";
     private static final String CSS_SOME = "some";
     private static final String CSS_ONLY = "only";
     private static final String CSS_VALUE = "value";
@@ -44,7 +43,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public static final String HTML_LIST_ITEM_END = "</li>";
 
     // the subset and equivalence symbols can be encoded in HTML
-    private final boolean USE_SYMBOLS = true;
+    private static final boolean USE_SYMBOLS = true;
 
     // the active objects currently on the page (will be highlighted)
     private Set<OWLObject> activeObjects = Collections.emptySet();
@@ -305,6 +304,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     @Override
     public void visit(@Nonnull OWLDatatypeRestriction node) {
         node.getDatatype().accept(this);
+        write(SPACE);
         write(" [");
         writeOpList(node.getFacetRestrictions(), ", ");
         write("]");
@@ -669,6 +669,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     @Override
     public void visit(@Nonnull OWLDisjointClassesAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DISJOINT_CLASSES.toString());
+        write(SPACE);
         write(OPEN_PAREN);
         writeOpList(axiom.getClassExpressions(), ", ");
         write(CLOSE_PAREN);
@@ -678,6 +679,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     @Override
     public void visit(@Nonnull OWLDisjointObjectPropertiesAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DISJOINT_PROPERTIES.toString());
+        write(SPACE);
         write(OPEN_PAREN);
         writeOpList(axiom.getProperties(), ", ");
         write(CLOSE_PAREN);
@@ -687,6 +689,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     @Override
     public void visit(@Nonnull OWLDisjointDataPropertiesAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DISJOINT_PROPERTIES.toString());
+        write(SPACE);
         write(OPEN_PAREN);
         writeOpList(axiom.getProperties(), ", ");
         write(CLOSE_PAREN);
@@ -696,6 +699,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     @Override
     public void visit(@Nonnull OWLDifferentIndividualsAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DIFFERENT_INDIVIDUALS.toString());
+        write(SPACE);
         write(OPEN_PAREN);
         writeOpList(axiom.getIndividuals(), ", ");
         write(CLOSE_PAREN);
@@ -705,6 +709,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     @Override
     public void visit(@Nonnull OWLDisjointUnionAxiom axiom) {
         writeKeyword(ManchesterOWLSyntax.DISJOINT_UNION_OF.toString());
+        write(SPACE);
         write(OPEN_PAREN);
         writeOpList(axiom.getClassExpressions(), ", ");
         write(CLOSE_PAREN);
@@ -880,26 +885,67 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     }
 
     private void writeAnonymousIndividual(OWLAnonymousIndividual individual) {
-        final Collection<OWLClassExpression> types =
-                EntitySearcher.getTypes(individual, ont.importsClosure()).toList();
+        writeTypes(individual);
+        writeAnnotations(individual);
+        writeDataPropertyValues(individual);
+        writeNegativeDataPropertyValues(individual);
+        writeObjectPropertyValues(individual);
+        writeNegativeObjectPropertyValues(individual);
+    }
 
-        if (!types.isEmpty()){
-            writeOpList(types, ", ");
-        }
-
-        Set<OWLAnnotation> annotations = EntitySearcher.getAnnotations(individual, ont.importsClosure(), null)
-                .collect(Collectors.toSet());
-
-        if (!annotations.isEmpty()){
+    private void writeNegativeObjectPropertyValues(OWLAnonymousIndividual individual) {
+        Multimap<OWLObjectPropertyExpression, OWLIndividual> negObjValues =
+                EntitySearcher.getNegativeObjectPropertyValues(individual, ont.importsClosure());
+        if (!negObjValues.isEmpty()){
             write(HTML_LIST_START);
-            for (OWLAnnotation a : annotations){
-                write(HTML_LIST_ITEM_START);
-                a.accept(this);
-                write(HTML_LIST_ITEM_END);
+
+            for (OWLObjectPropertyExpression p : negObjValues.keySet()){
+                write("<li>not ");
+                p.accept(this);
+                write("<ul><li>");
+                writeOpList(negObjValues.get(p), "</li><li>");
+                write("</ul></li>");
             }
             write(HTML_LIST_END);
         }
+    }
 
+    private void writeObjectPropertyValues(OWLAnonymousIndividual individual) {
+        Multimap<OWLObjectPropertyExpression, OWLIndividual> objValues =
+                EntitySearcher.getObjectPropertyValues(individual, ont.importsClosure());
+        if (!objValues.isEmpty()){
+            write(HTML_LIST_START);
+
+            for (OWLObjectPropertyExpression p : objValues.keySet()){
+                write(HTML_LIST_ITEM_START);
+                p.accept(this);
+                write("<ul><li>");
+                writeOpList(objValues.get(p), "</li><li>");
+                write("</ul></li>");
+            }
+            write(HTML_LIST_END);
+
+        }
+    }
+
+    private void writeNegativeDataPropertyValues(OWLAnonymousIndividual individual) {
+        Multimap<OWLDataPropertyExpression, OWLLiteral> negDataValues =
+                EntitySearcher.getNegativeDataPropertyValues(individual, ont.importsClosure());
+        if (!negDataValues.isEmpty()){
+            write(HTML_LIST_START);
+
+            for (OWLDataPropertyExpression p : negDataValues.keySet()){
+                write("<li>not ");
+                p.accept(this);
+                write("<ul><li>");
+                writeOpList(negDataValues.get(p), "</li><li>");
+                write("</ul></li>");
+            }
+            write(HTML_LIST_END);
+        }
+    }
+
+    private void writeDataPropertyValues(OWLAnonymousIndividual individual) {
         Multimap<OWLDataPropertyExpression, OWLLiteral> dataValues =
                 EntitySearcher.getDataPropertyValues(individual, ont.importsClosure());
         if (!dataValues.isEmpty()){
@@ -916,51 +962,29 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             }
             write(HTML_LIST_END);
         }
+    }
 
-        Multimap<OWLDataPropertyExpression, OWLLiteral> negDataValues =
-                EntitySearcher.getNegativeDataPropertyValues(individual, ont.importsClosure());
-        if (!negDataValues.isEmpty()){
+    private void writeAnnotations(OWLAnonymousIndividual individual) {
+        Set<OWLAnnotation> annotations = EntitySearcher.getAnnotations(individual, ont.importsClosure(), null)
+                .collect(Collectors.toSet());
+
+        if (!annotations.isEmpty()){
             write(HTML_LIST_START);
-
-            for (OWLDataPropertyExpression p : negDataValues.keySet()){
-                write("<li>not ");
-                p.accept(this);
-                write("<ul><li>");
-                writeOpList(negDataValues.get(p), "</li><li>");
-                write("</ul></li>");
-            }
-            write(HTML_LIST_END);
-        }
-
-        Multimap<OWLObjectPropertyExpression, OWLIndividual> objValues =
-                EntitySearcher.getObjectPropertyValues(individual, ont.importsClosure());
-        if (!objValues.isEmpty()){
-            write(HTML_LIST_START);
-
-            for (OWLObjectPropertyExpression p : objValues.keySet()){
+            for (OWLAnnotation a : annotations){
                 write(HTML_LIST_ITEM_START);
-                p.accept(this);
-                write("<ul><li>");
-                writeOpList(objValues.get(p), "</li><li>");
-                write("</ul></li>");
+                a.accept(this);
+                write(HTML_LIST_ITEM_END);
             }
             write(HTML_LIST_END);
-
         }
+    }
 
-        Multimap<OWLObjectPropertyExpression, OWLIndividual> negbjValues =
-                EntitySearcher.getNegativeObjectPropertyValues(individual, ont.importsClosure());
-        if (!negbjValues.isEmpty()){
-            write(HTML_LIST_START);
+    private void writeTypes(OWLAnonymousIndividual individual) {
+        final Collection<OWLClassExpression> types =
+                EntitySearcher.getTypes(individual, ont.importsClosure()).toList();
 
-            for (OWLObjectPropertyExpression p : negbjValues.keySet()){
-                write("<li>not ");
-                p.accept(this);
-                write("<ul><li>");
-                writeOpList(negbjValues.get(p), "</li><li>");
-                write("</ul></li>");
-            }
-            write(HTML_LIST_END);
+        if (!types.isEmpty()){
+            writeOpList(types, ", ");
         }
     }
 
