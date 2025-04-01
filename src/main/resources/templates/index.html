@@ -6,8 +6,8 @@
     <th:block th:insert='~{base :: header (title=${"Welcome"}, rewriteLinks=${false})}'/>
 
     <link rel='stylesheet' type='text/css' href="/css/stats.css" th:href='@{/css/stats.css}'/>
-<!--    <script src="/js/libs/chart.umd.js" th:src="@{/js/libs/chart.umd.js}"></script>-->
-<!--    <script src="/js/stats.js" th:src="@{/js/stats.js}"></script>-->
+    <script src="/js/libs/chart.umd.js" th:src="@{/js/libs/chart.umd.js}"></script>
+    <script src="/js/stats.js" th:src="@{/js/stats.js}"></script>
 </head>
 
 <body class="wrapper">
@@ -16,24 +16,47 @@
 
 <div th:replace='~{base :: menu}'></div>
 
-<div class="welcome"><p>Welcome to the <em th:text="${projectInfo.name}">Ontology name</em>
-    created in <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}"></a>.</p>
-</div>
-
 <div id='main'>
+    <div id='content' th:fragment="ontology">
+        <div class="entity-header">
+            <h2 th:text="${title}">An Ontology</h2>
 
-    <div class="stats-holder">
-        <div class="stats-vertical">
-            <canvas id="classVsInst"></canvas>
-            <canvas id="properties"></canvas>
+            <div class="iri">
+                <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
+            </div>
         </div>
-        <div class="stats-vertical">
-            <canvas id="axiomTypes"></canvas>
-            <canvas id="axiomTypeCounts"></canvas>
+
+        <div class="stats-holder" th:data-ont-id="${ontId}" th:data-imports-included="${imports}" data-import-control="false">
+            <div class="stats-horizontal">
+                <div>
+                    <h4>Class or instance</h4>
+                    <canvas class="pie-class-vs-inst"></canvas>
+                </div>
+                <div>
+                    <h4>Property types</h4>
+                    <canvas class="pie-properties"></canvas>
+                </div>
+                <div>
+                    <h4>Axiom types</h4>
+                    <canvas class="pie-axiom-types"></canvas>
+                </div>
+                <div>
+                    <h4>Logical axiom types</h4>
+                    <canvas class="pie-axiom-type-counts"></canvas>
+                </div>
+            </div>
         </div>
-        <!--        <canvas id="classChildCount"></canvas>-->
+
+        <div class="characteristics">
+
+            <div th:each="ch : ${characteristics}" th:remove="tag">
+                <div th:replace="~{base :: characteristic (${ch})}">
+                    A characteristic
+                </div>
+            </div>
+
+        </div>
     </div>
-
 </div>
 
 <div th:replace='~{base :: footer}'></div>

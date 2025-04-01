@@ -2,21 +2,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const charts = [];
 
-    const DEFAULT_IMPORTS = "EXCLUDED";
+    const renderToggle = (ontId, statsHolder, imports) => {
+        const included = "<input id='imports-included' class='imports-selector' type='checkbox' name='imports' " + ((imports === "INCLUDED") ? " checked" : "") + "/>";
+        const label = " <label for='imports-included'>Include imports</label>"
+        const html = "<span>" + included + label + "</span>";
 
-    const renderToggle = (ontId, statsHolder, importsIncluded) => {
-        const included = "<label for='imports-included'>included</label><input id='imports-included' class='imports-selector' type='radio' name='imports' value='INCLUDED'" + ((importsIncluded === "INCLUDED") ? " checked" : "") + "/>";
-        const excluded = "<label for='imports-excluded'>excluded</label><input id='imports-excluded' class='imports-selector' type='radio' name='imports' value='EXCLUDED'" + ((importsIncluded === "EXCLUDED") ? " checked" : "") + "/>";
-        const html = "<span>imports " + included + excluded + "</span>";
+        statsHolder.insertAdjacentHTML("afterBegin", html);
 
-        statsHolder.insertAdjacentHTML("beforeBegin", html);
         document.querySelectorAll(".imports-selector").forEach(element => {
             element.onclick = (e) => {
-                let importsIncluded = e.target.value;
+                let imports = e.target.checked ? "INCLUDED" : "EXCLUDED";
                 const searchParams = new URLSearchParams(window.location.search);
-                searchParams.set("imports", importsIncluded);
+                searchParams.set("imports", imports);
                 window.history.pushState({}, "", "?" + searchParams.toString());
-                load(ontId, importsIncluded);
+                load(ontId, imports);
             }
         });
     }
@@ -25,9 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const statsHolder = document.querySelector(".stats-holder");
         if (statsHolder) {
             const ontId = statsHolder.getAttribute("data-ont-id");
-            const importsIncluded = new URLSearchParams(window.location.search).get('imports') ?? DEFAULT_IMPORTS;
-            renderToggle(ontId, statsHolder, importsIncluded);
-            load(ontId, importsIncluded);
+            const imports = statsHolder.getAttribute("data-imports-included");
+            const importControl = statsHolder.getAttribute("data-import-control");
+            if (importControl === null || importControl !== "false") {
+                renderToggle(ontId, statsHolder, imports);
+            }
+            load(ontId, imports);
         }
     }
 
@@ -44,18 +46,18 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // ontId is not defined = doesn't work for / (as we need to explicitly create in the page - which is back to horrid)
-    const load = (ontId, importsIncluded) => {
+    const load = (ontId, imports) => {
         clear();
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
-        let url = '/stats?imports=' + importsIncluded + "&" + getOntIdQuery(ontId);
+        let url = '/stats?imports=' + imports + "&" + getOntIdQuery(ontId);
         fetch(url, {
             headers: myHeaders,
         })
             .then(response => {
                 response.json()
                     .then(json => {
-                        render(json, ontId);
+                        render(json, ontId, imports);
                     });
             });
     };
@@ -69,30 +71,34 @@ document.addEventListener('DOMContentLoaded', function () {
         getURL: (label) => "/" + label.toLowerCase() + "/?" + getOntIdQuery(),
     };
 
-    const render = (stats, ontId) => {
+    const render = (stats, ontId, imports) => {
         let entityCounts = stats.entityCounts;
         const labels = Object.keys(entityCounts);
         const data = Object.values(entityCounts);
         createPie(".pie-class-vs-inst", "Class or instance", labels.slice(0, 2), data.slice(0, 2), {
-            circumference: 180,
+            // circumference: 180,
+            infoPosition: "bottom",
         });
         createPie(".pie-properties", "Property types", labels.slice(2, 5), data.slice(2, 5), {
-            circumference: 180,
-            rotation: 90, // upside-down
+            // circumference: 180,
+            // rotation: 90, // upside-down
             infoPosition: "bottom",
         });
 
         let axiomCounts = stats.axiomCounts;
         createPie(".pie-axiom-types", "Axiom types", Object.keys(axiomCounts), Object.values(axiomCounts), {
-            circumference: 180,
-            getURL: (label) => "/axioms/?" + getOntIdQuery(ontId) + "&type=" + label, // TODO needs the ontID
+            // circumference: 180,
+            infoPosition: "bottom",
+            getURL: (label) => "/axioms/?" + getOntIdQuery(ontId) + "&imports=" + imports + "&type=" + label,
         });
 
         let axiomTypeCounts = stats.axiomTypeCounts.counts;
         createPie(".pie-axiom-type-counts", "Logical axiom types", Object.keys(axiomTypeCounts), Object.values(axiomTypeCounts), {
             showLegend: false,
-            infoPosition: "bottom",
-            getURL: (label) => "/axioms/?" + getOntIdQuery(ontId) + "&type=" + label, // TODO needs the ontID
+            // infoPosition: "bottom",
+            // circumference: 180,
+            // rotation: 90, // upside-down
+            getURL: (label) => "/axioms/?" + getOntIdQuery(ontId) + "&imports=" + imports + "&type=" + label,
             isLog: true,
         });
 
@@ -136,11 +142,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     // ...options, could but then have to nest
                     responsive: false,
                     plugins: {
-                        title: {
-                            display: true,
-                            text: title,
-                            position: options.infoPosition,
-                        },
                         legend: {
                             display: options.showLegend,
                             position: options.infoPosition,

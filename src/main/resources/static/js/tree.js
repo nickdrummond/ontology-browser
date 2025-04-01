@@ -104,7 +104,7 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
         updateSelection(link);
 
         // TODO move url gen out
-        const fragmentUrl = "/" + pluralType + "/" + entityId + "/fragment";
+        const fragmentUrl = "/" + pluralType + "/" + entityId + "/fragment?" + searchParams.toString();
         entityPane.loadEntity(fragmentUrl, originalUrl);
         if (selectedEntityCallback) {
             selectedEntityCallback(entityId);

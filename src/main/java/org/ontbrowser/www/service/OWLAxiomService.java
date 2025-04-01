@@ -71,7 +71,9 @@ public class OWLAxiomService implements RestartListener {
             int start,
             int pageSize,
             Function<OWLOntology, Stream<? extends OWLAxiom>> getAxiomsForOntology) {
-        Stream<OWLOntology> ontologies = imports == Imports.INCLUDED ? ont.importsClosure() : Stream.of(ont);
+
+        Stream<OWLOntology> ontologies = imports.stream(ont);
+
         List<AxiomWithMetadata> results = ontologies
                 .flatMap(o -> wrappedWithOntology(getAxiomsForOntology.apply(o), o))
                 .toList();
@@ -87,6 +89,7 @@ public class OWLAxiomService implements RestartListener {
     public Characteristic findAxioms(
             final String search,
             final OWLOntology ont,
+            final Imports imports,
             final ShortFormProvider sfp,
             int start,
             int pageSize) {
@@ -96,12 +99,13 @@ public class OWLAxiomService implements RestartListener {
         Predicate<Map.Entry<OWLAxiom, String>> contains = entry ->
                 entry.getValue().contains(stripped);
 
-        return resultsCharacteristic(search, ont, sfp, contains, start, pageSize);
+        return resultsCharacteristic(search, ont, imports, sfp, contains, start, pageSize);
     }
 
     public Characteristic findLogicalAxioms(
             final String search,
             final OWLOntology ont,
+            final Imports imports,
             final ShortFormProvider sfp,
             int start,
             int pageSize) {
@@ -111,12 +115,13 @@ public class OWLAxiomService implements RestartListener {
         Predicate<Map.Entry<OWLAxiom, String>> contains = entry ->
                 entry.getKey().isLogicalAxiom() && entry.getValue().contains(stripped);
 
-        return resultsCharacteristic(search, ont, sfp, contains, start, pageSize);
+        return resultsCharacteristic(search, ont, imports, sfp, contains, start, pageSize);
     }
 
     public Characteristic findAxiomsByType(
             @Nonnull final String search,
             final OWLOntology ont,
+            final Imports imports,
             final ShortFormProvider sfp,
             int start,
             int pageSize,
@@ -127,18 +132,19 @@ public class OWLAxiomService implements RestartListener {
         Predicate<Map.Entry<OWLAxiom, String>> contains = entry ->
                 entry.getKey().getAxiomType().equals(entityType) && entry.getValue().contains(stripped);
 
-        return resultsCharacteristic(search, ont, sfp, contains, start, pageSize);
+        return resultsCharacteristic(search, ont, imports, sfp, contains, start, pageSize);
     }
 
     private Characteristic resultsCharacteristic(
             final String search,
             final OWLOntology ont,
+            final Imports imports,
             final ShortFormProvider sfp,
             final Predicate<? super Map.Entry<OWLAxiom, String>> filter,
             int start,
             int pageSize) {
 
-        List<AxiomWithMetadata> results = ont.importsClosure()
+        List<AxiomWithMetadata> results = imports.stream(ont)
                 .flatMap(o -> wrappedWithOntology(filterAxioms(search, o, sfp, filter), o))
                 .toList();
 

@@ -170,6 +170,10 @@ li {
     font-size: 2rem;
 }
 
+.ontology-page {
+    display: flex;
+}
+
 .characteristics {
     vertical-align: top;
     padding-right: 5px; /* enough space for the scroller */

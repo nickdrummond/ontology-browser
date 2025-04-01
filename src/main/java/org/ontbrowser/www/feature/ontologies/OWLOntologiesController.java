@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -54,13 +55,14 @@ public class OWLOntologiesController extends ApplicationController {
 
         String id = service.getIdFor(rootOntology);
 
-        response.sendRedirect("/ontologies/" + id + "/?imports=INCLUDED");
+        response.sendRedirect("/ontologies/" + id + "/");
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}")
     public ModelAndView getOntology(
         @PathVariable final String ontId,
+        @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
@@ -74,7 +76,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         model.addAttribute("hierarchy", ontologyTree);
 
-        getOntologyFragment(ontId, with, model, request, response);
+        getOntologyFragment(ontId, imports, with, model, request, response);
 
         return new ModelAndView("ontology");
     }
@@ -84,6 +86,7 @@ public class OWLOntologiesController extends ApplicationController {
     @GetMapping(value = "/{ontId}/fragment")
     public ModelAndView getOntologyFragment(
         @PathVariable final String ontId,
+        @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
@@ -107,6 +110,7 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("ontId", ontId);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("imports", imports);
         model.addAttribute("ontologiesSfp", ontologySFP);
         model.addAttribute("metrics", service.getMetrics(ont));
         model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
