@@ -128,7 +128,7 @@ public class CommonFragments {
 //            final OWLOntology ont,
 //            final Model model,
 //            HttpServletRequest request
-//    ) throws NotFoundException {
+//    ) {
 //
 //        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 //

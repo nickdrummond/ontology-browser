@@ -16,15 +16,15 @@
 
     <div class="error">
         <div th:switch="${errorCode}" th:remove="tag">
-            <h2 th:case='${404}'>Not Found</h2>
+            <h2 th:case='404'>Not Found</h2>
             <h2 th:case='*' th:text='${errorCode + " Error"}'>Error.</h2>
         </div>
 
-        <p>
+        <p th:text="${message}">
             Sorry, an error has occurred.
         </p>
         <p>
-            Please consider reporting this to your <a th:href='${"mailto:" + projectInfo.contact}'>project contact</a>
+            If this is unexpected, consider reporting this to your <a th:href='${"mailto:" + projectInfo.contact}'>project contact</a>
             who can check the application logs.
         </p>
         <p>

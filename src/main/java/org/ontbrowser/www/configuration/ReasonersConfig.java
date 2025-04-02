@@ -2,10 +2,9 @@ package org.ontbrowser.www.configuration;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
-import org.ontbrowser.www.reasoner.ReasonerMomento;
 import org.ontbrowser.www.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.reasoner.ReasonerMomento;
 import org.semanticweb.owlapi.model.OWLEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,7 +69,6 @@ public class ReasonersConfig {
     }
 
     @Bean
-    @Autowired
     public ReasonerFactoryService reasonerFactoryService(List<ReasonerMomento> reasoners) {
         return new ReasonerFactoryService(reasoners, openlletLabel, structuralLabel);
     }

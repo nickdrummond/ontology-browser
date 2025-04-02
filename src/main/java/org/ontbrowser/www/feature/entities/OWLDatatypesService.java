@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.entities;
 
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.DatatypeCharacteristicsBuilder;
 import org.ontbrowser.www.model.paging.With;
@@ -10,13 +9,17 @@ import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OWLDatatypesService {
 
-    public OWLDatatype getOWLDatatypeFor(String propertyId, OWLOntology ont) throws NotFoundException {
+    public OWLDatatype getOWLDatatypeFor(String propertyId, OWLOntology ont) {
         OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
 
         OWLDatatype owlTopDatatype = df.getTopDatatype();
@@ -29,7 +32,7 @@ public class OWLDatatypesService {
                 return owlDatatype;
             }
         }
-        throw new NotFoundException("OWLDatatype", propertyId);
+        throw new ResponseStatusException(NOT_FOUND, "OWLDatatype not found: " + propertyId);
     }
 
     public String getIdFor(final OWLDatatype owlDatatype) {

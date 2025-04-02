@@ -1,20 +1,24 @@
 package org.ontbrowser.www.feature.entities;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.DataPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.service.hierarchy.*;
+import org.ontbrowser.www.service.hierarchy.AbstractRelationsHierarchyService;
+import org.ontbrowser.www.service.hierarchy.OWLDataPropertyHierarchyService;
+import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OWLDataPropertiesService implements PropertiesService<OWLDataProperty> {
@@ -23,7 +27,7 @@ public class OWLDataPropertiesService implements PropertiesService<OWLDataProper
     private ReasonerFactoryService reasonerFactoryService;
 
     @Override
-    public OWLDataProperty getPropertyFor(String propertyId, OWLOntology ont) throws NotFoundException {
+    public OWLDataProperty getPropertyFor(String propertyId, OWLOntology ont) {
         OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
 
         OWLDataProperty owlTopDataProperty = df.getOWLTopDataProperty();
@@ -43,7 +47,7 @@ public class OWLDataPropertiesService implements PropertiesService<OWLDataProper
                 }
             }
         }
-        throw new NotFoundException("OWLDataProperty", propertyId);
+        throw new ResponseStatusException(NOT_FOUND, "OWLDataProperty not found: " + propertyId);
     }
 
     public String getIdFor(final OWLDataProperty owlDataProperty) {

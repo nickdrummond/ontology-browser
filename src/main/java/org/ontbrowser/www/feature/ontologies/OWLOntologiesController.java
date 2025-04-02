@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
@@ -56,17 +55,18 @@ public class OWLOntologiesController extends ApplicationController {
 
         String id = service.getIdFor(rootOntology);
 
-        response.sendRedirect("/ontologies/" + id);
+        response.sendRedirect("/ontologies/" + id + "/");
     }
 
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}")
     public ModelAndView getOntology(
         @PathVariable final String ontId,
+        @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws NotFoundException {
+        final HttpServletResponse response) {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -76,9 +76,9 @@ public class OWLOntologiesController extends ApplicationController {
 
         model.addAttribute("hierarchy", ontologyTree);
 
-        getOntologyFragment(ontId, with, model, request, response);
+        getOntologyFragment(ontId, imports, with, model, request, response);
 
-        return new ModelAndView("owlentity");
+        return new ModelAndView("ontology");
     }
 
 
@@ -86,10 +86,11 @@ public class OWLOntologiesController extends ApplicationController {
     @GetMapping(value = "/{ontId}/fragment")
     public ModelAndView getOntologyFragment(
         @PathVariable final String ontId,
+        @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws NotFoundException {
+        final HttpServletResponse response) {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -103,17 +104,13 @@ public class OWLOntologiesController extends ApplicationController {
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
         List<Characteristic> characteristics = service.getCharacteristics(ont, withOrEmpty, DEFAULT_PAGE_SIZE, kit);
 
-        With axiomPaging = With.getOrDefault("axioms", withOrEmpty);
-        Characteristic axioms = axiomService.getAxioms(ont, Imports.EXCLUDED, axiomPaging.start(), axiomPaging.pageSize());
-        if (!axioms.getObjects().isEmpty()) {
-            characteristics.add(axioms);
-        }
-
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
         model.addAttribute("iri", iri);
+        model.addAttribute("ontId", ontId);
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
+        model.addAttribute("imports", imports);
         model.addAttribute("ontologiesSfp", ontologySFP);
         model.addAttribute("metrics", service.getMetrics(ont));
         model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
@@ -122,7 +119,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         response.addHeader("title", projectInfo.name() + ": " + title);
 
-        return new ModelAndView("owlentityfragment");
+        return new ModelAndView("ontologyfragment");
 
     }
 
@@ -131,7 +128,7 @@ public class OWLOntologiesController extends ApplicationController {
         @PathVariable final String ontId,
         final HttpServletResponse response,
         final Writer writer
-    ) throws NotFoundException {
+    ) {
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
 

@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
 import org.ontbrowser.www.model.Tree;
@@ -28,7 +27,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
 
@@ -76,7 +78,7 @@ public class OWLIndividualsController extends ApplicationController {
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response
-    ) throws NotFoundException {
+    ) {
 
         OWLNamedIndividual owlIndividual = individualsService.getOWLIndividualFor(individualId, ont);
         OWLClass firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
@@ -106,7 +108,7 @@ public class OWLIndividualsController extends ApplicationController {
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response
-    ) throws NotFoundException {
+    ) {
 
         OWLClass type = buildNav(classId, statsName, with, ont, model, request);
 
@@ -124,7 +126,7 @@ public class OWLIndividualsController extends ApplicationController {
             final OWLOntology ont,
             final Model model,
             final HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
         OWLClass type = owlClassesService.getOWLClassFor(classId, ont);
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
@@ -149,7 +151,7 @@ public class OWLIndividualsController extends ApplicationController {
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response
-    ) throws NotFoundException {
+    ) {
 
         OWLNamedIndividual ind = individualsService.getOWLIndividualFor(individualId, ont);
 
@@ -197,7 +199,7 @@ public class OWLIndividualsController extends ApplicationController {
         return individualsHierarchy;
     }
 
-    private void buildPrimaryHierarchy(String statsName, Model model, OWLClass type, OWLReasoner r) throws NotFoundException {
+    private void buildPrimaryHierarchy(String statsName, Model model, OWLClass type, OWLReasoner r) {
         OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, treeComparator());
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(type);
 
@@ -213,7 +215,7 @@ public class OWLIndividualsController extends ApplicationController {
             @RequestParam final String statsName,
             @ModelAttribute final OWLOntology ont,
             final Model model,
-            final HttpServletRequest request) throws NotFoundException {
+            final HttpServletRequest request) {
 
         OWLClass owlClass = owlClassesService.getOWLClassFor(classId, ont);
 
@@ -233,7 +235,7 @@ public class OWLIndividualsController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             final Model model,
             final HttpServletRequest request,
-            final HttpServletResponse response) throws NotFoundException {
+            final HttpServletResponse response) {
         OWLNamedIndividual owlIndividual = individualsService.getOWLIndividualFor(individualId, ont);
 
         // TODO custom renderer - linked to tree (see relations)
@@ -249,7 +251,7 @@ public class OWLIndividualsController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
-            final HttpServletResponse response) throws NotFoundException {
+            final HttpServletResponse response) {
         OWLClass owlClass = owlClassesService.getOWLClassFor(classId, ont);
 
         // TODO custom renderer
@@ -264,7 +266,7 @@ public class OWLIndividualsController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             final Model model,
             final HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         OWLClass type = owlClassesService.getOWLClassFor(classId, ont);
 

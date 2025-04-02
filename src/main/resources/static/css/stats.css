@@ -1,0 +1,39 @@
+.stats-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin: 0 1rem;
+}
+
+.stats-holder canvas {
+    height: 18rem;
+    width: 18rem;
+}
+
+.stats-horizontal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 2rem;
+}
+
+.stats-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4rem;
+}
+
+@media screen and (min-width: 800px) {
+    .stats-horizontal {
+        flex-direction: row;
+        justify-content: space-evenly;
+        gap: 0;
+    }
+
+    .stats-holder canvas {
+        height: 14rem;
+        width: 14rem;
+    }
+}

@@ -1,23 +1,21 @@
 export const characteristics = (parentSelector) => {
 
     const HIDDEN = "hidden characteristics";
-    const ICON_HTML = "<img class='min' src='" + "/images/min.png' width='16' height='16'/>";
     const VALUES_SELECTOR = "ul, table";
 
     const parentElement = document.querySelector(parentSelector);
 
     function init(selectors) {
-        createSlideToggles(selectors);
         hideCharacteristics();
+        createSlideToggles(selectors);
     }
 
     function createSlideToggles(selectors) {
         parentElement.querySelectorAll(selectors).forEach(characteristic => {
-            const icon = createIconElement();
-            icon.onclick = (e) => {
+            let firstChild = characteristic.querySelector("h4");
+            firstChild.onclick = (e) => {
                 toggle(characteristic);
             };
-            characteristic.insertBefore(icon, characteristic.firstChild);
         });
     }
 
@@ -35,22 +33,7 @@ export const characteristics = (parentSelector) => {
     }
 
     function getCharacteristicName(characteristicElement) {
-        return characteristicElement.classList.value;
-    }
-
-    function createIconElement() {
-        const throwaway = document.createElement('img');
-        throwaway.innerHTML = ICON_HTML;
-        return throwaway.firstElementChild;
-    }
-
-    function hideCharacteristic(characteristic) {
-        const arr = getHidden();
-        const isAlreadyHidden = arr.includes(characteristic);
-        if (!isAlreadyHidden) {
-            arr.push(characteristic);
-        }
-        sessionStorage.setItem(HIDDEN, JSON.stringify(arr));
+        return characteristicElement.classList.value.replace(" hidden", "");
     }
 
     function setCharacteristic(characteristic, visible) {
@@ -75,19 +58,27 @@ export const characteristics = (parentSelector) => {
         getHidden().forEach( hidden => {
             const sel = "." + hidden.replaceAll(" ", ".");
             parentElement.querySelectorAll(sel).forEach(characteristic => {
-               close(characteristic);
+               closeInstantly(characteristic);
             });
         });
+    }
+
+    function closeInstantly(characteristic) {
+        const values = getValuesElement(characteristic);
+        values.style.display = "none";
+        characteristic.classList.add("hidden");
     }
 
     function close(characteristic) {
         const values = getValuesElement(characteristic);
         $(values).slideUp("fast"); // TODO get rid of JQuery
+        characteristic.classList.add("hidden");
     }
 
     function open(characteristic) {
         const values = getValuesElement(characteristic);
         $(values).slideDown("fast"); // TODO get rid of JQuery
+        characteristic.classList.remove("hidden");
     }
 
     function getValuesElement(characteristic) {

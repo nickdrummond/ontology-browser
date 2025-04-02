@@ -3,7 +3,6 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
@@ -18,6 +17,7 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nullable;
@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(value = "/relations/" + OWLAnnotationRelationsController.PATH)
@@ -62,10 +64,10 @@ public class OWLAnnotationRelationsController extends ApplicationController {
     @GetMapping(value = "/")
     public void getRelationsForAnnotationProperty(
             final HttpServletResponse response
-    ) throws IOException, NotFoundException {
+    ) throws IOException {
         Set<OWLAnnotationProperty> props = kit.getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED);
         if (props.isEmpty()) {
-            throw new NotFoundException("Annotation Property");
+            throw new ResponseStatusException(NOT_FOUND, "Annotation Properties not found");
         }
         // Start with random
         String id = propertiesService.getIdFor(props.iterator().next());
@@ -82,7 +84,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @RequestParam final @Nullable String orderBy,
             @RequestParam(defaultValue = "annotationsCount") final String statsName,
             final Model model,
-            HttpServletRequest request) throws NotFoundException {
+            HttpServletRequest request) {
 
         var property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -109,7 +111,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @RequestParam final @Nullable String orderBy,
             final Model model,
             HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         var property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -131,7 +133,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             @RequestParam(defaultValue = "annotationsCount") final String statsName,
             final Model model,
-            HttpServletRequest request) throws NotFoundException {
+            HttpServletRequest request) {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -166,7 +168,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             final Model model,
             final HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
 
@@ -191,7 +193,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             final Model model,
             HttpServletRequest request
-    ) throws NotFoundException {
+    ) {
 
         OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
         OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);

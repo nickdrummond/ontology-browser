@@ -122,10 +122,6 @@ li {
     overflow: hidden;
 }
 
-#metrics {
-    margin: 5px;
-}
-
 #metrics table {
     border: solid 1px #c7cfd5;
     padding: 5px 5px 5px 25px;
@@ -174,25 +170,45 @@ li {
     font-size: 2rem;
 }
 
+.ontology-page {
+    display: flex;
+    flex-direction: column-reverse; /* charts first */
+}
+
 .characteristics {
     vertical-align: top;
     padding-right: 5px; /* enough space for the scroller */
+    padding-left: 1rem;
 }
 
 .characteristic {
-    margin: 5px;
+    margin-bottom: 0.5rem;
 }
 
-.characteristic h3 {
+.characteristic h4 {
+    display: flex;
+    align-items: center;
     font-size: 1rem;
-    font-weight: bold;
-    margin: 0 0 5px 0;
+    cursor: pointer;
 }
+
+.characteristic h4:after {
+    content: "˅";
+    font-size: 1.75rem;
+    position: relative;
+    top: 0.3rem;
+    left: 0.6rem;
+}
+
+.characteristic.hidden h4:after {
+    content: "˃";
+}
+
 
 .characteristic ul {
     border: solid 1px #c7cfd5;
     padding: 5px 5px 5px 25px;
-    margin: 0 0 10px 0;
+    margin: 0.25rem 0;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
 }
@@ -530,14 +546,6 @@ img.button {
     top: 8px;
 }
 
-img.min {
-    display: inline;
-    margin: 6px;
-    margin-right: 0;
-    cursor: pointer;
-    vertical-align: middle;
-}
-
 img.thumb{
     vertical-align: top;
     margin-left: 6px;
@@ -737,6 +745,7 @@ img.thumb{
         flex: 1;
         display: flex;
         flex-direction: column;
+        max-width: 24rem;
     }
 
     .owlselector .min {
@@ -768,6 +777,11 @@ img.thumb{
     #search, .autosuggest li {
         line-height: 24px;
         font-size: 1.5rem;
+    }
+
+    .ontology-page {
+        display: flex;
+        flex-direction: row;
     }
 }
 

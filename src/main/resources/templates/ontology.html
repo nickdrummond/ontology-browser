@@ -1,0 +1,34 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace='~{base :: header (title=${title}, rewriteLinks=${true})}'/>
+    <th:block th:replace="~{base :: includeTree}"/>
+
+    <link rel='stylesheet' type='text/css' href="/css/stats.css" th:href='@{/css/stats.css}'/>
+    <script src="/js/libs/chart.umd.js" th:src="@{/js/libs/chart.umd.js}"></script>
+    <script src="/js/stats.js" th:src="@{/js/stats.js}"></script>
+</head>
+
+<body class="wrapper">
+
+<div th:replace='~{base :: title}'></div>
+
+<div th:replace='~{base :: menu}'></div>
+
+<div id="main">
+
+    <div id='hierarchy'  th:replace="~{base :: hierarchy(${type}, ${hierarchy})}">
+        A hierarchy
+    </div>
+
+    <div th:replace="~{ontologyFragment :: ontology}">
+        An ontology
+    </div>
+</div>
+
+<div th:replace='~{base :: footer}'></div>
+
+</body>
+</html>

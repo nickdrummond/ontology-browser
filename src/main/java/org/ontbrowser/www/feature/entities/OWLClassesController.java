@@ -3,11 +3,10 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.exception.NotFoundException;
-import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
+import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.stats.Stats;
 import org.ontbrowser.www.service.stats.StatsService;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -66,7 +65,7 @@ public class OWLClassesController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
-            final HttpServletResponse response) throws NotFoundException {
+            final HttpServletResponse response) {
 
         OWLClass owlClass = service.getOWLClassFor(classId, ont);
 
@@ -87,7 +86,7 @@ public class OWLClassesController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
-            final HttpServletResponse response) throws NotFoundException {
+            final HttpServletResponse response) {
 
         OWLClass owlClass = service.getOWLClassFor(classId, ont);
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlClass);
@@ -100,7 +99,7 @@ public class OWLClassesController extends ApplicationController {
             @PathVariable final String classId,
             @RequestParam final String statsName,
             @ModelAttribute final OWLOntology ont,
-            final Model model) throws NotFoundException {
+            final Model model) {
 
         OWLClass owlClass = service.getOWLClassFor(classId, ont);
 

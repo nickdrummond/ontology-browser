@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.exception.BadRequestException;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.IRI;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import uk.co.nickdrummond.parsejs.ParseException;
 import uk.co.nickdrummond.parsejs.ParseResult;
 
@@ -29,6 +28,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 
 @RestController
@@ -54,21 +55,21 @@ public class EditController extends ApplicationController {
             @RequestParam(required = false) String transaction,
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws NotFoundException, BadRequestException, IOException {
+    ) throws IOException {
 
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker owlEntityChecker = kit.getOWLEntityChecker();
 
         OWLOntology targetOnt = kit.getOntologyForIRI(IRI.create(ontology))
-                .orElseThrow(() -> new NotFoundException("Target ontology not found: " + ontology));
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Target ontology not found: " + ontology));
 
         OWLAxiom newAxiom;
 
         try {
             newAxiom = editService.parseAxiom(axiom, df, owlEntityChecker);
         } catch (ParseException e) {
-            throw new BadRequestException("New axiom is not valid Manchester OWL syntax: " + e.getMessage());
+            throw new ResponseStatusException(BAD_REQUEST, "New axiom is not valid Manchester OWL syntax: " + e.getMessage());
         }
 
         // New transaction
@@ -105,14 +106,14 @@ public class EditController extends ApplicationController {
         @RequestParam(required = false) String transaction,
         HttpServletRequest request,
         HttpServletResponse response
-    ) throws NotFoundException, BadRequestException, IOException {
+    ) throws IOException {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLEntityChecker owlEntityChecker = kit.getOWLEntityChecker();
 
-        OWLOntology originalOnt = kit.getOntologyForIRI(IRI.create(originalOntology)).orElseThrow(() -> new NotFoundException("Original ontology not found: " + originalOntology));
+        OWLOntology originalOnt = kit.getOntologyForIRI(IRI.create(originalOntology)).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Original ontology not found: " + originalOntology));
         OWLOntology targetOnt = kit.getOntologyForIRI(IRI.create(ontology))
-                .orElseThrow(() -> new NotFoundException("Target ontology not found: " + ontology));
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Target ontology not found: " + ontology));
 
         OWLAxiom originalAx;
         OWLAxiom newAxiom;
@@ -120,13 +121,13 @@ public class EditController extends ApplicationController {
         try {
             originalAx = editService.parseAxiom(originalAxiom, df, owlEntityChecker);
         } catch (ParseException e) {
-            throw new BadRequestException("Original axiom is not valid Manchester OWL syntax: " + e.getMessage());
+            throw new ResponseStatusException(BAD_REQUEST, "Original axiom is not valid Manchester OWL syntax: " + e.getMessage());
         }
 
         try {
             newAxiom = editService.parseAxiom(axiom, df, owlEntityChecker);
         } catch (ParseException e) {
-            throw new BadRequestException("New axiom is not valid Manchester OWL syntax: " + e.getMessage());
+            throw new ResponseStatusException(BAD_REQUEST, "New axiom is not valid Manchester OWL syntax: " + e.getMessage());
         }
 
         // New transaction

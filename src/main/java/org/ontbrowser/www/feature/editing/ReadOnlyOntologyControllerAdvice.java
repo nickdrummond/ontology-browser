@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.editing;
 
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.ontologies.OWLOntologiesService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -27,7 +26,7 @@ public class ReadOnlyOntologyControllerAdvice {
     }
 
     @ModelAttribute
-    public OWLOntology injectParent(@RequestParam(required = false) final String ontId) throws NotFoundException {
+    public OWLOntology injectParent(@RequestParam(required = false) final String ontId) {
         if (ontId != null) {
             return ontService.getOntologyFor(ontId, kit);
         }

@@ -1,10 +1,9 @@
 package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -69,7 +68,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
             int pageSize,
             HttpServletRequest request,
             Model model,
-            Comparator<OWLObject> comparator) throws NotFoundException {
+            Comparator<OWLObject> comparator) {
 
         OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, ont);
 
@@ -88,7 +87,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
             T property,
             OWLOntology ont,
             @Nullable String orderBy,
-            boolean inverse) throws NotFoundException {
+            boolean inverse) {
 
         T orderByProperty = (orderBy != null) ? propertiesService.getPropertyFor(orderBy, ont) : null;
 
@@ -163,7 +162,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
                 .withQuery(request.getQueryString());
     }
 
-    public OWLNamedIndividual getOWLIndividualFor(String individualId, OWLOntology ont) throws NotFoundException {
+    public OWLNamedIndividual getOWLIndividualFor(String individualId, OWLOntology ont) {
         return individualsService.getOWLIndividualFor(individualId, ont);
     }
 

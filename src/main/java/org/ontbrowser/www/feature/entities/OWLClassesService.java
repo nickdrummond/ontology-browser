@@ -1,9 +1,8 @@
 package org.ontbrowser.www.feature.entities;
 
-import org.ontbrowser.www.exception.NotFoundException;
+import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
@@ -12,12 +11,17 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
 import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OWLClassesService {
@@ -25,7 +29,7 @@ public class OWLClassesService {
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
 
-    public OWLClass getOWLClassFor(final String classId, final OWLOntology ont) throws NotFoundException {
+    public OWLClass getOWLClassFor(final String classId, final OWLOntology ont) {
         OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
 
         OWLClass owlThing = df.getOWLThing();
@@ -43,7 +47,7 @@ public class OWLClassesService {
                 return owlClass;
             }
         }
-        throw new NotFoundException("OWLClass", classId);
+        throw new ResponseStatusException(NOT_FOUND, "OWLClass not found: " + classId);
     }
 
     public OWLHierarchyService<OWLClass> getHierarchyService(OWLOntology ont) {

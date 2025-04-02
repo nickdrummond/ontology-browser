@@ -1,23 +1,27 @@
 package org.ontbrowser.www.feature.entities;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(value="/annotationproperties")
@@ -34,13 +38,13 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     public void getOWLAnnotationProperties(
             @ModelAttribute final OWLOntology ont,
             final HttpServletResponse response
-    ) throws IOException, NotFoundException {
+    ) throws IOException {
 
         List<OWLAnnotationProperty> annotationProperties
                 = service.getAnnotationProperties(ont, kit.getComparator());
 
         if (annotationProperties.isEmpty()) {
-            throw new NotFoundException("Annotation properties", "");
+            throw new ResponseStatusException(NOT_FOUND, "Annotation properties not found");
         }
 
         OWLAnnotationProperty firstAnnotationProperty = annotationProperties.get(0);
@@ -59,7 +63,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
-            final HttpServletResponse response) throws NotFoundException {
+            final HttpServletResponse response) {
 
         var prop = service.getPropertyFor(propertyId, ont);
 
@@ -80,7 +84,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
-            final HttpServletResponse response) throws NotFoundException {
+            final HttpServletResponse response) {
 
         OWLAnnotationProperty owlAnnotationProperty = service.getPropertyFor(propertyId, ont);
 
@@ -115,7 +119,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
             final Model model
-    ) throws NotFoundException {
+    ) {
 
         OWLAnnotationProperty prop = service.getPropertyFor(propertyId, ont);
 

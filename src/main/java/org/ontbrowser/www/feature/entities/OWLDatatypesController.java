@@ -1,7 +1,8 @@
 package org.ontbrowser.www.feature.entities;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.exception.NotFoundException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
@@ -16,8 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +57,7 @@ public class OWLDatatypesController extends ApplicationController {
         @RequestParam(required = false) List<With> with,
         final Model model,
         final HttpServletRequest request,
-        final HttpServletResponse response) throws NotFoundException {
+        final HttpServletResponse response) {
 
         OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, ont);
 
@@ -85,7 +84,7 @@ public class OWLDatatypesController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
-            final HttpServletResponse response) throws NotFoundException {
+            final HttpServletResponse response) {
 
         OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, ont);
 
@@ -117,7 +116,7 @@ public class OWLDatatypesController extends ApplicationController {
     public ModelAndView getChildren(
             @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
-            final Model model) throws NotFoundException {
+            final Model model) {
 
         OWLDatatype property = service.getOWLDatatypeFor(propertyId, ont);
 
