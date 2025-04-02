@@ -14,6 +14,16 @@
 
 <div id="main">
 
+    <div class='owlselector primary'>
+        <h4>Axiom types</h4>
+        <ul class="minihierarchy axiom-types">
+            <li th:each="axiomType : ${axiomTypes}">
+                <span class="axiom-category" th:text="${axiomType.category}">category</span>
+                <a class="axiom-type" th:classappend="${type != null && type == axiomType.type} ? 'active-entity' : ''" th:href='${"?type=" + axiomType.type}' th:text="${axiomType.name}">Axiom Type</a>
+            </li>
+        </ul>
+    </div>
+
     <div id="content">
 
         <h2 th:text="${title}">Title</h2>

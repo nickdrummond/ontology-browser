@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 import static org.ontbrowser.www.feature.search.HighlightingHTMLRenderer.getHighlightRenderer;
 
@@ -54,6 +56,7 @@ public class OWLAxiomsController extends ApplicationController {
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findLogicalAxioms(search, ont, imports, sfp, start, pageSize));
             } else {
                 var axiomType = getAxiomType(type);
+                model.addAttribute("type", axiomType);
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findAxiomsByType(search, ont, imports, sfp, start, pageSize, axiomType));
             }
         } else {
@@ -64,14 +67,55 @@ public class OWLAxiomsController extends ApplicationController {
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getLogicalAxioms(ont, imports, start, pageSize));
             } else {
                 var axiomType = getAxiomType(type);
+                model.addAttribute("type", axiomType);
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getAxiomsOfType(ont, imports, start, pageSize, axiomType));
             }
         }
 
         model.addAttribute("title", getTitle(search, type, ont, imports));
         model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+        model.addAttribute("axiomTypes", getAxiomTypes());
 
         return new ModelAndView("axioms");
+    }
+
+    private Stream<AxiomTypeData> getAxiomTypes() {
+        return AxiomType.AXIOM_TYPES.stream()
+                .map(t -> new AxiomTypeData(
+                        t,
+                        splitCamelCase(t.getName()),
+                        getCategory(t)
+                ))
+                .sorted(Comparator.comparing(AxiomTypeData::category).thenComparing(AxiomTypeData::name));
+    }
+
+    private static String getCategory(AxiomType<?> t) {
+        if (AxiomType.TBoxAxiomTypes.contains(t))
+            return "T";
+        if (AxiomType.ABoxAxiomTypes.contains(t))
+            return "A";
+        if (AxiomType.RBoxAxiomTypes.contains(t))
+            return "R";
+        return "-";
+    }
+
+    // https://stackoverflow.com/questions/2559759/how-do-i-convert-camelcase-into-human-readable-names-in-java
+    static String splitCamelCase(String s) {
+        return s.replaceAll(
+                String.format("%s|%s|%s",
+                        "(?<=[A-Z])(?=[A-Z][a-z])",
+                        "(?<=[^A-Z])(?=[A-Z])",
+                        "(?<=[A-Za-z])(?=[^A-Za-z])"
+                ),
+                " "
+        );
+    }
+
+    public record AxiomTypeData(
+            AxiomType type,
+            String name,
+            String category
+    ) {
     }
 
     private String getTitle(String search, String type, OWLOntology ont, Imports imports) {

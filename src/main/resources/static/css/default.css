@@ -573,6 +573,11 @@ img.thumb{
   flex-flow: row wrap;
 }
 
+.axiom-category {
+    color: #1d3b91;
+    font-size: smaller;
+}
+
 .axioms-form{
     margin-left: 0.3em;
     margin-bottom: 0.5em;
