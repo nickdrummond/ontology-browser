@@ -33,11 +33,6 @@ public class ErrorHandling {
             Exception e,
             Model model) {
 
-        if (e instanceof NoResourceFoundException) {
-            httpResponse.setStatus(HttpStatus.NOT_FOUND.value());
-            return null;
-        }
-
         model.addAttribute("projectInfo", projectInfo);
 
         if (log.isDebugEnabled()) {
@@ -46,34 +41,41 @@ public class ErrorHandling {
             });
         }
         if (e != null) {
+            if (e instanceof NoResourceFoundException) {
+                httpResponse.setStatus(HttpStatus.NOT_FOUND.value());
+                return null;
+            }
+
             log.error(e.getMessage());
+
             if (e instanceof ResponseStatusException statusException) {
                 log.error("Status exception {}", statusException.getMessage());
                 int status = statusException.getStatusCode().value();
                 httpResponse.setStatus(status);
                 model.addAttribute(MODEL_ERROR_CODE, status);
                 model.addAttribute(MODEL_MESSAGE, statusException.getMessage());
-            } else {
-
-                Object exception = httpRequest.getAttribute("jakarta.servlet.error.exception");
-                if (exception instanceof Exception ex) {
-                    log.error("Servlet/container error {}", ex.getMessage(), ex);
-                }
-
-                Object errorCode = httpRequest.getAttribute("jakarta.servlet.error.status_code");
-                if (errorCode != null) {
-                    if (errorCode instanceof Integer code) {
-                        model.addAttribute(MODEL_ERROR_CODE, code);
-                    } else {
-                        log.warn("Unknown error code {} : {}", errorCode.getClass(), errorCode);
-                        model.addAttribute(MODEL_ERROR_CODE, 0);
-                    }
-                } else {
-                    model.addAttribute(MODEL_ERROR_CODE, 0);
-                }
-                model.addAttribute(MODEL_MESSAGE, "Sorry, an error has occurred.");
+                return new ModelAndView("error");
             }
         }
+
+        Object exception = httpRequest.getAttribute("jakarta.servlet.error.exception");
+        if (exception instanceof Exception ex) {
+            log.error("Servlet/container error {}", ex.getMessage(), ex);
+        }
+
+        Object errorCode = httpRequest.getAttribute("jakarta.servlet.error.status_code");
+        if (errorCode != null) {
+            if (errorCode instanceof Integer code) {
+                model.addAttribute(MODEL_ERROR_CODE, code);
+            } else {
+                log.warn("Unknown error code {} : {}", errorCode.getClass(), errorCode);
+                model.addAttribute(MODEL_ERROR_CODE, 0);
+            }
+        } else {
+            model.addAttribute(MODEL_ERROR_CODE, 0);
+        }
+        model.addAttribute(MODEL_MESSAGE, "Sorry, an error has occurred.");
+
         return new ModelAndView("error");
     }
 }
