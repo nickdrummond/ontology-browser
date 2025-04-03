@@ -1,4 +1,4 @@
-package org.ontbrowser.www.feature.search;
+package org.ontbrowser.www.feature.axioms;
 
 import org.ontbrowser.www.renderer.ElementRenderer;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;

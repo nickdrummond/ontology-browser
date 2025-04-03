@@ -1,4 +1,4 @@
-package org.ontbrowser.www.feature.search;
+package org.ontbrowser.www.feature.axioms;
 
 /**
  * Put highlight markup around all matching portions of text.

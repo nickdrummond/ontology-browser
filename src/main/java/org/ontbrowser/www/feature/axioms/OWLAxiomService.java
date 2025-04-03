@@ -1,4 +1,4 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.feature.axioms;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.kit.OWLHTMLKit;
@@ -51,7 +51,7 @@ public class OWLAxiomService implements RestartListener {
             Imports imports,
             int start,
             int pageSize,
-            @Nonnull AxiomType<OWLAxiom> axiomType) {
+            @Nonnull AxiomType<?> axiomType) {
         Function<OWLOntology, Stream<? extends OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.axioms(axiomType, Imports.EXCLUDED);
         return getAxioms(ont, imports, start, pageSize, getAxiomsForOntology);
     }

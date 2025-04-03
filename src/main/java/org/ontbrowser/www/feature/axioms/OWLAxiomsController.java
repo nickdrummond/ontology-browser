@@ -1,11 +1,9 @@
-package org.ontbrowser.www.feature.search;
+package org.ontbrowser.www.feature.axioms;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.service.OWLAxiomService;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
-import org.semanticweb.owlapi.model.AxiomType;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -14,18 +12,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Nonnull;
-import java.util.Comparator;
-import java.util.stream.Stream;
+import java.io.IOException;
 
-import static org.ontbrowser.www.feature.search.HighlightingHTMLRenderer.getHighlightRenderer;
+import static org.ontbrowser.www.feature.axioms.HighlightingHTMLRenderer.getHighlightRenderer;
+import static org.ontbrowser.www.feature.axioms.OWLAxiomsUtils.LOGICAL_AXIOMS_TYPE;
+import static org.ontbrowser.www.feature.axioms.OWLAxiomsUtils.getAxiomTypes;
+import static org.semanticweb.owlapi.model.AxiomType.getAxiomType;
 
 @RestController
 @RequestMapping(value = "/axioms")
 public class OWLAxiomsController extends ApplicationController {
 
     private static final String MODEL_KEY_AXIOMS = "axioms";
-    private static final String LOGICAL_AXIOMS_TYPE = "logicalAxioms";
 
     private final OWLAxiomService axiomService;
 
@@ -43,11 +41,16 @@ public class OWLAxiomsController extends ApplicationController {
             @RequestParam(required = false) String type,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
 
         if (search != null) {
-            validateSearch(search);
+            if (search.isEmpty()) {
+                response.sendRedirect("/axioms/");
+                return null;
+            }
+
             model.addAttribute("mos", getHighlightRenderer(search, rendererFactory.getHTMLRenderer(ont)));
             ShortFormProvider sfp = kit.getShortFormProvider();
             if (type == null) {
@@ -79,45 +82,6 @@ public class OWLAxiomsController extends ApplicationController {
         return new ModelAndView("axioms");
     }
 
-    private Stream<AxiomTypeData> getAxiomTypes() {
-        return AxiomType.AXIOM_TYPES.stream()
-                .map(t -> new AxiomTypeData(
-                        t,
-                        splitCamelCase(t.getName()),
-                        getCategory(t)
-                ))
-                .sorted(Comparator.comparing(AxiomTypeData::category).thenComparing(AxiomTypeData::name));
-    }
-
-    private static String getCategory(AxiomType<?> t) {
-        if (AxiomType.TBoxAxiomTypes.contains(t))
-            return "T";
-        if (AxiomType.ABoxAxiomTypes.contains(t))
-            return "A";
-        if (AxiomType.RBoxAxiomTypes.contains(t))
-            return "R";
-        return "-";
-    }
-
-    // https://stackoverflow.com/questions/2559759/how-do-i-convert-camelcase-into-human-readable-names-in-java
-    static String splitCamelCase(String s) {
-        return s.replaceAll(
-                String.format("%s|%s|%s",
-                        "(?<=[A-Z])(?=[A-Z][a-z])",
-                        "(?<=[^A-Z])(?=[A-Z])",
-                        "(?<=[A-Za-z])(?=[^A-Za-z])"
-                ),
-                " "
-        );
-    }
-
-    public record AxiomTypeData(
-            AxiomType type,
-            String name,
-            String category
-    ) {
-    }
-
     private String getTitle(String search, String type, OWLOntology ont, Imports imports) {
 
         var sb = new StringBuilder();
@@ -144,23 +108,5 @@ public class OWLAxiomsController extends ApplicationController {
         }
 
         return sb.toString();
-    }
-
-    // Prevent injection attacks
-    private static void validateSearch(@Nonnull String search) {
-        if (search.contains("<") || search.contains(">") || search.contains("%")) {
-            throw new IllegalArgumentException("Search terms may be text only");
-        }
-    }
-
-    private AxiomType<OWLAxiom> getAxiomType(String type) {
-        if (type != null) {
-            var axiomType = (AxiomType<OWLAxiom>) AxiomType.getAxiomType(type);
-            if (axiomType == null) {
-                throw new IllegalArgumentException("Unknown axiom type: " + type);
-            }
-            return axiomType;
-        }
-        return null;
     }
 }
