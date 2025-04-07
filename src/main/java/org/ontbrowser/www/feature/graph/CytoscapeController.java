@@ -49,54 +49,121 @@ public class CytoscapeController extends ApplicationController {
         return new ModelAndView("cytoscape");
     }
 
-    // TODO if no query or indivs, get all with property
+    // TODO
+    // property or properties condition (list of properties)
+    // subject condition "x type Y"
+    // object condition (same)
     @GetMapping(value = "/data", produces = MediaType.APPLICATION_JSON_VALUE)
     public CytoscapeGraph individualJson(
             @RequestParam(required = false, defaultValue = "") final List<String> indivs,
             @RequestParam(required = false) final String query,
+            @RequestParam(required = false) final String subtract,
             @RequestParam(required = false, defaultValue = "") final List<String> props,
+            @RequestParam(required = false, defaultValue = "") final List<String> without,
             @RequestParam(required = false, defaultValue = "") final List<String> parents,
             @RequestParam(required = false, defaultValue = "") final List<String> follow,
-            @RequestParam(required = false, defaultValue = "") final List<String> without,
             @RequestParam(required = false, defaultValue = "1") final int depth,
             @ModelAttribute final OWLOntology ont
     ) throws ExecutionException, InterruptedException {
         var finder = kit.getFinder();
+        var graphBuilder = new AxiomGraphBuilder();
 
-        var parentProperties = getProps(parents, ont, finder);
-        var followProperties = getProps(follow, ont, finder);
-        var withoutProperties = getProps(without, ont, finder);
-        var properties = props.isEmpty()
-                ? getAllProps(ont)
-                : getProps(props, ont, finder);
+        if (!props.isEmpty()) {
+            var properties = getProps(props, ont, finder);
+            // get rid of any properties not in the list
+            graphBuilder.addVeto(edge -> !properties.contains(edge.predicate()));
+        }
 
-        //
-        Set<OWLObject> objects = new HashSet<>();
+        if (!without.isEmpty()) {
+            var withoutProperties = getProps(without, ont, finder);
+            // get rid of further properties
+            graphBuilder.addVeto(edge -> withoutProperties.contains(edge.predicate()));
+        }
+
+        var parentProperties = parents.isEmpty() ? Set.<OWLProperty>of() : getProps(parents, ont, finder);
+
+        var objects = new HashSet<OWLEntity>();
         if (query != null && !query.isBlank()) {
             objects.addAll(getInds(query));
         }
         if (indivs != null && !indivs.isEmpty()) {
             objects.addAll(getInds(indivs, finder));
         }
+        if (subtract != null && !subtract.isBlank()) {
+            var subtractInds = getInds(subtract);
+            objects.removeAll(subtractInds);
+            graphBuilder.addVeto(edge -> subtractInds.contains(edge.subject()) || subtractInds.contains(edge.object()));
+        }
         if (objects.isEmpty() && !props.isEmpty()) {
+            var properties = getProps(props, ont, finder);
             objects.addAll(properties);
         }
 
-        var descr = new GraphDescriptor(ont)
-                .addObjects(objects)
-                .withProperties(properties)
-                .withProperties(parentProperties)
-                //.withInverseProperties(parentProperties) // adding this "fills" parents with their children
-                .withFollow(followProperties)
-                .withoutProperties(withoutProperties)
-                .withDepth(depth);
-
-        var graph = new GraphBuilder(descr).build();
+        for (var obj : objects) {
+            var axioms = ont.getReferencingAxioms(obj, Imports.INCLUDED);
+            if (follow != null && !follow.isEmpty() && depth > 1) {
+                var followProps = getProps(props, ont, finder);
+                if (!followProps.isEmpty()) {
+                    // TODO needs to know the algorithm for generating edges to follow !?
+//                    addFollow(obj, followProps, depth);
+                }
+            }
+            graphBuilder.addAxioms(axioms);
+        }
 
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
         var renderer = new MOSStringRenderer(kit.getFinder(), ont);
-        return new CytoscapeGraph(graph, df, renderer, parentProperties, objects);
+        return new CytoscapeGraph(graphBuilder.build(), df, renderer, parentProperties, objects);
     }
+
+//            // TODO if no query or indivs, get all with property
+//    @GetMapping(value = "/data", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public CytoscapeGraph individualJson(
+//            @RequestParam(required = false, defaultValue = "") final List<String> indivs,
+//            @RequestParam(required = false) final String query,
+//            @RequestParam(required = false, defaultValue = "") final List<String> props,
+//            @RequestParam(required = false, defaultValue = "") final List<String> parents,
+//            @RequestParam(required = false, defaultValue = "") final List<String> without,
+//            @RequestParam(required = false, defaultValue = "") final List<String> follow,
+//            @RequestParam(required = false, defaultValue = "1") final int depth,
+//            @ModelAttribute final OWLOntology ont
+//    ) throws ExecutionException, InterruptedException {
+//        var finder = kit.getFinder();
+//
+//        var parentProperties = getProps(parents, ont, finder);
+//        var followProperties = getProps(follow, ont, finder);
+//        var withoutProperties = getProps(without, ont, finder);
+//        var properties = props.isEmpty()
+//                ? getAllProps(ont)
+//                : getProps(props, ont, finder);
+//
+//        //
+//        Set<OWLObject> objects = new HashSet<>();
+//        if (query != null && !query.isBlank()) {
+//            objects.addAll(getInds(query));
+//        }
+//        if (indivs != null && !indivs.isEmpty()) {
+//            objects.addAll(getInds(indivs, finder));
+//        }
+//        if (objects.isEmpty() && !props.isEmpty()) {
+//            objects.addAll(properties);
+//        }
+//
+//        var descr = new GraphDescriptor(ont)
+//                .addObjects(objects)
+//                .withProperties(properties)
+//                .withProperties(parentProperties)
+//                //.withInverseProperties(parentProperties) // adding this "fills" parents with their children
+//                .withFollow(followProperties)
+//                .withoutProperties(withoutProperties)
+//                .withDepth(depth);
+//
+//        var graph = new GraphBuilder(descr).build();
+//
+//        var df = ont.getOWLOntologyManager().getOWLDataFactory();
+//        var renderer = new MOSStringRenderer(kit.getFinder(), ont);
+//        return new CytoscapeGraph(graph, df, renderer, parentProperties, objects);
+//    }
 
     private Set<? extends OWLProperty> getAllProps(OWLOntology ont) {
         return Streams.concat(
@@ -133,7 +200,7 @@ public class CytoscapeController extends ApplicationController {
     }
 
     private Set<? extends OWLProperty> getProps(String name, OWLEntityFinder finder, OWLOntology ont) {
-        if (name.equals("type")){
+        if (name.equals("type")) {
             var type = ont.getOWLOntologyManager().getOWLDataFactory().getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE);
             return Set.of(type);
         }

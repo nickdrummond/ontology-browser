@@ -39,6 +39,30 @@
 <div id="main">
     <div class="graph-controls">
         <form>
+            <label for="query">Query</label>
+            <input id="query" type="text"/>
+
+            <label for="subtract">Subtract</label>
+            <input id="subtract" type="text"/>
+
+            <label for="indivs">Individuals</label>
+            <input id="indivs" type="text"/>
+
+            <label for="props">Properties</label>
+            <input id="props" type="text"/>
+
+            <label for="without">Without</label>
+            <input id="without" type="text"/>
+
+            <label for="parents">Group by</label>
+            <input id="parents" type="text"/>
+
+            <label for="follow">Follow</label>
+            <input id="follow" type="text"/>
+
+            <label for="depth">Depth</label>
+            <input id="depth" type="range" min="0" max="100" value="50" class="slider"/>
+
             <label for="type">Graph Type</label>
             <select id="type">
                 <option value="fcose">fcose</option>
@@ -52,30 +76,8 @@
                 <option value="grid">grid</option>
             </select>
 
-            <label for="depth">Depth</label>
-            <input id="depth" type="range" min="0" max="100" value="50" class="slider"/>
-
             <label for="space">Space</label>
             <input id="space" type="range" min="0" max="100" value="50" class="slider"/>
-
-            <label for="query">Query</label>
-            <input id="query" type="text"/>
-
-            <label for="indivs">Individuals</label>
-            <input id="indivs" type="text"/>
-
-            <label for="props">Properties</label>
-            <input id="props" type="text"/>
-
-            <label for="without">Without</label>
-            <input id="without" type="text"/>
-
-            <label for="follow">Follow</label>
-            <input id="follow" type="text"/>
-
-            <label for="parents">Group by</label>
-            <input id="parents" type="text"/>
-
         </form>
         <ul class="graph-actions">
             <li><button id="refocus">refocus</button></li>

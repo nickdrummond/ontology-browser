@@ -139,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setupControl("depth", null, newValue => reload());
         setupControl("query", null, newValue => reload());
+        setupControl("subtract", null, newValue => reload());
         setupControl("indivs", null, newValue => reload());
         setupControl("props", null, newValue => reload());
         setupControl("without", null, newValue => reload());
