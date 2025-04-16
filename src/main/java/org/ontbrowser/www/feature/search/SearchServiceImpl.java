@@ -1,7 +1,6 @@
 package org.ontbrowser.www.feature.search;
 
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.util.MyStringUtils;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -9,7 +8,6 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,25 +54,6 @@ public class SearchServiceImpl implements SearchService {
         };
 
         return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).limit(size).toList();
-    }
-
-    @Override
-    public List<AxiomWithMetadata> findByAnnotation(@Nonnull String value,
-                                                    OWLAnnotationProperty searchProp,
-                                                    @Nonnull OWLHTMLKit kit) {
-        Optional<OWLAnnotationProperty> prop = Optional.ofNullable(searchProp);
-        Set<AxiomWithMetadata> results = new HashSet<>();
-        for (OWLOntology ont : kit.getOWLOntologyManager().getOntologies()) {
-            for (OWLAnnotationAssertionAxiom ax : ont.getAxioms(AxiomType.ANNOTATION_ASSERTION)) {
-                if (prop.isEmpty() || prop.get().equals(ax.getProperty())) {
-                    OWLAnnotationValue v = ax.getValue();
-                    if (v.isLiteral() && v.asLiteral().isPresent() && v.asLiteral().get().getLiteral().contains(value)) {
-                        results.add(new AxiomWithMetadata("results", ax, ax, ont));
-                    }
-                }
-            }
-        }
-        return new ArrayList<>(results);
     }
 
     public Set<OWLEntity> getEntities(IRI iri, OWLOntology ont) {

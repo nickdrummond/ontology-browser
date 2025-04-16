@@ -1,7 +1,6 @@
 package org.ontbrowser.www.feature.search;
 
 import com.google.common.collect.Streams;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.DelegatingAnalyzerWrapper;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
@@ -17,9 +16,10 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
-import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.renderer.LabelShortFormProvider;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.EntityType;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.model.providers.EntityProvider;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -194,10 +193,5 @@ public class LuceneSearchService implements SearchService, RestartListener {
                 .filter(t -> t.getName().equals(type))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Unknown "));
-    }
-
-    @Override
-    public List<AxiomWithMetadata> findByAnnotation(@Nonnull String value, OWLAnnotationProperty searchProp, @Nonnull OWLHTMLKit kit) {
-        throw new NotImplementedException("Find by annotation not implemented");
     }
 }
