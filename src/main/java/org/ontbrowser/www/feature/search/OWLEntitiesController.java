@@ -82,7 +82,7 @@ public class OWLEntitiesController extends ApplicationController {
                 Optional<IRI> iri = ax.getSubject().asIRI();
                 OWLObject o = ont.getEntitiesInSignature(iri.orElseThrow(), Imports.INCLUDED).iterator().next();
                 response.sendRedirect(kit.getURLScheme().getURLForOWLObject(o));
-                return new ModelAndView("");
+                return null;
             }
         }
 
