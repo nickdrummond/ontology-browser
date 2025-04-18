@@ -234,9 +234,13 @@
        th:src="${url}" src="/notfound.mp3"
        autostart="true" style="display:none"></EMBED>
 
-<li th:fragment="tree" th:if="${t != null}">
-    <span th:if='${t.childCount != 0}' class="node expandable" th:data="${statsName}">+</span>
-    <span th:if='${t.childCount == 0}' class="node">-</span>
+<li th:fragment="tree"
+    th:if="${t != null}"
+    th:classappend="${t.childCount > 0 ? 'with-children' + (!t.children.isEmpty() ? ' expanded' : '') : ''}"
+>
+    <span th:if='${t.childCount > 0}' class="node" th:data="${statsName}"></span>
+    <span th:if='${t.childCount == 0}' class="node"></span>
+
     <div class="tree-node">
         <span th:each="synonym,iteratorStatus : ${t.value}" th:remove="tag">
             <span th:if="${iteratorStatus.index != 0}" class="keyword">&equiv;</span>

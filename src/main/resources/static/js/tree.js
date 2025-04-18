@@ -67,9 +67,9 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
         // but we check for events in the minihierarchy
         treeElement.onclick = (e) => {
             if (e.target.closest(MINIHIERARCHY)) {
-                const t = e.target.closest('span.expandable');
+                const t = e.target.closest('li.with-children span');
                 if (t) {
-                    handleExpand(t.parentNode);
+                    toggleExpand(t.parentNode);
                 } else {
                     const link = e.target.closest("a");
                     if (link) {
@@ -80,11 +80,10 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
         }
     }
 
-    function handleExpand(li) {
+    function toggleExpand(li) {
+        li.classList.toggle('expanded');
         const children = li.querySelectorAll("ul");
-        if (children.length > 0) {
-            $(children).slideToggle('fast'); // TODO remove JQuery slideToggle - see https://codepen.io/jorgemaiden/pen/YgGZMg
-        } else {
+        if (children.length === 0) {
             li.append(getChildren(li));
         }
     }

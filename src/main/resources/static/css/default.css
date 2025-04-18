@@ -203,8 +203,6 @@ li {
 }
 
 .characteristic.hidden h4:after {
-    transition-property: rotate;
-    transition-duration: 0.3s;
     rotate: -90deg;
 }
 
@@ -411,13 +409,35 @@ ul.minihierarchy {
 
 .minihierarchy li .node{
     font-family: monospace;
-}
-
-.minihierarchy li .node{
     cursor: pointer;
     font-size: 1.5rem;
     margin-right: 1rem;
     padding: 0 0.5rem;
+}
+
+.minihierarchy li>.node:before{
+    content: "-";
+}
+
+.minihierarchy li.with-children>.node:before {
+    transition-property: rotate;
+    transition-duration: 0.3s;
+    display: inline-block;
+    content: "▶";
+}
+
+.minihierarchy li.with-children>ul {
+    transition-property: display;
+    transition-duration: 2s;
+    display: none;
+}
+
+.minihierarchy li.with-children.expanded>.node:before {
+    rotate: 90deg;
+}
+
+.minihierarchy li.with-children.expanded>ul {
+    display: block;
 }
 
 .minihierarchy li .child-count {
