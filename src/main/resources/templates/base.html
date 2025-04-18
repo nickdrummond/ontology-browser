@@ -69,7 +69,7 @@
         <form id='findForm' action="/axioms/" method='get'>
             <a id="burger">&#8801;</a>
             <input type='text' id='search' class='autocomplete' name='search' placeholder='search...' autofocus/>
-            <input type='submit' class="search-icon icon" value="" />
+            <input type='submit' class="search-icon icon" value=""/>
         </form>
     </div>
 </div>
@@ -114,7 +114,8 @@
 </div>
 
 <!-- paging -->
-<span class="paging" th:fragment="paged (data, componentName)" th:switch="${(data.start == 1) and (data.pageSize >= data.total)}">
+<span class="paging" th:fragment="paged (data, componentName)"
+      th:switch="${(data.start == 1) and (data.pageSize >= data.total)}">
     <span th:case="${true}" th:text='${"(" + data.total + ")"}'>(2)</span>
     <span th:case="${false}">
 
@@ -127,7 +128,7 @@
 
         <span th:with="end=${T(java.lang.Math).min(data.total, data.start + data.pageSize-1)},
                        total=${T(java.lang.Integer).MAX_VALUE == data.total ? '' : ' of ' + data.total}"
-                th:text='${"(" + data.start + "-" + end + total + ")"}'>(1-20 of 100)</span>
+              th:text='${"(" + data.start + "-" + end + total + ")"}'>(1-20 of 100)</span>
 
         <span class="paging-arrow" th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
             <a th:case="${true}" rel="nofollow"
@@ -146,6 +147,7 @@
         <span th:text='${ch.name}'>Some Characteristic</span>
         <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
     </h4>
+
     <ul th:remove="all-but-first" th:class="${cls}">
         <li class="asserted" th:each="object : ${ch.objects}">
 
@@ -199,6 +201,7 @@
 
 <div id="metrics" class="characteristic metrics" th:fragment="metrics (metrics)" th:if="${metrics != null}">
     <h4>Metrics</h4>
+    <div class="table-wrapper">
     <table>
         <thead>
         <tr>
@@ -216,6 +219,7 @@
         </tr>
         </tbody>
     </table>
+    </div>
 </div>
 
 <div class="googlemaps" th:fragment="map (geo)" th:if="${geo != null}">
