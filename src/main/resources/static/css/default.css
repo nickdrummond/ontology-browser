@@ -193,17 +193,20 @@ li {
 }
 
 .characteristic h4:after {
-    content: "˅";
-    font-size: 1.75rem;
+    transition-property: rotate;
+    transition-duration: 0.3s;
+    content: "▼";
+    font-size: 1rem;
     position: relative;
-    top: 0.3rem;
-    left: 0.6rem;
+    top: 0.1rem;
+    left: 0.2rem;
 }
 
 .characteristic.hidden h4:after {
-    content: "˃";
+    transition-property: rotate;
+    transition-duration: 0.3s;
+    rotate: -90deg;
 }
-
 
 .characteristic ul {
     border: solid 1px #c7cfd5;
