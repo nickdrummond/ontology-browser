@@ -98,6 +98,19 @@ li {
     width: 100%;
 }
 
+#menu {
+    transition: height 0.3s ease-in-out;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+#menu.hidden {
+    height: 0;
+}
+
 #entityfinder {
     flex: 1 1 auto;
     margin: 0 5px;
@@ -766,6 +779,11 @@ img.thumb{
 
     #menu {
         width: auto;
+        overflow: initial;
+    }
+
+    #menu.hidden {
+        height: auto; /* always visible even if "hidden" from burger */
     }
 
     #tabs {
