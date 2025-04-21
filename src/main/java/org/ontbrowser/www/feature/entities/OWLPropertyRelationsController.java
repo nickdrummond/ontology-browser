@@ -66,14 +66,22 @@ public class OWLPropertyRelationsController extends ApplicationController {
         );
     }
 
+
     @GetMapping(value = "/")
+    public void getRelationsForPropertyOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getRelationsForProperty(response);
+    }
+
+    @GetMapping()
     public void getRelationsForProperty(
             final HttpServletResponse response
     ) throws IOException {
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
         String id = propertiesService.getIdFor(owlTopObjectProperty);
-        response.sendRedirect("/relations/" + PATH + "/" + id + "/");
+        response.sendRedirect("/relations/" + PATH + "/" + id);
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -98,6 +106,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         common.buildSecondaryTree(relationsHierarchyService, null, model, request);
 
+        // TODO full property render?
         common.renderEntity(property, model);
 
         return new ModelAndView(RELATION_TEMPLATE);

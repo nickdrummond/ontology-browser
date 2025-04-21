@@ -35,6 +35,13 @@ public class OWLDatatypesController extends ApplicationController {
     }
 
     @GetMapping(value="/")
+    public void getOWLDatatypesOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getOWLDatatypes(response);
+    }
+
+    @GetMapping()
     public void getOWLDatatypes(
             final HttpServletResponse response
     ) throws IOException {

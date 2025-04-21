@@ -61,7 +61,15 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         );
     }
 
+
     @GetMapping(value = "/")
+    public void getRelationsForAnnotationPropertyOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getRelationsForAnnotationProperty(response);
+    }
+
+    @GetMapping()
     public void getRelationsForAnnotationProperty(
             final HttpServletResponse response
     ) throws IOException {

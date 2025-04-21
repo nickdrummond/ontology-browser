@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
             const secondaryNav = tree(secondaryTree, baseUrl, entityPane, rewriteLinks);
             secondaryNav.init();
             primaryNav.init((entityId) => {
-                secondaryNav.reload(  "secondary");
+                secondaryNav.reload(  window.location + "/secondary");
             });
         }
         else {
@@ -92,7 +92,9 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
         e.preventDefault();
 
         const searchParams = new URLSearchParams(window.location.search);
-        const originalUrl = link.getAttribute("href") + "?" + searchParams.toString();
+        const searchStr = searchParams.size === 0 ? "" : "?" + searchParams.toString();
+
+        const originalUrl = link.getAttribute("href");
         const entityId = getEntityId(originalUrl);
         const pluralType = getPlural(link.className);
 
@@ -103,7 +105,7 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
         updateSelection(link);
 
         // TODO move url gen out
-        const fragmentUrl = "/" + pluralType + "/" + entityId + "/fragment?" + searchParams.toString();
+        const fragmentUrl = "/" + pluralType + "/" + entityId + "/fragment" + searchStr;
         entityPane.loadEntity(fragmentUrl, originalUrl);
         if (selectedEntityCallback) {
             selectedEntityCallback(entityId);
@@ -181,7 +183,7 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
         // TODO there is a tidier way to construct the query
         const nodeUrl = li.querySelector('a').href;
         const [path, search] = nodeUrl.split('?');
-        let url = path + 'children?';
+        let url = path + '/children?';
         if (search) {
             url = url + search + "&";
         }
@@ -195,8 +197,9 @@ const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
         // entity ID is last path element
         // brittle - happens to work for both entity pages and relations pages
         // this depends on URLScheme staying in sync
-        let pathElements = originalUrl.split("/");
-        return pathElements[pathElements.length - 2];
+        const pathElements = originalUrl.split("?")[0].split("/");
+        const id = pathElements[pathElements.length - 1];
+        return id;
     }
 
     return {

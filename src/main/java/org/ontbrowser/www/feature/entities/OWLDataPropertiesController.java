@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -24,16 +23,21 @@ import java.util.List;
 public class OWLDataPropertiesController extends ApplicationController {
 
     private final OWLDataPropertiesService service;
-    private final ReasonerFactoryService reasonerFactoryService;
 
     public OWLDataPropertiesController(
-            @Autowired OWLDataPropertiesService service,
-            @Autowired ReasonerFactoryService reasonerFactoryService) {
+            @Autowired OWLDataPropertiesService service) {
         this.service = service;
-        this.reasonerFactoryService = reasonerFactoryService;
     }
 
+
     @GetMapping(value="/")
+    public void getOWLDataPropertiesOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getOWLDataProperties(response);
+    }
+
+    @GetMapping()
     public void getOWLDataProperties(
             final HttpServletResponse response
     ) throws IOException {

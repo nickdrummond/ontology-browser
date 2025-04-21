@@ -10,7 +10,6 @@ import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.service.hierarchy.IndividualsByTypeHierarchyService;
 import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.service.stats.Stats;
 import org.ontbrowser.www.service.stats.StatsService;
@@ -63,11 +62,19 @@ public class OWLIndividualsController extends ApplicationController {
         return new CommonFragments(kit, projectInfo, reasonerService);
     }
 
+
     @GetMapping(value = "/")
+    public void getOWLIndividualsOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getOWLIndividuals(response);
+    }
+
+    @GetMapping()
     public void getOWLIndividuals(
             final HttpServletResponse response
     ) throws IOException {
-        response.sendRedirect("/individuals/by/type/");
+        response.sendRedirect("/individuals/by/type");
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -90,7 +97,7 @@ public class OWLIndividualsController extends ApplicationController {
                 "inferredInstances", List.of(), ont, model, request, response);
     }
 
-    @GetMapping(value = "/by/type/")
+    @GetMapping(value = "/by/type")
     public void byType(
             @ModelAttribute final OWLOntology ont,
             final HttpServletResponse response
@@ -186,17 +193,6 @@ public class OWLIndividualsController extends ApplicationController {
         Set<OWLObject> activeObjects = new HashSet<>();
         activeObjects.add(type);
         return rendererFactory.getHTMLRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
-    }
-
-    private IndividualsByTypeHierarchyService buildSecondaryHierarchy(Model model, OWLClass type, OWLReasoner r) {
-        IndividualsByTypeHierarchyService individualsHierarchy =
-                new IndividualsByTypeHierarchyService(treeComparator())
-                        .withType(type, r);
-
-        model.addAttribute("hierarchy2", individualsHierarchy.getClosedTree());
-        model.addAttribute("type2", kit.getStringRenderer().render(type));
-
-        return individualsHierarchy;
     }
 
     private void buildPrimaryHierarchy(String statsName, Model model, OWLClass type, OWLReasoner r) {

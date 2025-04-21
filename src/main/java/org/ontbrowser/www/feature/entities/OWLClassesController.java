@@ -45,6 +45,11 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @GetMapping(value="/")
+    public void getOWLClassesOld(final HttpServletResponse response) throws IOException {
+        getOWLClasses(response);
+    }
+
+    @GetMapping()
     public void getOWLClasses(
             final HttpServletResponse response
     ) throws IOException {

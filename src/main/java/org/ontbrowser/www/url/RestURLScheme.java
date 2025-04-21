@@ -11,7 +11,7 @@ import org.semanticweb.owlapi.model.*;
  * It appears to work on OSX, but this will need to be double-checked.
  *
  * Creates URLs of the form:
- * serverbase/<type>/<hash-of-object-uri>/
+ * serverbase/<type>/<hash-of-object-uri>
  *
  */
 public class RestURLScheme implements URLScheme {
@@ -73,7 +73,6 @@ public class RestURLScheme implements URLScheme {
         sb.append(type);
         sb.append("/");
         sb.append(code);
-        sb.append("/");
 
         return sb.toString();
     }

@@ -35,6 +35,14 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     }
 
     @GetMapping(value="/")
+    public void getOWLAnnotationPropertiesOld(
+            @ModelAttribute final OWLOntology ont,
+            final HttpServletResponse response
+    ) throws IOException {
+        getOWLAnnotationProperties(ont, response);
+    }
+
+    @GetMapping()
     public void getOWLAnnotationProperties(
             @ModelAttribute final OWLOntology ont,
             final HttpServletResponse response

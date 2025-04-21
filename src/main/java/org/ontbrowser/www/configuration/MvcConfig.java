@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -26,14 +25,6 @@ public class MvcConfig implements WebMvcConfigurer {
     public MvcConfig(
             @Autowired(required = false) CachingInterceptor cachingInterceptor) {
         this.cachingInterceptor = cachingInterceptor;
-    }
-
-    // Spring 6 upgrade. Handle both plain and trailing slash endings
-    // TODO migrate everything to use one or the other as this is deprecated
-    // https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide#spring-mvc-and-webflux-url-matching-changes
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
-        configurer.setUseTrailingSlashMatch(true);
     }
 
     @Override

@@ -81,21 +81,21 @@
 </div> <!-- menu -->
 
 <ul id='tabs' th:fragment='tabs'>
-    <li><a th:href='@{/ontologies/}'>Ontologies</a></li>
+    <li><a th:href='@{/ontologies}'>Ontologies</a></li>
     <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'git')}">
         <li><a th:href="@{/git/history}">Git</a></li>
     </th:block>
-    <li><a th:href='@{/classes/}'>Classes</a></li>
+    <li><a th:href='@{/classes}'>Classes</a></li>
     <li>Individuals:
-        <a th:href='@{/individuals/}'>by&nbsp;Type</a> /
-        <a th:href='@{/relations/onproperty/}'>by&nbsp;Relation</a> /
-        <a th:href='@{/relations/onannotationproperty/}'>by&nbsp;Annotation</a></li>
-    <li>Properties: <a th:href='@{/objectproperties/}'>Object</a> /
-        <a th:href='@{/dataproperties/}'>Data</a> /
-        <a th:href='@{/annotationproperties/}'>Annotation</a></li>
-    <li><a th:href='@{/datatypes/}'>Datatypes</a></li>
-    <li><a th:href='@{/axioms/}'>Axioms</a></li>
-    <li><a th:href='@{/dlquery/}'>DL&nbsp;Query</a></li>
+        <a th:href='@{/individuals}'>by&nbsp;Type</a> /
+        <a th:href='@{/relations/onproperty}'>by&nbsp;Relation</a> /
+        <a th:href='@{/relations/onannotationproperty}'>by&nbsp;Annotation</a></li>
+    <li>Properties: <a th:href='@{/objectproperties}'>Object</a> /
+        <a th:href='@{/dataproperties}'>Data</a> /
+        <a th:href='@{/annotationproperties}'>Annotation</a></li>
+    <li><a th:href='@{/datatypes}'>Datatypes</a></li>
+    <li><a th:href='@{/axioms}'>Axioms</a></li>
+    <li><a th:href='@{/dlquery}'>DL&nbsp;Query</a></li>
 
     <li>Usage:
         <a th:href='@{/clouds/classes}'>cl</a> /
@@ -202,23 +202,23 @@
 <div id="metrics" class="characteristic metrics" th:fragment="metrics (metrics)" th:if="${metrics != null}">
     <h4>Metrics</h4>
     <div class="table-wrapper">
-    <table>
-        <thead>
-        <tr>
-            <td></td>
-            <td></td>
-            <td th:if="${showImportMetrics}">with imports</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="metric : ${metrics}">
-            <td class="metric" th:utext="${metric.getName()}"></td>
-            <td class="mvalue" th:utext="${metric.getValue()}"></td>
-            <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
-            <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"></td>
-        </tr>
-        </tbody>
-    </table>
+        <table>
+            <thead>
+            <tr>
+                <td></td>
+                <td></td>
+                <td th:if="${showImportMetrics}">with imports</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="metric : ${metrics}">
+                <td class="metric" th:utext="${metric.getName()}"></td>
+                <td class="mvalue" th:utext="${metric.getValue()}"></td>
+                <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
+                <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -283,8 +283,10 @@
 
     <h4 th:if="${inverse == null}" th:text="${type2}"></h4>
     <h4 th:if="${inverse != null}">
-        <span th:if="${inverse}" class="keyword">InverseOf</span>
-        <a th:href="'.?inverse=' + ${!inverse}" th:text="${type2}">Title</a>
+        <span th:if="${inverse}" class="keyword">InverseOf
+            <a href="?" th:text="${type2}">Title</a>
+        </span>
+        <a th:if="${!inverse}" href="?inverse=true" th:text="${type2}">Title</a>
     </h4>
 
     <ul class="minihierarchy" th:classappend="${type2}" th:if="${!hierarchy2.children.isEmpty()}">
