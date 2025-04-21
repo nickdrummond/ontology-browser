@@ -116,36 +116,7 @@ public class CommonFragments {
 
         return new ModelAndView("base::children");
     }
-//
-//    public ModelAndView getRelationsForPropertyFragment(
-//            final String propertyId,
-//            final String individualId,
-//            final boolean inverse,
-//            @Nullable String orderBy,
-//            int pageSize,
-//            List<With> with,
-//            final String statsName,
-//            final OWLOntology ont,
-//            final Model model,
-//            HttpServletRequest request
-//    ) {
-//
-//        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-//
-//        OWLNamedIndividual individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
-//
-//        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
-//
-//        AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
-//                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
-//
-//        // TODO should do common without creating the tree
-//        OWLReasoner reasoner = reasonerFactoryService.getToldReasoner(ont);
-//
-//        common.buildCommon(relationsHierarchyService, individual, ont, reasoner, statsName, model, request);
-//
-//        return new ModelAndView("owlentityfragment");
-//    }
+
 
     public ModelAndView getOWLIndividualFragment(
             final OWLIndividualsService service,
@@ -161,14 +132,6 @@ public class CommonFragments {
         ShortFormProvider sfp = kit.getShortFormProvider();
 
         String entityName = sfp.getShortForm(owlIndividual);
-//
-//        if (mediaService.isImageURL(owlIndividual.getIRI())) {
-//            model.addAttribute("image", owlIndividual.getIRI().toString());
-//        }
-//
-//        if (mediaService.isSoundURL(owlIndividual.getIRI())) {
-//            model.addAttribute("sound", owlIndividual.getIRI().toString());
-//        }
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 

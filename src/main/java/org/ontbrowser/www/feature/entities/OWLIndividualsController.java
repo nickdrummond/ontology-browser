@@ -87,12 +87,12 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletResponse response
     ) {
 
-        OWLNamedIndividual owlIndividual = individualsService.getOWLIndividualFor(individualId, ont);
+        var owlIndividual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
         OWLClass firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
                 .orElse(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
 
         return byType(
-                owlClassesService.getIdFor(firstType),
+                kit.lookup().getId(firstType),
                 individualId,
                 "inferredInstances", List.of(), ont, model, request, response);
     }
@@ -103,7 +103,7 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletResponse response
     ) throws IOException {
         response.sendRedirect("/individuals/by/type/" +
-                owlClassesService.getIdFor(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing()));
+                kit.lookup().getId(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing()));
     }
 
     @GetMapping(value = "/by/type/{classId}")
@@ -134,7 +134,7 @@ public class OWLIndividualsController extends ApplicationController {
             final Model model,
             final HttpServletRequest request
     ) {
-        OWLClass type = owlClassesService.getOWLClassFor(classId, ont);
+        var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
@@ -160,7 +160,7 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletResponse response
     ) {
 
-        OWLNamedIndividual ind = individualsService.getOWLIndividualFor(individualId, ont);
+        var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         OWLClass type = buildNav(classId, statsName, with, ont, model, request);
 
@@ -213,13 +213,13 @@ public class OWLIndividualsController extends ApplicationController {
             final Model model,
             final HttpServletRequest request) {
 
-        OWLClass owlClass = owlClassesService.getOWLClassFor(classId, ont);
+        var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-        OWLHTMLRenderer owlRenderer = getRenderer(owlClass, ont, request);
+        OWLHTMLRenderer owlRenderer = getRenderer(type, ont, request);
         Stats stats = statsService.getClassStats(statsName, r);
 
-        return getCommon().getClassChildren(owlClass, r, owlRenderer, stats, model);
+        return getCommon().getClassChildren(type, r, owlRenderer, stats, model);
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -232,11 +232,11 @@ public class OWLIndividualsController extends ApplicationController {
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response) {
-        OWLNamedIndividual owlIndividual = individualsService.getOWLIndividualFor(individualId, ont);
+        var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         // TODO custom renderer - linked to tree (see relations)
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlIndividual);
-        return getCommon().getOWLIndividualFragment(individualsService, owlIndividual, inferred, with, ont, owlRenderer, model, request, response);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(ind);
+        return getCommon().getOWLIndividualFragment(individualsService, ind, inferred, with, ont, owlRenderer, model, request, response);
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -248,11 +248,11 @@ public class OWLIndividualsController extends ApplicationController {
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response) {
-        OWLClass owlClass = owlClassesService.getOWLClassFor(classId, ont);
+        var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
         // TODO custom renderer
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlClass);
-        return getCommon().getOWLClassFragment(owlClassesService, owlClass, ont, owlRenderer, with, model, request, response);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(type);
+        return getCommon().getOWLClassFragment(owlClassesService, type, ont, owlRenderer, with, model, request, response);
     }
 
     @GetMapping(value = "/by/type/{classId}/secondary")
@@ -264,7 +264,7 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletRequest request
     ) {
 
-        OWLClass type = owlClassesService.getOWLClassFor(classId, ont);
+        var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 

@@ -9,48 +9,17 @@ import org.ontbrowser.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OWLObjectPropertiesService implements PropertiesService<OWLObjectProperty> {
 
     @Autowired
     private ReasonerFactoryService reasonerFactoryService;
-
-    @Override
-    public OWLObjectProperty getPropertyFor(String propertyId, OWLOntology ont) {
-        //TODO this should be cached
-        OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
-
-        OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
-        if (getIdFor(owlTopObjectProperty).equals(propertyId)) {
-            return owlTopObjectProperty;
-        }
-
-        OWLObjectProperty owlBottomObjectProperty = df.getOWLBottomObjectProperty();
-        if (getIdFor(owlBottomObjectProperty).equals(propertyId)) {
-            return owlBottomObjectProperty;
-        }
-        for (OWLOntology o : ont.getImportsClosure()){
-            for (OWLObjectProperty owlObjectProperty: o.getObjectPropertiesInSignature()) {
-                if (getIdFor(owlObjectProperty).equals(propertyId)){
-                    return owlObjectProperty;
-                }
-            }
-        }
-        throw new ResponseStatusException(NOT_FOUND, "OWLObjectProperty not found: " + propertyId);
-    }
-
-    @Override
-    public String getIdFor(final OWLObjectProperty owlObjectProperty) {
-        return String.valueOf(owlObjectProperty.getIRI().hashCode());
-    }
 
     @Override
     public List<Characteristic> getCharacteristics(

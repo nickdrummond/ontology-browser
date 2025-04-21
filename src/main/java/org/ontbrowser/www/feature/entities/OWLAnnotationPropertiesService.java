@@ -11,31 +11,14 @@ import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnnotationProperty> {
-
-    public OWLAnnotationProperty getPropertyFor(final String propertyId, final OWLOntology ont) {
-        for (OWLOntology o : ont.getImportsClosure()){
-            for (OWLAnnotationProperty owlAnnotationProperty: o.getAnnotationPropertiesInSignature()) {
-                if (getIdFor(owlAnnotationProperty).equals(propertyId)){
-                    return owlAnnotationProperty;
-                }
-            }
-        }
-        throw new ResponseStatusException(NOT_FOUND, "OWLAnnotationProperty not found: " + propertyId);
-    }
-
-    public String getIdFor(final OWLAnnotationProperty owlAnnotationProperty) {
-        return String.valueOf(owlAnnotationProperty.getIRI().hashCode());
-    }
 
     public List<Characteristic> getCharacteristics(
             final OWLAnnotationProperty property,

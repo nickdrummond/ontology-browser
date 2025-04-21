@@ -80,7 +80,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
     ) throws IOException {
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
         OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
-        String id = propertiesService.getIdFor(owlTopObjectProperty);
+        String id = kit.lookup().getId(owlTopObjectProperty);
         response.sendRedirect("/relations/" + PATH + "/" + id);
     }
 
@@ -95,8 +95,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         final Model model,
         HttpServletRequest request
     ) {
-
-        var property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
@@ -122,7 +121,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
             HttpServletRequest request
     ) {
 
-        var property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
@@ -149,7 +148,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         var individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
 
-        var property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
@@ -181,7 +180,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         var individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());
 
-        var property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
@@ -201,7 +200,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         final Model model
     ) {
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
                 reasonerFactoryService.getToldReasoner(ont),
@@ -228,7 +227,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         HttpServletRequest request
     ) {
 
-        OWLObjectProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
         OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
