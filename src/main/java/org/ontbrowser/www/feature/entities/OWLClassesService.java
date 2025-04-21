@@ -50,7 +50,6 @@ public class OWLClassesService {
             final Comparator<OWLObject> comparator,
             final List<With> with,
             final int defaultPageSize) {
-        // TODO inefficient - rebuilds all
         return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize).getCharacteristic(name);
     }
 
