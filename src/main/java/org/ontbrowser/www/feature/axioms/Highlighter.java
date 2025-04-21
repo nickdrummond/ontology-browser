@@ -40,9 +40,9 @@ public class Highlighter {
         while (!remains.isEmpty()) {
             int nextTagStart = remains.indexOf("<");
 
-            // if we start with a tag, skip it
+            // if we start with a tag, or inside a tag, skip it
             if (nextTagStart == 0) {
-                int endOfTag = remains.indexOf(">") + 1; //assuming we didn't start in the middle of a tag - TODO TEST
+                int endOfTag = remains.indexOf(">") + 1;
                 String tagText = remains.substring(0, endOfTag);
                 result.append(tagText);
                 remains = remains.substring(endOfTag);
