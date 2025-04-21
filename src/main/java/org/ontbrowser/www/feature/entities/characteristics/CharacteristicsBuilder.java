@@ -101,7 +101,6 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
 
         @Override
         public <U> AxiomWithMetadata doDefault(U axiom) {
-            // TODO types
             return new AxiomWithMetadata(USAGE, (OWLObject) axiom, (OWLAxiom) axiom, ont);
         }
 

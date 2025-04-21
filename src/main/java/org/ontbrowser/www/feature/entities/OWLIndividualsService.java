@@ -36,7 +36,6 @@ public class OWLIndividualsService {
         OWLOntologyManager mngr = reasonerRootOnt.getOWLOntologyManager();
         OWLDataFactory df = mngr.getOWLDataFactory();
         try {
-            // TODO materialise into an actual ontology
             IRI inferredIRI = IRI.create("inferred");
             OWLOntology ont = (mngr.contains(inferredIRI)) ?
                     mngr.getOntology(inferredIRI) :

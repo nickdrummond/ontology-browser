@@ -82,18 +82,18 @@ public class OWLIndividualsController extends ApplicationController {
     public ModelAndView getOWLIndividual(
             @PathVariable final String individualId,
             @ModelAttribute final OWLOntology ont,
+            @RequestParam(defaultValue = "false") final boolean inferred,
             final Model model,
             final HttpServletRequest request,
             final HttpServletResponse response
     ) {
-
         var owlIndividual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
         OWLClass firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
                 .orElse(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
 
         return byType(
                 kit.lookup().getId(firstType),
-                individualId,
+                individualId, inferred,
                 "inferredInstances", List.of(), ont, model, request, response);
     }
 
@@ -152,6 +152,7 @@ public class OWLIndividualsController extends ApplicationController {
     public ModelAndView byType(
             @PathVariable final String classId,
             @PathVariable final String individualId,
+            @RequestParam (defaultValue = "false") final boolean inferred,
             @RequestParam(defaultValue = "inferredInstances") final String statsName,
             @RequestParam(required = false) List<With> with,
             @ModelAttribute final OWLOntology ont,
@@ -164,7 +165,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         OWLClass type = buildNav(classId, statsName, with, ont, model, request);
 
-        getOWLIndividualFragment(individualId, false, with, ont, model, request, response);
+        getOWLIndividualFragment(individualId, inferred, with, ont, model, request, response);
 
         model.addAttribute("mos", getRenderer(type, ind, ont, request));
 
