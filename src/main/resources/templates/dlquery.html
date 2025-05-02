@@ -3,10 +3,8 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <!-- TODO use insert - see https://www.thymeleaf.org/doc/articles/layouts.html -->
-    <th:block th:replace='~{base :: header (title=${"DL query: " + expression}, rewriteLinks=${true})}'/>
-
-    <th:block th:replace="~{base :: includeDLQuery}"/>
+    <th:block th:insert='~{base :: header (title=${"DL query: " + expression}, rewriteLinks=${true})}'/>
+    <th:block th:insert="~{base :: includeDLQuery}"/>
 </head>
 
 <body class="wrapper">

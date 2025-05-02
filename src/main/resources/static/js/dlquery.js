@@ -94,8 +94,6 @@ const dlquery = (baseUrl, entityPane) => {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-        console.log("req = ", req);
-
         fetch(req, {
             signal: controller.signal
         }).then(response => {
@@ -145,7 +143,7 @@ const dlquery = (baseUrl, entityPane) => {
             // but only refresh the entity part of the page
             link.onclick = function (e) {
                 e.preventDefault();
-                entityPane.loadEntity(originalUrl + "fragment", newUrl);
+                entityPane.loadEntity(originalUrl + "/fragment", newUrl);
             }
         });
     }

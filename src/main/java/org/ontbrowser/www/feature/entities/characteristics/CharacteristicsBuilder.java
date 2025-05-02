@@ -7,7 +7,10 @@ import org.ontbrowser.www.util.PagingUtils;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -18,7 +21,11 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
     public static final String USAGE = "Usage";
     public static final String ANNOTATIONS = "Annotations";
 
-    private final List<Characteristic> characteristics;
+    private final T target;
+    private final OWLOntology ont;
+    private final Comparator<OWLObject> comparator;
+    private final List<With> with;
+    private final int defaultPageSize;
 
     protected CharacteristicsBuilder(
             T target,
@@ -26,37 +33,49 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
             Comparator<OWLObject> comparator,
             List<With> with,
             int defaultPageSize) {
-        // TODO don't do all the work in the constructor
-        Stream<InterestingFilter> filters = ont.getImportsClosure().stream()
-                .map(o -> createFilter(o, target));
+        this.target = target;
+        this.ont = ont;
+        this.comparator = comparator;
+        this.with = with;
+        this.defaultPageSize = defaultPageSize;
+    }
 
-        Stream<AxiomWithMetadata> axiomsWithMetadata = filters
-                .flatMap(InterestingFilter::findAxioms);
+    public List<Characteristic> getCharacteristics() {
+        Stream<AxiomWithMetadata> axiomsWithMetadata = getAxioms();
 
         Map<String, List<AxiomWithMetadata>> sortAndGroupByType = axiomsWithMetadata
                 .collect(groupingBy(AxiomWithMetadata::type));
 
-        Comparator<AxiomWithMetadata> compareByOWLObject = (a, b) ->
-                comparator.compare(a.owlObject(), b.owlObject());
-
-        Comparator<Characteristic> compareCharacteristics = (a, b) ->
-                getOrder().indexOf(a.getName()) - getOrder().indexOf(b.getName());
-
-        characteristics = sortAndGroupByType.entrySet().stream()
-                .map(entry -> PagingUtils.getCharacteristic(
-                        target, with, defaultPageSize, compareByOWLObject, entry.getKey(), entry.getValue()
-                ))
-                .sorted(compareCharacteristics) // Sort by "order"
+        return sortAndGroupByType.entrySet().stream()
+                .map(entry -> createCharacteristic(entry.getKey(), entry.getValue()))
+                .sorted((a, b) ->
+                        getOrder().indexOf(a.getName()) - getOrder().indexOf(b.getName())) // Sort by "order"
                 .toList();
     }
 
-    public List<Characteristic> getCharacteristics() {
-        return characteristics;
+    private Characteristic createCharacteristic(String name, List<AxiomWithMetadata> values) {
+        return PagingUtils.getCharacteristic(
+                target, with, defaultPageSize,
+                (a, b) -> comparator.compare(a.owlObject(), b.owlObject()),
+                name, values);
     }
 
-    // TODO lazy retrieve one characteristic?
+    private Stream<AxiomWithMetadata> getAxioms() {
+        return createFilters()
+                .flatMap(InterestingFilter::findAxioms);
+    }
+
+    private Stream<InterestingFilter> createFilters() {
+        return ont.getImportsClosure().stream()
+                .map(o -> createFilter(o, target));
+    }
+
     public Optional<Characteristic> getCharacteristic(String name) {
-        return characteristics.stream().filter(ch -> Objects.equals(ch.getName(), name)).findFirst();
+
+        var filtered = getAxioms()
+                .filter(axiomWithMetadata -> axiomWithMetadata.type().equals(name))
+                .toList();
+        return filtered.isEmpty() ? Optional.empty() : Optional.of(createCharacteristic(name, filtered));
     }
 
     abstract InterestingFilter createFilter(OWLOntology ont, T target);
@@ -82,7 +101,6 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
 
         @Override
         public <U> AxiomWithMetadata doDefault(U axiom) {
-            // TODO types
             return new AxiomWithMetadata(USAGE, (OWLObject) axiom, (OWLAxiom) axiom, ont);
         }
 

@@ -9,7 +9,6 @@ import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.service.hierarchy.OWLDatatypeHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +34,22 @@ public class OWLDatatypesController extends ApplicationController {
     }
 
     @GetMapping(value="/")
+    public void getOWLDatatypesOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getOWLDatatypes(response);
+    }
+
+    @GetMapping()
     public void getOWLDatatypes(
             final HttpServletResponse response
     ) throws IOException {
 
-        final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var df = kit.getOWLOntologyManager().getOWLDataFactory();
 
-        OWLDatatype owlTopDatatype = df.getTopDatatype();
+        var owlTopDatatype = df.getTopDatatype();
 
-        String id = service.getIdFor(owlTopDatatype);
+        String id = kit.lookup().getId(owlTopDatatype);
 
         response.sendRedirect("/datatypes/" + id);
     }
@@ -59,7 +65,7 @@ public class OWLDatatypesController extends ApplicationController {
         final HttpServletRequest request,
         final HttpServletResponse response) {
 
-        OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, ont);
+        var owlDatatype = kit.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
 
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(ont, treeComparator());
 
@@ -86,7 +92,7 @@ public class OWLDatatypesController extends ApplicationController {
             final HttpServletRequest request,
             final HttpServletResponse response) {
 
-        OWLDatatype owlDatatype = service.getOWLDatatypeFor(datatypeId, ont);
+        var owlDatatype = kit.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDatatype);
 
@@ -112,17 +118,17 @@ public class OWLDatatypesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}/children")
+    @GetMapping(value="/{datatypeId}/children")
     public ModelAndView getChildren(
-            @PathVariable final String propertyId,
+            @PathVariable final String datatypeId,
             @ModelAttribute final OWLOntology ont,
             final Model model) {
 
-        OWLDatatype property = service.getOWLDatatypeFor(propertyId, ont);
+        var owlDatatype = kit.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
 
         OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(ont, treeComparator());
 
-        Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(property);
+        Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(owlDatatype);
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);
 

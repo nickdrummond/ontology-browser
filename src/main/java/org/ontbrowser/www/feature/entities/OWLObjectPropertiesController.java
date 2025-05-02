@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -24,16 +23,20 @@ import java.util.List;
 public class OWLObjectPropertiesController extends ApplicationController {
 
     private final OWLObjectPropertiesService service;
-    private final ReasonerFactoryService reasonerFactoryService;
 
     public OWLObjectPropertiesController(
-            @Autowired OWLObjectPropertiesService service,
-            @Autowired ReasonerFactoryService reasonerFactoryService) {
+            @Autowired OWLObjectPropertiesService service) {
         this.service = service;
-        this.reasonerFactoryService = reasonerFactoryService;
     }
 
     @GetMapping(value="/")
+    public void getOWLObjectPropertiesOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getOWLObjectProperties(response);
+    }
+
+    @GetMapping()
     public void getOWLObjectProperties(
             final HttpServletResponse response
     ) throws IOException {
@@ -42,7 +45,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
 
-        String id = service.getIdFor(owlTopObjectProperty);
+        String id = kit.lookup().getId(owlTopObjectProperty);
 
         response.sendRedirect("/objectproperties/" + id);
     }
@@ -58,7 +61,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
         final HttpServletRequest request,
         final HttpServletResponse response) {
 
-        OWLObjectProperty prop = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
@@ -77,19 +80,19 @@ public class OWLObjectPropertiesController extends ApplicationController {
             final HttpServletRequest request,
             final HttpServletResponse response) {
 
-        OWLObjectProperty property = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
-        String entityName = kit.getShortFormProvider().getShortForm(property);
+        String entityName = kit.getShortFormProvider().getShortForm(prop);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(property);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(prop);
 
         List<With> withOrEmpty = with == null ? List.of() : with;
 
-        List<Characteristic> characteristics = service.getCharacteristics(property, ont, kit.getComparator(), withOrEmpty, 30);
+        List<Characteristic> characteristics = service.getCharacteristics(prop, ont, kit.getComparator(), withOrEmpty, 30);
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Object Properties");
-        model.addAttribute("iri", property.getIRI());
+        model.addAttribute("iri", prop.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
@@ -109,8 +112,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
         @ModelAttribute final OWLOntology ont,
         final Model model
     ) {
-
-        OWLObjectProperty prop = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
         model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));

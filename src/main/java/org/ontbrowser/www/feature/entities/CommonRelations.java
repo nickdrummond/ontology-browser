@@ -70,7 +70,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
             Model model,
             Comparator<OWLObject> comparator) {
 
-        OWLNamedIndividual individual = individualsService.getOWLIndividualFor(individualId, ont);
+        var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         renderEntity(individual, model);
 
@@ -89,7 +89,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
             @Nullable String orderBy,
             boolean inverse) {
 
-        T orderByProperty = (orderBy != null) ? propertiesService.getPropertyFor(orderBy, ont) : null;
+        T orderByProperty = (orderBy != null) ? (T) kit.lookup().entityFor(orderBy, ont, property.getClass()) : null;
 
         Comparator<Tree<OWLNamedIndividual>> comparator = propertiesService.getComparator(orderByProperty, ont);
 
@@ -163,7 +163,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
     }
 
     public OWLNamedIndividual getOWLIndividualFor(String individualId, OWLOntology ont) {
-        return individualsService.getOWLIndividualFor(individualId, ont);
+        return kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
     }
 
     public StatsMemo createMemo(AbstractRelationsHierarchyService<?> hierarchyService) {

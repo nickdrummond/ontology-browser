@@ -15,10 +15,6 @@ import java.util.List;
 
 public interface PropertiesService<T extends OWLProperty> {
 
-     T getPropertyFor(String propertyId, OWLOntology ont);
-
-     String getIdFor(final T property);
-
      List<Characteristic> getCharacteristics(
              final T property,
              final OWLOntology ont,

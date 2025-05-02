@@ -49,7 +49,7 @@ public class HighlighterTest {
     }
 
     @Test
-    public void shouldHighlightAllOccurrancesOfMatchingText() {
+    public void shouldHighlightAllOccurrencesOfMatchingText() {
         String highlight = "some (hadRole some StormTrooper)";
 
         String source = """
@@ -170,5 +170,11 @@ public class HighlighterTest {
         String result = h.highlight(source);
 
         assertTrue(result.contains("<span class=\"highlight\">offa</span>"));
+    }
+
+    @Test
+    public void shouldHighlightWhenStartIsInsideTag() {
+        var result = new Highlighter("abc").highlight("a>bcfgabc</a>");
+        assertEquals("a>bcfg<span class=\"highlight\">abc</span></a>", result);
     }
 }

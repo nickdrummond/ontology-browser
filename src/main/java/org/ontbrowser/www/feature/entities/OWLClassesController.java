@@ -45,13 +45,18 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @GetMapping(value="/")
+    public void getOWLClassesOld(final HttpServletResponse response) throws IOException {
+        getOWLClasses(response);
+    }
+
+    @GetMapping()
     public void getOWLClasses(
             final HttpServletResponse response
     ) throws IOException {
 
         OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
 
-        String id = service.getIdFor(owlThing);
+        String id = kit.lookup().getId(owlThing);
 
         response.sendRedirect("/classes/" + id);
     }
@@ -67,7 +72,7 @@ public class OWLClassesController extends ApplicationController {
             final HttpServletRequest request,
             final HttpServletResponse response) {
 
-        OWLClass owlClass = service.getOWLClassFor(classId, ont);
+        var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(owlClass));
         model.addAttribute("stats", statsService.getClassStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
@@ -88,7 +93,7 @@ public class OWLClassesController extends ApplicationController {
             final HttpServletRequest request,
             final HttpServletResponse response) {
 
-        OWLClass owlClass = service.getOWLClassFor(classId, ont);
+        var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlClass);
         return getCommon().getOWLClassFragment(service, owlClass, ont, owlRenderer, with, model, request, response);
     }
@@ -101,7 +106,7 @@ public class OWLClassesController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             final Model model) {
 
-        OWLClass owlClass = service.getOWLClassFor(classId, ont);
+        var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);

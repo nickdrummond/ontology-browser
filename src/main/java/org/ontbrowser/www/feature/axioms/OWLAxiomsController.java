@@ -32,7 +32,23 @@ public class OWLAxiomsController extends ApplicationController {
         this.axiomService = axiomService;
     }
 
-    @GetMapping(value = "/")
+
+    @GetMapping("/")
+    public ModelAndView axiomsOld(
+            final Model model,
+            @RequestParam(required = false) String search,
+            @ModelAttribute final OWLOntology ont,
+            @RequestParam(required = false, defaultValue = "INCLUDED") Imports imports,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false, defaultValue = "1") int start,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        return axioms(model, search, ont, imports, type, pageSize, start, request, response);
+    }
+
+    @GetMapping()
     public ModelAndView axioms(
             final Model model,
             @RequestParam(required = false) String search,
@@ -47,7 +63,7 @@ public class OWLAxiomsController extends ApplicationController {
 
         if (search != null) {
             if (search.isEmpty()) {
-                response.sendRedirect("/axioms/");
+                response.sendRedirect("/axioms");
                 return null;
             }
 

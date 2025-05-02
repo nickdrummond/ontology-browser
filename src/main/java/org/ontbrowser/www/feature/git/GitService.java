@@ -2,6 +2,7 @@ package org.ontbrowser.www.feature.git;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Ref;
@@ -17,6 +18,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,9 +32,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-// TODO
-// allow switch version????
 
 @Profile("git")
 @Service
@@ -118,6 +117,8 @@ public class GitService implements BeforeLoad {
     }
 
 
+    // Expensive operation - only run on demand
+    @Cacheable()
     public Map<String, DiffEntry.ChangeType> getChangedOntologies(
             Git git,
             Stream<OWLOntology> ontologies
@@ -189,13 +190,13 @@ public class GitService implements BeforeLoad {
         throw new RuntimeException("Cannot find local branch: " + branchName);
     }
 
-    public Optional<Ref> getRemote(Git git) throws GitAPIException, IOException {
-        // TODO can we get the remote Ref without doing the lsRemoteRepo?
-        Map<String, Ref> remotes = Git.lsRemoteRepository()
-                .setRemote(remote)
-                .callAsMap();
-
-        return Optional.ofNullable(remotes.get(getLocalBranchName(git)));
+    public Optional<Ref> getRemote(Git git) throws GitAPIException {
+        List<Ref> branches = git.branchList()
+                .setListMode(ListBranchCommand.ListMode.REMOTE)
+                .setContains("remotes/origin/HEAD")
+                .call();
+        Optional<Ref> origin = branches.stream().findFirst();
+        return origin;
     }
 
     public String getRev(Ref branchRef) {

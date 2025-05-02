@@ -1,10 +1,8 @@
 @import url("owl.css");
 
-@font-face {
-  font-family: 'aurebesh';
-  src: url('aurebesh.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+/* allow animation over non-numeric height values */
+:root {
+    interpolate-size: allow-keywords;
 }
 
 /* Mobile first design */
@@ -100,6 +98,19 @@ li {
     width: 100%;
 }
 
+#menu {
+    transition: height 0.3s ease-in-out;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+#menu.hidden {
+    height: 0;
+}
+
 #entityfinder {
     flex: 1 1 auto;
     margin: 0 5px;
@@ -123,13 +134,9 @@ li {
 }
 
 #metrics table {
-    border: solid 1px #c7cfd5;
-    padding: 5px 5px 5px 25px;
-    margin: 5px 0 10px 0;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
     text-align: right;
-    width: 99%;
+    width: 100%;
+    align-items: end;
 }
 
 #metrics table td {
@@ -193,19 +200,25 @@ li {
 }
 
 .characteristic h4:after {
-    content: "˅";
-    font-size: 1.75rem;
+    transition: rotate 0.3s ease-in-out;
+    content: "▼";
+    font-size: 1rem;
     position: relative;
-    top: 0.3rem;
-    left: 0.6rem;
+    top: 0.1rem;
+    left: 0.2rem;
 }
 
 .characteristic.hidden h4:after {
-    content: "˃";
+    rotate: -90deg;
 }
 
+.characteristic>ul, .characteristic>.table-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: auto;
+    overflow: hidden;
 
-.characteristic ul {
     border: solid 1px #c7cfd5;
     padding: 5px 5px 5px 25px;
     margin: 0.25rem 0;
@@ -213,12 +226,19 @@ li {
     -webkit-border-radius: 6px;
 }
 
-.characteristic li {
+.characteristic.hidden>ul, .characteristic.hidden>.table-wrapper {
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+    height: 0;
+}
+
+.characteristic>ul>li {
     padding: 4px;
     clear: both;
 }
 
-.characteristic li:hover, #metrics table tr:hover {
+.characteristic>li:hover, .characteristic tr:hover {
     background: rgba(125, 125, 125, 0.2);
     transition: ease-out 0.2s;
 }
@@ -408,13 +428,39 @@ ul.minihierarchy {
 
 .minihierarchy li .node{
     font-family: monospace;
-}
-
-.minihierarchy li .node{
     cursor: pointer;
     font-size: 1.5rem;
     margin-right: 1rem;
     padding: 0 0.5rem;
+}
+
+/* expand/collapse node button */
+.minihierarchy li>.node:before{
+    content: "-";
+}
+
+.minihierarchy li.with-children>.node:before {
+    transition: rotate 0.3s ease-in-out;
+    display: inline-block;
+    content: "▶";
+}
+
+.minihierarchy li.with-children.expanded>.node:before {
+    rotate: 90deg;
+}
+
+/* show/hide children */
+.minihierarchy li.with-children>ul {
+    transition: height 0.3s ease-in-out;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 0;
+}
+
+.minihierarchy li.with-children.expanded>ul {
+    height: auto;
 }
 
 .minihierarchy li .child-count {
@@ -733,6 +779,11 @@ img.thumb{
 
     #menu {
         width: auto;
+        overflow: initial;
+    }
+
+    #menu.hidden {
+        height: auto; /* always visible even if "hidden" from burger */
     }
 
     #tabs {
@@ -773,10 +824,6 @@ img.thumb{
     .characteristics {
         flex: 0 1 auto;
         overflow: auto;
-    }
-
-    #metrics {
-        flex: 0 1 auto;
     }
 
     #search, .autosuggest li {

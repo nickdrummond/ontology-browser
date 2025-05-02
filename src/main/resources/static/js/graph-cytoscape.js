@@ -127,6 +127,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function unionSet(a, b) {
+        return [...new Set(a).union(new Set(b))];
+    }
+
     function setupControls() {
         setupControl("type", defaultLayout.name, (newValue) => {
             currentLayout = getLayout(newValue);
@@ -157,10 +161,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const expand = document.getElementById("expand");
         expand.onclick = (e) => {
             e.preventDefault();
-            const sel = cy.$(':selected').map(s => s.data().label).join(',');
-            const indivs = document.getElementById("indivs");
-            indivs.value = indivs.value.concat(",", sel);
-            append(sel);
+            let selected = cy.$(':selected');
+            const selectedLabels = selected.map(s => s.data().label);
+            const selectedIds = selected.map(s => s.data().id);
+            const current = document.getElementById("indivs");
+            const merged = unionSet(selectedLabels, current.value.split(","));
+            current.value = merged.join(',');
+            append(selectedLabels, selectedIds);
         };
 
         const png = document.getElementById("png");
@@ -249,11 +256,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function append(individual) {
+    function append(labels, ids) {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
-        urlSearchParams.set("indivs", individual);
+        urlSearchParams.set("indivs", labels);
         urlSearchParams.set("depth", 0);
         let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
@@ -261,8 +268,15 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => {
                 response.json().then(json => {
-                    let eles = cy.add(json.elements);
-                    // TODO remove duplicate edges
+                    let elements = json.elements;
+
+                    // remove existing edges that have the requested nodes as source
+                    // to prevent duplicates
+                    ids.forEach(id => {
+                        cy.remove('edge[source="' + id + '"]');
+                    })
+
+                    cy.add(elements);
                     cy.layout(currentLayout).run();
                     cy.ready();
                 });
@@ -318,9 +332,14 @@ document.addEventListener('DOMContentLoaded', function () {
         cy.on('doubleTap', 'node', function(event, originalEvent) {
             const node = originalEvent.target;
             const sel = node.data().label;
+            const id = node.data().id;
             const indivs = document.getElementById("indivs");
-            indivs.value = indivs.value.concat(",", sel);
-            append(sel);
+            const current = indivs.value.split(",");
+            if (!current.includes(sel)) {
+                current.push(sel);
+                indivs.value = current.join(",");
+            }
+            append(sel, [id]);
         });
     }
 

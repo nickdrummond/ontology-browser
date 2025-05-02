@@ -3,10 +3,7 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
@@ -24,25 +21,30 @@ import java.util.List;
 public class OWLDataPropertiesController extends ApplicationController {
 
     private final OWLDataPropertiesService service;
-    private final ReasonerFactoryService reasonerFactoryService;
 
     public OWLDataPropertiesController(
-            @Autowired OWLDataPropertiesService service,
-            @Autowired ReasonerFactoryService reasonerFactoryService) {
+            @Autowired OWLDataPropertiesService service) {
         this.service = service;
-        this.reasonerFactoryService = reasonerFactoryService;
     }
 
+
     @GetMapping(value="/")
+    public void getOWLDataPropertiesOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getOWLDataProperties(response);
+    }
+
+    @GetMapping()
     public void getOWLDataProperties(
             final HttpServletResponse response
     ) throws IOException {
 
         final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
 
-        OWLDataProperty owlTopDataProperty = df.getOWLTopDataProperty();
+        var owlTopDataProperty = df.getOWLTopDataProperty();
 
-        String id = service.getIdFor(owlTopDataProperty);
+        String id = kit.lookup().getId(owlTopDataProperty);
 
         response.sendRedirect("/dataproperties/" + id);
     }
@@ -59,7 +61,7 @@ public class OWLDataPropertiesController extends ApplicationController {
         final HttpServletRequest request,
         final HttpServletResponse response) {
 
-        OWLDataProperty prop = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
@@ -80,19 +82,19 @@ public class OWLDataPropertiesController extends ApplicationController {
         final HttpServletRequest request,
         final HttpServletResponse response) {
 
-        OWLDataProperty owlDataProperty = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
-        String entityName = kit.getShortFormProvider().getShortForm(owlDataProperty);
+        String entityName = kit.getShortFormProvider().getShortForm(prop);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlDataProperty);
+        var owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(prop);
 
         List<With> withOrEmpty = with == null ? List.of() : with;
 
-        List<Characteristic> characteristics = service.getCharacteristics(owlDataProperty, ont, kit.getComparator(), withOrEmpty, pageSize);
+        var characteristics = service.getCharacteristics(prop, ont, kit.getComparator(), withOrEmpty, pageSize);
 
         model.addAttribute("title", entityName + " (Data Property)");
         model.addAttribute("type", "Data Properties");
-        model.addAttribute("iri", owlDataProperty.getIRI());
+        model.addAttribute("iri", prop.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
@@ -113,7 +115,7 @@ public class OWLDataPropertiesController extends ApplicationController {
             final Model model
     ) {
 
-        OWLDataProperty prop = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
         model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
         model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));

@@ -3,7 +3,7 @@ import {edits} from "./edits.js";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function (event) {
 
     theme(THEME_DEFAULT, "dark", THEME_ATTRIBUTE, THEME_KEY)
         .attachTo("#darkmode");
@@ -33,25 +33,11 @@ function openFullscreen() {
     }
 }
 
-const NONE = "none";
-
-function isHidden(el) {
-    return (el.offsetParent === null)
-}
-
 function burgerNavigation() {
     let burger = document.getElementById("burger");
-    if (!isHidden(burger)) { // setup once
-        let tabs = document.getElementById("tabs");
-        let defaultStyle = tabs.style.display;
-        tabs.style.display = NONE; // hide by default
-        burger.onclick = () => {
-            if (tabs.style.display === NONE) {
-                tabs.style.display = defaultStyle;
-            } else {
-                tabs.style.display = NONE;
-            }
-        }
+    let menu = document.getElementById("menu");
+    burger.onclick = () => {
+        menu.classList.toggle("hidden");
     }
 }
 

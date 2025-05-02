@@ -61,7 +61,15 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         );
     }
 
+
     @GetMapping(value = "/")
+    public void getRelationsForAnnotationPropertyOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getRelationsForAnnotationProperty(response);
+    }
+
+    @GetMapping()
     public void getRelationsForAnnotationProperty(
             final HttpServletResponse response
     ) throws IOException {
@@ -70,7 +78,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             throw new ResponseStatusException(NOT_FOUND, "Annotation Properties not found");
         }
         // Start with random
-        String id = propertiesService.getIdFor(props.iterator().next());
+        String id = kit.lookup().getId(props.iterator().next());
         response.sendRedirect("/relations/" + PATH + "/" + id + "/");
     }
 
@@ -86,19 +94,19 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             final Model model,
             HttpServletRequest request) {
 
-        var property = propertiesService.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
-        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+        var relationsHierarchyService = common.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
         var primaryHierarchy = propertiesService.getHierarchyService(ont);
 
-        common.buildPrimaryTree(property, primaryHierarchy, "Annotations on", model);
+        common.buildPrimaryTree(prop, primaryHierarchy, "Annotations on", model);
         common.buildSecondaryTree(relationsHierarchyService, null, model, request);
 
         model.addAttribute("stats", statsService.getAnnotationPropertyStats(statsName, ont, primaryHierarchy));
         model.addAttribute("statsName", statsName);
 
-        common.renderEntity(property, model);
+        common.renderEntity(prop, model);
 
         return new ModelAndView(RELATION_TEMPLATE);
     }
@@ -113,9 +121,9 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             HttpServletRequest request
     ) {
 
-        var property = propertiesService.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
-        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+        var relationsHierarchyService = common.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
         common.buildSecondaryTree(relationsHierarchyService, null, model, request);
 
@@ -146,13 +154,13 @@ public class OWLAnnotationRelationsController extends ApplicationController {
                 model,
                 kit.getComparator());
 
-        var property = propertiesService.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
-        var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+        var relationsHierarchyService = common.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
         var primaryHierarchy = propertiesService.getHierarchyService(ont);
 
-        common.buildPrimaryTree(property, primaryHierarchy, "Annotations on", model);
+        common.buildPrimaryTree(prop, primaryHierarchy, "Annotations on", model);
         common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
 
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
@@ -170,16 +178,18 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             final HttpServletRequest request
     ) {
 
-        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
-        model.addAttribute("t", propertiesService.getHierarchyService(ont).getChildren(property));
-        model.addAttribute("stats", statsService.getAnnotationPropertyStats(statsName, ont, propertiesService.getHierarchyService(ont)));
+        var stats = statsService.getAnnotationPropertyStats(statsName, ont, propertiesService.getHierarchyService(ont));
+
+        model.addAttribute("t", propertiesService.getHierarchyService(ont).getChildren(prop));
+        model.addAttribute("stats", stats);
         model.addAttribute("statsName", statsName);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property)
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop)
                 .withQuery(request.getQueryString());
 
-        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme).withActiveObject(property));
+        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme).withActiveObject(prop));
 
         return new ModelAndView(CommonRelations.BASE_TREE);
     }
@@ -195,19 +205,21 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             HttpServletRequest request
     ) {
 
-        OWLAnnotationProperty property = propertiesService.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
         OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
-                common.getRelationsHierarchyService(property, ont, orderBy, inverse);
+                common.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property)
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop)
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
 
+        var stats = statsService.getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService);
+
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
         model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme));
-        model.addAttribute("stats", statsService.getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService));
+        model.addAttribute("stats", stats);
         model.addAttribute("statsName", "treeStats"); // TODO not used
 
         return new ModelAndView(CommonRelations.BASE_TREE);

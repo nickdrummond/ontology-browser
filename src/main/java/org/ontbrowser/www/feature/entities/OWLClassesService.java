@@ -9,9 +9,7 @@ import org.ontbrowser.www.service.hierarchy.OWLHierarchyService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -21,42 +19,19 @@ import java.util.stream.Collectors;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
 import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OWLClassesService {
 
-    @Autowired
-    private ReasonerFactoryService reasonerFactoryService;
+    private final ReasonerFactoryService reasonerFactoryService;
 
-    public OWLClass getOWLClassFor(final String classId, final OWLOntology ont) {
-        OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
-
-        OWLClass owlThing = df.getOWLThing();
-        if (getIdFor(owlThing).equals(classId)) {
-            return owlThing;
-        }
-        OWLClass owlNothing = df.getOWLNothing();
-        if (getIdFor(owlNothing).equals(classId)) {
-            return owlNothing;
-        }
-
-        // TODO unbelievably inefficient - CACHE using a shortformprovider
-        for (OWLClass owlClass: ont.getClassesInSignature(Imports.INCLUDED)) {
-            if (getIdFor(owlClass).equals(classId)){
-                return owlClass;
-            }
-        }
-        throw new ResponseStatusException(NOT_FOUND, "OWLClass not found: " + classId);
+    public OWLClassesService(ReasonerFactoryService reasonerFactoryService) {
+        this.reasonerFactoryService = reasonerFactoryService;
     }
 
     public OWLHierarchyService<OWLClass> getHierarchyService(OWLOntology ont) {
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
         return new OWLClassHierarchyService(r, treeComparator());
-    }
-
-    public String getIdFor(final OWLClass owlClass) {
-        return String.valueOf(owlClass.getIRI().hashCode());
     }
 
     public List<Characteristic> getCharacteristics(
@@ -75,7 +50,6 @@ public class OWLClassesService {
             final Comparator<OWLObject> comparator,
             final List<With> with,
             final int defaultPageSize) {
-        // TODO inefficient - rebuilds all
         return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize).getCharacteristic(name);
     }
 

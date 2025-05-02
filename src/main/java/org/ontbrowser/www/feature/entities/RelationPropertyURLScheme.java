@@ -10,10 +10,9 @@ public class RelationPropertyURLScheme extends RestURLScheme {
 
     @Override
     public String getURLForOWLObject(OWLObject owlObject) {
-        if (owlObject instanceof OWLObjectProperty) {
+        if (owlObject instanceof OWLObjectProperty objProp) {
             return ROOT_PATH
-                    + "/onproperty/" + getIdForEntity((OWLObjectProperty) owlObject)
-                    + "/";
+                    + "/onproperty/" + getIdForEntity(objProp);
         }
         return super.getURLForOWLObject(owlObject);
     }

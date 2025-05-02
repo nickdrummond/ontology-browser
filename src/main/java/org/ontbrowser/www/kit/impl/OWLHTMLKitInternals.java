@@ -5,6 +5,7 @@ import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.*;
+import org.ontbrowser.www.service.EntityIdLookup;
 import org.ontbrowser.www.url.RestURLScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.util.OWLObjectComparator;
@@ -45,6 +46,7 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     private Config config;
 
     private MOSStringRenderer stringRenderer;
+    private EntityIdLookup entityIdLookup;
 
     public OWLHTMLKitInternals(
             final OWLOntology rootOntology,
@@ -116,6 +118,14 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
             owlEntityChecker = new ShortFormEntityChecker(getNameCache());
         }
         return owlEntityChecker;
+    }
+
+    @Override
+    public EntityIdLookup lookup() {
+        if (entityIdLookup == null){
+            entityIdLookup = new EntityIdLookup(mngr);
+        }
+        return entityIdLookup;
     }
 
     public ShortFormProvider getShortFormProvider() {

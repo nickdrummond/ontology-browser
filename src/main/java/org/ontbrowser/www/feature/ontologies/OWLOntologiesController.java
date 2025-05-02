@@ -9,7 +9,6 @@ import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.feature.axioms.OWLAxiomService;
 import org.ontbrowser.www.service.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
@@ -37,16 +36,20 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 public class OWLOntologiesController extends ApplicationController {
 
     private final OWLOntologiesService service;
-    private final OWLAxiomService axiomService;
 
     public OWLOntologiesController(
-            @Autowired OWLOntologiesService service,
-            @Autowired OWLAxiomService axiomService) {
+            @Autowired OWLOntologiesService service) {
         this.service = service;
-        this.axiomService = axiomService;
     }
 
     @GetMapping("/")
+    public void getOntologiesOld(
+            final HttpServletResponse response
+    ) throws IOException {
+        getOntologies(response);
+    }
+
+    @GetMapping()
     public void getOntologies(
             final HttpServletResponse response
     ) throws IOException {
@@ -55,7 +58,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         String id = service.getIdFor(rootOntology);
 
-        response.sendRedirect("/ontologies/" + id + "/");
+        response.sendRedirect("/ontologies/" + id);
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -120,7 +123,6 @@ public class OWLOntologiesController extends ApplicationController {
         response.addHeader("title", projectInfo.name() + ": " + title);
 
         return new ModelAndView("ontologyfragment");
-
     }
 
     @GetMapping(value = "/{ontId}", produces = "application/rdf+xml")

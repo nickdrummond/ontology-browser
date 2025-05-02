@@ -1,7 +1,6 @@
 export const characteristics = (parentSelector) => {
 
     const HIDDEN = "hidden characteristics";
-    const VALUES_SELECTOR = "ul, table";
 
     const parentElement = document.querySelector(parentSelector);
 
@@ -14,22 +13,21 @@ export const characteristics = (parentSelector) => {
         parentElement.querySelectorAll(selectors).forEach(characteristic => {
             let firstChild = characteristic.querySelector("h4");
             firstChild.onclick = (e) => {
+                // Add animation back in when element is interacted with
+                const ul = characteristic.querySelector("ul, .table-wrapper");
+                if (ul) {
+                    ul.style.transition = "all 0.3s ease-in-out"; // add the animation after initial hide
+                }
                 toggle(characteristic);
             };
         });
     }
 
     function toggle(characteristic) {
-        const values = getValuesElement(characteristic);
+        const classList = characteristic.classList;
+        classList.toggle("hidden");
         const name = getCharacteristicName(characteristic);
-        const isVisible = values.checkVisibility();
-        if (isVisible) {
-            close(characteristic);
-        }
-        else {
-            open(characteristic);
-        }
-        setCharacteristic(name, !isVisible);
+        setCharacteristic(name, !classList.contains("hidden"));
     }
 
     function getCharacteristicName(characteristicElement) {
@@ -64,25 +62,7 @@ export const characteristics = (parentSelector) => {
     }
 
     function closeInstantly(characteristic) {
-        const values = getValuesElement(characteristic);
-        values.style.display = "none";
         characteristic.classList.add("hidden");
-    }
-
-    function close(characteristic) {
-        const values = getValuesElement(characteristic);
-        $(values).slideUp("fast"); // TODO get rid of JQuery
-        characteristic.classList.add("hidden");
-    }
-
-    function open(characteristic) {
-        const values = getValuesElement(characteristic);
-        $(values).slideDown("fast"); // TODO get rid of JQuery
-        characteristic.classList.remove("hidden");
-    }
-
-    function getValuesElement(characteristic) {
-        return characteristic.querySelector(VALUES_SELECTOR);
     }
 
     return {

@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         showLegend: true,
         infoPosition: "top",
         isLog: false,
-        getURL: (label) => "/" + label.toLowerCase() + "/?" + getOntIdQuery(),
+        getURL: (label) => "/" + label.toLowerCase() + "?" + getOntIdQuery(),
     };
 
     const render = (stats, ontId, imports) => {
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
         createPie(".pie-axiom-types", "Axiom types", Object.keys(axiomCounts), Object.values(axiomCounts), {
             // circumference: 180,
             infoPosition: "bottom",
-            getURL: (label) => "/axioms/?" + getOntIdQuery(ontId) + "&imports=" + imports + "&type=" + label,
+            getURL: (label) => "/axioms?" + getOntIdQuery(ontId) + "&imports=" + imports + "&type=" + label,
         });
 
         let axiomTypeCounts = stats.axiomTypeCounts.counts;
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // infoPosition: "bottom",
             // circumference: 180,
             // rotation: 90, // upside-down
-            getURL: (label) => "/axioms/?" + getOntIdQuery(ontId) + "&imports=" + imports + "&type=" + label,
+            getURL: (label) => "/axioms?" + getOntIdQuery(ontId) + "&imports=" + imports + "&type=" + label,
             isLog: true,
         });
 

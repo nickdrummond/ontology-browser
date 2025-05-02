@@ -29,14 +29,11 @@ public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLSchem
 
     @Override
     public String getURLForOWLObject(OWLObject owlObject) {
-        if (service != null && owlObject instanceof OWLNamedIndividual && service.treeContains((OWLNamedIndividual)owlObject)) {
-            return rootPath + "/" + propertyId
-                    + "/withindividual/" + getIdForEntity((OWLNamedIndividual) owlObject)
-                    + "/" + query;
+        if (service != null && owlObject instanceof OWLNamedIndividual ind && service.treeContains((OWLNamedIndividual)owlObject)) {
+            return rootPath + "/" + propertyId + "/withindividual/" + getIdForEntity(ind) + query;
         }
         else if (propertyJavaClass.isAssignableFrom(owlObject.getClass())) {
-            return rootPath + "/" +getIdForEntity((OWLEntity) owlObject)
-                    + "/";
+            return rootPath + "/" + getIdForEntity((OWLEntity) owlObject);
         }
         return super.getURLForOWLObject(owlObject);
     }

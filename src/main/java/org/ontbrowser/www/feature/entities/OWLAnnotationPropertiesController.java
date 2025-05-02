@@ -35,6 +35,14 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     }
 
     @GetMapping(value="/")
+    public void getOWLAnnotationPropertiesOld(
+            @ModelAttribute final OWLOntology ont,
+            final HttpServletResponse response
+    ) throws IOException {
+        getOWLAnnotationProperties(ont, response);
+    }
+
+    @GetMapping()
     public void getOWLAnnotationProperties(
             @ModelAttribute final OWLOntology ont,
             final HttpServletResponse response
@@ -49,7 +57,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         OWLAnnotationProperty firstAnnotationProperty = annotationProperties.get(0);
 
-        String id = service.getIdFor(firstAnnotationProperty);
+        String id = kit.lookup().getId(firstAnnotationProperty);
 
         response.sendRedirect("/annotationproperties/" + id);
     }
@@ -65,7 +73,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             final HttpServletRequest request,
             final HttpServletResponse response) {
 
-        var prop = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
@@ -86,22 +94,22 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             final HttpServletRequest request,
             final HttpServletResponse response) {
 
-        OWLAnnotationProperty owlAnnotationProperty = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
         Comparator<OWLObject> comparator = kit.getComparator();
 
-        String entityName = kit.getShortFormProvider().getShortForm(owlAnnotationProperty);
+        String entityName = kit.getShortFormProvider().getShortForm(prop);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlAnnotationProperty);
+        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(prop);
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
         List<Characteristic> characteristics =
-                service.getCharacteristics(owlAnnotationProperty, ont, comparator, withOrEmpty, pageSize);
+                service.getCharacteristics(prop, ont, comparator, withOrEmpty, pageSize);
 
         model.addAttribute("title", entityName + " (Annotation Property)");
         model.addAttribute("type", "Annotation Properties");
-        model.addAttribute("iri", owlAnnotationProperty.getIRI());
+        model.addAttribute("iri", prop.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
@@ -121,7 +129,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             final Model model
     ) {
 
-        OWLAnnotationProperty prop = service.getPropertyFor(propertyId, ont);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
         model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
         model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
