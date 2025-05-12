@@ -9,6 +9,7 @@ import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,4 +48,6 @@ public interface OWLHTMLKit extends Restartable {
     OntologyIRIShortFormProvider getOntologySFP();
 
     OWLOntology getRootOntology();
+
+    Map<String, String> getPrefixes();
 }

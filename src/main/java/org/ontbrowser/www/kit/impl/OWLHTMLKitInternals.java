@@ -20,6 +20,7 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -148,6 +149,17 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
 
     public OWLOntology getRootOntology() {
         return rootOntology;
+    }
+
+    @Override
+    public Map<String, String> getPrefixes() {
+        var format = rootOntology.getFormat();
+        if (format != null && format.isPrefixOWLDocumentFormat()) {
+            return format.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap();
+        }
+        else {
+            return Map.of();
+        }
     }
 
     private ShortFormProvider getInternalSFP() {

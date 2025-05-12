@@ -4,7 +4,13 @@
 
 <head>
     <th:block th:insert='~{base :: header (title=${"DL query: " + expression}, rewriteLinks=${true})}'/>
-    <th:block th:insert="~{base :: includeDLQuery}"/>
+    <link rel='stylesheet' type='text/css' href='/css/gaphu-0.0.9.css'
+          th:href='@{/css/gaphu-0.0.9.css}'/>
+    <script type='text/javascript' src='/js/gaphu-0.0.9.js'
+            th:src='@{/js/gaphu-0.0.9.js}'></script>
+    <script type='module' src='/js/dlquery.js'
+            th:src='@{/js/dlquery.js}'>
+    </script>
 </head>
 
 <body class="wrapper">
@@ -15,38 +21,41 @@
 
 <div id="main">
 
-    <div id="queryPane" class='codebox'>
+    <div id="query-pane">
 
         <h3 th:utext='${"Querying: " + mos.render(reasoningOntology) + " using " + reasonerName}'>Reasoning ontology and reasoner</h3>
 
-        <form class='autocomplete' method='get' id='dlQueryForm' action=''>
-            <div class="dlQueryWrapper">
-                <textarea name='expression' placeholder="Query - eg participant value R2-D2" class='dlQuery' id='dlQuery' th:text='${expression}'>Pizza</textarea>
-                <textarea name='minus' placeholder="Subtract from above - eg participant value C-3PO" class='dlQuery' id='dlQuery2' th:text='${minus}'>hasTopping some CheeseTopping</textarea>
-            </div>
+        <form class='autocomplete' method='get' id='query-form' action=''>
+            <textarea id='dlQuery' name='expression'
+                      placeholder="Query - eg participant value R2-D2"
+                      class='editor dl'
+                      th:text='${expression}'>Pizza</textarea>
+            <textarea id='dlQuery2' name='minus'
+                      placeholder="Subtract from above - eg participant value C-3PO"
+                      class='editor dl'
+                      th:text='${minus}'>hasTopping some CheeseTopping</textarea>
             <input name='syntax' id='dlQuerySyntax' type='hidden' value='man' />
             <input name='order' id='order' type='hidden' th:value='${order}' />
 
-            <div id="dlQueryOptions">
-                <ul id="queries">
-                    <li th:each="q : ${queries}">
-                        <input type='radio' name='query'
-                               th.id='${"q-" + q}'
-                               th:value='${q}'
-                               th:checked="${q == query}"/>
-                        <label th:for='${"q-" + q}'
-                               th:text='${q}'></label>
-                    </li>
-                </ul>
-                <input id="dlQuerySubmit" type='submit' value='query' />
-                <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
-
+            <div class="bottom">
+                <span>
+                    <label for="queries">Get </label>
+                    <select id="queries" name='query' th:value="${query}">
+                        <option th:each="q : ${queries}"
+                                th:value="${q}"
+                                th:text="${q}"
+                                th:selected="${q == query}"
+                        ></option>
+                    </select>
+                </span>
+                <input id="query-submit" type='submit' value='&#9881; run'>
             </div>
         </form>
 
+        <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
         <div id='resultsForm'>
             <!-- results will go here -->
-            <p>Provide a class description in Manchester OWL Syntax on the left.</p>
+            <p>Provide a class description in Manchester OWL Syntax.</p>
             <p>Autocomplete with <em>Ctrl-Space</em></p>
         </div>
 

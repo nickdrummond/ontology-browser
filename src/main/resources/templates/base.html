@@ -48,17 +48,6 @@
             th:src='@{/js/tree.js}'>
     </script>
 </th:block>
-
-<th:block th:fragment="includeDLQuery">
-    <link rel='stylesheet' type='text/css' href='/css/gaphu-0.0.9.css'
-          th:href='@{/css/gaphu-0.0.9.css}'/>
-    <script type='text/javascript' src='/js/gaphu-0.0.9.js'
-            th:src='@{/js/gaphu-0.0.9.js}'></script>
-    <script type='module' src='/js/dlquery.js'
-            th:src='@{/js/dlquery.js}'>
-    </script>
-</th:block>
-
 <body>
 
 <div id='title' th:fragment="title">
@@ -95,7 +84,12 @@
         <a th:href='@{/annotationproperties}'>Annotation</a></li>
     <li><a th:href='@{/datatypes}'>Datatypes</a></li>
     <li><a th:href='@{/axioms}'>Axioms</a></li>
-    <li><a th:href='@{/dlquery}'>DL&nbsp;Query</a></li>
+    <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'reasoners')}">
+        <li><a th:href='@{/dlquery}'>DL&nbsp;Query</a></li>
+    </th:block>
+    <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'rdf')}">
+        <li><a th:href="@{/sparql}">SPARQL</a></li>
+    </th:block>
 
     <li>Usage:
         <a th:href='@{/clouds/classes}'>cl</a> /

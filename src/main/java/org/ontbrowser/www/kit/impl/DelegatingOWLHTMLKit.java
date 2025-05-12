@@ -104,4 +104,9 @@ public class DelegatingOWLHTMLKit implements OWLHTMLKit {
     public OWLOntology getRootOntology() {
         return delegate.getRootOntology();
     }
+
+    @Override
+    public Map<String, String> getPrefixes() {
+        return delegate.getPrefixes();
+    }
 }

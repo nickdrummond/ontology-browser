@@ -46,8 +46,6 @@ public class ErrorHandling {
                 return null;
             }
 
-            log.error(e.getMessage());
-
             if (e instanceof ResponseStatusException statusException) {
                 log.error("Status exception {}", statusException.getMessage());
                 int status = statusException.getStatusCode().value();
@@ -55,6 +53,9 @@ public class ErrorHandling {
                 model.addAttribute(MODEL_ERROR_CODE, status);
                 model.addAttribute(MODEL_MESSAGE, statusException.getMessage());
                 return new ModelAndView("error");
+            }
+            else {
+                log.error(e.getMessage(), e);
             }
         }
 

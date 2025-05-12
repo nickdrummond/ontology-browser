@@ -1,7 +1,7 @@
-import {BUSY_IMAGE} from "./util.js";
+import {BUSY_IMAGE, getUrlWithParameter} from "./util.js";
 import {characteristics} from "./characteristics.js";
 
-export const entity = () => {
+export const entity = (sel = "#content") => {
 
     function loadEntity(url, rewriteUrl) {
         fetch(url)
@@ -9,7 +9,7 @@ export const entity = () => {
                 response.text().then(html => {
                     const throwaway = document.createElement('span');
                     throwaway.innerHTML = html;
-                    let content = document.getElementById("content");
+                    let content = document.querySelector(sel);
 
                     if (rewriteUrl) {
                         window.history.pushState({}, '', rewriteUrl); // make sure URL follows
@@ -24,12 +24,27 @@ export const entity = () => {
             })
             .catch((err) => {
                 console.log(err);
-                document.getElementById("content").innerHTML = "";
+                document.querySelector(sel).innerHTML = "";
             })
 
-        document.getElementById("content").innerHTML = BUSY_IMAGE;
+        document.querySelector(sel).innerHTML = BUSY_IMAGE;
     }
 
+    function openLinksInEntityPane(parent, anchorSelector) {
+        parent.onclick = (e) => {
+            const link = e.target.closest(anchorSelector);
+            if (link) {
+                e.preventDefault();
+                const type = link.getAttribute("class");
+                let originalUrl = link.getAttribute("href");
+                let entityId = originalUrl.split("/")[2];
+                // update the URL in the link
+                let newUrl = getUrlWithParameter(type.toLowerCase(), entityId);
+                link.setAttribute("href", newUrl);
+                loadEntity(originalUrl + "/fragment", newUrl);
+            }
+        }
+    }
 
     function entityLoaded() {
         characteristics("#content").init(".characteristic, #metrics");
@@ -39,5 +54,6 @@ export const entity = () => {
 
     return {
         loadEntity: loadEntity,
+        openLinksInEntityPane: openLinksInEntityPane,
     }
 }

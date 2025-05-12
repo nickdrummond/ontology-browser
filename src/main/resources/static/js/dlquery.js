@@ -3,7 +3,7 @@ import {BUSY_IMAGE} from "./util.js";
 import {entity} from "./entity.js";
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    const entityPane = entity(() => {});
+    const entityPane = entity();
     dlquery(baseUrl, entityPane).init();
 });
 
@@ -40,6 +40,7 @@ const dlquery = (baseUrl, entityPane) => {
             entityPane.loadEntity(url);
         }
 
+        // TODO FIX DL QUERY
         const cls = getParameter("class");
         if (cls) {
             const url = baseUrl + "classes/" + cls + "/fragment";
@@ -51,22 +52,13 @@ const dlquery = (baseUrl, entityPane) => {
         const expression = getValueOfElementByID("dlQuery");
         const minus = getValueOfElementByID("dlQuery2");
         const order = getValueOfElementByID("order");
-        const query = getQueryFromForm();
+        const query = getValueOfElementByID("queries");
         const start = getParameter("start");
         const pageSize = getParameter("pageSize");
 
         if ((expression !== "") && (query !== "")) {
             const syntax = getValueOfElementByID("dlQuerySyntax");
             sendSubQuery(expression, minus, order, syntax, query, start, pageSize, 1);
-        }
-    }
-
-    function getQueryFromForm() {
-        const ele = document.getElementsByName('query');
-        for (let i = 0; i < ele.length; i++) {
-            if (ele[i].checked) {
-                return ele[i].value;
-            }
         }
     }
 
@@ -100,8 +92,7 @@ const dlquery = (baseUrl, entityPane) => {
             clearTimeout(timeoutId);
             response.text().then(html => {
                 resultsForm.innerHTML = html;
-                rewriteLinks("Class"); // note Capitalised
-                rewriteLinks("individual");
+                entityPane.openLinksInEntityPane(resultsForm, "li a");
             });
         }).catch(err => {
             if (err.name === "AbortError") {
@@ -128,24 +119,6 @@ const dlquery = (baseUrl, entityPane) => {
         const resultsForm = document.getElementById("resultsForm");
         resultsForm.innerHTML = "<div class='characteristic'><h4>"
             + header + "</h4><p>" + message + "</p></div>";
-    }
-
-///////////////////////
-
-// TODO single event handler like tree
-    function rewriteLinks(type) {
-        document.querySelectorAll(`#resultsForm a.${type}`).forEach(link => {
-            let originalUrl = link.getAttribute("href");
-            let entityId = originalUrl.split("/")[2];
-            // update the URL in the link
-            let newUrl = getUrlWithParameter(type.toLowerCase(), entityId);
-            link.setAttribute("href", newUrl);
-            // but only refresh the entity part of the page
-            link.onclick = function (e) {
-                e.preventDefault();
-                entityPane.loadEntity(originalUrl + "/fragment", newUrl);
-            }
-        });
     }
 
     return {

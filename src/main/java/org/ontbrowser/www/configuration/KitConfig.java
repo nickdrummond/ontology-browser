@@ -9,6 +9,7 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.DelegatingOWLHTMLKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitInternals;
 import org.ontbrowser.www.model.ProjectInfo;
+import org.ontbrowser.www.rdf.SPARQLService;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -32,7 +33,7 @@ public class KitConfig {
     protected final Logger logger = LoggerFactory.getLogger(KitConfig.class);
 
     @Bean
-    public ProjectInfo projectInfo(@Value("${project.name}")    String name,
+    public ProjectInfo projectInfo(@Value("${project.name}") String name,
                                    @Value("${project.contact}") String contact,
                                    @Value("${project.url}") String url,
                                    @Value("${project.tagline}") String tagline,
@@ -65,14 +66,20 @@ public class KitConfig {
     @Bean
     public RendererFactory rendererFactory(OWLHTMLKit kit) {
         return new RendererFactory(kit.getShortFormProvider(),
-                                   kit.getOntologySFP(),
-                                   kit.getURLScheme(),
-                                   kit.getFinder());
+                kit.getOntologySFP(),
+                kit.getURLScheme(),
+                kit.getFinder());
     }
 
     @Profile("lucene")
     @Bean
     public Directory luceneDirectory() {
         return new ByteBuffersDirectory();
+    }
+
+    @Profile("rdf")
+    @Bean
+    public SPARQLService rdfDirectory(@Value("${ontology.root.location}") String root) {
+        return new SPARQLService(root, "tdb2/");
     }
 }

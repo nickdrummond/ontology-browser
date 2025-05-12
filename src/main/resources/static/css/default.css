@@ -55,7 +55,7 @@ h2 {
 h3 {
     font-size: 1.2rem;
     color: rgba(125, 125, 125, 0.8);
-    margin: 1rem;
+    margin: 0.2rem;
 }
 
 h4 {
@@ -199,16 +199,13 @@ li {
     cursor: pointer;
 }
 
-.characteristic h4:after {
+.characteristic h4:before {
     transition: rotate 0.3s ease-in-out;
     content: "▼";
-    font-size: 1rem;
-    position: relative;
-    top: 0.1rem;
-    left: 0.2rem;
+    margin-right: 0.2rem;
 }
 
-.characteristic.hidden h4:after {
+.characteristic.hidden h4:before {
     rotate: -90deg;
 }
 
@@ -522,36 +519,76 @@ form#load {
     display: inline;
 }
 
-#queryPane {
+#query-pane {
     flex: 1;
     overflow: auto;
     margin: 0.5rem;
 }
 
-#dlQueryForm {
+.editor {
+    width: 95%;
+    height: 16rem;
+}
+
+.editor.prefixes {
+    height: 6rem;
+    margin-bottom: 0.5rem;
+}
+
+.editor.dl {
+    height: 6rem;
+    margin-bottom: 0.5rem;
+}
+
+#resultsForm {
+    margin: 0 0.5rem;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#resultsForm tbody {
+    display: block;
+    height: 20rem;
+    overflow: auto;
+}
+
+#resultsForm thead, table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#resultsForm thead th {
+    text-align: left;
+}
+
+#entityPane {
+    height: 25rem;
+}
+
+#query-form {
     display: flex;
+    flex-direction: column;
 }
 
-.dlQueryWrapper {
+#query-form .bottom {
     display: flex;
-    flex-flow: column;
-    flex: 6 1 auto;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.dlQuery{
-    flex: 1 1 auto;
-    margin: 5px;
-}
-
-#dlQueryOptions {
-    flex: 2 1 auto;
-    margin: 5px;
-}
-
-#dlQuerySubmit{
+#query-submit{
+    font-size: 2rem;
     margin: 5px;
     background: none;
-    border: solid 1px black;
+    border: none;
+    cursor: pointer;
+}
+
+#query-submit:hover{
+    background-color: rgba(207, 207, 207, 0.49);
+    border-radius: 1rem;
 }
 
 .iri{
@@ -775,6 +812,11 @@ img.thumb{
         align-items: stretch;
         overflow: hidden;
         width: auto;
+    }
+
+    #main.three-pane {
+        flex-grow: 2;
+        height: 44vh;
     }
 
     #menu {
