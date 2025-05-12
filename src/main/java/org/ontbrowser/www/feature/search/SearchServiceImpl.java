@@ -2,14 +2,14 @@ package org.ontbrowser.www.feature.search;
 
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.util.MyStringUtils;
-import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Convert a request to a regex which can be found by the OWLEntityFinder.
@@ -54,19 +54,5 @@ public class SearchServiceImpl implements SearchService {
         };
 
         return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).limit(size).toList();
-    }
-
-    public Set<OWLEntity> getEntities(IRI iri, OWLOntology ont) {
-        OWLDataFactory df = ont.getOWLOntologyManager().getOWLDataFactory();
-        return EntityType.values().stream()
-                .map(t -> {
-                    OWLEntity e = df.getOWLEntity(t, iri);
-                    if (ont.containsEntityInSignature(e, Imports.INCLUDED)) {
-                        return e;
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
     }
 }

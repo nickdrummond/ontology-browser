@@ -9,7 +9,7 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.DelegatingOWLHTMLKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitInternals;
 import org.ontbrowser.www.model.ProjectInfo;
-import org.ontbrowser.www.rdf.FusekiService;
+import org.ontbrowser.www.rdf.SPARQLService;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -79,7 +79,7 @@ public class KitConfig {
 
     @Profile("rdf")
     @Bean
-    public FusekiService rdfDirectory(@Value("${ontology.root.location}") String root) {
-        return new FusekiService(root, "tdb2/");
+    public SPARQLService rdfDirectory(@Value("${ontology.root.location}") String root) {
+        return new SPARQLService(root, "tdb2/");
     }
 }
