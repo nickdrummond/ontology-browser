@@ -7,6 +7,8 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 
+import java.util.Arrays;
+
 public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLScheme {
 
     public final String rootPath;
@@ -38,10 +40,20 @@ public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLSchem
         return super.getURLForOWLObject(owlObject);
     }
 
+    // TODO Explicitly whitelist params to retain on links
     public URLScheme withQuery(String queryString) {
         if (queryString != null) {
-            this.query = "?" + queryString;
+            // DO NOT pass "with" params
+            this.query = "?" + filter(queryString, "with");
         }
         return this;
+    }
+
+    private String filter(final String queryString, final String without) {
+        var split = queryString.split("&");
+        return Arrays.stream(split)
+                .filter(s -> !s.startsWith(without))
+                .reduce((a, b) -> a + "&" + b)
+                .orElse("");
     }
 }

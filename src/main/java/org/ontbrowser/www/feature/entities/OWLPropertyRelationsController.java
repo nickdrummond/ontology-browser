@@ -143,7 +143,6 @@ public class OWLPropertyRelationsController extends ApplicationController {
         final Model model,
         HttpServletRequest request
     ) {
-
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
         var individual = common.renderIndividual(individualId, ont, withOrEmpty, pageSize, request, model, kit.getComparator());

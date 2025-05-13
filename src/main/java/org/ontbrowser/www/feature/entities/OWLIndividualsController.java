@@ -82,6 +82,7 @@ public class OWLIndividualsController extends ApplicationController {
     public ModelAndView getOWLIndividual(
             @PathVariable final String individualId,
             @ModelAttribute final OWLOntology ont,
+            @RequestParam(required = false) List<With> with,
             @RequestParam(defaultValue = "false") final boolean inferred,
             final Model model,
             final HttpServletRequest request,
@@ -94,7 +95,7 @@ public class OWLIndividualsController extends ApplicationController {
         return byType(
                 kit.lookup().getId(firstType),
                 individualId, inferred,
-                "inferredInstances", List.of(), ont, model, request, response);
+                "inferredInstances", with, ont, model, request, response);
     }
 
     @GetMapping(value = "/by/type")
@@ -117,7 +118,7 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletResponse response
     ) {
 
-        OWLClass type = buildNav(classId, statsName, with, ont, model, request);
+        OWLClass type = buildNav(classId, statsName, ont, model, request);
 
         getOWLClassFragment(classId, ont, with, model, request, response);
 
@@ -129,7 +130,6 @@ public class OWLIndividualsController extends ApplicationController {
     private OWLClass buildNav(
             final String classId,
             final String statsName,
-            final List<With> with,
             final OWLOntology ont,
             final Model model,
             final HttpServletRequest request
@@ -140,9 +140,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         buildPrimaryHierarchy(statsName, model, type, r);
 
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
-        buildSecondaryNavigation(ont, model, type, withOrEmpty, request);
+        buildSecondaryNavigation(ont, model, type, request);
 
         return type;
     }
@@ -163,7 +161,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
-        OWLClass type = buildNav(classId, statsName, with, ont, model, request);
+        OWLClass type = buildNav(classId, statsName, ont, model, request);
 
         getOWLIndividualFragment(individualId, inferred, with, ont, model, request, response);
 
@@ -259,7 +257,6 @@ public class OWLIndividualsController extends ApplicationController {
     @GetMapping(value = "/by/type/{classId}/secondary")
     public ModelAndView getSecondaryFragment(
             @PathVariable final String classId,
-            @RequestParam(required = false) List<With> with,
             @ModelAttribute final OWLOntology ont,
             final Model model,
             final HttpServletRequest request
@@ -267,22 +264,20 @@ public class OWLIndividualsController extends ApplicationController {
 
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
-        buildSecondaryNavigation(ont, model, type, withOrEmpty, request);
+        buildSecondaryNavigation(ont, model, type, request);
 
         model.addAttribute("mos", getRenderer(type, null, ont, request));
 
         return new ModelAndView("base::secondary");
     }
 
-    private void buildSecondaryNavigation(OWLOntology ont, Model model, OWLClass type,
-                                          List<With> withOrEmpty, HttpServletRequest request) {
+    private void buildSecondaryNavigation(OWLOntology ont, Model model, OWLClass type, HttpServletRequest request) {
+        var with = Collections.<With>emptyList();
         var characteristic = owlClassesService.getCharacteristic(
                         ClassCharacteristicsBuilder.MEMBERS,
-                        type, ont, kit.getComparator(), withOrEmpty, DEFAULT_SECONDARY_PAGE_SIZE);
+                        type, ont, kit.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE);
 
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, with));
 
         model.addAttribute("direct",
                 characteristic.orElse(new Characteristic(type, "Members", Collections.emptyList())));
