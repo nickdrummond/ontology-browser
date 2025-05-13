@@ -40,7 +40,6 @@ export const entity = (sel = "#content") => {
                 let entityId = originalUrl.split("/")[2];
                 // update the URL in the link
                 let newUrl = getUrlWithParameter(type.toLowerCase(), entityId);
-                link.setAttribute("href", newUrl);
                 loadEntity(originalUrl + "/fragment", newUrl);
             }
         }
