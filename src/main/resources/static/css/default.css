@@ -192,20 +192,25 @@ li {
     margin-bottom: 0.5rem;
 }
 
-.characteristic h4 {
+.characteristic .header {
     display: flex;
+}
+
+.characteristic .header h4 {
+    display: inline-block;
     align-items: center;
     font-size: 1rem;
     cursor: pointer;
 }
 
-.characteristic h4:before {
+.characteristic .header:before {
     transition: rotate 0.3s ease-in-out;
     content: "▼";
     margin-right: 0.2rem;
+    rotate: 0;
 }
 
-.characteristic.hidden h4:before {
+.characteristic.hidden .header:before {
     rotate: -90deg;
 }
 

@@ -23,7 +23,6 @@
 
     <script type='text/javascript' th:inline='javascript'>
         const baseUrl = '/';
-        const rewriteLinks = [[${rewriteLinks}]] ?? false;
         const editingEnabled = [[${editingEnabled}]] ?? false;
         const THEME_ATTRIBUTE = "data-theme";
         const THEME_KEY = "theme";
@@ -137,10 +136,10 @@
      th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(ch.name)}'
      th:class='${"characteristic " + name}'>
 
-    <h4>
-        <span th:text='${ch.name}'>Some Characteristic</span>
-        <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
-    </h4>
+    <div class="header">
+    <h4 th:text='${ch.name}'>Some Characteristic</h4>
+    <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
+    </div>
 
     <ul th:remove="all-but-first" th:class="${cls}">
         <li class="asserted" th:each="object : ${ch.objects}">

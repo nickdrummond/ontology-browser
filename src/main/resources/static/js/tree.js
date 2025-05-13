@@ -10,11 +10,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     const primaryTree = document.querySelector(".owlselector.primary");
     if (primaryTree) {
-        const primaryNav = tree(primaryTree, baseUrl, entityPane, rewriteLinks);
+        const primaryNav = tree(primaryTree, baseUrl, entityPane);
 
         const secondaryTree = document.querySelector(".owlselector.secondary");
         if (secondaryTree) {
-            const secondaryNav = tree(secondaryTree, baseUrl, entityPane, rewriteLinks);
+            const secondaryNav = tree(secondaryTree, baseUrl, entityPane);
             secondaryNav.init();
             primaryNav.init((entityId) => {
                 secondaryNav.reload(  window.location + "/secondary");
@@ -27,9 +27,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 });
 
-const tree = (treeElement, baseUrl, entityPane, isRewriteLinks) => {
-
-    // TODO when do we not rewrite links
+const tree = (treeElement, baseUrl, entityPane) => {
 
     let selectedEntityCallback;
 

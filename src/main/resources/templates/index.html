@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <th:block th:insert='~{base :: header (title=${"Welcome"}, rewriteLinks=${false})}'/>
+    <th:block th:insert='~{base :: header (title=${"Welcome"})}'/>
 
     <link rel='stylesheet' type='text/css' href="/css/stats.css" th:href='@{/css/stats.css}'/>
     <script src="/js/libs/chart.umd.js" th:src="@{/js/libs/chart.umd.js}"></script>

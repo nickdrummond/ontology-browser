@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <th:block th:insert='~{base :: header (title=${"SPARQL query: " + select}, rewriteLinks=${true})}'/>
+    <th:block th:insert='~{base :: header (title=${"SPARQL query: " + select})}'/>
     <script type='module' src='/js/sparql.js'
             th:src='@{/js/sparql.js}'>
     </script>
