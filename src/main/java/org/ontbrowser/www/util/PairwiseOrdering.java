@@ -2,7 +2,6 @@ package org.ontbrowser.www.util;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PairwiseOrdering<T> {
 
@@ -35,9 +34,9 @@ public class PairwiseOrdering<T> {
         lists.add(new LinkedList<>(newList));
     }
 
-    public LinkedList<LinkedList<T>> getResult() {
+    public List<LinkedList<T>> getResult() {
         return lists;
     }
 
-    public List<T> flattened() { return lists.stream().flatMap(List::stream).collect(Collectors.toList());}
+    public List<T> flattened() { return lists.stream().flatMap(List::stream).toList();}
 }

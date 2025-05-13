@@ -1,7 +1,6 @@
-package org.ontbrowser.www.util;
+package org.ontbrowser.www.feature.entities.characteristics;
 
 import org.ontbrowser.www.model.AxiomWithMetadata;
-import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -11,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class PagingUtils {
+
+    private PagingUtils() {}
 
     public static <T extends OWLObject> Characteristic getCharacteristic(
             T target,
@@ -61,5 +62,4 @@ public class PagingUtils {
                 .replace(")", "_")
                 .toLowerCase();
     }
-
 }

@@ -133,7 +133,7 @@
 
 
 <div th:fragment="characteristic (ch)"
-     th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(ch.name)}'
+     th:with='name=${T(org.ontbrowser.www.feature.entities.characteristics.PagingUtils).getIdFor(ch.name)}'
      th:class='${"characteristic " + name}'>
 
     <div class="header">
@@ -302,7 +302,7 @@
      th:if="${direct != null}"
      class="owlselector secondary">
 
-    <h4 th:with='name=${T(org.ontbrowser.www.util.PagingUtils).getIdFor(direct.name)}'>
+    <h4 th:with='name=${T(org.ontbrowser.www.feature.entities.characteristics.PagingUtils).getIdFor(direct.name)}'>
         <span th:text='${direct.name}'>Some Characteristic</span>
         <span th:replace="~{base::paged (${direct.getPageData()}, ${name})}">(2)</span>
     </h4>

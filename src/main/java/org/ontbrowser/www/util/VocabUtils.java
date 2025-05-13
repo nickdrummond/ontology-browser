@@ -5,6 +5,8 @@ import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 
 public class VocabUtils {
 
+    private VocabUtils() {}
+
     public static boolean isSkosXLLabelAnnotation(OWLAnnotationProperty annotProp) {
         return annotProp.getIRI().toString().equals(SKOSXL.PREF_LABEL.toString());
     }

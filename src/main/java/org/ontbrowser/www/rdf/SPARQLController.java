@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Nullable;
+
 import static org.ontbrowser.www.rdf.SPARQLService.DEFAULT_QUERY;
 
 @Profile("rdf")
@@ -24,8 +26,8 @@ public class SPARQLController extends ApplicationController {
 
     @GetMapping
     public ModelAndView sparql(
-            @RequestParam(required = false) String prefixes,
-            @RequestParam(required = false) String select,
+            @Nullable @RequestParam(required = false) String prefixes,
+            @Nullable @RequestParam(required = false) String select,
             @RequestParam(required = false, defaultValue = "20") int limit,
             @ModelAttribute final OWLOntology ont,
             final Model model

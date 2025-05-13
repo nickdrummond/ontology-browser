@@ -3,7 +3,7 @@ package org.ontbrowser.www.feature.entities.characteristics;
 import com.google.common.collect.Streams;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.util.PagingUtils;
+import org.ontbrowser.www.feature.entities.characteristics.PagingUtils;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 

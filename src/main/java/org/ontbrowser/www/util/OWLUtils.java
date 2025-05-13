@@ -4,6 +4,8 @@ import org.semanticweb.owlapi.model.*;
 
 public class OWLUtils {
 
+    private OWLUtils() {}
+
     public static OWLOntology getDeclaringOntology(OWLEntity e, OWLOntology rootOnt) {
         OWLDeclarationAxiom decl = rootOnt.getOWLOntologyManager().getOWLDataFactory().getOWLDeclarationAxiom(e);
         for (OWLOntology o : rootOnt.getImportsClosure()) {

@@ -24,9 +24,9 @@ public class OWLObjectComparator implements Comparator<OWLObject> {
         else if (o2.isTopEntity() && !o1.isTopEntity()){
             return 1;
         }
-        else if (o1 instanceof OWLEntity && o2 instanceof OWLEntity){
-            String ren1 = sfp.getShortForm((OWLEntity)o1);
-            String ren2 = sfp.getShortForm((OWLEntity)o2);
+        else if ((o1 instanceof OWLEntity entity1) && (o2 instanceof OWLEntity entity2)){
+            String ren1 = sfp.getShortForm(entity1);
+            String ren2 = sfp.getShortForm(entity2);
             return ren1.compareToIgnoreCase(ren2);
         }
         else if (o1 instanceof OWLEntity){ // named things always come before anonymous things
