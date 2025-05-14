@@ -6,8 +6,9 @@ import org.semanticweb.owlapi.util.AnnotationValueShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.SKOSVocabulary;
 
-import javax.annotation.Nonnull;
 import java.util.*;
+
+import static org.ontbrowser.www.renderer.Lang.createLangMap;
 
 /**
  * A shortformProvider that uses the server properties to render
@@ -50,8 +51,7 @@ public class LabelShortFormProvider implements ShortFormProvider {
         return annotProp.getIRI().toString().equals(SKOSXL.PREF_LABEL.toString());
     }
 
-    @Nonnull
-    public String getShortForm(@Nonnull OWLEntity owlEntity) {
+    public String getShortForm(OWLEntity owlEntity) {
         if (reifyRendering && isSkosConcept(owlEntity)) {
             Optional<OWLNamedIndividual> label = getLabelInstance(owlEntity.asOWLNamedIndividual());
             if (label.isPresent()) {
@@ -89,18 +89,8 @@ public class LabelShortFormProvider implements ShortFormProvider {
         return false;
     }
 
+    @Override
     public void dispose() {
         delegate.dispose();
-    }
-
-    private <P> Map<P, List<String>> createLangMap(P p, String lang) {
-        final Map<P, List<String>> lMap = new HashMap<>();
-        if (lang.length() > 0){
-            List<String> langs = new ArrayList<>();
-            langs.add(lang);
-            langs.add(""); // default to no language
-            lMap.put(p, langs);
-        }
-        return lMap;
     }
 }

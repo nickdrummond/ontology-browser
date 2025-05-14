@@ -7,7 +7,6 @@ import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,11 +26,9 @@ public class OWLAxiomsController extends ApplicationController {
 
     private final OWLAxiomService axiomService;
 
-    public OWLAxiomsController(
-            @Autowired OWLAxiomService axiomService) {
+    OWLAxiomsController(OWLAxiomService axiomService) {
         this.axiomService = axiomService;
     }
-
 
     @GetMapping("/")
     public ModelAndView axiomsOld(

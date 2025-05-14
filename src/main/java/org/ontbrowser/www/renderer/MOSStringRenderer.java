@@ -10,9 +10,9 @@ import java.io.StringWriter;
 
 public class MOSStringRenderer implements OWLObjectRenderer {
 
-    private OWLEntityFinder finder;
+    private final OWLEntityFinder finder;
 
-    private OWLOntology ont;
+    private final OWLOntology ont;
 
     public MOSStringRenderer(OWLEntityFinder finder, OWLOntology ont) {
         this.finder = finder;

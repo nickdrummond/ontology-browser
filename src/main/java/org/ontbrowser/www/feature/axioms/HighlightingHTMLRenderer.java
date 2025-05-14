@@ -4,7 +4,7 @@ import org.ontbrowser.www.renderer.ElementRenderer;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLObject;
 
-public class HighlightingHTMLRenderer<O> implements ElementRenderer<O> {
+class HighlightingHTMLRenderer<O> implements ElementRenderer<O> {
     private final Highlighter highlighter;
     private final ElementRenderer<O> delegate;
 

@@ -13,10 +13,8 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nonnull;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -27,13 +25,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class OWLAxiomService implements RestartListener {
+class OWLAxiomService implements RestartListener {
 
     private static final Logger log = LoggerFactory.getLogger(OWLAxiomService.class);
 
     private final Map<OWLOntology, Map<OWLAxiom, String>> axiomsRenderingsByOntology = new HashMap<>();
 
-    public OWLAxiomService(@Autowired OWLHTMLKit kit) {
+    public OWLAxiomService(OWLHTMLKit kit) {
         kit.registerListener(this);
     }
 
@@ -51,7 +49,7 @@ public class OWLAxiomService implements RestartListener {
             Imports imports,
             int start,
             int pageSize,
-            @Nonnull AxiomType<?> axiomType) {
+            AxiomType<?> axiomType) {
         Function<OWLOntology, Stream<? extends OWLAxiom>> getAxiomsForOntology = (OWLOntology o) -> o.axioms(axiomType, Imports.EXCLUDED);
         return getAxioms(ont, imports, start, pageSize, getAxiomsForOntology);
     }
@@ -119,13 +117,13 @@ public class OWLAxiomService implements RestartListener {
     }
 
     public Characteristic findAxiomsByType(
-            @Nonnull final String search,
+            final String search,
             final OWLOntology ont,
             final Imports imports,
             final ShortFormProvider sfp,
             int start,
             int pageSize,
-            @Nonnull final AxiomType<? extends OWLAxiom> entityType) {
+            final AxiomType<? extends OWLAxiom> entityType) {
 
         String stripped = normalise(search);
 

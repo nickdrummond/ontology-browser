@@ -1,7 +1,6 @@
-package org.ontbrowser.www.renderer;
+package org.ontbrowser.www.feature.axioms;
 
 import org.junit.Test;
-import org.ontbrowser.www.feature.axioms.Highlighter;
 
 import java.io.IOException;
 import java.net.URL;

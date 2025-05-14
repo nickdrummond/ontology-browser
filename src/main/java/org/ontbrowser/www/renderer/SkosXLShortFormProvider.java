@@ -9,6 +9,8 @@ import org.semanticweb.owlapi.vocab.SKOSVocabulary;
 import javax.annotation.Nonnull;
 import java.util.*;
 
+import static org.ontbrowser.www.renderer.Lang.createLangMap;
+
 /**
  * A ShortFormProvider that renders SKOS Concepts with reified labels.
  * For label instances, it renders uses literalForm
@@ -112,18 +114,8 @@ public class SkosXLShortFormProvider implements ShortFormProvider {
         return false;
     }
 
+    @Override
     public void dispose() {
         delegate.dispose();
-    }
-
-    private <P> Map<P, List<String>> createLangMap(P p, String lang) {
-        final Map<P, List<String>> lMap = new HashMap<>();
-        if (lang.length() > 0){
-            List<String> langs = new ArrayList<>();
-            langs.add(lang);
-            langs.add(""); // default to no language
-            lMap.put(p, langs);
-        }
-        return lMap;
     }
 }

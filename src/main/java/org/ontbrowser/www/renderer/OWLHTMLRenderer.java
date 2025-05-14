@@ -48,10 +48,11 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
         return this;
     }
 
-    public String render(final OWLObject obj){
+    @Override
+    public String render(OWLObject object){
         StringWriter writer = new StringWriter();
         rendererVisitor.setWriter(new PrintWriter(writer));
-        obj.accept(rendererVisitor);
+        object.accept(rendererVisitor);
         writer.flush();
         return writer.getBuffer().toString();
     }

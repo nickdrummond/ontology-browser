@@ -20,13 +20,9 @@ public class FixedSimpleShortFormProvider implements ShortFormProvider {
             return iriShortFormProvider.getShortForm(IRI.create(iriString.substring(0, iriString.length()-1)));
         }
         int hash = iriString.indexOf('#');
-        if (hash >= 0 && hash < iriString.length()) {
+        if (hash >= 0) {
             return iriString.substring(hash+1);
         }
         return iriShortFormProvider.getShortForm(entity.getIRI());
-    }
-
-    @Override
-    public void dispose() {
     }
 }
