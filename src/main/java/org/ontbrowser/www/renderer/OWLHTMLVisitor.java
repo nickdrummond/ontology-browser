@@ -337,9 +337,10 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     @Override
     public void visit(OWLObjectInverseOf property) {
-        writeKeyword(ManchesterOWLSyntax.INVERSE_OF.toString());
-        write(SPACE);
+        writeKeyword(ManchesterOWLSyntax.INVERSE.toString());
+        write(OPEN_PAREN);
         writeOp(property.getInverse(), true);
+        write(CLOSE_PAREN);
     }
 
     @Override
