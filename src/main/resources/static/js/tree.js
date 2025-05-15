@@ -4,7 +4,7 @@ import {entity} from "./entity.js";
 const ACTIVE_ENTITY = "active-entity";
 const MINIHIERARCHY = '.minihierarchy';
 
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function (event) {
 
     const entityPane = entity();
 
@@ -17,10 +17,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
             const secondaryNav = tree(secondaryTree, baseUrl, entityPane);
             secondaryNav.init();
             primaryNav.init((entityId) => {
-                secondaryNav.reload(  window.location + "/secondary");
+                secondaryNav.reload(window.location + "/secondary");
             });
-        }
-        else {
+        } else {
             primaryNav.init();
         }
     }
@@ -87,6 +86,11 @@ const tree = (treeElement, baseUrl, entityPane) => {
     }
 
     function entitySelected(e, link) {
+        // TODO this is a hack to allow original links to work - eg clouds
+        if (TREE_LINKS_SIMPLE === true) {
+            return;
+        }
+
         e.preventDefault();
 
         const searchParams = new URLSearchParams(window.location.search);

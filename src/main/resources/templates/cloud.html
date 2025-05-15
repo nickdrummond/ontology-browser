@@ -4,6 +4,10 @@
 
 <head>
     <th:block th:replace='~{base :: header (title=${title})}'/>
+    <script>
+        TREE_LINKS_SIMPLE = true;
+    </script>
+    <th:block th:replace="~{base :: includeTree}"/>
 </head>
 
 <body class="wrapper">
@@ -13,6 +17,10 @@
 <div th:replace='~{base :: menu}'></div>
 
 <div id="main">
+
+    <div id='hierarchy'  th:replace="~{base :: hierarchy(${type}, ${hierarchy})}">
+        A hierarchy
+    </div>
 
     <div id="content">
 

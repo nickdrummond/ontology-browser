@@ -1,4 +1,4 @@
-package org.ontbrowser.www.feature.editing;
+package org.ontbrowser.www.controller;
 
 import org.ontbrowser.www.feature.ontologies.OWLOntologiesService;
 import org.ontbrowser.www.kit.OWLHTMLKit;

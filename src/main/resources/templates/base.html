@@ -27,6 +27,7 @@
         const THEME_ATTRIBUTE = "data-theme";
         const THEME_KEY = "theme";
         const THEME_DEFAULT = "light";
+        let TREE_LINKS_SIMPLE = false;
 
         // Set dark mode early to avoid flicker
         document.documentElement.setAttribute(THEME_ATTRIBUTE, sessionStorage.getItem(THEME_KEY) || THEME_DEFAULT);
@@ -198,8 +199,6 @@
         <table>
             <thead>
             <tr>
-                <td></td>
-                <td></td>
                 <td th:if="${showImportMetrics}">with imports</td>
             </tr>
             </thead>
