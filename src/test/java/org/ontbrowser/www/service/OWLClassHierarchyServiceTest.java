@@ -1,7 +1,7 @@
 package org.ontbrowser.www.service;
 
 import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.service.hierarchy.OWLClassHierarchyService;
+import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
 import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -10,8 +10,6 @@ import org.semanticweb.owlapi.reasoner.BufferingMode;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
-
-import java.util.Comparator;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
 import static org.ontbrowser.www.service.Matchers.*;

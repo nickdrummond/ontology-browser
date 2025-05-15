@@ -9,7 +9,7 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.DelegatingOWLHTMLKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitInternals;
 import org.ontbrowser.www.model.ProjectInfo;
-import org.ontbrowser.www.rdf.SPARQLService;
+import org.ontbrowser.www.feature.rdf.SPARQLService;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;

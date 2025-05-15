@@ -7,14 +7,14 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractCloudModel<O> implements CloudModel<O> {
+abstract class AbstractCloudModel<O> implements CloudModel<O> {
 
     private final Map<O, Integer> entityValueMap = Maps.newHashMap();
 
     private int min;
     private int max;
 
-    protected void reload() {
+    public void load() {
         min = Integer.MAX_VALUE;
         max = 0;
 
@@ -28,16 +28,14 @@ public abstract class AbstractCloudModel<O> implements CloudModel<O> {
         }
     }
 
-    public abstract Set<O> getEntities();
+    public final Set<O> getEntities(final int threshold) {
 
-    public final Set<O> getEntities(int threshold) {
-
-        threshold = normalize(threshold);
+        var normalisedThreshold = normalize(threshold);
 
         Set<O> result = Sets.newHashSet();
 
         for (O entity : entityValueMap.keySet()) {
-            if (entityValueMap.get(entity) >= threshold) {
+            if (entityValueMap.get(entity) >= normalisedThreshold) {
                 result.add(entity);
             }
         }

@@ -2,7 +2,7 @@ package org.ontbrowser.www.feature.editing;
 
 import org.ontbrowser.www.feature.editing.parser.MOSAxiomTreeParser;
 import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.service.AutocompleteService;
+import org.ontbrowser.www.feature.expression.AutocompleteService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;

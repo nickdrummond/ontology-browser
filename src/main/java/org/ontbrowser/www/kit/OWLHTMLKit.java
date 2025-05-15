@@ -1,7 +1,7 @@
 package org.ontbrowser.www.kit;
 
 import org.ontbrowser.www.renderer.MOSStringRenderer;
-import org.ontbrowser.www.service.EntityIdLookup;
+import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;

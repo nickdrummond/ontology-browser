@@ -5,6 +5,8 @@ import java.util.Set;
 
 public interface CloudModel<O> {
 
+    void load();
+
     int getValue(O entity);
 
     int getMin();

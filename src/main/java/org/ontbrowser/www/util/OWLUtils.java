@@ -1,6 +1,8 @@
 package org.ontbrowser.www.util;
 
 import org.semanticweb.owlapi.model.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 public class OWLUtils {
 
@@ -24,5 +26,17 @@ public class OWLUtils {
         return ontologyID.getOntologyIRI().map(IRI::toString)
                 .orElse(ontologyID.getDefaultDocumentIRI().map(IRI::toString)
                         .orElse("anonymous"));
+    }
+
+    public static EntityType<?> getEntityTypeFromPath(String name) {
+        return switch(name) {
+            case "classes" -> EntityType.CLASS;
+            case "individuals" -> EntityType.NAMED_INDIVIDUAL;
+            case "objectproperties" -> EntityType.OBJECT_PROPERTY;
+            case "dataproperties" -> EntityType.DATA_PROPERTY;
+            case "annotationproperties" -> EntityType.ANNOTATION_PROPERTY;
+            case "datatypes" -> EntityType.DATATYPE;
+            default -> throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity type not found: " + name);
+        };
     }
 }

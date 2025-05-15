@@ -3,7 +3,7 @@ package org.ontbrowser.www.feature.dlquery;
 import com.google.common.collect.ImmutableSet;
 import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;

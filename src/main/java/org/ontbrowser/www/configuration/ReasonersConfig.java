@@ -2,8 +2,8 @@ package org.ontbrowser.www.configuration;
 
 import org.apache.commons.collections4.map.LRUMap;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
-import org.ontbrowser.www.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.reasoner.ReasonerMomento;
+import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.feature.reasoner.ReasonerMomento;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

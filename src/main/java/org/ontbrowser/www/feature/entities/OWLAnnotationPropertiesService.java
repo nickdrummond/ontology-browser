@@ -2,9 +2,9 @@ package org.ontbrowser.www.feature.entities;
 
 import org.ontbrowser.www.feature.entities.characteristics.AnnotationPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.hierarchy.*;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.service.hierarchy.*;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;

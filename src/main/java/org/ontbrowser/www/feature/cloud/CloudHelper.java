@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CloudHelper<O extends OWLEntity> {
+class CloudHelper<O extends OWLEntity> {
 
     // capped maximum size of the font used to display entities
     private static final int MAX_SIZE = 60;

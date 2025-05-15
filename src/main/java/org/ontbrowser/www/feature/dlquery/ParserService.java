@@ -1,7 +1,7 @@
 package org.ontbrowser.www.feature.dlquery;
 
 import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.service.AutocompleteService;
+import org.ontbrowser.www.feature.expression.AutocompleteService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;

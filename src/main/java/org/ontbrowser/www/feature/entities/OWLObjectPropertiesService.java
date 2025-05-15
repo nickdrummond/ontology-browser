@@ -2,10 +2,10 @@ package org.ontbrowser.www.feature.entities;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ObjectPropertyCharacteristicsBuilder;
+import org.ontbrowser.www.feature.hierarchy.*;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.service.hierarchy.*;
+import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

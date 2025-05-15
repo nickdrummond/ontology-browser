@@ -15,6 +15,9 @@ class OWLAxiomsUtils {
 
     public static final String LOGICAL_AXIOMS_TYPE = "logicalAxioms";
 
+    record AxiomTypeData(AxiomType<?> type, String name, String category) {
+    }
+
     public static Stream<AxiomTypeData> getAxiomTypes() {
         return AxiomType.AXIOM_TYPES.stream()
                 .map(t -> new AxiomTypeData(

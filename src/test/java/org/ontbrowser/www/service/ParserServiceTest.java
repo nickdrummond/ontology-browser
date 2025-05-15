@@ -3,6 +3,7 @@ package org.ontbrowser.www.service;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.ontbrowser.www.feature.dlquery.ParserService;
+import org.ontbrowser.www.feature.expression.AutocompleteService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
