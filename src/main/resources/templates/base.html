@@ -11,6 +11,10 @@
     <meta http-equiv='content-type' content='text/html;charset=UTF-8'/>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=3.0'/>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
     <link rel='icon' type='image/x-icon' href='/images/favicon.ico'
           th:href='@{/images/favicon.ico}'/>
     <link rel='apple-touch-icon-precomposed' href='/images/splat-152-211412.png'
@@ -320,12 +324,12 @@
     </ul>
 </div>
 
-<p class='footer' th:fragment='footer'>
-    <a href="#" id="darkmode" class="light">darkmode</a>
+<div id='footer' th:fragment='footer'>
+    <a href="#" id="darkmode" class="light">&#9790;</a>
     <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}">Project Link</a>
     <a href='https://github.com/nickdrummond/ontology-browser/'>rendered with Ontology Browser</a>
     <a th:href='${"mailto:" + projectInfo.contact}'>Contact</a>
-</p>
+</div>
 
 </body>
 </html>

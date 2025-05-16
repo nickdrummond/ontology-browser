@@ -16,7 +16,7 @@ export const theme = (normal, alt, attribute, key) => {
         const notTheme = not(theme);
         component.classList.add(notTheme);
         component.classList.remove(theme);
-        component.innerHTML = notTheme;
+        component.innerHTML = notTheme === "dark" ? "&#9790;" : "&#9788;️";
     }
 
     function setTheme(theme) {

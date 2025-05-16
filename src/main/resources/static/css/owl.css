@@ -15,7 +15,6 @@
 
 .ontology-uri {
     color: gray;
-    font-size: 1rem;
 }
 
 .active-ontology-uri {
@@ -36,7 +35,7 @@
 /* keywords - default cyan */
 .keyword {
     color: #00B2B2;
-    font-weight: bolder;
+    font-weight: 300;
 }
 
 .comment {
@@ -45,7 +44,7 @@
 
 .some, .only, .value, .min, .max, .exactly {
     color: #B200B2;
-    font-weight:bolder;
+    font-weight:300;
 }
 
 .Class{

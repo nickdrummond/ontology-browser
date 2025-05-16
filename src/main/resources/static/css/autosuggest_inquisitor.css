@@ -84,7 +84,6 @@ div.autosuggest ul li a span
 {
 	display: block;
 	padding: 3px 6px;
-/*	font-weight: bold;*/
 }
 
 div.autosuggest ul li a span small
@@ -137,14 +136,14 @@ div.autosuggest ul li.as_highlight a .tr
 
 div.autosuggest ul li.as_warning
 {
-	font-weight: bold;
+	font-weight: 300;
 	text-align: center;
 }
 
 div.autosuggest ul em
 {
     font-style: normal;
-    font-weight: bolder;
+    font-weight: 300;
 	color: #11aa11;
 }
 
