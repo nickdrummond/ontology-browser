@@ -18,10 +18,9 @@
 <div id="main" class="three-pane">
 
     <div id="query-pane" class='codebox'>
-
-        <h3>SPARQL select query</h3>
-
         <form method='get' id='query-form' action=''>
+            <h3>SPARQL select query</h3>
+
             <textarea id='sparql-prefixes' name='prefixes'
                       class="editor prefixes"
                       placeholder="PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
@@ -35,11 +34,14 @@
                 </textarea>
             <div class="bottom">
                 <span>
-                    <label for="limit">Page size </label>
-                    <select id="limit" name="limit" th:value="${limit}">
-                        <option th:value="10">10</option>
-                        <option th:value="20">20</option>
-                        <option th:value="50">50</option>
+                    <label for="pageSize">Page size </label>
+                    <select id="pageSize" name="pageSize"
+                    th:with="pageSize=${pageData.pageSize()}">
+                        <option th:value="10" th:selected="${pageSize == 10}">10</option>
+                        <option th:value="20" th:selected="${pageSize == 20}">20</option>
+                        <option th:value="50" th:selected="${pageSize == 50}">50</option>
+                        <option th:if="${pageSize != 10 && pageSize != 20 && pageSize != 50}"
+                                th:value="${pageSize}" th:selected="true" th:text="${pageSize}">custom</option>
                     </select>
                 </span>
                 <input id="query-submit" type='submit' value='&#9881; run'>
@@ -55,8 +57,9 @@
     <p th:text="${error}"></p>
 </div>
 
-<div th:if="${results != null}"  id='resultsForm'>
+<div th:if="${results != null}" id='resultsForm'>
     <h3>Results</h3>
+    <span th:replace="~{base::paged (${pageData}, ${name})}">(2)</span>
     <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
 
     <table th:if="${!results.isEmpty()}">
@@ -70,7 +73,10 @@
         <tbody>
         <tr th:each="result : ${results}">
             <td th:each="variable : ${result.keySet()}">
-                <span th:utext="${mos.render(result.get(variable))}"></span>
+                <span th:if="${result.get(variable) != null}"
+                      th:utext="${mos.render(result.get(variable))}"
+                >
+                </span>
             </td>
         </tr>
         </tbody>

@@ -589,6 +589,7 @@ form#load {
 #query-form {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 #query-form .bottom {

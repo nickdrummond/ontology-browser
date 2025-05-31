@@ -1,8 +1,11 @@
 package org.ontbrowser.www.feature.rdf;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.query.QueryParseException;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
+import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.context.annotation.Profile;
 import org.springframework.ui.Model;
@@ -28,8 +31,10 @@ public class SPARQLController extends ApplicationController {
     public ModelAndView sparql(
             @Nullable @RequestParam(required = false) String prefixes,
             @Nullable @RequestParam(required = false) String select,
-            @RequestParam(required = false, defaultValue = "20") int limit,
+            @RequestParam(required = false, defaultValue = "20") int pageSize,
+            @RequestParam(required = false, defaultValue = "1") int start,
             @ModelAttribute final OWLOntology ont,
+            final HttpServletRequest request,
             final Model model
     ) {
         if (prefixes == null) {
@@ -37,14 +42,17 @@ public class SPARQLController extends ApplicationController {
         }
 
         model.addAttribute("prefixes", prefixes);
-        model.addAttribute("limit", limit);
+
+        // paging
+        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+        model.addAttribute("pageData", new PageData(start, pageSize));
 
         if (select == null) {
             model.addAttribute("select", DEFAULT_QUERY);
         }
         else {
             try {
-                var results = sparqlService.select(prefixes + select + "\nLIMIT " + limit, ont);
+                var results = sparqlService.select(prefixes + select + "\nLIMIT " + pageSize + " OFFSET " + (start-1), ont);
                 model.addAttribute("results", results);
                 OWLHTMLRenderer htmlRenderer = rendererFactory.getHTMLRenderer(ont);
                 model.addAttribute("mos", htmlRenderer);

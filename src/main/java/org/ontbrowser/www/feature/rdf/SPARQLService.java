@@ -34,7 +34,7 @@ public class SPARQLService implements DisposableBean {
 
         File rootFile = new File(root);
         if (!rootFile.exists()) {
-            throw new RuntimeException("Root ontology does not exist: " + rootFile);
+            throw new RuntimeException("SPARQL root file does not exist: " + rootFile);
         }
         File dir = rootFile.getParentFile();
         String fileExtension = rootFile.getName().substring(rootFile.getName().lastIndexOf(".") + 1);
@@ -44,7 +44,9 @@ public class SPARQLService implements DisposableBean {
         }
 
         // TODO check if already loaded
+        // TODO this is currently loading loads more triples each time we restart
         // TODO each ont as a separate graph?
+        // TODO infModel - its currently not picking up Events
 
         this.dataset = TDB2Factory.connectDataset(dbLoc);
         var loader = LoaderFactory.parallelLoader(
@@ -63,8 +65,6 @@ public class SPARQLService implements DisposableBean {
     }
 
     public List<Map<String, OWLObject>> select(String select, OWLOntology ont) {
-        log.info(select);
-
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
 
         Query qry = QueryFactory.create(select);
@@ -82,6 +82,9 @@ public class SPARQLService implements DisposableBean {
                     RDFNode rdfNode = sol.get(variable);
                     if (rdfNode != null) { // can have no binding if vars are not in the query
                         map.put(variable, toOWL(rdfNode, df, ont));
+                    }
+                    else {
+                        map.put(variable, null); // empty literal for no binding
                     }
                 }
             });

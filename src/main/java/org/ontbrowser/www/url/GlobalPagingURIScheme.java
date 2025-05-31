@@ -15,6 +15,7 @@ public class GlobalPagingURIScheme extends PagingURIScheme {
         return fromUri(original)
                 .replaceQueryParam("start", start)
                 .replaceQueryParam("pageSize", pageSize)
-                .build().toUri();
+                .build(true) // state that all existing params are already encoded (do not double-encode)
+                .toUri();
     }
 }
