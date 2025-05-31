@@ -80,6 +80,6 @@ public class KitConfig {
     @Profile("rdf")
     @Bean
     public SPARQLService rdfDirectory(@Value("${ontology.root.location}") String root) {
-        return new SPARQLService(root, "tdb2/");
+        return new SPARQLService(root, "tdb2/"); // NOTE: the TDB directory gets deleted each restart
     }
 }

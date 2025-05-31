@@ -564,6 +564,11 @@ form#load {
     margin: 0 0.5rem;
     flex-grow: 1;
     overflow: hidden;
+    min-height: 30%;
+}
+
+#resultsForm h4 {
+    display: inline-block;
 }
 
 #resultsForm tbody {
@@ -589,6 +594,9 @@ form#load {
 #query-form {
     display: flex;
     flex-direction: column;
+}
+
+#query-form.sparql {
     height: 100%;
 }
 
@@ -832,7 +840,7 @@ img.thumb {
 
     #main.three-pane {
         flex-grow: 2;
-        height: 44vh;
+        height: 72vh;
     }
 
     #menu {

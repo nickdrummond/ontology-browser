@@ -1,9 +1,19 @@
 package org.ontbrowser.www.feature.rdf;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.sparql.core.DatasetOne;
 import org.apache.jena.tdb2.TDB2Factory;
 import org.apache.jena.tdb2.loader.LoaderFactory;
+import org.apache.jena.util.LocationMapper;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -12,9 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO each ont as a separate graph?
 public class SPARQLService implements DisposableBean {
 
     private static final Logger log = LoggerFactory.getLogger(SPARQLService.class);
@@ -31,24 +43,33 @@ public class SPARQLService implements DisposableBean {
     private final Dataset dataset;
 
     public SPARQLService(String root, String dbLoc) {
-
         File rootFile = new File(root);
         if (!rootFile.exists()) {
             throw new RuntimeException("SPARQL root file does not exist: " + rootFile);
         }
         File dir = rootFile.getParentFile();
+        log.info("Loading SPARQL model from {}", dir);
+//        this.dataset = loadToTDB(rootFile, dir, dbLoc);
+        this.dataset = loadInMemoryInfModel(rootFile, dir);
+    }
+
+    private Dataset loadToTDB(File rootFile, File dir, String dbLoc) {
         String fileExtension = rootFile.getName().substring(rootFile.getName().lastIndexOf(".") + 1);
         var sources = dir.listFiles((file, name) -> name.endsWith(fileExtension));
         if (sources == null) {
             throw new RuntimeException("No files found in " + dir);
         }
 
-        // TODO check if already loaded
-        // TODO this is currently loading loads more triples each time we restart
-        // TODO each ont as a separate graph?
-        // TODO infModel - its currently not picking up Events
-
-        this.dataset = TDB2Factory.connectDataset(dbLoc);
+        // Delete the existing DB on startup (until we're able to detect ont changes)
+        File dbLocFile = new File(dbLoc);
+        if (dbLocFile.exists()) {
+            try {
+                FileUtils.deleteDirectory(dbLocFile);
+            } catch (IOException e) {
+                log.error("Could not delete SPARQL database directory: {}", dbLocFile, e);
+            }
+        }
+        var dataset = TDB2Factory.connectDataset(dbLoc);
         var loader = LoaderFactory.parallelLoader(
                 dataset.asDatasetGraph(),
                 (s, args) -> log.info(String.format(s, args))
@@ -57,7 +78,56 @@ public class SPARQLService implements DisposableBean {
         loader.startBulk();
         loader.load(Arrays.stream(sources).map(File::getAbsolutePath).toArray(String[]::new));
         loader.finishBulk();
+        return dataset;
     }
+
+    public Dataset loadInMemoryInfModel(final File root, final File baseDir) {
+        // TODO make inference optional
+        var basicModel = loadMemoryModel(root, baseDir);
+
+        Reasoner rdfsReasoner = ReasonerRegistry.getRDFSReasoner();
+        var rdfsInfModel = ModelFactory.createInfModel(rdfsReasoner, basicModel);
+
+        return DatasetOne.create(rdfsInfModel);
+    }
+
+    public Model loadMemoryModel(final File root, final File baseDir) {
+        long t1 = System.currentTimeMillis();
+
+        OntDocumentManager dm = new OntDocumentManager();
+        dm.setReadFailureHandler((url, m, e) -> System.err.println("Failed to load " + url + e.getMessage()));
+        LocationMapper locManager = dm.getFileManager().getLocationMapper();
+        // TODO proper mapping
+        locManager.addAltPrefix("https://nickdrummond.github.io/star-wars-ontology/ontologies/", "file:" + baseDir + "/");
+
+        OntModelSpec spec = OntModelSpec.OWL_MEM;
+        spec.setDocumentManager(dm);
+        OntModel model = ModelFactory.createOntologyModel(spec);
+        model.read(root.toString());
+
+        long t2 = System.currentTimeMillis();
+
+        listImports(model);
+        System.out.println("loaded in " + (t2 - t1) + "ms");
+
+        return model;
+    }
+
+    private void listImports(OntModel model) {
+        model.getImportModelMaker().listModels().forEachRemaining(mURI -> {
+            OntDocumentManager dm = model.getDocumentManager();
+            String alt = dm.getFileManager().getLocationMapper().altMapping(mURI);
+
+            OntModel m = dm.getOntology(mURI, OntModelSpec.OWL_MEM);
+            if (m != null) {
+                System.out.println("import = " + mURI + " from " + alt);
+            }
+            else {
+                System.err.println("Cannot find model for " + mURI);
+            }
+        });
+    }
+
 
     @Override
     public void destroy() {

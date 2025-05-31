@@ -18,7 +18,7 @@
 <div id="main" class="three-pane">
 
     <div id="query-pane" class='codebox'>
-        <form method='get' id='query-form' action=''>
+        <form method='get' id='query-form' class="sparql" action=''>
             <h3>SPARQL select query</h3>
 
             <textarea id='sparql-prefixes' name='prefixes'
@@ -58,7 +58,7 @@
 </div>
 
 <div th:if="${results != null}" id='resultsForm'>
-    <h3>Results</h3>
+    <h4>Results</h4>
     <span th:replace="~{base::paged (${pageData}, ${name})}">(2)</span>
     <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
 
