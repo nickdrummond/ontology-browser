@@ -5,6 +5,7 @@ import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.reasoner.ReasonerMomento;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.reasoner.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @Profile("reasoners")

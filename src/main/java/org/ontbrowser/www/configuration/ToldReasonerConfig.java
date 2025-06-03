@@ -5,6 +5,7 @@ import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.reasoner.ReasonerMomento;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

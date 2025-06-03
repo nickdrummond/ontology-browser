@@ -1,11 +1,9 @@
 package org.ontbrowser.www.feature.reasoner;
 
+import com.google.common.base.Stopwatch;
 import org.ontbrowser.www.util.OWLUtils;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import org.semanticweb.owlapi.reasoner.OWLReasonerRuntimeException;
-import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
+import org.semanticweb.owlapi.reasoner.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +50,6 @@ public class ReasonerFactoryService {
         }
     }
 
-    public List<String> getAvailableReasoners(){
-        return new ArrayList<>(facsByName.keySet());
-    }
-
     public OWLReasonerFactory getFactoryFor(String name) {
         if (name == null) {
             name = defaultInferredReasoner;
@@ -75,18 +69,38 @@ public class ReasonerFactoryService {
         String key = makeKey(name, ont);
         OWLReasoner r = reasonerByName.get(key);
         if (r == null) {
-            OWLReasonerFactory fac = getFactoryFor(name);
-            if (fac != null) {
-                String ontName = OWLUtils.ontIRI(ont.getOntologyID());
-                log.warn("Creating {} reasoner for {}", name, ontName);
-                r = new SynchronizedOWLReasoner(fac.createNonBufferingReasoner(ont, new SimpleConfiguration()));
-                reasonerByName.put(key, r);
-            }
-            else {
-                throw new RuntimeException("No reasoner found for " + name);
-            }
+            r = createReasoner(name, ont, key);
         }
         return r;
+    }
+
+    private synchronized OWLReasoner createReasoner(String name, OWLOntology ont, String key) {
+        OWLReasonerFactory fac = getFactoryFor(name);
+        if (fac != null) {
+            String ontName = OWLUtils.ontIRI(ont.getOntologyID());
+            log.info("Creating {} reasoner for {}", name, ontName);
+            OWLReasoner r = new SynchronizedOWLReasoner(fac.createReasoner(ont, new SimpleConfiguration()));
+            var stopwatch = Stopwatch.createStarted();
+            r.precomputeInferences(
+                    InferenceType.CLASS_HIERARCHY,
+                    InferenceType.OBJECT_PROPERTY_HIERARCHY,
+                    InferenceType.DATA_PROPERTY_HIERARCHY,
+                    InferenceType.CLASS_ASSERTIONS,
+                    InferenceType.OBJECT_PROPERTY_ASSERTIONS,
+                    InferenceType.DATA_PROPERTY_ASSERTIONS,
+                    InferenceType.DIFFERENT_INDIVIDUALS,
+                    InferenceType.SAME_INDIVIDUAL
+            );
+            log.info("{} classified {} in {} ms", name, ontName, stopwatch.elapsed().toMillis());
+            if (!r.isConsistent()) {
+                throw new RuntimeException("Reasoner " + name + " is not consistent");
+            }
+            reasonerByName.put(key, r);
+            return r;
+        }
+        else {
+            throw new RuntimeException("No reasoner found for " + name);
+        }
     }
 
     private String makeKey(String name, OWLOntology ont) {
