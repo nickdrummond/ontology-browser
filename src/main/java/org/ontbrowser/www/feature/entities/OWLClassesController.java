@@ -4,15 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
-import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.feature.stats.Stats;
 import org.ontbrowser.www.feature.stats.StatsService;
+import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,7 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="/classes")
+@RequestMapping(value = "/classes")
 public class OWLClassesController extends ApplicationController {
 
     private final OWLClassesService service;
@@ -30,10 +29,10 @@ public class OWLClassesController extends ApplicationController {
     private final ReasonerService reasonerService;
 
     public OWLClassesController(
-            @Autowired OWLClassesService service,
-            @Autowired ReasonerFactoryService reasonerFactoryService,
-            @Autowired StatsService statsService,
-            @Autowired ReasonerService reasonerService) {
+            OWLClassesService service,
+            ReasonerFactoryService reasonerFactoryService,
+            StatsService statsService,
+            ReasonerService reasonerService) {
         this.service = service;
         this.reasonerFactoryService = reasonerFactoryService;
         this.statsService = statsService;
@@ -44,7 +43,7 @@ public class OWLClassesController extends ApplicationController {
         return new CommonFragments(kit, projectInfo, reasonerService);
     }
 
-    @GetMapping(value="/")
+    @GetMapping(value = "/")
     public void getOWLClassesOld(final HttpServletResponse response) throws IOException {
         getOWLClasses(response);
     }
@@ -62,11 +61,11 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{classId}")
+    @GetMapping(value = "/{classId}")
     public ModelAndView getOWLClass(
             @PathVariable final String classId,
             @ModelAttribute final OWLOntology ont,
-            @RequestParam (defaultValue = "classDescendants") final String statsName,
+            @RequestParam(defaultValue = "classDescendants") final String statsName,
             @RequestParam(required = false) List<With> with,
             final Model model,
             final HttpServletRequest request,
@@ -84,7 +83,7 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{classId}/fragment")
+    @GetMapping(value = "/{classId}/fragment")
     public ModelAndView getOWLClassFragment(
             @PathVariable final String classId,
             @ModelAttribute final OWLOntology ont,
@@ -99,7 +98,7 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{classId}/children")
+    @GetMapping(value = "/{classId}/children")
     public ModelAndView getChildren(
             @PathVariable final String classId,
             @RequestParam final String statsName,

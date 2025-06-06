@@ -10,7 +10,6 @@ import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,17 +18,17 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="/objectproperties")
+@RequestMapping(value = "/objectproperties")
 public class OWLObjectPropertiesController extends ApplicationController {
 
     private final OWLObjectPropertiesService service;
 
     public OWLObjectPropertiesController(
-            @Autowired OWLObjectPropertiesService service) {
+            OWLObjectPropertiesService service) {
         this.service = service;
     }
 
-    @GetMapping(value="/")
+    @GetMapping(value = "/")
     public void getOWLObjectPropertiesOld(
             final HttpServletResponse response
     ) throws IOException {
@@ -52,14 +51,14 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}")
+    @GetMapping(value = "/{propertyId}")
     public ModelAndView getOWLObjectProperty(
-        @PathVariable final String propertyId,
-        @ModelAttribute final OWLOntology ont,
-        @RequestParam(required = false) List<With> with,
-        final Model model,
-        final HttpServletRequest request,
-        final HttpServletResponse response) {
+            @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
@@ -71,7 +70,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}/fragment")
+    @GetMapping(value = "/{propertyId}/fragment")
     public ModelAndView getOWLObjectPropertyFragment(
             @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
@@ -106,11 +105,11 @@ public class OWLObjectPropertiesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}/children")
+    @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
-        @PathVariable final String propertyId,
-        @ModelAttribute final OWLOntology ont,
-        final Model model
+            @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
+            final Model model
     ) {
         var prop = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 

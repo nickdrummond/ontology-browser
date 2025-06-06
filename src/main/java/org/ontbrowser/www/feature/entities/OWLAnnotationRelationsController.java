@@ -3,18 +3,17 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
+import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.RendererFactory;
-import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
-import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,12 +40,12 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
 
     public OWLAnnotationRelationsController(
-            @Autowired OWLAnnotationPropertiesService propertiesService,
-            @Autowired OWLIndividualsService individualsService,
-            @Autowired OWLHTMLKit kit,
-            @Autowired ProjectInfo projectInfo,
-            @Autowired RendererFactory rendererFactory,
-            @Autowired StatsService statsService) {
+            OWLAnnotationPropertiesService propertiesService,
+            OWLIndividualsService individualsService,
+            OWLHTMLKit kit,
+            ProjectInfo projectInfo,
+            RendererFactory rendererFactory,
+            StatsService statsService) {
         this.propertiesService = propertiesService;
         this.statsService = statsService;
         this.projectInfo = projectInfo;

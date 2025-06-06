@@ -6,13 +6,13 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
-import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
+import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.Stats;
 import org.ontbrowser.www.feature.stats.StatsService;
+import org.ontbrowser.www.model.Tree;
+import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -20,7 +20,6 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,11 +45,11 @@ public class OWLIndividualsController extends ApplicationController {
     private final StatsService statsService;
 
     public OWLIndividualsController(
-            @Autowired OWLIndividualsService individualsService,
-            @Autowired OWLClassesService owlClassesService,
-            @Autowired ReasonerFactoryService reasonerFactoryService,
-            @Autowired ReasonerService reasonerService,
-            @Autowired StatsService statsService) {
+            OWLIndividualsService individualsService,
+            OWLClassesService owlClassesService,
+            ReasonerFactoryService reasonerFactoryService,
+            ReasonerService reasonerService,
+            StatsService statsService) {
         this.individualsService = individualsService;
         this.owlClassesService = owlClassesService;
         this.reasonerFactoryService = reasonerFactoryService;
@@ -150,7 +149,7 @@ public class OWLIndividualsController extends ApplicationController {
     public ModelAndView byType(
             @PathVariable final String classId,
             @PathVariable final String individualId,
-            @RequestParam (defaultValue = "false") final boolean inferred,
+            @RequestParam(defaultValue = "false") final boolean inferred,
             @RequestParam(defaultValue = "inferredInstances") final String statsName,
             @RequestParam(required = false) List<With> with,
             @ModelAttribute final OWLOntology ont,
@@ -274,8 +273,8 @@ public class OWLIndividualsController extends ApplicationController {
     private void buildSecondaryNavigation(OWLOntology ont, Model model, OWLClass type, HttpServletRequest request) {
         var with = Collections.<With>emptyList();
         var characteristic = owlClassesService.getCharacteristic(
-                        ClassCharacteristicsBuilder.MEMBERS,
-                        type, ont, kit.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE);
+                ClassCharacteristicsBuilder.MEMBERS,
+                type, ont, kit.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE);
 
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, with));
 

@@ -1,11 +1,10 @@
 package org.ontbrowser.www.renderer;
 
-import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class RendererFactory {
 
@@ -15,10 +14,10 @@ public class RendererFactory {
     private final OWLEntityFinder finder;
 
     public RendererFactory(
-            @Autowired final ShortFormProvider sfp,
-            @Autowired final OntologyIRIShortFormProvider ontSfp,
-            @Autowired final URLScheme urlScheme,
-            @Autowired final OWLEntityFinder finder
+            ShortFormProvider sfp,
+            OntologyIRIShortFormProvider ontSfp,
+            URLScheme urlScheme,
+            OWLEntityFinder finder
     ) {
         this.sfp = sfp;
         this.ontSfp = ontSfp;

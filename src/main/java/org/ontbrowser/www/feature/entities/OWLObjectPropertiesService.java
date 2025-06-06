@@ -3,11 +3,10 @@ package org.ontbrowser.www.feature.entities;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ObjectPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.*;
+import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.semanticweb.owlapi.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -18,8 +17,11 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 @Service
 public class OWLObjectPropertiesService implements PropertiesService<OWLObjectProperty> {
 
-    @Autowired
-    private ReasonerFactoryService reasonerFactoryService;
+    private final ReasonerFactoryService reasonerFactoryService;
+
+    public OWLObjectPropertiesService(ReasonerFactoryService reasonerFactoryService) {
+        this.reasonerFactoryService = reasonerFactoryService;
+    }
 
     @Override
     public List<Characteristic> getCharacteristics(
@@ -47,7 +49,7 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
                 treeComparator());
     }
 
-    public AbstractRelationsHierarchyService<OWLObjectProperty> getRelationsHierarchy (
+    public AbstractRelationsHierarchyService<OWLObjectProperty> getRelationsHierarchy(
             Comparator<Tree<OWLNamedIndividual>> comparator) {
         return new RelationsHierarchyService(comparator);
     }

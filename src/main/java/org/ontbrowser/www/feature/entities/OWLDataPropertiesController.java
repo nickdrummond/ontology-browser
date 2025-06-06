@@ -8,7 +8,6 @@ import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,18 +16,17 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="/dataproperties")
+@RequestMapping(value = "/dataproperties")
 public class OWLDataPropertiesController extends ApplicationController {
 
     private final OWLDataPropertiesService service;
 
     public OWLDataPropertiesController(
-            @Autowired OWLDataPropertiesService service) {
+            OWLDataPropertiesService service) {
         this.service = service;
     }
 
-
-    @GetMapping(value="/")
+    @GetMapping(value = "/")
     public void getOWLDataPropertiesOld(
             final HttpServletResponse response
     ) throws IOException {
@@ -51,15 +49,15 @@ public class OWLDataPropertiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}")
+    @GetMapping(value = "/{propertyId}")
     public ModelAndView getOWLDataProperty(
-        @PathVariable final String propertyId,
-        @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-        @RequestParam(required = false) List<With> with,
-        @ModelAttribute OWLOntology ont,
-        final Model model,
-        final HttpServletRequest request,
-        final HttpServletResponse response) {
+            @PathVariable final String propertyId,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            @ModelAttribute OWLOntology ont,
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
@@ -72,15 +70,15 @@ public class OWLDataPropertiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}/fragment")
+    @GetMapping(value = "/{propertyId}/fragment")
     public ModelAndView getOWLDataPropertyFragment(
-        @PathVariable final String propertyId,
-        @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-        @RequestParam(required = false) List<With> with,
-        @ModelAttribute OWLOntology ont,
-        final Model model,
-        final HttpServletRequest request,
-        final HttpServletResponse response) {
+            @PathVariable final String propertyId,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            @ModelAttribute OWLOntology ont,
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
@@ -108,7 +106,7 @@ public class OWLDataPropertiesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}/children")
+    @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
             @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,

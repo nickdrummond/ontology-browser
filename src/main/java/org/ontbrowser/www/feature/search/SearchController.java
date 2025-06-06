@@ -3,7 +3,6 @@ package org.ontbrowser.www.feature.search;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +16,8 @@ public class SearchController extends ApplicationController {
     private final NameService nameService;
 
     public SearchController(
-            @Autowired SearchService service,
-            @Autowired NameService nameService) {
+            SearchService service,
+            NameService nameService) {
         this.service = service;
         this.nameService = nameService;
     }

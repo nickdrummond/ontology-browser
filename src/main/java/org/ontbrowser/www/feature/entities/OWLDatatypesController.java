@@ -4,14 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.hierarchy.OWLDatatypeHierarchyService;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.feature.hierarchy.OWLDatatypeHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,17 +22,17 @@ import java.util.List;
 import static org.ontbrowser.www.model.Tree.treeComparator;
 
 @RestController
-@RequestMapping(value="/datatypes")
+@RequestMapping(value = "/datatypes")
 public class OWLDatatypesController extends ApplicationController {
 
     private final OWLDatatypesService service;
 
     public OWLDatatypesController(
-            @Autowired OWLDatatypesService service) {
+            OWLDatatypesService service) {
         this.service = service;
     }
 
-    @GetMapping(value="/")
+    @GetMapping(value = "/")
     public void getOWLDatatypesOld(
             final HttpServletResponse response
     ) throws IOException {
@@ -55,15 +54,15 @@ public class OWLDatatypesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value= "/{datatypeId}")
+    @GetMapping(value = "/{datatypeId}")
     public ModelAndView getOWLDatatype(
-        @PathVariable final String datatypeId,
-        @ModelAttribute final OWLOntology ont,
-        @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-        @RequestParam(required = false) List<With> with,
-        final Model model,
-        final HttpServletRequest request,
-        final HttpServletResponse response) {
+            @PathVariable final String datatypeId,
+            @ModelAttribute final OWLOntology ont,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
 
         var owlDatatype = kit.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
 
@@ -82,7 +81,7 @@ public class OWLDatatypesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value= "/{datatypeId}/fragment")
+    @GetMapping(value = "/{datatypeId}/fragment")
     public ModelAndView getOWLDatatypeFragment(
             @PathVariable final String datatypeId,
             @ModelAttribute final OWLOntology ont,
@@ -118,7 +117,7 @@ public class OWLDatatypesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{datatypeId}/children")
+    @GetMapping(value = "/{datatypeId}/children")
     public ModelAndView getChildren(
             @PathVariable final String datatypeId,
             @ModelAttribute final OWLOntology ont,

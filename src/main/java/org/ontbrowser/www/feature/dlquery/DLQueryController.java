@@ -1,15 +1,16 @@
 package org.ontbrowser.www.feature.dlquery;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.feature.graph.GraphURLScheme;
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.renderer.MOSStringRenderer;
-import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.graph.GraphURLScheme;
+import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.model.AxiomWithMetadata;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.model.paging.PageData;
+import org.ontbrowser.www.renderer.MOSStringRenderer;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
+import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.ontbrowser.www.util.OWLUtils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
@@ -18,7 +19,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,9 +26,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.co.nickdrummond.parsejs.ParseException;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @RestController
 @RequestMapping(value= DLQueryController.PATH)
@@ -40,8 +42,8 @@ public class DLQueryController extends ApplicationController {
     private final ReasonerService reasonerService;
 
     public DLQueryController(
-            @Autowired ParserService parserService,
-            @Autowired ReasonerService reasonerService) {
+            ParserService parserService,
+            ReasonerService reasonerService) {
         this.parserService = parserService;
         this.reasonerService = reasonerService;
     }

@@ -11,7 +11,6 @@ import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.ui.Model;
@@ -34,8 +33,10 @@ public class CytoscapeController extends ApplicationController {
     private final ParserService parserService;
     private final ReasonerService reasonerService;
 
-    public CytoscapeController(@Autowired ParserService parserService,
-                               @Autowired ReasonerService reasonerService) {
+    public CytoscapeController(
+            ParserService parserService,
+            ReasonerService reasonerService
+    ) {
         this.parserService = parserService;
         this.reasonerService = reasonerService;
     }
@@ -133,7 +134,7 @@ public class CytoscapeController extends ApplicationController {
     }
 
     private Set<? extends OWLProperty> getProps(String name, OWLEntityFinder finder, OWLOntology ont) {
-        if (name.equals("type")){
+        if (name.equals("type")) {
             var type = ont.getOWLOntologyManager().getOWLDataFactory().getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE);
             return Set.of(type);
         }

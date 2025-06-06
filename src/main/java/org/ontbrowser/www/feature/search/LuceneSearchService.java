@@ -25,7 +25,6 @@ import org.semanticweb.owlapi.model.providers.EntityProvider;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -52,8 +51,8 @@ public class LuceneSearchService implements SearchService, RestartListener {
     private final Analyzer analyzer;
 
     public LuceneSearchService(
-            @Autowired Directory directory,
-            @Autowired OWLHTMLKit kit) {
+            Directory directory,
+            OWLHTMLKit kit) {
         this.directory = directory;
         this.kit = kit;
         kit.registerListener(this);

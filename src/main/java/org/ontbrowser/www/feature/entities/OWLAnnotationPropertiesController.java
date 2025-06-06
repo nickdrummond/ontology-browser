@@ -10,7 +10,6 @@ import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,17 +23,17 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@RequestMapping(value="/annotationproperties")
+@RequestMapping(value = "/annotationproperties")
 public class OWLAnnotationPropertiesController extends ApplicationController {
 
     private final OWLAnnotationPropertiesService service;
 
     public OWLAnnotationPropertiesController(
-            @Autowired OWLAnnotationPropertiesService service) {
+            OWLAnnotationPropertiesService service) {
         this.service = service;
     }
 
-    @GetMapping(value="/")
+    @GetMapping(value = "/")
     public void getOWLAnnotationPropertiesOld(
             @ModelAttribute final OWLOntology ont,
             final HttpServletResponse response
@@ -63,7 +62,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}")
+    @GetMapping(value = "/{propertyId}")
     public ModelAndView getOWLAnnotationProperty(
             @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
@@ -84,7 +83,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}/fragment")
+    @GetMapping(value = "/{propertyId}/fragment")
     public ModelAndView getOWLAnnotationPropertyFragment(
             @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
@@ -122,7 +121,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
     }
 
     @SuppressWarnings("SameReturnValue")
-    @GetMapping(value="/{propertyId}/children")
+    @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
             @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,

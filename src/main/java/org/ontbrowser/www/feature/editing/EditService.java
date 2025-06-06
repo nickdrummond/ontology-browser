@@ -1,13 +1,12 @@
 package org.ontbrowser.www.feature.editing;
 
 import org.ontbrowser.www.feature.editing.parser.MOSAxiomTreeParser;
-import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.feature.expression.AutocompleteService;
+import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.co.nickdrummond.parsejs.AutocompleteResult;
 import uk.co.nickdrummond.parsejs.ParseException;
@@ -21,7 +20,7 @@ public class EditService {
 
     private final AutocompleteService autocompleteService;
 
-    public EditService(@Autowired AutocompleteService autocompleteService) {
+    public EditService(AutocompleteService autocompleteService) {
         this.autocompleteService = autocompleteService;
     }
 

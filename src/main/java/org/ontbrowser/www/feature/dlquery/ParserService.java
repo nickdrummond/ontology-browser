@@ -1,13 +1,13 @@
 package org.ontbrowser.www.feature.dlquery;
 
-import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.feature.expression.AutocompleteService;
+import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntaxClassExpressionParser;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.co.nickdrummond.parsejs.AutocompleteResult;
 import uk.co.nickdrummond.parsejs.ParseException;
@@ -21,7 +21,7 @@ public class ParserService {
 
     private final AutocompleteService autocompleteService;
 
-    public ParserService(@Autowired AutocompleteService autocompleteService) {
+    public ParserService(AutocompleteService autocompleteService) {
         this.autocompleteService = autocompleteService;
     }
 

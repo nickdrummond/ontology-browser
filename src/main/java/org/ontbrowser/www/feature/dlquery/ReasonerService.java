@@ -1,16 +1,15 @@
 package org.ontbrowser.www.feature.dlquery;
 
 import com.google.common.collect.ImmutableSet;
-import org.ontbrowser.www.kit.RestartListener;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.RestartListener;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -42,10 +41,10 @@ public class ReasonerService implements RestartListener {
     private final ReasonerFactoryService reasonerFactoryService;
 
     public ReasonerService(
-            @Autowired OWLHTMLKit kit,
-            @Autowired ExecutorService es,
-            @Autowired Map<DLQuery, Future<Set<OWLEntity>>> cache,
-            @Autowired ReasonerFactoryService reasonerFactoryService) {
+            OWLHTMLKit kit,
+            ExecutorService es,
+            Map<DLQuery, Future<Set<OWLEntity>>> cache,
+            ReasonerFactoryService reasonerFactoryService) {
         this.kit = kit;
         kit.registerListener(this);
         this.es = es;

@@ -13,7 +13,6 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +40,7 @@ public class EditController extends ApplicationController {
 
     private final EditService editService;
 
-    public EditController(@Autowired EditService editService) {
+    public EditController(EditService editService) {
         this.editService = editService;
     }
 
@@ -87,8 +86,7 @@ public class EditController extends ApplicationController {
             response.sendRedirect(fromUri(referer)
                     .replaceQueryParam("transaction", transaction)
                     .build().toString());
-        }
-        else {
+        } else {
             log.warn("No referer - defaulting to transaction ontology page");
             response.sendRedirect(kit.getURLScheme().getURLForOWLObject(transactionOntology));
         }
@@ -99,13 +97,13 @@ public class EditController extends ApplicationController {
      */
     @GetMapping(value = "/edit")
     public void edit(
-        @RequestParam String originalAxiom,
-        @RequestParam URI originalOntology,
-        @RequestParam String axiom,
-        @RequestParam URI ontology,
-        @RequestParam(required = false) String transaction,
-        HttpServletRequest request,
-        HttpServletResponse response
+            @RequestParam String originalAxiom,
+            @RequestParam URI originalOntology,
+            @RequestParam String axiom,
+            @RequestParam URI ontology,
+            @RequestParam(required = false) String transaction,
+            HttpServletRequest request,
+            HttpServletResponse response
     ) throws IOException {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();

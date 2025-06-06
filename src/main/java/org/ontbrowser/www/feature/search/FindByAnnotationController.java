@@ -8,7 +8,6 @@ import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,8 +22,7 @@ public class FindByAnnotationController extends ApplicationController {
 
     private final FindByAnnotation service;
 
-    public FindByAnnotationController(
-            @Autowired FindByAnnotation service) {
+    public FindByAnnotationController(FindByAnnotation service) {
         this.service = service;
     }
 

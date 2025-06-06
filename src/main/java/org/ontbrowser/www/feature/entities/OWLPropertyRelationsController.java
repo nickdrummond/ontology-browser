@@ -3,21 +3,20 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
+import org.ontbrowser.www.feature.hierarchy.OWLObjectPropertyHierarchyService;
+import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.renderer.RendererFactory;
-import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
-import org.ontbrowser.www.feature.hierarchy.OWLObjectPropertyHierarchyService;
-import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,14 +40,14 @@ public class OWLPropertyRelationsController extends ApplicationController {
     private final CommonRelations<OWLObjectProperty> common;
 
     public OWLPropertyRelationsController(
-            @Autowired OWLObjectPropertiesService propertiesService,
-            @Autowired OWLIndividualsService individualsService,
-            @Autowired ReasonerFactoryService reasonerFactoryService,
-            @Autowired OWLHTMLKit kit,
-            @Autowired RendererFactory rendererFactory,
-            @Autowired StatsService statsService,
-            @Autowired ProjectInfo projectInfo) {
-
+            OWLObjectPropertiesService propertiesService,
+            OWLIndividualsService individualsService,
+            ReasonerFactoryService reasonerFactoryService,
+            OWLHTMLKit kit,
+            RendererFactory rendererFactory,
+            StatsService statsService,
+            ProjectInfo projectInfo
+    ) {
         this.propertiesService = propertiesService;
         this.reasonerFactoryService = reasonerFactoryService;
         this.statsService = statsService;
@@ -87,13 +86,13 @@ public class OWLPropertyRelationsController extends ApplicationController {
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}")
     public ModelAndView getRelationsForProperty(
-        @PathVariable final String propertyId,
-        @ModelAttribute final OWLOntology ont,
-        @RequestParam(defaultValue = "false") final boolean inverse,
-        @RequestParam final @Nullable String orderBy,
-        @RequestParam(defaultValue = "relationsCount") final String statsName,
-        final Model model,
-        HttpServletRequest request
+            @PathVariable final String propertyId,
+            @ModelAttribute final OWLOntology ont,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            @RequestParam(defaultValue = "relationsCount") final String statsName,
+            final Model model,
+            HttpServletRequest request
     ) {
         var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
@@ -132,16 +131,16 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
     public ModelAndView getRelationsForProperty(
-        @PathVariable final String propertyId,
-        @PathVariable final String individualId,
-        @RequestParam(defaultValue = "false") final boolean inverse,
-        @RequestParam final @Nullable String orderBy,
-        @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-        @RequestParam(required = false) List<With> with,
-        @RequestParam(defaultValue = "relationsCount") final String statsName,
-        @ModelAttribute final OWLOntology ont,
-        final Model model,
-        HttpServletRequest request
+            @PathVariable final String propertyId,
+            @PathVariable final String individualId,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
+            @RequestParam(required = false) List<With> with,
+            @RequestParam(defaultValue = "relationsCount") final String statsName,
+            @ModelAttribute final OWLOntology ont,
+            final Model model,
+            HttpServletRequest request
     ) {
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -193,10 +192,10 @@ public class OWLPropertyRelationsController extends ApplicationController {
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
-        @PathVariable final String propertyId,
-        @RequestParam(defaultValue = "relationsCount") final String statsName,
-        @ModelAttribute final OWLOntology ont,
-        final Model model
+            @PathVariable final String propertyId,
+            @RequestParam(defaultValue = "relationsCount") final String statsName,
+            @ModelAttribute final OWLOntology ont,
+            final Model model
     ) {
 
         var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
@@ -217,13 +216,13 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
     public ModelAndView getChildren(
-        @PathVariable final String propertyId,
-        @PathVariable final String individualId,
-        @RequestParam(defaultValue = "false") final boolean inverse,
-        @RequestParam final @Nullable String orderBy,
-        @ModelAttribute final OWLOntology ont,
-        final Model model,
-        HttpServletRequest request
+            @PathVariable final String propertyId,
+            @PathVariable final String individualId,
+            @RequestParam(defaultValue = "false") final boolean inverse,
+            @RequestParam final @Nullable String orderBy,
+            @ModelAttribute final OWLOntology ont,
+            final Model model,
+            HttpServletRequest request
     ) {
 
         var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);

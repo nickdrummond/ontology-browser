@@ -6,10 +6,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.model.IRI;
@@ -17,7 +17,6 @@ import org.semanticweb.owlapi.model.OWLDocumentFormat;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,8 +36,7 @@ public class OWLOntologiesController extends ApplicationController {
 
     private final OWLOntologiesService service;
 
-    public OWLOntologiesController(
-            @Autowired OWLOntologiesService service) {
+    public OWLOntologiesController(OWLOntologiesService service) {
         this.service = service;
     }
 
@@ -64,12 +62,12 @@ public class OWLOntologiesController extends ApplicationController {
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}")
     public ModelAndView getOntology(
-        @PathVariable final String ontId,
-        @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
-        @RequestParam(required = false) List<With> with,
-        final Model model,
-        final HttpServletRequest request,
-        final HttpServletResponse response) {
+            @PathVariable final String ontId,
+            @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -88,12 +86,12 @@ public class OWLOntologiesController extends ApplicationController {
     @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}/fragment")
     public ModelAndView getOntologyFragment(
-        @PathVariable final String ontId,
-        @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
-        @RequestParam(required = false) List<With> with,
-        final Model model,
-        final HttpServletRequest request,
-        final HttpServletResponse response) {
+            @PathVariable final String ontId,
+            @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
+            @RequestParam(required = false) List<With> with,
+            final Model model,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -127,9 +125,9 @@ public class OWLOntologiesController extends ApplicationController {
 
     @GetMapping(value = "/{ontId}", produces = "application/rdf+xml")
     public void exportOntology(
-        @PathVariable final String ontId,
-        final HttpServletResponse response,
-        final Writer writer
+            @PathVariable final String ontId,
+            final HttpServletResponse response,
+            final Writer writer
     ) {
 
         OWLOntology owlOntology = service.getOntologyFor(ontId, kit);
