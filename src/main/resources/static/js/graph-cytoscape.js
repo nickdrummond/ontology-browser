@@ -1,7 +1,6 @@
 const INDIVIDUALS = "indivs";
 const SELECTED = ':selected';
 const HIGHLIGHTED = 'highlighted';
-const THEME_ATTRIBUTE = 'data-theme';
 
 function getTheme() {
     return document.documentElement.getAttribute(THEME_ATTRIBUTE);
@@ -422,10 +421,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!current.includes(sel)) {
                 current.push(sel);
                 indivs.value = current.join(",");
+                append(sel, [id]);
+                update(indivsId, indivs, () => {});
             }
-            append(sel, [id]);
-            update(indivsId, indivs, () => {
-            });
         });
     }
 
