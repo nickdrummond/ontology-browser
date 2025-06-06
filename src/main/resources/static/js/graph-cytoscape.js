@@ -1,3 +1,6 @@
+const INDIVIDUALS = "indivs";
+const SELECTED = ':selected';
+const HIGHLIGHTED = 'highlighted';
 document.addEventListener('DOMContentLoaded', function () {
 
     let currentLayout;
@@ -36,9 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
         'cola': {
             name: 'cola',
         },
-        'dagre' : {
+        'dagre': {
             name: 'dagre',
-            rankDir : 'RL',
+            rankDir: 'RL',
         },
     };
 
@@ -47,13 +50,9 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'node',
             style: {
                 'background-color': '#999',
-                // 'background-opacity': 0,
-                // 'border-width': 1,
-                // 'border-style': 'solid',
-                // 'border-color': '#999',
                 'label': 'data(label)',
                 'font-size': '10',
-            }
+            },
         },
 
         {
@@ -62,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'background-opacity': 0.02,
                 'border-color': '#2B65EC',
                 'font-size': '12',
-            }
+            },
         },
 
         {
@@ -74,28 +73,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 'width': 5,
                 'curve-style': 'straight-triangle',
                 'label': 'data(label)',
-                // 'target-label': 'data(label)',
-                // 'target-text-offset': 20,
                 'font-size': '8',
                 'text-opacity': 1,
-            }
+            },
         },
 
         {
-            selector: 'node:selected',
+            selector: 'node:' + SELECTED,
             style: {
                 'background-color': '#F08080',
-                // 'border-width': 2,
-                // 'border-color': 'red'
-            }
+            },
         },
 
         {
-            selector: 'edge:selected',
+            selector: 'edge:' + SELECTED,
             style: {
                 'line-color': '#F08080',
                 'line-opacity': 1,
-            }
+            },
+        },
+
+        { // highlight edges connected to selected nodes
+            selector: 'edge.highlighted',
+            style: {
+                'line-color': '#F08080',
+                'line-opacity': 0.5,
+            },
         }
     ];
 
@@ -115,15 +118,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setLengthProp(newValue) {
-        switch(currentLayout.name) {
-            case 'fcose': currentLayout.idealEdgeLength = newValue * 2; break;
-            case 'euler': currentLayout.springLength = 100 + (newValue * 2); break;
-            case 'cola': currentLayout.edgeLength = 50 + (newValue * 2); break;
-            case 'concentric': currentLayout.minNodeSpacing = newValue; break;
-            case 'dagre': currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue/50)); break;
-            case 'circle': currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue/50)); break;
-            case 'breadthfirst': currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue/50)); break;
-            case 'grid': currentLayout.avoidOverlapPadding = newValue * 2; break;
+        switch (currentLayout.name) {
+            case 'fcose':
+                currentLayout.idealEdgeLength = newValue * 2;
+                break;
+            case 'euler':
+                currentLayout.springLength = 100 + (newValue * 2);
+                break;
+            case 'cola':
+                currentLayout.edgeLength = 50 + (newValue * 2);
+                break;
+            case 'concentric':
+                currentLayout.minNodeSpacing = newValue;
+                break;
+            case 'dagre':
+                currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue / 50));
+                break;
+            case 'circle':
+                currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue / 50));
+                break;
+            case 'breadthfirst':
+                currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue / 50));
+                break;
+            case 'grid':
+                currentLayout.avoidOverlapPadding = newValue * 2;
+                break;
         }
     }
 
@@ -143,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         setupControl("depth", null, newValue => reload());
         setupControl("query", null, newValue => reload());
-        setupControl("indivs", null, newValue => reload());
+        setupControl(INDIVIDUALS, null, newValue => reload());
         setupControl("props", null, newValue => reload());
         setupControl("without", null, newValue => reload());
         setupControl("follow", null, newValue => reload());
@@ -152,19 +171,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const refocus = document.getElementById("refocus");
         refocus.onclick = (e) => {
             e.preventDefault();
-            const sel = cy.$(':selected').map(s => s.data().label).join(',');
-            const indivs = document.getElementById("indivs");
+            const sel = cy.$(SELECTED).map(s => s.data().label).join(',');
+            const indivs = document.getElementById(INDIVIDUALS);
             indivs.value = sel;
-            update("indivs", indivs, () => reload());
+            update(INDIVIDUALS, indivs, () => reload());
         };
 
         const expand = document.getElementById("expand");
         expand.onclick = (e) => {
             e.preventDefault();
-            let selected = cy.$(':selected');
+            let selected = cy.$(SELECTED);
             const selectedLabels = selected.map(s => s.data().label);
             const selectedIds = selected.map(s => s.data().id);
-            const current = document.getElementById("indivs");
+            const current = document.getElementById(INDIVIDUALS);
             const merged = unionSet(selectedLabels, current.value.split(","));
             current.value = merged.join(',');
             append(selectedLabels, selectedIds);
@@ -198,14 +217,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function openBase64InNewTab (data, mimeType) {
+    function openBase64InNewTab(data, mimeType) {
         var byteCharacters = atob(data);
         var byteNumbers = new Array(byteCharacters.length);
         for (var i = 0; i < byteCharacters.length; i++) {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         var byteArray = new Uint8Array(byteNumbers);
-        var file = new Blob([byteArray], { type: mimeType + ';base64' });
+        var file = new Blob([byteArray], {type: mimeType + ';base64'});
         var fileURL = URL.createObjectURL(file);
         window.open(fileURL);
     }
@@ -225,8 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const type = new URLSearchParams(window.location.search).get(name);
             if (type) {
                 ctrl.value = type;
-            }
-            else if (defaultValue) {
+            } else if (defaultValue) {
                 ctrl.value = defaultValue;
             }
             ctrl.addEventListener('change', function () {
@@ -248,19 +266,19 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(url, {
             headers: myHeaders,
         })
-        .then(response => {
-            response.json().then(json => {
-                const type = urlSearchParams.get("type");
-                buildGraph(type, json.elements);
+            .then(response => {
+                response.json().then(json => {
+                    const type = urlSearchParams.get("type");
+                    buildGraph(type, json.elements);
+                });
             });
-        });
     }
 
     function append(labels, ids) {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
-        urlSearchParams.set("indivs", labels);
+        urlSearchParams.set(INDIVIDUALS, labels);
         urlSearchParams.set("depth", 0);
         let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
@@ -284,10 +302,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function getShape(node) {
-        switch(node.data().type) {
-            case 'individual': return "ellipse";
-            case 'class': return "rectangle";
-            case 'expression': return "octagon";
+        switch (node.data().type) {
+            case 'individual':
+                return "ellipse";
+            case 'class':
+                return "rectangle";
+            case 'expression':
+                return "octagon";
         }
     }
 
@@ -295,11 +316,17 @@ document.addEventListener('DOMContentLoaded', function () {
         let size = 10
         if (node.data().type === 'individual') {
             size = Math.min(size + (node.degree() * 10), 100);
-            // node.css('background-opacity', 1);
         }
         node.css("width", size);
         node.css("height", size);
         node.css("shape", getShape(node));
+    }
+
+    function highlightConnectedEdges() {
+        cy.edges().removeClass(HIGHLIGHTED);
+        cy.$(SELECTED).map(node => {
+            cy.edges("[source='" + node.id() + "']").addClass(HIGHLIGHTED);
+        });
     }
 
     function buildGraph(type, elements) {
@@ -308,10 +335,11 @@ document.addEventListener('DOMContentLoaded', function () {
         setLengthProp(parseInt(spaceCtrl.value));
         cy = cytoscape({
             container: document.querySelector('.graph'), // container to render in
-            ready: function() {
+            ready: function () {
                 this.nodes().forEach(function (node) {
                     render(node);
                 });
+                highlightConnectedEdges();
             },
             elements: elements,
             style: style,
@@ -319,7 +347,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         const doubleClickDelayMs = 300;
         let previousTapStamp;
-        cy.on('tap', function(e) {
+
+        cy.on('click', function (e) {
+            if (e.target.cy) {
+                if (e.target.group() === 'nodes') {
+                    // Give it a sec to allow the selection to update
+                    setTimeout(() => {
+                        highlightConnectedEdges();
+                    }, 100);
+                }
+            }
+        });
+
+        cy.on('tap', function (e) {
             const currentTapStamp = e.timeStamp;
             const msFromLastTap = currentTapStamp - previousTapStamp;
 
@@ -329,17 +369,20 @@ document.addEventListener('DOMContentLoaded', function () {
             previousTapStamp = currentTapStamp;
         });
 
-        cy.on('doubleTap', 'node', function(event, originalEvent) {
+        cy.on('doubleTap', 'node', function (event, originalEvent) {
             const node = originalEvent.target;
             const sel = node.data().label;
             const id = node.data().id;
-            const indivs = document.getElementById("indivs");
+            const indivsId = INDIVIDUALS;
+            const indivs = document.getElementById(indivsId);
             const current = indivs.value.split(",");
             if (!current.includes(sel)) {
                 current.push(sel);
                 indivs.value = current.join(",");
             }
             append(sel, [id]);
+            update(indivsId, indivs, () => {
+            });
         });
     }
 
