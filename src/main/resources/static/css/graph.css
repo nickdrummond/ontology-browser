@@ -4,8 +4,8 @@
     flex-grow: 2;
     margin: 1rem;
     height: 40rem;
-    background-color: #fefefe;
-    border: 1px solid black;
+    border-width: 1px;
+    border-style: solid;
 }
 
 .graph-controls form {
@@ -35,6 +35,12 @@
     cursor: pointer;
 }
 
+[data-theme="light"] .graph {
+    background-color: #fefefe;
+    border-color: black;
+}
+
 [data-theme="dark"] .graph {
-    filter: invert(1);
+    background-color: #000;
+    border-color: white;
 }

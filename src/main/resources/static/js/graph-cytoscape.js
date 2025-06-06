@@ -1,6 +1,11 @@
 const INDIVIDUALS = "indivs";
 const SELECTED = ':selected';
 const HIGHLIGHTED = 'highlighted';
+const THEME_ATTRIBUTE = 'data-theme';
+
+function getTheme() {
+    return document.documentElement.getAttribute(THEME_ATTRIBUTE);
+}
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -46,11 +51,12 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     };
 
-    let style = [
+    let lightStyle = [
         {
             selector: 'node',
             style: {
-                'background-color': '#999',
+                'background-color': '#999999',
+                'color': '#000000',
                 'label': 'data(label)',
                 'font-size': '10',
             },
@@ -68,8 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             selector: 'edge',
             style: {
-                'color': '#888',
-                'line-color': '#000',
+                'color': '#888888',
+                'line-color': '#000000',
                 'line-opacity': 0.12,
                 'width': 5,
                 'curve-style': 'straight-triangle',
@@ -102,6 +108,42 @@ document.addEventListener('DOMContentLoaded', function () {
             },
         }
     ];
+
+    // Light/dark style support must be under control of cytoscape for png export to work
+    function getStyle() {
+        return getTheme() === 'dark' ? invert(lightStyle) : lightStyle;
+    }
+
+    // Check if the theme changes
+    new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            if (mutation.attributeName === THEME_ATTRIBUTE) {
+                cy.style(getStyle());
+            }
+        });
+    }).observe(document.documentElement, {
+        attributes: true,
+    });
+
+    // Equivalent of filter(invert(1)) - colors must all be in #RRGGBB format
+    function invert(original) {
+        const copy = JSON.parse(JSON.stringify(original));
+        copy.forEach(s => {
+            let style = s.style;
+            for (let key in style) {
+                let value = style[key];
+                if (typeof value === 'string' && value.startsWith('#')) {
+                    inverted = invertHex(value.substring(1));
+                    style[key] = '#' + inverted;
+                }
+            }
+        });
+        return copy;
+    }
+
+    function invertHex(hex) {
+        return (Number(`0x1${hex}`) ^ 0xFFFFFF).toString(16).substring(1).toUpperCase()
+    }
 
     let cy = null;
 
@@ -151,6 +193,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return [...new Set(a).union(new Set(b))];
     }
 
+    function isDark() {
+        return getTheme() === 'dark';
+    }
+
     function setupControls() {
         setupControl("type", defaultLayout.name, (newValue) => {
             currentLayout = getLayout(newValue);
@@ -194,10 +240,11 @@ document.addEventListener('DOMContentLoaded', function () {
         png.onclick = (e) => {
             e.preventDefault();
             let png64 = cy.png({
-                output: 'base64'
+                output: 'base64',
+                scale: 2,
+                bg: isDark() ? '#000000' : '#FFFFFF',
             });
             openBase64InNewTab(png64, 'image/png');
-            // document.querySelector('#png-eg').setAttribute('src', png64);
         };
 
         const save = document.getElementById("save");
@@ -254,11 +301,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function getValue(name) {
-        const ctrl = document.getElementById(name);
-        return ctrl.value;
-    }
-
     function reload() {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
@@ -270,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => {
                 response.json().then(json => {
                     const type = urlSearchParams.get("type");
-                    buildGraph(type, json.elements);
+                    buildGraph(type, json.elements, getStyle());
                 });
             });
     }
@@ -330,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function buildGraph(type, elements) {
+    function buildGraph(type, elements, style) {
         currentLayout = getLayout(type);
         const spaceCtrl = document.getElementById("space");
         setLengthProp(parseInt(spaceCtrl.value));
