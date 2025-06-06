@@ -1,10 +1,11 @@
 package org.ontbrowser.www.renderer;
 
-import org.ontbrowser.www.url.URLScheme;
 import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
@@ -20,14 +21,16 @@ public class OWLHTMLRenderer implements ElementRenderer<OWLObject>{
 
     public OWLHTMLRenderer(final ShortFormProvider sfp,
                            final OntologyIRIShortFormProvider ontSfp,
+                           final IRIShortFormProvider iriSfp,
                            final URLScheme urlScheme,
                            final OWLOntology ont,
-                           final OWLEntityFinder finder) {
-
+                           final OWLEntityFinder finder
+    ) {
         stringRenderer = new MOSStringRenderer(finder, ont);
         rendererVisitor = new OWLHTMLVisitor(
                 sfp,
                 ontSfp,
+                iriSfp,
                 urlScheme,
                 ont,
                 finder);

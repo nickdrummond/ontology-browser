@@ -1,12 +1,13 @@
 package org.ontbrowser.www.renderer;
 
-import org.eclipse.rdf4j.model.vocabulary.SKOSXL;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.AnnotationValueShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
-import org.semanticweb.owlapi.vocab.SKOSVocabulary;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
 
 import static org.ontbrowser.www.renderer.Lang.createLangMap;
 
@@ -18,75 +19,20 @@ import static org.ontbrowser.www.renderer.Lang.createLangMap;
 public class LabelShortFormProvider implements ShortFormProvider {
 
     private final AnnotationValueShortFormProvider delegate;
-    private final boolean reifyRendering;
-    private final Set<OWLOntology> ontologies;
-    private final OWLDataFactory df;
 
     public LabelShortFormProvider(final OWLAnnotationProperty annotProp,
                                   final String lang,
                                   final Set<OWLOntology> ontologies,
                                   final ShortFormProvider defaultSFP) {
-        this.ontologies = ontologies;
-        this.df = ontologies.iterator().next().getOWLOntologyManager().getOWLDataFactory();
-
-        reifyRendering = isSkosXLLabelAnnotation(annotProp);
-        if (reifyRendering) {
-            OWLAnnotationProperty literalForm = df.getOWLAnnotationProperty(SKOSXL.LITERAL_FORM.toString());
-            delegate = new AnnotationValueShortFormProvider(
-                    Collections.singletonList(literalForm),
-                    createLangMap(literalForm, lang),
-                    ontologies::stream,
-                    defaultSFP);
-        }
-        else {
-            delegate = new AnnotationValueShortFormProvider(
-                    Collections.singletonList(annotProp),
-                    createLangMap(annotProp, lang),
-                    ontologies::stream,
-                    defaultSFP);
-        }
-    }
-
-    private boolean isSkosXLLabelAnnotation(OWLAnnotationProperty annotProp) {
-        return annotProp.getIRI().toString().equals(SKOSXL.PREF_LABEL.toString());
+        delegate = new AnnotationValueShortFormProvider(
+                Collections.singletonList(annotProp),
+                createLangMap(annotProp, lang),
+                ontologies::stream,
+                defaultSFP);
     }
 
     public String getShortForm(OWLEntity owlEntity) {
-        if (reifyRendering && isSkosConcept(owlEntity)) {
-            Optional<OWLNamedIndividual> label = getLabelInstance(owlEntity.asOWLNamedIndividual());
-            if (label.isPresent()) {
-                return delegate.getShortForm(label.get());
-            }
-        }
         return delegate.getShortForm(owlEntity);
-    }
-
-    private Optional<OWLNamedIndividual> getLabelInstance(OWLNamedIndividual ind) {
-        OWLAnnotationProperty prefLabel = df.getOWLAnnotationProperty(SKOSXL.PREF_LABEL.toString());
-        for (OWLOntology o : ontologies) {
-            for (OWLAnnotationAssertionAxiom annot : o.getAnnotationAssertionAxioms(ind.getIRI())) {
-                if (annot.getProperty().equals(prefLabel)) {
-                    Optional<IRI> value = annot.getValue().asIRI();
-                    // TODO should check if there is an individual with this IRI
-                    if (value.isPresent()) {
-                        return Optional.of(df.getOWLNamedIndividual(value.get()));
-                    }
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
-    private boolean isSkosConcept(OWLEntity owlEntity) {
-        if (owlEntity.isOWLNamedIndividual()) {
-            OWLClass skosConcept = df.getOWLClass(SKOSVocabulary.CONCEPT.getIRI());
-            for (OWLOntology o : ontologies) {
-                if (o.containsAxiom(df.getOWLClassAssertionAxiom(skosConcept, owlEntity.asOWLNamedIndividual()))) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override

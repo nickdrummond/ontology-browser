@@ -65,10 +65,13 @@ public class KitConfig {
 
     @Bean
     public RendererFactory rendererFactory(OWLHTMLKit kit) {
-        return new RendererFactory(kit.getShortFormProvider(),
+        return new RendererFactory(
+                kit.getShortFormProvider(),
                 kit.getOntologySFP(),
+                kit.getIriShortFormProvider(),
                 kit.getURLScheme(),
-                kit.getFinder());
+                kit.getFinder()
+        );
     }
 
     @Profile("lucene")

@@ -1,9 +1,9 @@
 package org.ontbrowser.www.kit.impl;
 
 import org.ontbrowser.www.kit.Config;
-import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.renderer.*;
 import org.ontbrowser.www.url.RestURLScheme;
 import org.ontbrowser.www.url.URLScheme;
@@ -14,14 +14,12 @@ import org.semanticweb.owlapi.expression.ShortFormEntityChecker;
 import org.semanticweb.owlapi.io.ToStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class OWLHTMLKitInternals implements OWLHTMLKit {
 
@@ -30,6 +28,8 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     private ShortFormProvider shortFormProvider;
 
     private OntologyIRIShortFormProvider ontologySFP;
+
+    private PrefixIRIShortFormProvider prefixIRIProvider;
 
     private OWLEntityChecker owlEntityChecker;
 
@@ -47,6 +47,7 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
 
     private MOSStringRenderer stringRenderer;
     private EntityIdLookup entityIdLookup;
+    private Map<String, String> prefixes;
 
     public OWLHTMLKitInternals(
             final OWLOntology rootOntology,
@@ -152,26 +153,37 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
 
     @Override
     public Map<String, String> getPrefixes() {
-        var format = rootOntology.getFormat();
-        if (format != null && format.isPrefixOWLDocumentFormat()) {
-            return format.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap();
+        if (prefixes == null) {
+            prefixes = new HashMap<>();
+            prefixes.put("swrlb:", "http://www.w3.org/2003/11/swrlb#");
+            var format = rootOntology.getFormat();
+            if (format != null && format.isPrefixOWLDocumentFormat()) {
+                prefixes.putAll(format.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap());
+            }
         }
-        else {
-            return Map.of();
+        return prefixes;
+    }
+
+    @Override
+    public IRIShortFormProvider getIriShortFormProvider() {
+        if (prefixIRIProvider == null) {
+            prefixIRIProvider = new PrefixIRIShortFormProvider(getPrefixes());
         }
+        return prefixIRIProvider;
     }
 
     private ShortFormProvider getInternalSFP() {
         if (shortFormProvider == null){
-            OWLDataFactory df = mngr.getOWLDataFactory();
-            OWLAnnotationProperty labelAnnotationProperty = df.getOWLAnnotationProperty(config.labelIRI());
+            var df = mngr.getOWLDataFactory();
+            var labelAnnotationProperty = df.getOWLAnnotationProperty(config.labelIRI());
+            var noLabelSFP = new FixedSimpleShortFormProvider(getIriShortFormProvider());
             if (VocabUtils.isSkosXLLabelAnnotation(labelAnnotationProperty)) {
                 shortFormProvider = new SkosXLShortFormProvider(
-                        config.labelLang(), getOntologies(), new FixedSimpleShortFormProvider());
+                        config.labelLang(), getOntologies(), noLabelSFP);
             }
             else {
                 shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
-                        config.labelLang(), getOntologies(), new FixedSimpleShortFormProvider());
+                        config.labelLang(), getOntologies(), noLabelSFP);
             }
         }
         return shortFormProvider;

@@ -79,6 +79,7 @@ public class LuceneSearchService implements SearchService, RestartListener {
     private void doIndex() {
         var df = kit.getOWLOntologyManager().getOWLDataFactory();
 
+        // RDFS:label short form provider on top of the default
         var labelProp = OWLRDFVocabulary.RDFS_LABEL.getIRI();
         var labelAnnotationProperty = df.getOWLAnnotationProperty(labelProp);
         var labelSfp = new LabelShortFormProvider(

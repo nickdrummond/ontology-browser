@@ -9,6 +9,7 @@ import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
@@ -107,5 +108,10 @@ public class DelegatingOWLHTMLKit implements OWLHTMLKit {
     @Override
     public Map<String, String> getPrefixes() {
         return delegate.getPrefixes();
+    }
+
+    @Override
+    public IRIShortFormProvider getIriShortFormProvider() {
+        return delegate.getIriShortFormProvider();
     }
 }

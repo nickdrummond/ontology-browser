@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.search.EntitySearcher;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLFacet;
@@ -44,6 +45,8 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     // the subset and equivalence symbols can be encoded in HTML
     private static final boolean USE_SYMBOLS = true;
 
+    private final IRIShortFormProvider iriShortFormProvider;
+
     // the active objects currently on the page (will be highlighted)
     private Set<OWLObject> activeObjects = Collections.emptySet();
 
@@ -62,11 +65,13 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
     public OWLHTMLVisitor(
             ShortFormProvider sfProvider,
             OntologyIRIShortFormProvider ontologySFProvider,
+            IRIShortFormProvider iriShortFormProvider,
             URLScheme urlScheme,
             OWLOntology ont,
             OWLEntityFinder finder) {
         this.sfProvider = sfProvider;
         this.ontologyIriSFProvider = ontologySFProvider;
+        this.iriShortFormProvider = iriShortFormProvider;
         this.urlScheme = urlScheme;
         this.ont = ont;
         this.finder = finder;
@@ -432,57 +437,91 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     @Override
     public void visit(SWRLRule swrlRule) {
-        // SWRL not supported
+        writeOpList(swrlRule.bodyList(), " ^ ");
+        write(" &rarr; ");
+        writeOpList(swrlRule.headList(), " ^ ");
     }
 
     @Override
     public void visit(SWRLClassAtom swrlClassAtom) {
-        // SWRL not supported
+        var predicate = swrlClassAtom.getPredicate();
+        if (predicate.isAnonymous()) {
+            write(OPEN_PAREN);
+            predicate.accept(this);
+            write(CLOSE_PAREN);
+        }
+        else {
+            predicate.accept(this);
+        }
+        writeSWRLUnaryArg(swrlClassAtom);
     }
 
     @Override
     public void visit(SWRLDataRangeAtom swrlDataRangeAtom) {
-        // SWRL not supported
+        swrlDataRangeAtom.getPredicate().accept(this);
+        writeSWRLUnaryArg(swrlDataRangeAtom);
     }
 
     @Override
     public void visit(SWRLObjectPropertyAtom swrlObjectPropertyAtom) {
-        // SWRL not supported
+        swrlObjectPropertyAtom.getPredicate().accept(this);
+        writeSWRLBinaryArgs(swrlObjectPropertyAtom);
     }
 
     @Override
     public void visit(SWRLDataPropertyAtom swrlDataPropertyAtom) {
-        // SWRL not supported
+        swrlDataPropertyAtom.getPredicate().accept(this);
+        writeSWRLBinaryArgs(swrlDataPropertyAtom);
     }
 
     @Override
     public void visit(SWRLBuiltInAtom swrlBuiltInAtom) {
-        // SWRL not supported
+        write(iriShortFormProvider.getShortForm(swrlBuiltInAtom.getPredicate()));
+        write(OPEN_PAREN);
+        writeOpList(swrlBuiltInAtom.getArguments(), ", ");
+        write(CLOSE_PAREN);
     }
 
     @Override
     public void visit(SWRLVariable swrlVariable) {
-        // SWRL not supported
+        write("?");
+        write(swrlVariable.getIRI().getFragment());
     }
 
     @Override
     public void visit(SWRLIndividualArgument swrlIndividualArgument) {
-        // SWRL not supported
+        swrlIndividualArgument.getIndividual().accept(this);
     }
 
     @Override
     public void visit(SWRLLiteralArgument swrlLiteralArgument) {
-        // SWRL not supported
+        swrlLiteralArgument.getLiteral().accept(this);
     }
 
     @Override
     public void visit(SWRLSameIndividualAtom swrlSameIndividualAtom) {
-        // SWRL not supported
+        write("sameAs"); // IRI is a bit naff http://www.w3.org/2003/11/swrl#SameIndividualsAtom
+        writeSWRLBinaryArgs(swrlSameIndividualAtom);
     }
 
     @Override
     public void visit(SWRLDifferentIndividualsAtom swrlDifferentIndividualsAtom) {
-        // SWRL not supported
+        write("differentFrom"); // IRI is a bit naff http://www.w3.org/2003/11/swrl#DifferentIndividualsAtom
+        writeSWRLBinaryArgs(swrlDifferentIndividualsAtom);
+    }
+
+    private void writeSWRLUnaryArg(SWRLUnaryAtom<?> swrlClassAtom) {
+        write(OPEN_PAREN);
+        swrlClassAtom.getArgument().accept(this);
+        write(CLOSE_PAREN);
+    }
+
+    private void writeSWRLBinaryArgs(SWRLBinaryAtom args) {
+        write(OPEN_PAREN);
+        args.getFirstArgument().accept(this);
+        write(", ");
+        args.getSecondArgument().accept(this);
+        write(CLOSE_PAREN);
     }
 
     @Override

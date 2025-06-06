@@ -1,12 +1,13 @@
 package org.ontbrowser.www.renderer;
 
-import org.ontbrowser.www.url.URLScheme;
-import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.io.PrintWriter;
@@ -41,9 +42,11 @@ public class OWLHTMLVisitorTest {
     private final OWLHTMLVisitor visitor = new OWLHTMLVisitor(
             mock(ShortFormProvider.class),
             mock(OntologyShortFormProvider.class),
+            mock(IRIShortFormProvider.class),
             mock(URLScheme.class),
             mock(OWLOntology.class),
-            mock(OWLEntityFinder.class));
+            mock(OWLEntityFinder.class)
+    );
 
     @Test
     public void test() {
