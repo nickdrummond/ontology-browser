@@ -605,7 +605,7 @@ form#load {
     align-items: center;
 }
 
-#query-submit {
+.icon-button {
     font-size: 2rem;
     margin: 5px;
     background: none;
@@ -613,7 +613,7 @@ form#load {
     cursor: pointer;
 }
 
-#query-submit:hover {
+.icon-button:hover {
     background-color: rgba(207, 207, 207, 0.49);
     border-radius: 1rem;
 }

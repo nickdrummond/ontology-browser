@@ -249,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const save = document.getElementById("save");
         save.onclick = (e) => {
             e.preventDefault();
+            console.log("Saving graph layout to local storage");
             const params = new URLSearchParams(window.location.search);
             localStorage.setItem(params.toString(), JSON.stringify(cy.json()));
         };
@@ -256,6 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const recover = document.getElementById("recover");
         recover.onclick = (e) => {
             e.preventDefault();
+            console.log("Recovering graph layout from local storage");
             const params = new URLSearchParams(window.location.search);
             const saved = localStorage.getItem(params.toString());
             if (saved != null) {
@@ -308,12 +310,12 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(url, {
             headers: myHeaders,
         })
-            .then(response => {
-                response.json().then(json => {
-                    const type = urlSearchParams.get("type");
-                    buildGraph(type, json.elements, getStyle());
-                });
+        .then(response => {
+            response.json().then(json => {
+                const type = urlSearchParams.get("type");
+                buildGraph(type, json.elements, getStyle());
             });
+        });
     }
 
     function append(labels, ids) {
