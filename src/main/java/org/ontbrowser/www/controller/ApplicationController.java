@@ -1,5 +1,7 @@
 package org.ontbrowser.www.controller;
 
+import org.ontbrowser.www.feature.stats.EntityCounts;
+import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.RendererFactory;
@@ -24,8 +26,16 @@ public abstract class ApplicationController {
     @Autowired
     protected RendererFactory rendererFactory;
 
+    @Autowired
+    private StatsService statsService;
+
     @ModelAttribute("projectInfo")
     public ProjectInfo getProjectInfo() {
         return projectInfo;
+    }
+
+    @ModelAttribute("entityCounts")
+    public EntityCounts getEntityCounts() {
+        return statsService.getEntityCountsTotal();
     }
 }

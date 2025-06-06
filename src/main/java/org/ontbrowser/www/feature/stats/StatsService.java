@@ -5,12 +5,16 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Set;
+
+import static org.ontbrowser.www.feature.stats.StatsHelper.getBarData;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -18,10 +22,14 @@ public class StatsService implements RestartListener {
 
     private static final Logger log = LoggerFactory.getLogger(StatsService.class);
 
+    private final OWLHTMLKit kit;
+
     private final LRUMap<StatsMemo, Stats> cache = new LRUMap<>(20);
+    private EntityCounts entityCountsTotal = null;
 
     public StatsService(OWLHTMLKit kit) {
         kit.registerListener(this);
+        this.kit = kit;
     }
 
     public Stats<OWLClass> getClassStats(String type, OWLReasoner reasoner) {
@@ -61,9 +69,69 @@ public class StatsService implements RestartListener {
         return cache.computeIfAbsent(memo, m -> new TreeStats<>(hierarchyService));
     }
 
+
+    private AxiomTypeCounts getAxiomsTypeCounts(OWLOntology ont, Imports imports) {
+        var counts = new AxiomTypeCounts();
+        AxiomType.AXIOM_TYPES.stream()
+                .filter(axiomType ->
+                        axiomType != AxiomType.ANNOTATION_ASSERTION &&
+                                axiomType != AxiomType.DECLARATION)
+                .forEach(axiomType ->
+                        counts.put(axiomType, ont.getAxiomCount(axiomType, imports))
+                );
+        return counts;
+    }
+
+    // TODO caching
+    public OntologyStats getOntologyStats(OWLOntology ont, Imports imports) {
+        return new OntologyStats(
+                getCounts(ont, imports),
+                getAxiomCounts(ont, imports),
+                getAxiomsTypeCounts(ont, imports),
+                getChildCountDistribution(ont, imports)
+        );
+    }
+
+    private Set<Coords<Long>> getChildCountDistribution(OWLOntology ont, Imports imports) {
+        return getBarData(ont.classesInSignature(imports), cls -> getSubclassCount(cls, ont, imports));
+    }
+
+    private Long getSubclassCount(OWLClass cls, OWLOntology ont, Imports imports) {
+        return ont.referencingAxioms(cls, imports)
+                .filter(OWLSubClassOfAxiom.class::isInstance)
+                .filter(ax -> ((OWLSubClassOfAxiom) ax).getSuperClass().equals(cls))
+                .count();
+    }
+
+    private AxiomCounts getAxiomCounts(OWLOntology ont, Imports imports) {
+        int logicalAxiomCount = ont.getLogicalAxioms(imports).size();
+        int declarationCount = ont.getAxiomCount(AxiomType.DECLARATION, imports);
+        int annotationCount = ont.getAxioms(imports).size() - logicalAxiomCount - declarationCount;
+        return new AxiomCounts(logicalAxiomCount, declarationCount, annotationCount);
+    }
+
+    public EntityCounts getCounts(OWLOntology ont, Imports imports) {
+        return new EntityCounts(
+                ont.getClassesInSignature(imports).size(),
+                ont.getIndividualsInSignature(imports).size(),
+                ont.getObjectPropertiesInSignature(imports).size(),
+                ont.getDataPropertiesInSignature(imports).size(),
+                ont.getAnnotationPropertiesInSignature(imports).size(),
+                ont.getDatatypesInSignature(imports).size()
+        );
+    }
+
+    public EntityCounts getEntityCountsTotal() {
+        if (entityCountsTotal == null) {
+            this.entityCountsTotal = getCounts(kit.getRootOntology(), Imports.INCLUDED);
+        }
+        return entityCountsTotal;
+    }
+
     @Override
     public void onRestart() {
         log.info("Clearing stats cache");
         cache.clear();
+        entityCountsTotal = null;
     }
 }
