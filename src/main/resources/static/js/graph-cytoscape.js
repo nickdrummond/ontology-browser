@@ -1,6 +1,7 @@
 const INDIVIDUALS = "indivs";
 const SELECTED = ':selected';
 const HIGHLIGHTED = 'highlighted';
+
 document.addEventListener('DOMContentLoaded', function () {
 
     let currentLayout;
@@ -79,14 +80,14 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         {
-            selector: 'node:' + SELECTED,
+            selector: 'node' + SELECTED,
             style: {
                 'background-color': '#F08080',
             },
         },
 
         {
-            selector: 'edge:' + SELECTED,
+            selector: 'edge' + SELECTED,
             style: {
                 'line-color': '#F08080',
                 'line-opacity': 1,
