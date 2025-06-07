@@ -1,20 +1,17 @@
 package org.ontbrowser.www.feature.graph;
 
-import org.semanticweb.owlapi.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLProperty;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 // TODO could make the properties a list and use that order for display?
 public class GraphDescriptor {
 
-    private static final Logger log = LoggerFactory.getLogger(GraphDescriptor.class);
-
     private final OWLOntology ont;
-    private final OWLDataFactory df;
 
     private final Set<OWLProperty> withProperties = new HashSet<>();
     private final Set<OWLProperty> followProperties = new HashSet<>();
@@ -22,11 +19,11 @@ public class GraphDescriptor {
     private final Set<OWLProperty> withInverseProperties = new HashSet<>();
     private final Set<OWLProperty> withoutProperties = new HashSet<>();
     private final Set<OWLObject> owlObjects = new HashSet<>();
+
     private int depth = 1;
 
     public GraphDescriptor(OWLOntology ont) {
         this.ont = ont;
-        this.df = ont.getOWLOntologyManager().getOWLDataFactory();
     }
 
     public GraphDescriptor withProperties(Set<? extends OWLProperty> properties) {

@@ -28,12 +28,12 @@ import java.util.stream.Stream;
 @RestController
 @Profile("graph")
 @RequestMapping(value = "/graph")
-public class CytoscapeController extends ApplicationController {
+public class GraphController extends ApplicationController {
 
     private final ParserService parserService;
     private final ReasonerService reasonerService;
 
-    public CytoscapeController(
+    public GraphController(
             ParserService parserService,
             ReasonerService reasonerService
     ) {
@@ -47,7 +47,7 @@ public class CytoscapeController extends ApplicationController {
             Model model
     ) {
         model.addAttribute("title", "Graph");
-        return new ModelAndView("cytoscape");
+        return new ModelAndView("graph");
     }
 
     // TODO if no query or indivs, get all with property
