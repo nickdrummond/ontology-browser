@@ -51,12 +51,21 @@
             <label for="without">Without</label>
             <input id="without" type="text"/>
 
-            <label for="follow">Follow</label>
-            <input id="follow" type="text"/>
-
             <label for="parents">Group by</label>
             <input id="parents" type="text"/>
 
+            <label for="follow">Follow</label>
+            <input id="follow" type="text"/>
+
+            <label for="depth">Depth</label>
+            <input id="depth" type="range" min="0" max="100" value="50" class="slider"/>
+
+            <label for="graph-search">Graph search</label>
+            <input id="graph-search" type="text"/>
+
+            <div id="selected-nodes-wrapper">
+                <ul id="selected-nodes"></ul>
+            </div>
         </form>
     </div>
 
@@ -95,6 +104,10 @@
                 </svg>
             </li>
             <li>
+                <label for="space">Space</label>
+                <input id="space" type="range" min="0" max="100" value="50" class="slider"/>
+            </li>
+            <li>
                 <label for="type">Graph Type</label>
                 <select id="type">
                     <option value="fcose">fcose</option>
@@ -107,14 +120,6 @@
                     <option value="concentric">concentric</option>
                     <option value="grid">grid</option>
                 </select>
-            </li>
-            <li>
-                <label for="depth">Depth</label>
-                <input id="depth" type="range" min="0" max="100" value="50" class="slider"/>
-            </li>
-            <li>
-                <label for="space">Space</label>
-                <input id="space" type="range" min="0" max="100" value="50" class="slider"/>
             </li>
         </ul>
         <div class="graph"></div>

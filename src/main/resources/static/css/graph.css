@@ -2,6 +2,7 @@
 /* do not set to 100% as it infinitely expands */
 .graph-container {
     flex-grow: 2;
+    height: 100%;
 }
 
 .graph {
@@ -12,7 +13,7 @@
 }
 
 .graph-controls form {
-    flex-grow: 1;
+    height: 100%;
     display: flex;
     flex-direction: column;
     margin: 1em;
@@ -20,6 +21,18 @@
 
 .graph-controls input, .graph-controls select {
     margin-bottom: 1em;
+}
+
+#selected-nodes-wrapper {
+    overflow: auto;
+}
+
+#selected-nodes {
+    padding-left: 0;
+}
+
+#selected-nodes li:hover {
+    cursor: pointer;
 }
 
 .graph-actions {

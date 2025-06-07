@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const defaultLayout = {
         name: 'cola',
-        animationDuration: 10000,
+        animationDuration: 5000,
     }
 
     const layouts = {
@@ -196,6 +196,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return getTheme() === 'dark';
     }
 
+    function search(value) {
+        cy.edges().removeClass(HIGHLIGHTED);
+        cy.nodes().unselect();
+        if (value !== "") {
+            const sel = cy.nodes(`[label ^= "${value}"]`); // starts with
+            sel.select();
+            nodeSelected(sel);
+        } else {
+            updatedSelectedList([]);
+            cy.reset();
+        }
+    }
+
     function setupControls() {
         setupControl("type", defaultLayout.name, (newValue) => {
             currentLayout = getLayout(newValue);
@@ -213,14 +226,15 @@ document.addEventListener('DOMContentLoaded', function () {
         setupControl("without", null, newValue => reload());
         setupControl("follow", null, newValue => reload());
         setupControl("parents", null, newValue => reload());
+        setupControl("graph-search", null, null, newValue => search(newValue));
 
         const refocus = document.getElementById("refocus");
         refocus.onclick = (e) => {
             e.preventDefault();
             const sel = cy.$(SELECTED).map(s => s.data().label).join(',');
-            const indivs = document.getElementById(INDIVIDUALS);
-            indivs.value = sel;
-            update(INDIVIDUALS, indivs, () => reload());
+            document.getElementById(INDIVIDUALS).value = sel;
+            updateAddress(INDIVIDUALS, sel);
+            reload();
         };
 
         document.getElementById("expand").onclick = (e) => {
@@ -286,16 +300,13 @@ document.addEventListener('DOMContentLoaded', function () {
         window.open(fileURL);
     }
 
-    function update(name, ctrl, changed) {
+    function updateAddress(name, value) {
         const params = new URLSearchParams(window.location.search);
-        params.set(name, ctrl.value);
+        params.set(name, value);
         window.history.pushState({}, '', window.location.pathname + '?' + params);
-        if (cy) {
-            changed(ctrl.value);
-        }
     }
 
-    function setupControl(name, defaultValue, changed) {
+    function setupControl(name, defaultValue, changed, edited) {
         const ctrl = document.getElementById(name);
         if (ctrl) {
             const type = new URLSearchParams(window.location.search).get(name);
@@ -304,9 +315,17 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (defaultValue) {
                 ctrl.value = defaultValue;
             }
-            ctrl.addEventListener('change', function () {
-                update(name, ctrl, changed);
-            });
+            if (changed) {
+                ctrl.addEventListener('change', () => {
+                    updateAddress(name, ctrl.value);
+                    changed(ctrl.value);
+                });
+            }
+            if (edited) {
+                ctrl.addEventListener('keyup', (event) => {
+                    edited(ctrl.value);
+                });
+            }
         }
     }
 
@@ -318,12 +337,12 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(url, {
             headers: myHeaders,
         })
-        .then(response => {
-            response.json().then(json => {
-                const type = urlSearchParams.get("type");
-                buildGraph(type, json.elements, getStyle());
+            .then(response => {
+                response.json().then(json => {
+                    const type = urlSearchParams.get("type");
+                    buildGraph(type, json.elements, getStyle());
+                });
             });
-        });
     }
 
     function append(labels, ids) {
@@ -336,21 +355,21 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(url, {
             headers: myHeaders,
         })
-        .then(response => {
-            response.json().then(json => {
-                let elements = json.elements;
+            .then(response => {
+                response.json().then(json => {
+                    let elements = json.elements;
 
-                // remove existing edges that have the requested nodes as source
-                // to prevent duplicates
-                ids.forEach(id => {
-                    cy.remove('edge[source="' + id + '"]');
-                })
+                    // remove existing edges that have the requested nodes as source
+                    // to prevent duplicates
+                    ids.forEach(id => {
+                        cy.remove('edge[source="' + id + '"]');
+                    })
 
-                cy.add(elements);
-                cy.layout(currentLayout).run();
-                cy.ready();
+                    cy.add(elements);
+                    cy.layout(currentLayout).run();
+                    cy.ready();
+                });
             });
-        });
     }
 
     function remove(labels, ids) {
@@ -380,11 +399,54 @@ document.addEventListener('DOMContentLoaded', function () {
         node.css("shape", getShape(node));
     }
 
-    function highlightConnectedEdges() {
+    function highlightConnectedEdges(sel) {
         cy.edges().removeClass(HIGHLIGHTED);
-        cy.$(SELECTED).map(node => {
+        sel.map(node => {
             cy.edges("[source='" + node.id() + "']").addClass(HIGHLIGHTED);
         });
+    }
+
+    const expand = (event, originalEvent) => {
+        const node = originalEvent.target;
+        const sel = node.data().label;
+        const id = node.data().id;
+        const indivsId = INDIVIDUALS;
+        const indivs = document.getElementById(indivsId);
+        const current = indivs.value.split(",");
+        if (!current.includes(sel)) {
+            current.push(sel);
+            indivs.value = current.join(",");
+            append(sel, [id]);
+            updateAddress(indivsId, indivs.value);
+        }
+    }
+
+    function updatedSelectedList(sel) {
+        const selectedList = document.getElementById("selected-nodes");
+        while (selectedList.firstChild) {
+            selectedList.removeChild(selectedList.lastChild);
+        }
+        sel.forEach(node => {
+            const li = document.createElement("li");
+            li.textContent = node.data().label;
+            li.onclick = () => {
+                cy.$(SELECTED).unselect();
+                node.select();
+                nodeSelected([node]);
+            };
+            selectedList.appendChild(li);
+        });
+    }
+
+    const nodeSelected = (sel) => {
+        updatedSelectedList(sel);
+        highlightConnectedEdges(sel);
+        if (sel.length === 1) {
+            cy.center(sel);
+        }
+        if (sel.length > 1) {
+            cy.fit(sel);
+        }
     }
 
     function buildGraph(type, elements, style) {
@@ -397,25 +459,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.nodes().forEach(function (node) {
                     render(node);
                 });
-                highlightConnectedEdges();
+                nodeSelected(this.$(SELECTED));
             },
             elements: elements,
             style: style,
             layout: currentLayout,
         });
-        const doubleClickDelayMs = 300;
-        let previousTapStamp;
 
         cy.on('click', function (e) {
-            if (e.target.cy) {
-                if (e.target.group() === 'nodes') {
-                    // Give it a sec to allow the selection to update
-                    setTimeout(() => {
-                        highlightConnectedEdges();
-                    }, 100);
-                }
+            if (e.target.cy && e.target.group() === 'nodes') {
+                // Give it a sec to allow the selection to update
+                setTimeout(() => {
+                    nodeSelected(cy.$(SELECTED));
+                }, 100);
             }
         });
+
+        const doubleClickDelayMs = 300;
+        let previousTapStamp;
 
         cy.on('tap', function (e) {
             const currentTapStamp = e.timeStamp;
@@ -427,20 +488,7 @@ document.addEventListener('DOMContentLoaded', function () {
             previousTapStamp = currentTapStamp;
         });
 
-        cy.on('doubleTap', 'node', function (event, originalEvent) {
-            const node = originalEvent.target;
-            const sel = node.data().label;
-            const id = node.data().id;
-            const indivsId = INDIVIDUALS;
-            const indivs = document.getElementById(indivsId);
-            const current = indivs.value.split(",");
-            if (!current.includes(sel)) {
-                current.push(sel);
-                indivs.value = current.join(",");
-                append(sel, [id]);
-                update(indivsId, indivs, () => {});
-            }
-        });
+        cy.on('doubleTap', 'node', expand);
     }
 
     reload();
