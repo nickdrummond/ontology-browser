@@ -2,7 +2,7 @@
     <div class="entity-header">
         <h2 th:text="${title}">An OWLClass</h2>
 
-        <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
+        <span th:replace="~{base :: graphLink}"></span>
 
         <div class="iri">
             <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>

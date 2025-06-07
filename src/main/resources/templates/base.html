@@ -13,7 +13,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet">
 
     <link rel='icon' type='image/x-icon' href='/images/favicon.ico'
           th:href='@{/images/favicon.ico}'/>
@@ -78,7 +79,9 @@
     <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'git')}">
         <li><a th:href="@{/git/history}">Git</a></li>
     </th:block>
-    <th:block th:if="${entityCounts.classes > 0}"><li><a th:href='@{/classes}'>Classes</a></li></th:block>
+    <th:block th:if="${entityCounts.classes > 0}">
+        <li><a th:href='@{/classes}'>Classes</a></li>
+    </th:block>
     <li th:if="${entityCounts.individuals > 0}">Individuals:
         <a th:href='@{/individuals}'>by&nbsp;Type</a> /
         <a th:href='@{/relations/onproperty}'>by&nbsp;Relation</a> /
@@ -86,9 +89,12 @@
     <li>Properties:
         <th:block th:if="${entityCounts.objectProperties > 0}"><a th:href='@{/objectproperties}'>Object</a> /</th:block>
         <th:block th:if="${entityCounts.dataProperties > 0}"><a th:href='@{/dataproperties}'>Data</a> /</th:block>
-        <th:block th:if="${entityCounts.annotationProperties > 0}"><a th:href='@{/annotationproperties}'>Annotation</a></th:block>
+        <th:block th:if="${entityCounts.annotationProperties > 0}"><a th:href='@{/annotationproperties}'>Annotation</a>
+        </th:block>
     </li>
-    <th:block th:if="${entityCounts.datatypes > 0}"><li><a th:href='@{/datatypes}'>Datatypes</a></li></th:block>
+    <th:block th:if="${entityCounts.datatypes > 0}">
+        <li><a th:href='@{/datatypes}'>Datatypes</a></li>
+    </th:block>
     <li><a th:href='@{/axioms}'>Axioms</a></li>
     <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'reasoners')}">
         <li><a th:href='@{/dlquery}'>DL&nbsp;Query</a></li>
@@ -100,9 +106,11 @@
     <li>Usage:
         <th:block th:if="${entityCounts.classes > 0}"><a th:href='@{/clouds/classes}'>cl</a> /</th:block>
         <th:block th:if="${entityCounts.individuals > 0}"><a th:href='@{/clouds/individuals}'>in</a> /</th:block>
-        <th:block th:if="${entityCounts.objectProperties > 0}"><a th:href='@{/clouds/objectproperties}'>op</a> /</th:block>
+        <th:block th:if="${entityCounts.objectProperties > 0}"><a th:href='@{/clouds/objectproperties}'>op</a> /
+        </th:block>
         <th:block th:if="${entityCounts.dataProperties > 0}"><a th:href='@{/clouds/dataproperties}'>dp</a> /</th:block>
-        <th:block th:if="${entityCounts.annotationProperties > 0}"><a th:href='@{/clouds/annotationproperties}'>ap</a> /</th:block>
+        <th:block th:if="${entityCounts.annotationProperties > 0}"><a th:href='@{/clouds/annotationproperties}'>ap</a> /
+        </th:block>
         <th:block th:if="${entityCounts.datatypes > 0}"><a th:href='@{/clouds/datatypes}'>dt</a></th:block>
     </li>
 </ul> <!-- tabs -->
@@ -144,8 +152,8 @@
      th:class='${"characteristic " + name}'>
 
     <div class="header">
-    <h4 th:text='${ch.name}'>Some Characteristic</h4>
-    <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
+        <h4 th:text='${ch.name}'>Some Characteristic</h4>
+        <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
     </div>
 
     <ul th:remove="all-but-first" th:class="${cls}">
@@ -325,6 +333,16 @@
         </li>
     </ul>
 </div>
+
+<span th:if="${graphLink != null}"
+      th:fragment="graphLink"
+      class="icon-button">
+<a th:href="${graphLink}">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+    <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+    <path d="M0 80C0 53.5 21.5 32 48 32l96 0c26.5 0 48 21.5 48 48l0 16 192 0 0-16c0-26.5 21.5-48 48-48l96 0c26.5 0 48 21.5 48 48l0 96c0 26.5-21.5 48-48 48l-96 0c-26.5 0-48-21.5-48-48l0-16-192 0 0 16c0 1.7-.1 3.4-.3 5L272 288l96 0c26.5 0 48 21.5 48 48l0 96c0 26.5-21.5 48-48 48l-96 0c-26.5 0-48-21.5-48-48l0-96c0-1.7 .1-3.4 .3-5L144 224l-96 0c-26.5 0-48-21.5-48-48L0 80z"/></svg>
+</a>
+</span>
 
 <div id='footer' th:fragment='footer'>
     <a href="#" id="darkmode" class="light">&#9790;</a>

@@ -52,7 +52,7 @@
             </div>
         </form>
 
-        <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
+        <span th:replace="~{base :: graphLink}"></span>
         <div id='resultsForm'>
             <!-- results will go here -->
             <p>Provide a class description in Manchester OWL Syntax.</p>

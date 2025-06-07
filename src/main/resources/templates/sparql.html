@@ -60,7 +60,7 @@
 <div th:if="${results != null}" id='resultsForm'>
     <h4>Results</h4>
     <span th:replace="~{base::paged (${pageData}, ${name})}">(2)</span>
-    <a th:if="${graphLink != null}" class="graph-button" th:href="${graphLink}">&#9738;</a>
+    <span th:replace="~{base :: graphLink}"></span>
 
     <table th:if="${!results.isEmpty()}">
         <thead>

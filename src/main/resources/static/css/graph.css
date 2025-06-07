@@ -35,22 +35,6 @@
     margin-bottom: auto;
 }
 
-.graph-actions .icon-button {
-    width: 2.5rem;
-    height: 2.5rem;
-    text-align: center;
-}
-
-.graph-actions svg {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-top: 0.5rem;
-}
-
-[data-theme="dark"] .graph-actions svg path {
-    fill: #b4b392;
-}
-
 [data-theme="light"] .graph {
     background-color: #fefefe;
     border-color: black;
