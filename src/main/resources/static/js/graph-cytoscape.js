@@ -223,8 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
             update(INDIVIDUALS, indivs, () => reload());
         };
 
-        const expand = document.getElementById("expand");
-        expand.onclick = (e) => {
+        document.getElementById("expand").onclick = (e) => {
             e.preventDefault();
             let selected = cy.$(SELECTED);
             const selectedLabels = selected.map(s => s.data().label);
@@ -235,8 +234,19 @@ document.addEventListener('DOMContentLoaded', function () {
             append(selectedLabels, selectedIds);
         };
 
-        const png = document.getElementById("png");
-        png.onclick = (e) => {
+        document.getElementById("delete").onclick = (e) => {
+            e.preventDefault();
+            let selected = cy.$(SELECTED);
+            const selectedLabels = selected.map(s => s.data().label);
+            const selectedIds = selected.map(s => s.data().id);
+            const current = document.getElementById(INDIVIDUALS);
+            let existingIndividuals = current.value.split(",");
+            const newIndividuals = existingIndividuals.filter(sel => !selectedLabels.includes(sel));
+            current.value = newIndividuals.join(',');
+            remove(selectedLabels, selectedIds);
+        };
+
+        document.getElementById("png").onclick = (e) => {
             e.preventDefault();
             let png64 = cy.png({
                 output: 'base64',
@@ -246,16 +256,14 @@ document.addEventListener('DOMContentLoaded', function () {
             openBase64InNewTab(png64, 'image/png');
         };
 
-        const save = document.getElementById("save");
-        save.onclick = (e) => {
+        document.getElementById("save").onclick = (e) => {
             e.preventDefault();
             console.log("Saving graph layout to local storage");
             const params = new URLSearchParams(window.location.search);
             localStorage.setItem(params.toString(), JSON.stringify(cy.json()));
         };
 
-        const recover = document.getElementById("recover");
-        recover.onclick = (e) => {
+        document.getElementById("recover").onclick = (e) => {
             e.preventDefault();
             console.log("Recovering graph layout from local storage");
             const params = new URLSearchParams(window.location.search);
@@ -328,21 +336,27 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(url, {
             headers: myHeaders,
         })
-            .then(response => {
-                response.json().then(json => {
-                    let elements = json.elements;
+        .then(response => {
+            response.json().then(json => {
+                let elements = json.elements;
 
-                    // remove existing edges that have the requested nodes as source
-                    // to prevent duplicates
-                    ids.forEach(id => {
-                        cy.remove('edge[source="' + id + '"]');
-                    })
+                // remove existing edges that have the requested nodes as source
+                // to prevent duplicates
+                ids.forEach(id => {
+                    cy.remove('edge[source="' + id + '"]');
+                })
 
-                    cy.add(elements);
-                    cy.layout(currentLayout).run();
-                    cy.ready();
-                });
+                cy.add(elements);
+                cy.layout(currentLayout).run();
+                cy.ready();
             });
+        });
+    }
+
+    function remove(labels, ids) {
+        ids.forEach(id => {
+            cy.remove('node[id="' + id + '"]');
+        })
     }
 
     function getShape(node) {
