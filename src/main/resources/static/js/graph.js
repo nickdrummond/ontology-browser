@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cy.edges().removeClass(HIGHLIGHTED);
         cy.nodes().unselect();
         if (value !== "") {
-            const sel = cy.nodes(`[label ^= "${value}"]`); // starts with
+            const sel = cy.nodes(`[label *= "${value}"]`); // starts with
             sel.select();
             nodeSelected(sel);
         } else {
@@ -489,8 +489,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         cy.on('doubleTap', 'node', expand);
+
+        setupControls();
     }
 
     reload();
-    setupControls();
 });
