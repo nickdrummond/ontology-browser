@@ -1,41 +1,42 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <th:block th:replace='~{base :: header (title=${title})}'/>
+    </head>
 
-<head>
-    <th:block  th:replace='~{base :: header (title=${title})}'/>
-</head>
+    <body class="wrapper">
+        <div th:replace='~{base :: title}'></div>
+        <div th:replace='~{base :: menu}'></div>
 
-<body class="wrapper">
+        <div id="main">
 
-<div th:replace='~{base :: title}'></div>
+            <div class='owlselector primary'>
+                <h4>Axiom types</h4>
+                <ul class="minihierarchy axiom-types">
+                    <li th:each="axiomType : ${axiomTypes}">
+                        <span class="axiom-category" th:text="${axiomType.category}">category</span>
+                        <a class="axiom-type"
+                           th:classappend="${type != null && type == axiomType.type} ? 'active-entity' : ''"
+                           th:href='${pageURIScheme.builder()
+                           .replaceQueryParam("type", axiomType.type.toString())
+                           .replaceQueryParam("start", 1)
+                           .build(true).toUri()}'
+                           th:text="${axiomType.name}">Axiom Type</a>
+                    </li>
+                </ul>
+            </div>
 
-<div th:replace='~{base :: menu}'></div>
+            <div id="content">
 
-<div id="main">
+                <h2 th:text="${title}">Title</h2>
 
-    <div class='owlselector primary'>
-        <h4>Axiom types</h4>
-        <ul class="minihierarchy axiom-types">
-            <li th:each="axiomType : ${axiomTypes}">
-                <span class="axiom-category" th:text="${axiomType.category}">category</span>
-                <a class="axiom-type" th:classappend="${type != null && type == axiomType.type} ? 'active-entity' : ''" th:href='${"?type=" + axiomType.type}' th:text="${axiomType.name}">Axiom Type</a>
-            </li>
-        </ul>
-    </div>
+                <div th:replace="~{base :: characteristic (${axioms})}">
+                    A characteristic
+                </div>
 
-    <div id="content">
-
-        <h2 th:text="${title}">Title</h2>
-
-        <div th:replace="~{base :: characteristic (${axioms})}">
-            A characteristic
+            </div>
         </div>
-
-    </div>
-</div>
-
-<div th:replace='~{base :: footer}'></div>
-
-</body>
+        <div th:replace='~{base :: footer}'></div>
+    </body>
 </html>

@@ -351,6 +351,47 @@ td.key {
     cursor: pointer;
 }
 
+#ontology-selector {
+    width: fit-content;
+}
+
+#ontology-selector ul {
+    opacity: 0;
+    position: absolute;
+    width: fit-content;
+    top: 2rem;
+    right: 0;
+    height: 0;
+    overflow: auto;
+    background-color: #fff;
+    padding-left: 0.5rem;
+}
+
+[data-theme="dark"] #ontology-selector ul {
+    filter: invert(100%);
+}
+
+[data-theme="dark"] #ontology-selector a {
+    filter: invert(100%);
+}
+
+/* show ontology selector when hover on current */
+#ontology-selector:hover ul {
+    opacity: 1;
+    height: 20rem;
+}
+
+/* or on the actual ontology selector */
+#ontology-selector ul:hover {
+    opacity: 1;
+    height: 20rem;
+}
+
+#ontology-selector ul li {
+    list-style: none;
+    white-space: nowrap;
+}
+
 #tabs {
     color: rgba(125, 125, 125, 0.8);
     margin: 0 0.5rem;

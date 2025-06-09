@@ -24,8 +24,8 @@ public class ReadOnlyOntologyControllerAdvice {
         this.ontService = ontService;
     }
 
-    @ModelAttribute
-    public OWLOntology injectParent(@RequestParam(required = false) final String ontId) {
+    @ModelAttribute()
+    public OWLOntology getOnt(@RequestParam(required = false) final String ontId) {
         if (ontId != null) {
             return ontService.getOntologyFor(ontId, kit);
         }

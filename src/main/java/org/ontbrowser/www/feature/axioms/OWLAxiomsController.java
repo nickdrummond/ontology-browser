@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.axioms;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -18,6 +19,7 @@ import static org.ontbrowser.www.feature.axioms.OWLAxiomsUtils.LOGICAL_AXIOMS_TY
 import static org.ontbrowser.www.feature.axioms.OWLAxiomsUtils.getAxiomTypes;
 import static org.semanticweb.owlapi.model.AxiomType.getAxiomType;
 
+// TODO remove ApplicationController
 @RestController
 @RequestMapping(value = "/axioms")
 public class OWLAxiomsController extends ApplicationController {
@@ -25,9 +27,12 @@ public class OWLAxiomsController extends ApplicationController {
     private static final String MODEL_KEY_AXIOMS = "axioms";
 
     private final OWLAxiomService axiomService;
+    private final CommonContent commonContent;
 
-    OWLAxiomsController(OWLAxiomService axiomService) {
+    OWLAxiomsController(OWLAxiomService axiomService,
+                        CommonContent commonContent) {
         this.axiomService = axiomService;
+        this.commonContent = commonContent;
     }
 
     @GetMapping("/")
@@ -58,6 +63,12 @@ public class OWLAxiomsController extends ApplicationController {
             HttpServletResponse response
     ) throws IOException {
 
+        if (start < 1) {
+            start = 1;
+        }
+        if (pageSize < 1) {
+            pageSize = DEFAULT_PAGE_SIZE;
+        }
         if (search != null) {
             if (search.isEmpty()) {
                 response.sendRedirect("/axioms");
@@ -88,6 +99,8 @@ public class OWLAxiomsController extends ApplicationController {
             }
         }
 
+        commonContent.addCommonContent(request, model);
+        model.addAttribute("ont", ont); // TODO why is this not alreay available?
         model.addAttribute("title", getTitle(search, type, ont, imports));
         model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
         model.addAttribute("axiomTypes", getAxiomTypes());

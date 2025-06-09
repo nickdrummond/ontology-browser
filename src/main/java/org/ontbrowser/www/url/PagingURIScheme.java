@@ -1,7 +1,11 @@
 package org.ontbrowser.www.url;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import java.net.URI;
+
+import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 
 public abstract class PagingURIScheme {
     protected final URI original;
@@ -9,6 +13,17 @@ public abstract class PagingURIScheme {
     protected PagingURIScheme(HttpServletRequest request) {
         String queryString = request.getQueryString();
         this.original = URI.create(queryString != null ? "?" + queryString : "");
+    }
+
+    public UriComponentsBuilder builder() {
+        return fromUri(original);
+    }
+
+    public URI replacingParam(String paramName, String paramValue) {
+        return builder()
+                .replaceQueryParam(paramName, paramValue)
+                .build(true) // state that all existing params are already encoded (do not double-encode)
+                .toUri();
     }
 
     // used in templates

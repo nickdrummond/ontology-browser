@@ -66,6 +66,17 @@
             <input type='submit' class="search-icon icon" value=""/>
         </form>
     </div>
+    <div th:if="${allOntologies != null && allOntologies.size() > 1}" id="ontology-selector">
+        <p th:text="${ontologiesSfp.getShortForm(ont)}">current ontology</p>
+        <ul>
+            <li th:each="ont : ${allOntologies}">
+                <a th:href='${pageURIScheme.replacingParam("ontId", ont.getOntologyID().hashCode().toString())}'
+                   th:text="${ontologiesSfp.getShortForm(ont)}">
+                    ontology
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <div id='menu' th:fragment="menu">
