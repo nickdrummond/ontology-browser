@@ -99,8 +99,7 @@ public class OWLAxiomsController extends ApplicationController {
             }
         }
 
-        commonContent.addCommonContent(request, model);
-        model.addAttribute("ont", ont); // TODO why is this not alreay available?
+        commonContent.addCommonContent(model, ont);
         model.addAttribute("title", getTitle(search, type, ont, imports));
         model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
         model.addAttribute("axiomTypes", getAxiomTypes());

@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -27,10 +28,14 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class OWLAnnotationPropertiesController extends ApplicationController {
 
     private final OWLAnnotationPropertiesService service;
+    private CommonContent commonContent;
 
     public OWLAnnotationPropertiesController(
-            OWLAnnotationPropertiesService service) {
+            OWLAnnotationPropertiesService service,
+            CommonContent commonContent
+    ) {
         this.service = service;
+        this.commonContent = commonContent;
     }
 
     @GetMapping(value = "/")
@@ -74,6 +79,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
+        commonContent.addCommonContent(model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
         getOWLAnnotationPropertyFragment(propertyId, ont, pageSize, with, model, request, response);

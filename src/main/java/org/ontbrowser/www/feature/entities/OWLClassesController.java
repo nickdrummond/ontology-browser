@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.Stats;
@@ -27,16 +28,18 @@ public class OWLClassesController extends ApplicationController {
     private final ReasonerFactoryService reasonerFactoryService;
     private final StatsService statsService;
     private final ReasonerService reasonerService;
+    private final CommonContent commonContent;
 
     public OWLClassesController(
             OWLClassesService service,
             ReasonerFactoryService reasonerFactoryService,
             StatsService statsService,
-            ReasonerService reasonerService) {
+            ReasonerService reasonerService, CommonContent commonContent) {
         this.service = service;
         this.reasonerFactoryService = reasonerFactoryService;
         this.statsService = statsService;
         this.reasonerService = reasonerService;
+        this.commonContent = commonContent;
     }
 
     private CommonFragments getCommon() {
@@ -73,6 +76,7 @@ public class OWLClassesController extends ApplicationController {
 
         var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
+        commonContent.addCommonContent(model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(owlClass));
         model.addAttribute("stats", statsService.getClassStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);

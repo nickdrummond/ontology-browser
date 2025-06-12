@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.hierarchy.OWLDatatypeHierarchyService;
 import org.ontbrowser.www.model.Tree;
@@ -26,10 +27,14 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 public class OWLDatatypesController extends ApplicationController {
 
     private final OWLDatatypesService service;
+    private final CommonContent commonContent;
 
     public OWLDatatypesController(
-            OWLDatatypesService service) {
+            OWLDatatypesService service,
+            CommonContent commonContent
+    ) {
         this.service = service;
+        this.commonContent = commonContent;
     }
 
     @GetMapping(value = "/")
@@ -72,6 +77,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
+        commonContent.addCommonContent(model, ont);
         model.addAttribute("hierarchy", prunedTree);
 
         getOWLDatatypeFragment(datatypeId, ont, pageSize, withOrEmpty, model, request, response);

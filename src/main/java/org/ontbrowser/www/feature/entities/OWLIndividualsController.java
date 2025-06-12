@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
@@ -43,18 +44,20 @@ public class OWLIndividualsController extends ApplicationController {
     private final ReasonerFactoryService reasonerFactoryService;
     private final ReasonerService reasonerService;
     private final StatsService statsService;
+    private final CommonContent commonContent;
 
     public OWLIndividualsController(
             OWLIndividualsService individualsService,
             OWLClassesService owlClassesService,
             ReasonerFactoryService reasonerFactoryService,
             ReasonerService reasonerService,
-            StatsService statsService) {
+            StatsService statsService, CommonContent commonContent) {
         this.individualsService = individualsService;
         this.owlClassesService = owlClassesService;
         this.reasonerFactoryService = reasonerFactoryService;
         this.reasonerService = reasonerService;
         this.statsService = statsService;
+        this.commonContent = commonContent;
     }
 
     private CommonFragments getCommon() {
@@ -121,6 +124,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         getOWLClassFragment(classId, ont, with, model, request, response);
 
+        commonContent.addCommonContent(model, ont);
         model.addAttribute("mos", getRenderer(type, null, ont, request));
 
         return new ModelAndView("instances");
@@ -164,6 +168,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         getOWLIndividualFragment(individualId, inferred, with, ont, model, request, response);
 
+        commonContent.addCommonContent(model, ont);
         model.addAttribute("mos", getRenderer(type, ind, ont, request));
 
         return new ModelAndView("instances");

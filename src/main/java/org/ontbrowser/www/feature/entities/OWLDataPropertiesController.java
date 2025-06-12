@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -20,10 +21,14 @@ import java.util.List;
 public class OWLDataPropertiesController extends ApplicationController {
 
     private final OWLDataPropertiesService service;
+    private final CommonContent commonContent;
 
     public OWLDataPropertiesController(
-            OWLDataPropertiesService service) {
+            OWLDataPropertiesService service,
+            CommonContent commonContent
+    ) {
         this.service = service;
+        this.commonContent = commonContent;
     }
 
     @GetMapping(value = "/")
@@ -61,6 +66,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
+        commonContent.addCommonContent(model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
         getOWLDataPropertyFragment(propertyId, pageSize, with, ont, model, request, response);

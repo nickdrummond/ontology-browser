@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -22,10 +23,12 @@ import java.util.List;
 public class OWLObjectPropertiesController extends ApplicationController {
 
     private final OWLObjectPropertiesService service;
+    private final CommonContent commonContent;
 
     public OWLObjectPropertiesController(
-            OWLObjectPropertiesService service) {
+            OWLObjectPropertiesService service, CommonContent commonContent) {
         this.service = service;
+        this.commonContent = commonContent;
     }
 
     @GetMapping(value = "/")
@@ -62,6 +65,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
+        commonContent.addCommonContent(model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
         getOWLObjectPropertyFragment(propertyId, ont, with, model, request, response);
