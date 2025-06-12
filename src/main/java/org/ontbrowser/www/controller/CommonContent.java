@@ -43,7 +43,7 @@ public class CommonContent {
         model.addAttribute("entityCounts", statsService.getEntityCountsTotal());
 
         // required for ontology selector
-        model.addAttribute("allOntologies", kit.getOntologies());
+        model.addAttribute("allOntologies", kit.getOntologies().stream().sorted().toList());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("ont", ont);
         model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
