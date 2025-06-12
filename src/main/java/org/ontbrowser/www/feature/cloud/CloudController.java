@@ -2,6 +2,7 @@ package org.ontbrowser.www.feature.cloud;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
 import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -20,6 +21,12 @@ import static org.ontbrowser.www.util.OWLUtils.getEntityTypeFromPath;
 @RequestMapping(value = "/clouds")
 public class CloudController extends ApplicationController {
 
+    private final CommonContent commonContent;
+
+    public CloudController(CommonContent commonContent) {
+        this.commonContent = commonContent;
+    }
+
     @GetMapping(value = "/{entityType}")
     public ModelAndView getUsageCloud(
             @PathVariable String entityType,
@@ -36,6 +43,8 @@ public class CloudController extends ApplicationController {
         var cloudModel = CloudModelFactory.getUsageCloud(et, ont, imports);
 
         var title = et.getPluralPrintName() + " usage";
+
+        commonContent.addCommonContent(request, model, ont);
 
         var helper = new CloudHelper<>(cloudModel);
         helper.setZoom(zoom);
@@ -59,7 +68,6 @@ public class CloudController extends ApplicationController {
         model.addAttribute("mos", customRenderer);
 
         model.addAttribute("title", title);
-        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("helper", helper);
 
         return new ModelAndView("cloud");

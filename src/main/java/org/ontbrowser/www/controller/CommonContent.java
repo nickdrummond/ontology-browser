@@ -1,9 +1,11 @@
 package org.ontbrowser.www.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.RendererFactory;
+import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -34,7 +36,7 @@ public class CommonContent {
         this.statsService = statsService;
     }
 
-    public void addCommonContent(Model model, OWLOntology ont) {
+    public void addCommonContent(HttpServletRequest request, Model model, OWLOntology ont) {
         // required for header and footer text and links
         model.addAttribute("projectInfo", projectInfo);
         // required for entity visibility in the menu
@@ -44,5 +46,6 @@ public class CommonContent {
         model.addAttribute("allOntologies", kit.getOntologies());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("ont", ont);
+        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
     }
 }

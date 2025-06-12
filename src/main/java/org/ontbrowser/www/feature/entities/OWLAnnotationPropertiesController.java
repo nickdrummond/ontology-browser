@@ -79,7 +79,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
         getOWLAnnotationPropertyFragment(propertyId, ont, pageSize, with, model, request, response);

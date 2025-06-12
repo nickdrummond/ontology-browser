@@ -66,7 +66,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
         getOWLDataPropertyFragment(propertyId, pageSize, with, ont, model, request, response);

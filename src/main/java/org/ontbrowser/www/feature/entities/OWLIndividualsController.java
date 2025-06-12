@@ -124,7 +124,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         getOWLClassFragment(classId, ont, with, model, request, response);
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
         model.addAttribute("mos", getRenderer(type, null, ont, request));
 
         return new ModelAndView("instances");
@@ -168,7 +168,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         getOWLIndividualFragment(individualId, inferred, with, ont, model, request, response);
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
         model.addAttribute("mos", getRenderer(type, ind, ont, request));
 
         return new ModelAndView("instances");

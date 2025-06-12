@@ -361,6 +361,7 @@ td.key {
     margin: 0;
     padding-left: 0.5rem;
     border: solid 1px #000;
+    z-index: 1000;
 }
 
 [data-theme="dark"] #ontology-selector ul {

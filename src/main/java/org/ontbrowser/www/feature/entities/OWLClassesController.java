@@ -76,7 +76,7 @@ public class OWLClassesController extends ApplicationController {
 
         var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(owlClass));
         model.addAttribute("stats", statsService.getClassStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);

@@ -101,7 +101,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
 
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
         model.addAttribute("stats", statsService.getPropertyStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
@@ -153,7 +153,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 

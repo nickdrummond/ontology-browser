@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -99,9 +98,8 @@ public class OWLAxiomsController extends ApplicationController {
             }
         }
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
         model.addAttribute("title", getTitle(search, type, ont, imports));
-        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
         model.addAttribute("axiomTypes", getAxiomTypes());
 
         return new ModelAndView("axioms");

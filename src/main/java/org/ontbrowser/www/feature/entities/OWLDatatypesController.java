@@ -77,7 +77,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
-        commonContent.addCommonContent(model, ont);
+        commonContent.addCommonContent(request, model, ont);
         model.addAttribute("hierarchy", prunedTree);
 
         getOWLDatatypeFragment(datatypeId, ont, pageSize, withOrEmpty, model, request, response);
