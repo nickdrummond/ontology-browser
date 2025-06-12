@@ -100,9 +100,16 @@ li {
     display: block;
 }
 
-#menu, #welcome, #title {
+#menu, #title {
     margin: 5px;
     width: 100%;
+}
+
+#title .group {
+    display: flex;
+    flex: 4;
+    align-items: center;
+    justify-content: space-between;
 }
 
 #menu {
@@ -116,11 +123,6 @@ li {
 
 #menu.hidden {
     height: 0;
-}
-
-#entityfinder {
-    flex: 1 1 auto;
-    margin: 0 5px;
 }
 
 #content {
@@ -155,16 +157,6 @@ li {
 #metrics tbody td:first-child {
     display: list-item;
     text-align: left;
-}
-
-.welcome p {
-    font-size: 1.5rem;
-    margin: 1rem auto 1rem auto;
-    text-align: center;
-}
-
-.entity-header {
-
 }
 
 .graph-button {
@@ -313,17 +305,8 @@ td.key {
     padding-right: 25px;
 }
 
-#findForm, #activeOnt {
-    display: block;
-    margin: 5px 0;
-}
-
-#activeOnt select {
-    width: 100%;
-    height: 24px;
-}
-
 #findForm {
+    flex: 4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -337,6 +320,7 @@ td.key {
 #search {
     height: 2rem;
     border-radius: 1rem;
+    border: solid 2px rgba(125, 125, 125, 0.8);
 }
 
 #search, .autosuggest li {
@@ -353,18 +337,30 @@ td.key {
 
 #ontology-selector {
     width: fit-content;
+    position: relative;
+}
+
+#ontology-selector .current-ontology {
+    font-weight: 400;
+    margin: 0;
+    padding: 0.5rem;
+    height: 1rem;
+    border-radius: 1rem;
+    border: solid 2px rgba(125, 125, 125, 0.8);
+    cursor: pointer;
 }
 
 #ontology-selector ul {
     opacity: 0;
     position: absolute;
-    width: fit-content;
-    top: 2rem;
+    top: 2.25rem;
     right: 0;
     height: 0;
     overflow: auto;
     background-color: #fff;
+    margin: 0;
     padding-left: 0.5rem;
+    border: solid 1px #000;
 }
 
 [data-theme="dark"] #ontology-selector ul {
@@ -874,11 +870,11 @@ img.thumb {
     }
 
     #title {
+        width: 99%;
         display: flex;
+        justify-content: stretch;
         align-items: center;
         margin: 0.25rem 0.5rem;
-        flex: 0 1 auto;
-        width: auto;
     }
 
     #main {
