@@ -160,7 +160,7 @@ public class CommonFragments {
 
         if (projectInfo.activeProfiles().contains("graph")) {
             var mos = new MOSStringRenderer(kit.getFinder(), ont);
-            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlIndividual));
+            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlIndividual, ont));
         }
 
         response.addHeader("title", projectInfo.name() + ": " + title);

@@ -36,7 +36,7 @@ public class SearchController extends ApplicationController {
         if (name.length() > 1) {
             List<OWLEntity> entities = service.findByName(name, size, kit);
             for (OWLEntity owlEntity : entities) {
-                results.addResult(new SearchResult(kit.getURLScheme().getURLForOWLObject(owlEntity), "", nameService.getName(owlEntity, kit)));
+                results.addResult(new SearchResult(kit.getURLScheme().getURLForOWLObject(owlEntity, ont), "", nameService.getName(owlEntity, kit)));
             }
         }
 

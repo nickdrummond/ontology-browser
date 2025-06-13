@@ -2,10 +2,7 @@ package org.ontbrowser.www.feature.graph;
 
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.URLScheme;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLObjectVisitorEx;
+import org.semanticweb.owlapi.model.*;
 
 public class GraphURLScheme implements URLScheme {
 
@@ -17,7 +14,7 @@ public class GraphURLScheme implements URLScheme {
     }
 
     @Override
-    public String getURLForOWLObject(OWLObject owlObject) {
+    public String getURLForOWLObject(OWLObject owlObject, OWLOntology ontology) {
         return owlObject.accept(new OWLObjectVisitorEx<String>() {
             @Override
             public String visit(OWLNamedIndividual individual) {

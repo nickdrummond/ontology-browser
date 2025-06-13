@@ -88,7 +88,7 @@ public class EditController extends ApplicationController {
                     .build().toString());
         } else {
             log.warn("No referer - defaulting to transaction ontology page");
-            response.sendRedirect(kit.getURLScheme().getURLForOWLObject(transactionOntology));
+            response.sendRedirect(kit.getURLScheme().getURLForOWLObject(transactionOntology, targetOnt));
         }
     }
 

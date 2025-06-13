@@ -96,7 +96,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
 
     @Override
     public void visit(OWLOntology ontology) {
-        String link = urlScheme.getURLForOWLObject(ontology);
+        String link = urlScheme.getURLForOWLObject(ontology, ontology);
         String cssClass = CSS_ONTOLOGY_URI;
 
         if (activeObjects.contains(ontology)){
@@ -916,7 +916,7 @@ public class OWLHTMLVisitor implements OWLObjectVisitor {
             cssClasses.add(CSS_ACTIVE_ENTITY);
         }
 
-        final String urlForTarget = urlScheme.getURLForOWLObject(entity);
+        final String urlForTarget = urlScheme.getURLForOWLObject(entity, ont);
         write("<a href=\"" + urlForTarget + "\"");
         writeCSSClasses(cssClasses);
         write(" title=\"" + uri + "\">");

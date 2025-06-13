@@ -90,7 +90,7 @@ public class DLQueryController extends ApplicationController {
 
         if (projectInfo.activeProfiles().contains("graph") && owlClassExpression != null) {
             var mos = new MOSStringRenderer(kit.getFinder(), ont);
-            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlClassExpression));
+            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlClassExpression, ont));
         }
 
         return new ModelAndView("dlquery");

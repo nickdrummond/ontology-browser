@@ -6,6 +6,7 @@ import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.util.Arrays;
 
@@ -30,14 +31,14 @@ public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLSchem
     }
 
     @Override
-    public String getURLForOWLObject(OWLObject owlObject) {
+    public String getURLForOWLObject(OWLObject owlObject, OWLOntology ontology) {
         if (service != null && owlObject instanceof OWLNamedIndividual ind && service.treeContains((OWLNamedIndividual)owlObject)) {
             return rootPath + "/" + propertyId + "/withindividual/" + getIdForEntity(ind) + query;
         }
         else if (propertyJavaClass.isAssignableFrom(owlObject.getClass())) {
-            return rootPath + "/" + getIdForEntity((OWLEntity) owlObject);
+            return rootPath + "/" + getIdForEntity((OWLEntity) owlObject) + query;
         }
-        return super.getURLForOWLObject(owlObject);
+        return super.getURLForOWLObject(owlObject, ontology);
     }
 
     // TODO Explicitly whitelist params to retain on links

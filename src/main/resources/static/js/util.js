@@ -25,6 +25,11 @@ export function getParameter(key) {
     return new URLSearchParams(window.location.search).get(key);
 }
 
+export function getSearchStr() {
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.size === 0 ? "" : "?" + searchParams.toString();
+}
+
 export function setParameter(key, value) {
     window.history.pushState({}, '', getUrlWithParameter(key, value));
 }

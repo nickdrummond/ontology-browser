@@ -51,7 +51,7 @@ public class FindByAnnotationController extends ApplicationController {
             if (owlObject instanceof OWLAnnotationAssertionAxiom ax) {
                 Optional<IRI> iri = ax.getSubject().asIRI();
                 OWLObject o = ont.getEntitiesInSignature(iri.orElseThrow(), Imports.INCLUDED).iterator().next();
-                response.sendRedirect(kit.getURLScheme().getURLForOWLObject(o));
+                response.sendRedirect(kit.getURLScheme().getURLForOWLObject(o, ont));
                 return null;
             }
         }

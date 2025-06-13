@@ -47,10 +47,10 @@ public class SitemapController extends ApplicationController {
         URLScheme scheme = kit.getURLScheme();
 
         // ontologies
-        ont.getImportsClosure().forEach(o -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(o))));
+        ont.getImportsClosure().forEach(o -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(o, ont))));
 
         // entities
-        Consumer<OWLEntity> action = i -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(i)));
+        Consumer<OWLEntity> action = i -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(i, ont)));
         ont.getClassesInSignature(Imports.INCLUDED).forEach(action);
         ont.getIndividualsInSignature(Imports.INCLUDED).forEach(action);
         ont.getObjectPropertiesInSignature(Imports.INCLUDED).forEach(action);

@@ -1,4 +1,4 @@
-import {BUSY_IMAGE, getPlural} from "./util.js";
+import {BUSY_IMAGE, getPlural, getSearchStr} from "./util.js";
 import {entity} from "./entity.js";
 
 const ACTIVE_ENTITY = "active-entity";
@@ -17,7 +17,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
             const secondaryNav = tree(secondaryTree, baseUrl, entityPane);
             secondaryNav.init();
             primaryNav.init((entityId) => {
-                secondaryNav.reload(window.location + "/secondary");
+                const currentPath = window.location.pathname.split("?")[0];
+                const url = currentPath + "/secondary" + getSearchStr();
+                secondaryNav.reload(url);
             });
         } else {
             primaryNav.init();
@@ -93,8 +95,7 @@ const tree = (treeElement, baseUrl, entityPane) => {
 
         e.preventDefault();
 
-        const searchParams = new URLSearchParams(window.location.search);
-        const searchStr = searchParams.size === 0 ? "" : "?" + searchParams.toString();
+        const searchStr = getSearchStr();
 
         const originalUrl = link.getAttribute("href");
         const entityId = getEntityId(originalUrl);

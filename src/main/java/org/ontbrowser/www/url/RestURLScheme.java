@@ -48,7 +48,8 @@ public class RestURLScheme implements URLScheme {
         }
     };
 
-    public String getURLForOWLObject(OWLObject owlObject) {
+    @Override
+    public String getURLForOWLObject(OWLObject owlObject, OWLOntology ontology) {
         if (owlObject == null){
             throw new NullPointerException("OWLObject may not be null");
         }
@@ -73,6 +74,11 @@ public class RestURLScheme implements URLScheme {
         sb.append(type);
         sb.append("/");
         sb.append(code);
+
+        if (!owlObject.isOntology()) {
+            sb.append("?ontId=");
+            sb.append(ontology.getOntologyID().hashCode());
+        }
 
         return sb.toString();
     }

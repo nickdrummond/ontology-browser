@@ -59,11 +59,11 @@ public class CloudController extends ApplicationController {
         var customRenderer = rendererFactory
                 .getHTMLRenderer(ont)
                 .withActiveObject(ont)
-                .withURLScheme(owlObject -> {
+                .withURLScheme((owlObject, ontology) -> {
                     if (owlObject instanceof OWLOntology ontLink) {
                         return request.getServletPath() + "?imports=EXCLUDED&ontId=" + ontLink.getOntologyID().hashCode();
                     }
-                    return kit.getURLScheme().getURLForOWLObject(owlObject);
+                    return kit.getURLScheme().getURLForOWLObject(owlObject, ontology);
                 });
         model.addAttribute("mos", customRenderer);
 
