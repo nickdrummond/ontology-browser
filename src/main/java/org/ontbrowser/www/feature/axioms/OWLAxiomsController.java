@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 import static org.ontbrowser.www.feature.axioms.HighlightingHTMLRenderer.getHighlightRenderer;
@@ -52,10 +53,10 @@ public class OWLAxiomsController extends ApplicationController {
     @GetMapping()
     public ModelAndView axioms(
             final Model model,
-            @RequestParam(required = false) String search,
+            @RequestParam(required = false) @Nullable String search,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = "INCLUDED") Imports imports,
-            @RequestParam(required = false) String type,
+            @RequestParam(required = false) @Nullable String type,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
             HttpServletRequest request,
@@ -99,25 +100,22 @@ public class OWLAxiomsController extends ApplicationController {
         }
 
         commonContent.addCommonContent(request, model, ont);
-        model.addAttribute("title", getTitle(search, type, ont, imports));
+        model.addAttribute("title", getTitle(search, type, imports));
         model.addAttribute("axiomTypes", getAxiomTypes());
 
         return new ModelAndView("axioms");
     }
 
-    private String getTitle(String search, String type, OWLOntology ont, Imports imports) {
+    private String getTitle(@Nullable String search, @Nullable String type, Imports imports) {
 
         var sb = new StringBuilder();
-        sb.append(kit.getOntologySFP().getShortForm(ont));
-        sb.append(" - ");
-
         if (search != null) {
-            sb.append("search ");
+            sb.append("Search: ");
         }
         if (type == null) {
-            sb.append("axioms");
+            sb.append("All axioms");
         } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {
-            sb.append("logical axioms");
+            sb.append("Logical axioms");
         } else {
             sb.append(type);
             sb.append(" axioms");
