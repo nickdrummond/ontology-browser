@@ -78,7 +78,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         }
         // Start with random
         String id = kit.lookup().getId(props.iterator().next());
-        response.sendRedirect("/relations/" + PATH + "/" + id + "/");
+        response.sendRedirect("/relations/" + PATH + "/" + id);
     }
 
 
