@@ -19,6 +19,7 @@ public abstract class PagingURIScheme {
         return fromUri(original);
     }
 
+    // used in templates
     public URI replacingParam(String paramName, String paramValue) {
         return builder()
                 .replaceQueryParam(paramName, paramValue)
