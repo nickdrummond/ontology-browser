@@ -39,11 +39,6 @@ public class ErrorHandling {
         model.addAttribute("projectInfo", projectInfo);
         model.addAttribute( "entityCounts", statsService.getEntityCountsTotal());
 
-        if (log.isDebugEnabled()) {
-            httpRequest.getAttributeNames().asIterator().forEachRemaining(n -> {
-                log.debug("request attr = {}", n);
-            });
-        }
         if (e != null) {
             if (e instanceof NoResourceFoundException) {
                 httpResponse.setStatus(HttpStatus.NOT_FOUND.value());

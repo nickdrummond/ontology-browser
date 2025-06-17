@@ -1,10 +1,10 @@
-import {BUSY_IMAGE, getUrlWithParameter} from "./util.js";
+import {BUSY_IMAGE, getUrlWithParameter, getUrlWithSuffix} from "./util.js";
 import {characteristics} from "./characteristics.js";
 
 export const entity = (sel = "#content") => {
 
-    function loadEntity(url, rewriteUrl) {
-        fetch(url)
+    function loadEntity(fetchUrl, rewriteUrl) {
+        fetch(fetchUrl)
             .then(response => {
                 response.text().then(html => {
                     const throwaway = document.createElement('span');
@@ -38,9 +38,11 @@ export const entity = (sel = "#content") => {
                 const type = link.getAttribute("class");
                 let originalUrl = link.getAttribute("href");
                 let entityId = originalUrl.split("/")[2];
-                // update the URL in the link
-                let newUrl = getUrlWithParameter(type.toLowerCase(), entityId);
-                loadEntity(originalUrl + "/fragment", newUrl);
+
+                loadEntity(
+                    getUrlWithSuffix(originalUrl, "/fragment"),
+                    getUrlWithParameter(type.toLowerCase(), entityId) // update the URL in the link
+                );
             }
         }
     }

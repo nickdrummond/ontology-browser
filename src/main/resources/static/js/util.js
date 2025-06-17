@@ -25,9 +25,21 @@ export function getParameter(key) {
     return new URLSearchParams(window.location.search).get(key);
 }
 
-export function getSearchStr() {
-    const searchParams = new URLSearchParams(window.location.search);
+export function getSearchStrFor(url) {
+    const searchParams = new URLSearchParams(url);
     return searchParams.size === 0 ? "" : "?" + searchParams.toString();
+}
+
+export function getSearchStr() {
+    return getSearchStrFor(window.location.search);
+}
+
+export function getPath(url) {
+    return url.split("?")[0];
+}
+
+export function getUrlWithSuffix(url, suffix) {
+    return getPath(url) + suffix + getSearchStrFor(url);
 }
 
 export function setParameter(key, value) {

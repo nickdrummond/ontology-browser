@@ -1,4 +1,4 @@
-import {BUSY_IMAGE, getPlural, getSearchStr} from "./util.js";
+import {BUSY_IMAGE, getPath, getPlural, getSearchStr, getUrlWithSuffix} from "./util.js";
 import {entity} from "./entity.js";
 
 const ACTIVE_ENTITY = "active-entity";
@@ -17,8 +17,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             const secondaryNav = tree(secondaryTree, baseUrl, entityPane);
             secondaryNav.init();
             primaryNav.init((entityId) => {
-                const currentPath = window.location.pathname.split("?")[0];
-                const url = currentPath + "/secondary" + getSearchStr();
+                const url = getUrlWithSuffix(window.location.href, "/secondary");
                 secondaryNav.reload(url);
             });
         } else {
@@ -200,9 +199,8 @@ const tree = (treeElement, baseUrl, entityPane) => {
         // entity ID is last path element
         // brittle - happens to work for both entity pages and relations pages
         // this depends on URLScheme staying in sync
-        const pathElements = originalUrl.split("?")[0].split("/");
-        const id = pathElements[pathElements.length - 1];
-        return id;
+        const pathElements = getPath(originalUrl).split("/");
+        return pathElements[pathElements.length - 1];
     }
 
     return {
