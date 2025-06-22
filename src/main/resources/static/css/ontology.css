@@ -1,4 +1,9 @@
 
+.ontology-page {
+    display: flex;
+    flex-direction: column-reverse; /* charts first */
+}
+
 #metrics table {
     text-align: right;
     width: 100%;

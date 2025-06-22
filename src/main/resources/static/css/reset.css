@@ -1,0 +1,66 @@
+
+/* General styles */
+
+html {
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+}
+
+body {
+    font-size: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 300;
+    margin: 4px;
+}
+
+h2, h3 {
+    font-weight: 300;
+}
+
+h2 {
+    font-size: 1.5rem;
+    display: inline;
+    margin: 0.5rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+    color: rgba(125, 125, 125, 0.8);
+    margin: 0.2rem;
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: normal;
+    display: inline;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #002;
+}
+
+img {
+    border: none;
+}
+
+div {
+    margin-top: 0;
+}
+
+li {
+    margin-top: 3px;
+}

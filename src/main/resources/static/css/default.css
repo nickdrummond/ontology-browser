@@ -1,80 +1,22 @@
+/* Mobile first design */
+
+@import url("reset.css");
 @import url("theme.css");
 @import url("owl.css");
+@import url("characteristics.css");
 
 /* allow animation over non-numeric height values */
 :root {
     interpolate-size: allow-keywords;
 }
 
-/* Mobile first design */
-
-/* General styles */
-
-html {
-    font-family: "Roboto", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 200;
-    font-style: normal;
-}
-
-body {
-    font-size: 1rem;
-    margin: 0;
-    padding: 0;
-}
-
-h1 {
-    font-size: 2rem;
-    font-weight: 300;
-    margin: 4px;
-}
-
-h2, h3 {
-    font-weight: 300;
-}
-
-h2 {
-    font-size: 1.5rem;
-    display: inline;
-    margin: 0.5rem;
-}
-
-h3 {
-    font-size: 1.2rem;
-    color: rgba(125, 125, 125, 0.8);
-    margin: 0.2rem;
-}
-
-h4 {
-    font-size: 1rem;
-    font-weight: normal;
-    display: inline;
-    margin: 0;
-}
-
-a {
-    text-decoration: none;
-    color: #000;
-}
-
-a:hover {
-    text-decoration: underline;
-    color: #002;
-}
-
-img {
-    border: none;
-}
-
-div {
-    margin-top: 0;
-}
-
-li {
-    margin-top: 3px;
-}
-
 /* Components */
+
+/* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+body.wrapper {
+    display: flex;
+    flex-flow: row wrap;
+}
 
 #menu, #title {
     margin: 5px;
@@ -105,116 +47,9 @@ li {
     margin: 1rem 0.5rem;
 }
 
-.skip-nav {
-    display: none;
-}
-
 #main {
     width: 100%;
     overflow: hidden;
-}
-
-.error {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    font-size: 1.5rem;
-    max-width: 100%;
-}
-
-.error h2 {
-    font-size: 2rem;
-}
-
-.ontology-page {
-    display: flex;
-    flex-direction: column-reverse; /* charts first */
-}
-
-.characteristics {
-    vertical-align: top;
-    padding-right: 5px; /* enough space for the scroller */
-    padding-left: 1rem;
-}
-
-.characteristic {
-    margin-bottom: 0.5rem;
-}
-
-.characteristic .header {
-    display: flex;
-}
-
-.characteristic .header h4 {
-    display: inline-block;
-    align-items: center;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.characteristic .header:before {
-    transition: rotate 0.3s ease-in-out;
-    content: "▼";
-    margin-right: 0.2rem;
-    rotate: 0;
-}
-
-.characteristic.hidden .header:before {
-    rotate: -90deg;
-}
-
-.characteristic > ul, .characteristic > .table-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: auto;
-    overflow: hidden;
-
-    border: solid 1px #c7cfd5;
-    padding: 5px 5px 5px 25px;
-    margin: 0.25rem 0;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-}
-
-.characteristic.hidden > ul, .characteristic.hidden > .table-wrapper {
-    padding-top: 0;
-    padding-bottom: 0;
-    border-width: 0;
-    height: 0;
-}
-
-.characteristic > ul > li {
-    padding: 4px;
-    clear: both;
-}
-
-.characteristic > li:hover, .characteristic tr:hover {
-    background: rgba(125, 125, 125, 0.2);
-    transition: ease-out 0.2s;
-}
-
-.characteristic .source-ont {
-    float: right;
-    font-size: 0.8rem;
-}
-
-.characteristic.object_property_assertions .Named.individual.active-entity,
-.characteristic.negative_object_property_assertions .Named.individual.active-entity,
-.characteristic.data_property_assertions .Named.individual.active-entity,
-.characteristic.negative_data_property_assertions .Named.individual.active-entity {
-    display: none;
-}
-
-.highlight {
-    background: rgba(255, 255, 0, 0.2);
-}
-
-.imageHolder {
-    overflow: auto;
-    text-align: center;
-    margin-bottom: 12px;
 }
 
 #findForm {
@@ -222,11 +57,6 @@ li {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-#as_find {
-    max-height: 75vh;
-    overflow: auto;
 }
 
 #search {
@@ -276,7 +106,6 @@ li {
     z-index: 1000;
 }
 
-
 /* show ontology selector when hover on current */
 #ontology-selector:hover ul {
     opacity: 1;
@@ -311,13 +140,6 @@ li {
     padding: 2px;
 }
 
-.inferred {
-    border: dotted gray 1px;
-    opacity: 0.6;
-    -moz-opacity: 0.6;
-    filter: alpha(opacity=60);
-}
-
 #footer {
     display: flex;
     align-items: center;
@@ -331,26 +153,42 @@ li {
     margin: 0 0.5rem;
 }
 
-.editor {
-    width: 95%;
-    height: 16rem;
-}
-
-.editor.prefixes {
-    height: 6rem;
-    margin-bottom: 0.5rem;
-}
-
-.editor.dl {
-    height: 6rem;
-    margin-bottom: 0.5rem;
-}
-
 #entityPane {
     height: 25rem;
 }
 
-/* BUTTONS */
+
+.skip-nav {
+    display: none;
+}
+
+.error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    font-size: 1.5rem;
+    max-width: 100%;
+}
+
+.error h2 {
+    font-size: 2rem;
+}
+
+.imageHolder {
+    overflow: auto;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.inferred {
+    border: dotted gray 1px;
+    opacity: 0.6;
+    -moz-opacity: 0.6;
+    filter: alpha(opacity=60);
+}
+
+/* ICONS */
 
 img.busy {
     height: 1rem;
@@ -389,69 +227,6 @@ img.button {
     margin-top: 0.5rem;
 }
 
-.iri {
-    color: #002;
-    font-size: smaller;
-    margin: 8px;
-}
-
-.iri a, .iri form, .iri h3 {
-    display: inline;
-}
-
-.iri h3 {
-    margin-left: 0;
-    font-weight: normal;
-}
-
-.icon {
-    position: relative;
-    top: 2px;
-    width: 24px;
-    height: 24px;
-}
-
-img.thumb {
-    vertical-align: top;
-    margin-left: 6px;
-}
-
-.disabled {
-    background-color: #bbbbdd;
-}
-
-.warn {
-    color: #ff0000;
-}
-
-/* Flex layout - see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
-.wrapper {
-    display: flex;
-    flex-flow: row wrap;
-}
-
-.axiom-category {
-    color: #1d3b91;
-    font-size: smaller;
-}
-
-.axioms-form {
-    margin-left: 0.3em;
-    margin-bottom: 0.5em;
-    display: flex;
-    align-items: center;
-}
-
-.axioms-form h2 {
-    margin-bottom: 0;
-}
-
-.axioms-form input[type="text"] {
-    font-size: 1.5em;
-    width: 50%;
-    padding-left: 10px;
-}
-
 /* Needed to prevent the icon from taking space when we move it left "inside" the search field */
 .search-icon-wrapper {
     position: relative;
@@ -470,6 +245,43 @@ img.thumb {
     left: -3em;
     cursor: pointer;
 }
+
+.icon {
+    position: relative;
+    top: 2px;
+    width: 24px;
+    height: 24px;
+}
+
+/* IRI */
+
+.iri {
+    color: #002;
+    font-size: smaller;
+    margin: 8px;
+}
+
+.iri a, .iri form, .iri h3 {
+    display: inline;
+}
+
+.iri h3 {
+    margin-left: 0;
+    font-weight: normal;
+}
+
+/* Axioms */
+
+.highlight {
+    background: rgba(255, 255, 0, 0.2);
+}
+
+.axiom-category {
+    color: #1d3b91;
+    font-size: smaller;
+}
+
+/* Paging */
 
 .paging {
     margin-left: 0.2em;
@@ -509,10 +321,6 @@ img.thumb {
     float: right;
 }
 
-.debug {
-    background-color: rgba(120, 150, 255, 0.2);
-}
-
 @media screen and (max-width: 800px) and (max-height: 450px) {
 
     #burger {
@@ -536,7 +344,7 @@ img.thumb {
 
 @media screen and (min-width: 800px) {
 
-    .wrapper {
+    body.wrapper {
         flex-flow: column;
     }
 
@@ -594,11 +402,6 @@ img.thumb {
         overflow: auto;
         display: flex;
         flex-direction: column;
-    }
-
-    .characteristics {
-        flex: 0 1 auto;
-        overflow: auto;
     }
 
     #search, .autosuggest li {

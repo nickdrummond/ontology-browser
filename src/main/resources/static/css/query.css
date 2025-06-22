@@ -58,3 +58,18 @@ form.autocomplete {
     justify-content: space-between;
     align-items: center;
 }
+
+.editor {
+    width: 95%;
+    height: 16rem;
+}
+
+.editor.prefixes {
+    height: 6rem;
+    margin-bottom: 0.5rem;
+}
+
+.editor.dl {
+    height: 6rem;
+    margin-bottom: 0.5rem;
+}

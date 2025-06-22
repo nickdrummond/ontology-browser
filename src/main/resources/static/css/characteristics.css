@@ -1,0 +1,83 @@
+
+.characteristics {
+    vertical-align: top;
+    padding-right: 5px; /* enough space for the scroller */
+    padding-left: 1rem;
+}
+
+.characteristic {
+    margin-bottom: 0.5rem;
+}
+
+.characteristic .header {
+    display: flex;
+}
+
+.characteristic .header h4 {
+    display: inline-block;
+    align-items: center;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.characteristic .header:before {
+    transition: rotate 0.3s ease-in-out;
+    content: "▼";
+    margin-right: 0.2rem;
+    rotate: 0;
+}
+
+.characteristic.hidden .header:before {
+    rotate: -90deg;
+}
+
+.characteristic > ul, .characteristic > .table-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: auto;
+    overflow: hidden;
+
+    border: solid 1px #c7cfd5;
+    padding: 5px 5px 5px 25px;
+    margin: 0.25rem 0;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+
+.characteristic.hidden > ul, .characteristic.hidden > .table-wrapper {
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+    height: 0;
+}
+
+.characteristic > ul > li {
+    padding: 4px;
+    clear: both;
+}
+
+.characteristic > li:hover, .characteristic tr:hover {
+    background: rgba(125, 125, 125, 0.2);
+    transition: ease-out 0.2s;
+}
+
+.characteristic .source-ont {
+    float: right;
+    font-size: 0.8rem;
+}
+
+.characteristic.object_property_assertions .Named.individual.active-entity,
+.characteristic.negative_object_property_assertions .Named.individual.active-entity,
+.characteristic.data_property_assertions .Named.individual.active-entity,
+.characteristic.negative_data_property_assertions .Named.individual.active-entity {
+    display: none;
+}
+
+@media screen and (min-width: 800px) {
+
+    .characteristics {
+        flex: 0 1 auto;
+        overflow: auto;
+    }
+}
