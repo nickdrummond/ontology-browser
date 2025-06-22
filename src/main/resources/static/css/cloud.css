@@ -1,0 +1,20 @@
+
+.cloud {
+    text-align: center;
+    margin: auto;
+    width: 90%;
+}
+
+.cloud span.entity {
+    margin: 0.2rem;
+}
+
+/* Let the model spans determine the color */
+.cloud a.Class,
+.cloud a.Object.property,
+.cloud a.Data.property,
+.cloud a.Annotation.property,
+.cloud a.Named.individual,
+.cloud a.Datatype {
+    color: inherit;
+}

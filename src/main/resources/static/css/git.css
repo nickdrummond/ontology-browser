@@ -1,0 +1,25 @@
+
+.git-summary {
+    margin-left: 5px;
+}
+
+.commit {
+    display: flex;
+}
+
+.commit span {
+    margin: 0 0.3em;
+}
+
+.commit-message {
+    flex-grow: 10;
+}
+
+.commit-author, .commit-date {
+    color: gray;
+    white-space: nowrap;
+}
+
+.branch-name {
+    font-weight: 300;
+}

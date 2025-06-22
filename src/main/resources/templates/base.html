@@ -49,11 +49,20 @@
 </th:block>
 
 <th:block th:fragment="includeTree">
+    <link rel='stylesheet' type='text/css' href='/css/tree.css'
+          th:href='@{/css/tree.css}'/>
+
     <script type='module' src='/js/tree.js'
             th:src='@{/js/tree.js}'>
     </script>
 </th:block>
 <body>
+
+<th:block th:fragment="includeOntology">
+    <link rel='stylesheet' type='text/css' href="/css/ontology.css" th:href='@{/css/ontology.css}'/>
+    <script src="/js/libs/chart.umd.js" th:src="@{/js/libs/chart.umd.js}"></script>
+    <script src="/js/stats.js" th:src="@{/js/stats.js}"></script>
+</th:block>
 
 <div id='title' th:fragment="title">
     <h1>

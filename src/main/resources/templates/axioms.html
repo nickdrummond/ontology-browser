@@ -3,6 +3,8 @@
       xmlns:th="http://www.thymeleaf.org">
     <head>
         <th:block th:replace='~{base :: header (title=${title})}'/>
+        <link rel='stylesheet' type='text/css' href='/css/tree.css'
+              th:href='@{/css/tree.css}'/>
     </head>
 
     <body class="wrapper">

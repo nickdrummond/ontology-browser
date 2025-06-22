@@ -1,0 +1,50 @@
+
+#darkmode {
+    font-size: 2rem;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+    color: #b4b392;
+}
+
+[data-theme="dark"] a {
+    color: #dad6cd;
+}
+
+[data-theme="dark"] a:hover {
+    color: #dad6cd;
+}
+
+[data-theme="dark"] .autosuggest {
+    background-color: black;
+}
+
+[data-theme="dark"] #ontology-selector ul {
+    filter: invert(100%);
+}
+
+[data-theme="dark"] #ontology-selector a {
+    filter: invert(100%);
+}
+
+[data-theme="dark"] .cloud a.Class,
+[data-theme="dark"] .cloud a.Object.property,
+[data-theme="dark"] .cloud a.Data.property,
+[data-theme="dark"] .cloud a.Annotation.property,
+[data-theme="dark"] .cloud a.Named.individual,
+[data-theme="dark"] .cloud a.Datatype {
+    filter: invert(100%);
+}
+
+[data-theme="dark"] .minihierarchy li .child-count {
+    background-color: #671d16;
+}
+
+[data-theme="dark"] .icon-button svg path {
+    fill: #b4b392;
+}
+
+[data-theme="dark"] .icon {
+    filter: invert(100%);
+}

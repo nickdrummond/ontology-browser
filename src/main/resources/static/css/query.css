@@ -1,0 +1,60 @@
+
+form.autocomplete {
+    display: inline;
+}
+
+#queries {
+    padding: 0;
+}
+
+#queries li {
+    list-style-type: none;
+}
+
+#query-pane {
+    flex: 1;
+    overflow: auto;
+    margin: 0.5rem;
+}
+
+
+#resultsForm {
+    margin: 0 0.5rem;
+    flex-grow: 1;
+}
+
+#resultsForm h4 {
+    display: inline-block;
+}
+
+#resultsForm tbody {
+    display: block;
+    height: 20rem;
+    overflow: auto;
+}
+
+#resultsForm thead, table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#resultsForm thead th {
+    text-align: left;
+}
+
+#query-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#query-form.sparql {
+    height: 100%;
+}
+
+#query-form .bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}

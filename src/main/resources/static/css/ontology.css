@@ -1,3 +1,21 @@
+
+#metrics table {
+    text-align: right;
+    width: 100%;
+    align-items: end;
+}
+
+#metrics table td {
+    padding: 4px;
+    border: none;
+    overflow-wrap: anywhere;
+}
+
+#metrics tbody td:first-child {
+    display: list-item;
+    text-align: left;
+}
+
 .stats-holder {
     display: flex;
     flex-direction: column;
@@ -35,5 +53,10 @@
     .stats-holder canvas {
         height: 14rem;
         width: 14rem;
+    }
+
+    .ontology-page {
+        display: flex;
+        flex-direction: row;
     }
 }

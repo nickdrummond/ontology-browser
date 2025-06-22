@@ -1,3 +1,4 @@
+@import url("theme.css");
 @import url("owl.css");
 
 /* allow animation over non-numeric height values */
@@ -20,27 +21,6 @@ body {
     font-size: 1rem;
     margin: 0;
     padding: 0;
-}
-
-#darkmode {
-    font-size: 2rem;
-}
-
-[data-theme="dark"] {
-    color-scheme: dark;
-    color: #b4b392;
-}
-
-[data-theme="dark"] a {
-    color: #dad6cd;
-}
-
-[data-theme="dark"] a:hover {
-    color: #dad6cd;
-}
-
-[data-theme="dark"] .autosuggest {
-    background-color: black;
 }
 
 h1 {
@@ -96,10 +76,6 @@ li {
 
 /* Components */
 
-#options {
-    display: block;
-}
-
 #menu, #title {
     margin: 5px;
     width: 100%;
@@ -133,34 +109,9 @@ li {
     display: none;
 }
 
-.owlselector {
-    margin: 1rem 0.5rem 0.5rem;
-}
-
 #main {
     width: 100%;
     overflow: hidden;
-}
-
-#metrics table {
-    text-align: right;
-    width: 100%;
-    align-items: end;
-}
-
-#metrics table td {
-    padding: 4px;
-    border: none;
-    overflow-wrap: anywhere;
-}
-
-#metrics tbody td:first-child {
-    display: list-item;
-    text-align: left;
-}
-
-.graph-button {
-    font-size: 1.8rem;
 }
 
 .error {
@@ -266,45 +217,6 @@ li {
     margin-bottom: 12px;
 }
 
-.optiongroup {
-    margin-top: 20px;
-    margin-left: 40px;
-}
-
-.optiongroup table {
-    margin-top: 20px;
-    width: 100%;
-}
-
-.optiongroup select {
-    width: 80%;
-}
-
-.optiongroup input[type=text] {
-    width: 80%;
-    margin-right: 10px;
-}
-
-td.key {
-    width: 150px;
-    text-align: right;
-}
-
-#queryform {
-    background: #ff0000;
-    padding: 5px;
-}
-
-#signout img {
-    position: relative;
-    top: 4px;
-}
-
-#options a {
-    color: inherit;
-    padding-right: 25px;
-}
-
 #findForm {
     flex: 4;
     display: flex;
@@ -364,13 +276,6 @@ td.key {
     z-index: 1000;
 }
 
-[data-theme="dark"] #ontology-selector ul {
-    filter: invert(100%);
-}
-
-[data-theme="dark"] #ontology-selector a {
-    filter: invert(100%);
-}
 
 /* show ontology selector when hover on current */
 #ontology-selector:hover ul {
@@ -406,137 +311,6 @@ td.key {
     padding: 2px;
 }
 
-.cloud {
-    text-align: center;
-    margin: auto;
-    width: 90%;
-}
-
-.cloud span.entity {
-    margin: 0.2rem;
-}
-
-/* Let the model spans determine the color */
-.cloud a.Class,
-.cloud a.Object.property,
-.cloud a.Data.property,
-.cloud a.Annotation.property,
-.cloud a.Named.individual,
-.cloud a.Datatype {
-    color: inherit;
-}
-
-[data-theme="dark"] .cloud a.Class,
-[data-theme="dark"] .cloud a.Object.property,
-[data-theme="dark"] .cloud a.Data.property,
-[data-theme="dark"] .cloud a.Annotation.property,
-[data-theme="dark"] .cloud a.Named.individual,
-[data-theme="dark"] .cloud a.Datatype {
-    filter: invert(100%);
-}
-
-a.help {
-    float: right;
-}
-
-a.permalink {
-    font-size: smaller;
-}
-
-.minihierarchy, .minihierarchy ul {
-    list-style-type: none;
-    border: none;
-    margin-bottom: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-ul.minihierarchy {
-    border: solid 1px #c7cfd5;
-    -moz-border-radius: 6px;
-    -webkit-border-radius: 6px;
-    overflow: auto;
-    height: 200px;
-    margin-top: 5px;
-    padding-left: 10px;
-}
-
-.minihierarchy ul {
-    padding-left: 15px;
-}
-
-.minihierarchy li {
-    white-space: nowrap;
-}
-
-.minihierarchy .tree-node {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-.minihierarchy li .node {
-    font-family: monospace;
-    cursor: pointer;
-    font-size: 1.5rem;
-    margin-right: 1rem;
-    padding: 0 0.5rem;
-}
-
-/* expand/collapse node button */
-.minihierarchy li > .node:before {
-    content: "-";
-}
-
-.minihierarchy li.with-children > .node:before {
-    transition: rotate 0.3s ease-in-out;
-    display: inline-block;
-    content: "▶";
-}
-
-.minihierarchy li.with-children.expanded > .node:before {
-    rotate: 90deg;
-}
-
-/* show/hide children */
-.minihierarchy li.with-children > ul {
-    transition: height 0.3s ease-in-out;
-    display: flex;
-    overflow: hidden;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 0;
-}
-
-.minihierarchy li.with-children.expanded > ul {
-    height: auto;
-}
-
-.minihierarchy li .child-count {
-    display: inline-block;
-    background-color: #a7d4e3;
-    font-size: x-small;
-}
-
-/* hide the dummy nodes for annotations */
-.minihierarchy.Annotation.Properties > li > .node,
-.minihierarchy.Annotation.Properties > li > .tree-node,
-.minihierarchy.Annotations.on > li > .node,
-.minihierarchy.Annotations.on > li > .tree-node {
-    display: none;
-}
-
-[data-theme="dark"] .minihierarchy li .child-count {
-    background-color: #671d16;
-}
-
-img.busy {
-    height: 1rem;
-    width: 1rem;
-    margin: auto;
-}
-
 .inferred {
     border: dotted gray 1px;
     opacity: 0.6;
@@ -557,32 +331,6 @@ img.busy {
     margin: 0 0.5rem;
 }
 
-form.autocomplete {
-    display: inline;
-}
-
-#queries {
-    padding: 0;
-}
-
-#queries li {
-    list-style-type: none;
-}
-
-form#load {
-    margin-bottom: 50px;
-}
-
-#rendererForm {
-    display: inline;
-}
-
-#query-pane {
-    flex: 1;
-    overflow: auto;
-    margin: 0.5rem;
-}
-
 .editor {
     width: 95%;
     height: 16rem;
@@ -598,49 +346,25 @@ form#load {
     margin-bottom: 0.5rem;
 }
 
-#resultsForm {
-    margin: 0 0.5rem;
-    flex-grow: 1;
-}
-
-#resultsForm h4 {
-    display: inline-block;
-}
-
-#resultsForm tbody {
-    display: block;
-    height: 20rem;
-    overflow: auto;
-}
-
-#resultsForm thead, table tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-}
-
-#resultsForm thead th {
-    text-align: left;
-}
-
 #entityPane {
     height: 25rem;
 }
 
-#query-form {
-    display: flex;
-    flex-direction: column;
+/* BUTTONS */
+
+img.busy {
+    height: 1rem;
+    width: 1rem;
+    margin: auto;
 }
 
-#query-form.sparql {
-    height: 100%;
+img.button {
+    position: relative;
+    top: 8px;
 }
 
-#query-form .bottom {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+.graph-button {
+    font-size: 1.8rem;
 }
 
 .icon-button {
@@ -665,10 +389,6 @@ form#load {
     margin-top: 0.5rem;
 }
 
-[data-theme="dark"] .icon-button svg path {
-    fill: #b4b392;
-}
-
 .iri {
     color: #002;
     font-size: smaller;
@@ -684,28 +404,11 @@ form#load {
     font-weight: normal;
 }
 
-.googlemaps {
-    margin-left: auto;
-    margin-right: auto;
-    width: 425px;
-    height: 350px;
-    margin-bottom: 12px;
-}
-
 .icon {
     position: relative;
     top: 2px;
     width: 24px;
     height: 24px;
-}
-
-[data-theme="dark"] .icon {
-    filter: invert(100%);
-}
-
-img.button {
-    position: relative;
-    top: 8px;
 }
 
 img.thumb {
@@ -810,39 +513,10 @@ img.thumb {
     background-color: rgba(120, 150, 255, 0.2);
 }
 
-.git-summary {
-    margin-left: 5px;
-}
-
-.commit {
-    display: flex;
-}
-
-.commit span {
-    margin: 0 0.3em;
-}
-
-.commit-message {
-    flex-grow: 10;
-}
-
-.commit-author, .commit-date {
-    color: gray;
-    white-space: nowrap;
-}
-
-.branch-name {
-    font-weight: 300;
-}
-
 @media screen and (max-width: 800px) and (max-height: 450px) {
 
     #burger {
         display: none;
-    }
-
-    ul.minihierarchy {
-        width: 70%;
     }
 }
 
@@ -857,11 +531,6 @@ img.thumb {
 
     .wrapper {
         height: 100vh;
-    }
-
-    .minihierarchy li .node {
-        font-size: inherit;
-        margin-right: inherit;
     }
 }
 
@@ -920,23 +589,6 @@ img.thumb {
         width: auto;
     }
 
-    .owlselector {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        max-width: 24rem;
-    }
-
-    .owlselector .min {
-        display: none;
-    }
-
-    ul.minihierarchy {
-        flex: 1 1 auto;
-        overflow: auto;
-        height: auto;
-    }
-
     #content {
         flex: 2;
         overflow: auto;
@@ -953,11 +605,6 @@ img.thumb {
         line-height: 24px;
         font-size: 1.5rem;
     }
-
-    .ontology-page {
-        display: flex;
-        flex-direction: row;
-    }
 }
 
 @media screen and (max-width: 450px), (max-height: 450px) {
@@ -972,13 +619,6 @@ img.thumb {
 
     h4 {
         font-size: 1rem;
-    }
-}
-
-@media screen and (min-width: 800px) and (max-height: 450px) {
-
-    ul.minihierarchy {
-        height: 200px;
     }
 }
 

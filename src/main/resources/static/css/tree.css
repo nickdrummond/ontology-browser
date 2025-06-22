@@ -1,0 +1,142 @@
+
+.owlselector {
+    margin: 1rem 0.5rem 0.5rem;
+}
+
+.owlselector {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 24rem;
+}
+
+.owlselector .min {
+    display: none;
+}
+
+.minihierarchy, .minihierarchy ul {
+    list-style-type: none;
+    border: none;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+ul.minihierarchy {
+    border: solid 1px #c7cfd5;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    overflow: auto;
+    height: 200px;
+    margin-top: 5px;
+    padding-left: 10px;
+}
+
+.minihierarchy ul {
+    padding-left: 15px;
+}
+
+.minihierarchy li {
+    white-space: nowrap;
+}
+
+.minihierarchy .tree-node {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.minihierarchy li .node {
+    font-family: monospace;
+    cursor: pointer;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    padding: 0 0.5rem;
+}
+
+/* expand/collapse node button */
+.minihierarchy li > .node:before {
+    content: "-";
+}
+
+.minihierarchy li.with-children > .node:before {
+    transition: rotate 0.3s ease-in-out;
+    display: inline-block;
+    content: "▶";
+}
+
+.minihierarchy li.with-children.expanded > .node:before {
+    rotate: 90deg;
+}
+
+/* show/hide children */
+.minihierarchy li.with-children > ul {
+    transition: height 0.3s ease-in-out;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 0;
+}
+
+.minihierarchy li.with-children.expanded > ul {
+    height: auto;
+}
+
+.minihierarchy li .child-count {
+    display: inline-block;
+    background-color: #a7d4e3;
+    font-size: x-small;
+}
+
+/* hide the dummy nodes for annotations */
+.minihierarchy.Annotation.Properties > li > .node,
+.minihierarchy.Annotation.Properties > li > .tree-node,
+.minihierarchy.Annotations.on > li > .node,
+.minihierarchy.Annotations.on > li > .tree-node {
+    display: none;
+}
+
+@media screen and (min-width: 800px) {
+
+    .owlselector {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        max-width: 24rem;
+    }
+
+    .owlselector .min {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 800px) and (max-height: 450px) {
+
+    ul.minihierarchy {
+        width: 70%;
+    }
+}
+
+@media screen and (min-width: 800px) and (min-height: 450px) {
+
+    .minihierarchy li .node {
+        font-size: inherit;
+        margin-right: inherit;
+    }
+
+
+    ul.minihierarchy {
+        flex: 1 1 auto;
+        overflow: auto;
+        height: auto;
+    }
+}
+
+@media screen and (min-width: 800px) and (max-height: 450px) {
+
+    ul.minihierarchy {
+        height: 200px;
+    }
+}

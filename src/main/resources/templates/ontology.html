@@ -5,10 +5,7 @@
 <head>
     <th:block th:replace='~{base :: header (title=${title})}'/>
     <th:block th:replace="~{base :: includeTree}"/>
-
-    <link rel='stylesheet' type='text/css' href="/css/stats.css" th:href='@{/css/stats.css}'/>
-    <script src="/js/libs/chart.umd.js" th:src="@{/js/libs/chart.umd.js}"></script>
-    <script src="/js/stats.js" th:src="@{/js/stats.js}"></script>
+    <th:block th:replace="~{base :: includeOntology}"/>
 </head>
 
 <body class="wrapper">
