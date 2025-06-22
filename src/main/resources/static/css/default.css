@@ -342,7 +342,7 @@ td.key {
 
 #ontology-selector .current-ontology {
     font-weight: 400;
-    margin: 0;
+    margin: 0 0.5rem;
     padding: 0.5rem;
     height: 1rem;
     border-radius: 1rem;
@@ -749,16 +749,21 @@ img.thumb {
     padding-left: 10px;
 }
 
+/* Needed to prevent the icon from taking space when we move it left "inside" the search field */
+.search-icon-wrapper {
+    position: relative;
+    height: 1.5em;
+}
+
 .search-icon {
     border: none;
     width: 1.5em;
-    height: 1.5em;
     margin-left: 0.5em;
     background-size: contain;
     background-color: inherit;
     background-repeat: no-repeat;
     background-image: url("/images/search-svgrepo-com.svg");
-    position: relative;
+    position: absolute;
     left: -3em;
     cursor: pointer;
 }

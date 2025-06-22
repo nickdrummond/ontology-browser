@@ -65,7 +65,9 @@
         <form id='findForm' action="/axioms/" method='get'>
             <a id="burger">&#8801;</a>
             <input type='text' id='search' class='autocomplete' name='search' placeholder='search...' autofocus/>
-            <input type='submit' class="search-icon icon" value=""/>
+            <div class="search-icon-wrapper">
+                <input type='submit' class="search-icon icon" value=""/>
+            </div>
         </form>
         <div th:if="${allOntologies != null && allOntologies.size() > 1}" id="ontology-selector">
             <p class="current-ontology" th:text="${ontologiesSfp.getShortForm(ont)}">current ontology</p>
