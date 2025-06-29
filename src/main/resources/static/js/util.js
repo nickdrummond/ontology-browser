@@ -26,7 +26,11 @@ export function getParameter(key) {
 }
 
 export function getSearchStrFor(url) {
-    const searchParams = new URLSearchParams(url);
+    const urlParts = url.split("?");
+    if (urlParts.length === 1) {
+        return "";
+    }
+    const searchParams = new URLSearchParams(urlParts[1]);
     return searchParams.size === 0 ? "" : "?" + searchParams.toString();
 }
 
