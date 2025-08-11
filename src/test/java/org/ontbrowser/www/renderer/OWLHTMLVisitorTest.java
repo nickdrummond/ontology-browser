@@ -1,8 +1,8 @@
 package org.ontbrowser.www.renderer;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.IRI;
@@ -12,32 +12,19 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-@RunWith(Parameterized.class)
 public class OWLHTMLVisitorTest {
 
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection<String[]> data() {
-        return Arrays.asList(new String[][]{
-                {"With fragment", "http://example.org/thing#Name", "http://<wbr>example.org/<wbr>thing#<wbr><b>Name</b>"},
-                {"Without fragment", "http://example.org/thing/", "http://<wbr>example.org/<wbr>thing/"}
-        });
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of("http://example.org/thing#Name", "http://<wbr>example.org/<wbr>thing#<wbr><b>Name</b>"),
+                Arguments.of("http://example.org/thing/", "http://<wbr>example.org/<wbr>thing/")
+        );
     }
-
-    @Parameterized.Parameter
-    public String name;
-
-    @Parameterized.Parameter(1)
-    public String fInput;
-
-    @Parameterized.Parameter(2)
-    public String fExpected;
 
     private final OWLHTMLVisitor visitor = new OWLHTMLVisitor(
             mock(ShortFormProvider.class),
@@ -48,11 +35,12 @@ public class OWLHTMLVisitorTest {
             mock(OWLEntityFinder.class)
     );
 
-    @Test
-    public void test() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void test(String param1, String param2) {
         final StringWriter out = new StringWriter();
         visitor.setWriter(new PrintWriter(out));
-        visitor.visit(IRI.create(fInput));
-        assertThat(out.toString(), equalTo(fExpected));
+        visitor.visit(IRI.create(param1));
+        assertEquals(out.toString(), param2);
     }
 }

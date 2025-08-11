@@ -1,14 +1,15 @@
 package org.ontbrowser.owl.mngr.impl;
 
+import org.junit.jupiter.api.Test;
 import org.ontbrowser.www.kit.impl.OWLEntityFinderImpl;
-import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class OWLEntityFinderImplTest {
 

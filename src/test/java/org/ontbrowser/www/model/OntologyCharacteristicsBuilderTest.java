@@ -1,20 +1,21 @@
 package org.ontbrowser.www.model;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.IndividualCharacteristicsBuilder;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
+
 public class OntologyCharacteristicsBuilderTest {
 
     private final IRI ontologyIRI = IRI.create("http://example.com");
@@ -28,7 +29,7 @@ public class OntologyCharacteristicsBuilderTest {
     @Mock
     private Comparator<OWLObject> comparator;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mngr = new OWLManager().get();
         df = mngr.getOWLDataFactory();

@@ -1,12 +1,14 @@
 package org.ontbrowser.www.util;
 
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class PairwiseOrderingTest {
 
@@ -56,7 +58,7 @@ public class PairwiseOrderingTest {
                 l('R', 'S', 'T')), ordering.getResult());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testNaturalOrdering() {
         PairwiseOrdering<Character> ordering = new PairwiseOrdering<>();

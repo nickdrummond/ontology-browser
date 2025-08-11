@@ -1,12 +1,14 @@
 package org.ontbrowser.www.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.semanticweb.owlapi.model.IRI;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 
 public class DLQueryTest {
 

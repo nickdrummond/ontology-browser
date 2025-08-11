@@ -1,15 +1,15 @@
 package org.ontbrowser.www.service;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.ontbrowser.www.feature.dlquery.ReasonerService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.dlquery.QueryType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
@@ -20,9 +20,10 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ReasonerServiceTest {
 
     public final DLQuery q1 = new DLQuery(new OWLClassImpl(IRI.create("test")), QueryType.instances);

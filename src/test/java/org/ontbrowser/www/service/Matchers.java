@@ -2,9 +2,9 @@ package org.ontbrowser.www.service;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
-import org.ontbrowser.www.model.Tree;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Description;
+import org.ontbrowser.www.model.Tree;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;

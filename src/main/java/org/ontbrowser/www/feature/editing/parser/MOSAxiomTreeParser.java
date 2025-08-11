@@ -155,7 +155,10 @@ public class MOSAxiomTreeParser {
                                 .expectAnnotationProperty("a").expectLiteral("v")
                                 .create(e -> df.getOWLAnnotationAssertionAxiom(e.annotProp("a"), e.dataProp("p").getIRI(), e.lit("v"))),
                         branch()
-                                .expectPrefixKeyword(RANGE).expectDatatype("d")
+                                .expectKeyword(DOMAIN).expectClassExpression("c")
+                                .create(e -> df.getOWLDataPropertyDomainAxiom(e.dataProp("p"), e.clsExpr("c"))),
+                        branch()
+                                .expectKeyword(RANGE).expectDatatype("d")
                                 .create(e -> df.getOWLDataPropertyRangeAxiom(e.dataProp("p"), e.datatype("d"))),
                         branch()
                                 .expectKeyword(DISJOINT_WITH).expectDataPropertyExpression("q")

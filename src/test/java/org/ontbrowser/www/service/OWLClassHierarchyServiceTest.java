@@ -1,9 +1,9 @@
 package org.ontbrowser.www.service;
 
-import org.ontbrowser.www.model.Tree;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
-import org.junit.Before;
-import org.junit.Test;
+import org.ontbrowser.www.model.Tree;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
@@ -11,9 +11,9 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.ontbrowser.www.model.Tree.treeComparator;
 import static org.ontbrowser.www.service.Matchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Integration test using StructuralReasoner implementation.
@@ -32,7 +32,7 @@ public class OWLClassHierarchyServiceTest {
 
     private OWLClass owlThing, a, a2, b, b2, b3, b4, c;
 
-    @Before
+    @BeforeEach
     public void setup() throws OWLOntologyCreationException {
         mngr = OWLManager.createOWLOntologyManager();
         dataFactory = mngr.getOWLDataFactory();

@@ -1,13 +1,14 @@
 package org.ontbrowser.www.renderer;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.util.SimpleIRIShortFormProvider;
 import uk.ac.manchester.cs.owl.owlapi.OWLNamedIndividualImpl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class FixedShortFormProviderTest {
 
@@ -29,7 +30,7 @@ public class FixedShortFormProviderTest {
         assertEquals("monkey", label);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldDealWithNamesStartingWithNumbers() {
         IRI iri = IRI.create("http://null.com/ontology.owl#501st");
@@ -38,7 +39,7 @@ public class FixedShortFormProviderTest {
         assertEquals("501st", label);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void shouldDealWithNamesWithApostrophes() {
         IRI iri = IRI.create("http://null.com/ontology.owl#D'Qar");

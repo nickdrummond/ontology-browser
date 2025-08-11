@@ -1,6 +1,6 @@
 package org.ontbrowser.www.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.ontbrowser.www.feature.dlquery.ParserService;
 import org.ontbrowser.www.feature.expression.AutocompleteService;
@@ -15,7 +15,7 @@ import uk.co.nickdrummond.parsejs.ParseResult;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 
 public class ParserServiceTest {

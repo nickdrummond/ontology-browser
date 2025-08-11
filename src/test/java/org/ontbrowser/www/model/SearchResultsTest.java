@@ -1,13 +1,13 @@
 package org.ontbrowser.www.model;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ontbrowser.www.feature.search.SearchResult;
 import org.ontbrowser.www.feature.search.SearchResults;
 
 import java.io.IOException;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SearchResultsTest {
 

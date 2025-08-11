@@ -1,11 +1,11 @@
 package org.ontbrowser.www.renderer;
 
 import org.eclipse.rdf4j.model.vocabulary.SKOSXL;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -13,11 +13,11 @@ import org.semanticweb.owlapi.vocab.SKOSVocabulary;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SkosXLShortFormProviderTest {
 
     private OWLOntology ont;
@@ -32,7 +32,7 @@ public class SkosXLShortFormProviderTest {
     @Mock
     private ShortFormProvider mockBackupSfp;
 
-    @Before
+    @BeforeEach
     public void setup() throws OWLOntologyCreationException {
 
         OWLOntologyManager mngr = OWLManager.createOWLOntologyManager();
