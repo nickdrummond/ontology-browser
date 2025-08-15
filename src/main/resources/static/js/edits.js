@@ -44,7 +44,7 @@ export const edits = () => {
     }
 
     return {
-        init: init,
-        rememberTransaction: rememberTransaction,
+        init,
+        rememberTransaction,
     }
 }

@@ -6,17 +6,17 @@
     <div class="edit" th:fragment="axiom (original, ontologyIRI)">
         <form method='get' id='edit' action='/axioms/add'>
             <input type="hidden" name="transaction" th:if="${transaction != null}" id="edit-transaction" th:value="${transaction}"/>
-<!--            <input type="hidden" name="originalAxiom" id="edit-original-axiom" th:value="${original}"/>-->
-<!--            <input type="hidden" name="originalOntology" id="edit-original-ontology" th:value="${ontologyIRI}"/>-->
-<!--            <label for="edit-axiom">Axiom</label>-->
+            <input type="hidden" name="originalAxiom" id="edit-original-axiom" th:value="${original}"/>
+            <input type="hidden" name="originalOntology" id="edit-original-ontology" th:value="${ontologyIRI}"/>
+            <label for="edit-axiom">Axiom</label>
             <textarea name='axiom' id='edit-axiom'
                       th:placeholder="${original}"
                       th:text='${original}'>Pizza</textarea>
 
             <input class="edit-add" type='submit' value='add'/>
-<!--            <input class="edit-edit" type='submit' value='edit'/>-->
+            <input class="edit-edit" type='submit' value='edit'/>
 
-            <!--            <label for="edit-ontology">Ontology</label>-->
+                        <label for="edit-ontology">Ontology</label>
             <select name="ontology" id="edit-ontology">
                 <option th:each="ont : ${ontologies}"
                         class="ontology-uri"

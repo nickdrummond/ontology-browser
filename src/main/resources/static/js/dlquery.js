@@ -1,4 +1,4 @@
-import {getValueOfElementByID, getParameter, getUrlWithParameter} from "./util.js";
+import {getValueOfElementByID, getParameter} from "./util.js";
 import {BUSY_IMAGE} from "./util.js";
 import {entity} from "./entity.js";
 
