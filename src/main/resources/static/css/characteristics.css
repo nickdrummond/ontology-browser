@@ -20,14 +20,14 @@
     cursor: pointer;
 }
 
-.characteristic .header:before {
+.characteristic .header::before {
     transition: rotate 0.3s ease-in-out;
     content: "▼";
     margin-right: 0.2rem;
     rotate: 0;
 }
 
-.characteristic.hidden .header:before {
+.characteristic.hidden .header::before {
     rotate: -90deg;
 }
 

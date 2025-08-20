@@ -34,9 +34,25 @@ const tree = (treeElement, baseUrl, entityPane) => {
     function init(callback) {
         selectedEntityCallback = callback;
 
+        addMinimise();
         scrollToSelection();
-
         createExpandListeners();
+    }
+
+    function addMinimise() {
+        let classList = treeElement.className;
+        const name = classList.replace(" hidden", "");
+        const hidden = sessionStorage.getItem(name);
+        if (hidden && hidden === "true") {
+            treeElement.classList.add("hidden");
+        }
+        const title = treeElement.querySelector("h4.header .title");
+        if (title) {
+            title.onclick = (e) => {
+                treeElement.classList.toggle("hidden");
+                sessionStorage.setItem(name, treeElement.classList.contains("hidden"));
+            };
+        }
     }
 
     function showSelected(component) {
@@ -150,6 +166,7 @@ const tree = (treeElement, baseUrl, entityPane) => {
                         const throwaway = document.createElement('span');
                         throwaway.innerHTML = html;
                         treeElement.replaceChildren(...throwaway.firstElementChild.childNodes);
+                        addMinimise();
                     } else {
                         treeElement.innerHTML = "<h4>Members (0)</h4>";
                     }
@@ -204,7 +221,7 @@ const tree = (treeElement, baseUrl, entityPane) => {
     }
 
     return {
-        init: init,
-        reload: reload,
+        init,
+        reload,
     };
 };

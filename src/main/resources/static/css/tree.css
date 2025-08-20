@@ -10,7 +10,17 @@
     max-width: 24rem;
 }
 
-.owlselector .min {
+.owlselector .header {
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.owlselector .header::before {
+    content: "▶";
+    margin-right: 0.5rem;
+}
+
+.owlselector.hidden .minihierarchy {
     display: none;
 }
 
@@ -56,17 +66,17 @@ ul.minihierarchy {
 }
 
 /* expand/collapse node button */
-.minihierarchy li > .node:before {
+.minihierarchy li > .node::before {
     content: "-";
 }
 
-.minihierarchy li.with-children > .node:before {
+.minihierarchy li.with-children > .node::before {
     transition: rotate 0.3s ease-in-out;
     display: inline-block;
     content: "▶";
 }
 
-.minihierarchy li.with-children.expanded > .node:before {
+.minihierarchy li.with-children.expanded > .node::before {
     rotate: 90deg;
 }
 
@@ -104,10 +114,25 @@ ul.minihierarchy {
         flex: 1;
         display: flex;
         flex-direction: column;
+        padding-top: 3rem;
         max-width: 24rem;
     }
 
-    .owlselector .min {
+    .owlselector.hidden {
+        flex: 0;
+        width: 2rem;
+        margin: 0;
+    }
+
+    .owlselector.hidden .header {
+        writing-mode: sideways-lr;
+    }
+
+    .owlselector.hidden .header::before {
+        margin-top: 0.5rem;
+    }
+
+    .owlselector.hidden .header .paging {
         display: none;
     }
 }

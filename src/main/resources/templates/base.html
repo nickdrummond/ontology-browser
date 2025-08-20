@@ -312,7 +312,7 @@
 </ul>
 
 <div class='owlselector primary' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
-    <h4 th:text="${title}">Title</h4>
+    <h4 class="header"><span class="title" th:text="${title}">Title</span></h4>
     <ul class="minihierarchy" th:classappend="${title}">
         <li th:replace="~{base::tree(t=${hierarchy})}">Top Thing</li>
     </ul>
@@ -322,12 +322,11 @@
      th:fragment="secondaryhierarchy"
      th:if="${hierarchy2 != null}">
 
-    <h4 th:if="${inverse == null}" th:text="${type2}"></h4>
-    <h4 th:if="${inverse != null}">
-        <span th:if="${inverse}" class="keyword">InverseOf
-            <a href="?" th:text="${type2}">Title</a>
-        </span>
-        <a th:if="${!inverse}" href="?inverse=true" th:text="${type2}">Title</a>
+    <h4 class="header">
+        <span th:if="${inverse != null && !inverse}" class="keyword">Inverse</span>
+        <span class="title" th:text="${type2}">Title</span>
+        <a th:if="${inverse}" href="?" class="keyword">↩</a>
+        <a th:if="${inverse != null && !inverse}" href="?inverse=true" class="keyword">↪</a>
     </h4>
 
     <ul class="minihierarchy" th:classappend="${type2}" th:if="${!hierarchy2.children.isEmpty()}">
@@ -338,7 +337,7 @@
 </div>
 
 <div class='owlselector primary' th:fragment="list (title, entities)" th:if="${entities != null}">
-    <h4 th:text="${title}">Title</h4>
+    <h4 class="header"><span class="title"  th:text="${title}">Title</span></h4>
     <ul class="minihierarchy" th:classappend="${type}">
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
             a thing
@@ -350,8 +349,9 @@
      th:if="${direct != null}"
      class="owlselector secondary">
 
-    <h4 th:with='name=${T(org.ontbrowser.www.feature.entities.characteristics.PagingUtils).getIdFor(direct.name)}'>
-        <span th:text='${direct.name}'>Some Characteristic</span>
+    <h4 class="header"
+        th:with='name=${T(org.ontbrowser.www.feature.entities.characteristics.PagingUtils).getIdFor(direct.name)}'>
+        <span class="title" th:text='${direct.name}'>Some Characteristic</span>
         <span th:replace="~{base::paged (${direct.getPageData()}, ${name})}">(2)</span>
     </h4>
 
