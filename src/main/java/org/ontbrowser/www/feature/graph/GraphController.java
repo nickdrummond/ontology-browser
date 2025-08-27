@@ -60,6 +60,7 @@ public class GraphController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "") final List<String> follow,
             @RequestParam(required = false, defaultValue = "") final List<String> without,
             @RequestParam(required = false, defaultValue = "1") final int depth,
+            @RequestParam(required = false, defaultValue = "200") final int maxEdges,
             @ModelAttribute final OWLOntology ont
     ) throws ExecutionException, InterruptedException {
         var finder = kit.getFinder();
@@ -90,6 +91,7 @@ public class GraphController extends ApplicationController {
                 //.withInverseProperties(parentProperties) // adding this "fills" parents with their children
                 .withFollow(followProperties)
                 .withoutProperties(withoutProperties)
+                .withMaxEdges(maxEdges)
                 .withDepth(depth);
 
         var graph = new GraphBuilder(descr).build();

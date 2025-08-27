@@ -439,13 +439,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const nodeSelected = (sel) => {
-        updatedSelectedList(sel);
-        highlightConnectedEdges(sel);
-        if (sel.length === 1) {
-            cy.center(sel);
+        if (sel) {
+            updatedSelectedList(sel);
+            highlightConnectedEdges(sel);
+            if (sel.length === 1) {
+                cy.center(sel);
+            }
+            if (sel.length > 1) {
+                cy.fit(sel);
+            }
         }
-        if (sel.length > 1) {
-            cy.fit(sel);
+    }
+
+    function updateStats(nodes, edges) {
+        const nodeCount = document.getElementById("nodeCount");
+        if (nodeCount) {
+            nodeCount.innerText = nodes.length;
+        }
+
+        const edgeCount = document.getElementById("edgeCount");
+        if (edgeCount) {
+            edgeCount.innerText = edges.length;
         }
     }
 
@@ -456,7 +470,12 @@ document.addEventListener('DOMContentLoaded', function () {
         cy = cytoscape({
             container: document.querySelector('.graph'), // container to render in
             ready: function () {
-                this.nodes().forEach(function (node) {
+                const nodes = this.nodes();
+                const edges = this.edges();
+
+                updateStats(nodes, edges);
+
+                nodes.forEach(function (node) {
                     render(node);
                 });
                 nodeSelected(this.$(SELECTED));

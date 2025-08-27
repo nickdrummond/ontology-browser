@@ -48,6 +48,14 @@
     margin-bottom: auto;
 }
 
+.graph-stats {
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+    margin-right: 2rem;
+    font-size: small;
+}
+
 [data-theme="light"] .graph {
     background-color: #fefefe;
     border-color: black;

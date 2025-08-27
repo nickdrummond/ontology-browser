@@ -63,7 +63,7 @@ public class GraphBuilder {
     }
 
     private void buildEntity(OWLEntity entity, int depth) {
-        ont.referencingAxioms(entity, Imports.INCLUDED).forEach(ax -> ax.accept(new OWLAxiomVisitor() {
+        OWLAxiomVisitor visitor = new OWLAxiomVisitor() {
             @Override
             public void visit(@Nonnull OWLObjectPropertyAssertionAxiom axiom) {
                 buildRelation(axiom, entity, depth);
@@ -87,7 +87,12 @@ public class GraphBuilder {
                     log.debug("Ignoring axiom {} ", object);
                 }
             }
-        }));
+        };
+        ont.referencingAxioms(entity, Imports.INCLUDED).forEach(ax -> {
+            if (edges.size() < descr.getMaxEdges()) {
+                ax.accept(visitor);
+            }
+        });
     }
 
     private void buildDataRelation(OWLDataPropertyAssertionAxiom axiom) {

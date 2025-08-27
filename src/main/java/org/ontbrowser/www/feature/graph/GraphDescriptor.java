@@ -21,6 +21,7 @@ public class GraphDescriptor {
     private final Set<OWLObject> owlObjects = new HashSet<>();
 
     private int depth = 1;
+    private int maxEdges = 100;
 
     public GraphDescriptor(OWLOntology ont) {
         this.ont = ont;
@@ -62,9 +63,13 @@ public class GraphDescriptor {
         return this;
     }
 
-
     public GraphDescriptor withDepth(int depth) {
         this.depth = depth;
+        return this;
+    }
+
+    public GraphDescriptor withMaxEdges(int maxEdges) {
+        this.maxEdges = maxEdges;
         return this;
     }
 
@@ -86,6 +91,10 @@ public class GraphDescriptor {
 
     public int getMaxDepth() {
         return depth;
+    }
+
+    public int getMaxEdges() {
+        return maxEdges;
     }
 
     public OWLOntology getOntology() {
