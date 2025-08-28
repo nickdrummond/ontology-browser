@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setupControl("query", null, newValue => reload());
         setupControl(INDIVIDUALS, null, newValue => reload());
         setupControl("props", null, newValue => reload());
+        setupControl("incoming", null, newValue => reload());
         setupControl("without", null, newValue => reload());
         setupControl("follow", null, newValue => reload());
         setupControl("parents", null, newValue => reload());

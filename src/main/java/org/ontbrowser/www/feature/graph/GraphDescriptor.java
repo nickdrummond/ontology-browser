@@ -32,7 +32,7 @@ public class GraphDescriptor {
         return this;
     }
 
-    public GraphDescriptor withInverseProperties(Set<OWLProperty> invProps) {
+    public GraphDescriptor withIncomingProperties(Set<OWLProperty> invProps) {
         this.withInverseProperties.addAll(invProps);
         return this;
     }

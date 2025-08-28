@@ -59,6 +59,7 @@ public class GraphController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "") final List<String> parents,
             @RequestParam(required = false, defaultValue = "") final List<String> follow,
             @RequestParam(required = false, defaultValue = "") final List<String> without,
+            @RequestParam(required = false, defaultValue = "") final List<String> incoming,
             @RequestParam(required = false, defaultValue = "1") final int depth,
             @RequestParam(required = false, defaultValue = "200") final int maxEdges,
             @ModelAttribute final OWLOntology ont
@@ -68,6 +69,7 @@ public class GraphController extends ApplicationController {
         var parentProperties = getProps(parents, ont, finder);
         var followProperties = getProps(follow, ont, finder);
         var withoutProperties = getProps(without, ont, finder);
+        var incomingProperties = getProps(incoming, ont, finder);
         var properties = props.isEmpty()
                 ? getAllProps(ont)
                 : getProps(props, ont, finder);
@@ -88,7 +90,7 @@ public class GraphController extends ApplicationController {
                 .addObjects(objects)
                 .withProperties(properties)
                 .withProperties(parentProperties)
-                //.withInverseProperties(parentProperties) // adding this "fills" parents with their children
+                .withIncomingProperties(incomingProperties)
                 .withFollow(followProperties)
                 .withoutProperties(withoutProperties)
                 .withMaxEdges(maxEdges)
