@@ -446,16 +446,22 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    let lastSelected = "";
     const nodeSelected = (sel) => {
         if (sel) {
+            const ids = JSON.stringify(sel.map(s => s.data().id));
+            if (ids === lastSelected) {
+                return;
+            }
+            lastSelected = ids;
             updatedSelectedList(sel);
             highlightConnectedEdges(sel);
-            if (sel.length === 1) {
-                cy.center(sel);
-            }
-            if (sel.length > 1) {
-                cy.fit(sel);
-            }
+            cy.stop(true);
+            cy.animate({
+                fit: { eles: sel },
+            }, {
+                duration: 1000
+            });
         }
     }
 
