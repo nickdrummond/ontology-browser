@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'color': '#000000',
                 'label': 'data(label)',
                 'font-size': '10',
+                'min-zoomed-font-size': 25, // optimisation for large graphs
             },
         },
 
@@ -81,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'label': 'data(label)',
                 'font-size': '8',
                 'text-opacity': 1,
+                'min-zoomed-font-size': 35, // optimisation for large graphs
             },
         },
 
@@ -88,14 +90,19 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'node' + SELECTED,
             style: {
                 'background-color': '#F08080',
+                'font-size': '14',
+                'min-zoomed-font-size': 20, // optimisation for large graphs
             },
         },
+
+        // TODO node highlighted if one step from selected node?
 
         {
             selector: 'edge' + SELECTED,
             style: {
                 'line-color': '#F08080',
                 'line-opacity': 1,
+                'min-zoomed-font-size': 30, // optimisation for large graphs
             },
         },
 
@@ -104,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
             style: {
                 'line-color': '#F08080',
                 'line-opacity': 0.5,
+                'min-zoomed-font-size': 30, // optimisation for large graphs
             },
         }
     ];
