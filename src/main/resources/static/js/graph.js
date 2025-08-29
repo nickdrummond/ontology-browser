@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Remove duplicates that already occur in the graph
                     // Use the ID as that is unique hash of the edge or node
                     const filtered = elements.filter(element => {
-                        const existing = cy.$("#" + element.data.id);
+                        const existing = cy.getElementById(element.data.id);
                         return (!existing.length > 0);
                     });
 
