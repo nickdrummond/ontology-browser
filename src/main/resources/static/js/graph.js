@@ -242,11 +242,10 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             let selected = cy.$(SELECTED);
             const selectedLabels = selected.map(s => s.data().label);
-            const selectedIds = selected.map(s => s.data().id);
             const current = document.getElementById(INDIVIDUALS);
             const merged = unionSet(selectedLabels, current.value.split(","));
             current.value = merged.join(',');
-            append(selectedLabels, selectedIds);
+            append(selectedLabels);
         };
 
         document.getElementById("delete").onclick = (e) => {
@@ -346,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    function append(labels, ids) {
+    function append(labels) {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
@@ -358,15 +357,15 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => {
                 response.json().then(json => {
-                    let elements = json.elements;
+                    const elements = json.elements;
+                    // Remove duplicates that already occur in the graph
+                    // Use the ID as that is unique hash of the edge or node
+                    const filtered = elements.filter(element => {
+                        const existing = cy.$("#" + element.data.id);
+                        return (!existing.length > 0);
+                    });
 
-                    // remove existing edges that have the requested nodes as source
-                    // to prevent duplicates
-                    ids.forEach(id => {
-                        cy.remove('edge[source="' + id + '"]');
-                    })
-
-                    cy.add(elements);
+                    cy.add(filtered);
                     cy.layout(currentLayout).run();
                     cy.ready();
                 });
@@ -417,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!current.includes(sel)) {
             current.push(sel);
             indivs.value = current.join(",");
-            append(sel, [id]);
+            append(sel);
             updateAddress(indivsId, indivs.value);
         }
     }

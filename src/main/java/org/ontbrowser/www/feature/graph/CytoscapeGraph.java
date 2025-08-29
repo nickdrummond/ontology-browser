@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @JsonSerialize
 public class CytoscapeGraph {
@@ -24,9 +22,9 @@ public class CytoscapeGraph {
 
     private interface Data{}
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private record EdgeData(String label, String source, String target) implements Data {}
-    private record NodeData(String id, String label, String type) implements Data {}
-    private record ChildData(String id, String label, String parent) implements Data {}
+    private record EdgeData(int id, String label, int source, int target) implements Data {}
+    private record NodeData(int id, String label, String type) implements Data {}
+    private record ChildData(int id, String label, int parent) implements Data {}
     private record Element(String group, Data data, boolean selected){}
 
     private final List<Element> elements ;
@@ -70,20 +68,24 @@ public class CytoscapeGraph {
         ).distinct().toList();
     }
 
-    private Stream<Element> fillInNumericNodes(EdgeData edgeData) {
-        return Stream.of(
-                new Element("edges", edgeData, false),
-                new Element("nodes", new NodeData(edgeData.source, edgeData.source, "literal"), false),
-                new Element("nodes", new NodeData(edgeData.target, edgeData.target, "literal"), false)
-        );
-    }
+//    private Stream<Element> fillInNumericNodes(EdgeData edgeData) {
+//        return Stream.of(
+//                new Element("edges", edgeData, false),
+//                new Element("nodes", new NodeData(edgeData.source.hashCode(), edgeData.source, "literal"), false),
+//                new Element("nodes", new NodeData(edgeData.target.hashCode(), edgeData.target, "literal"), false)
+//        );
+//    }
 
-    private EdgeData numericEdge(int i) {
-        return new EdgeData("after", String.valueOf(i), String.valueOf(i - 1));
-    }
+//    private EdgeData numericEdge(int i) {
+//        return new EdgeData("after", String.valueOf(i), String.valueOf(i - 1));
+//    }
 
     private Element transformEdge(Graph.Edge edge) {
-        EdgeData data = new EdgeData(mos.render(edge.predicate()), getId(edge.subject()), getId(edge.object()));
+        String label = mos.render(edge.predicate());
+        int subjectId = getId(edge.subject());
+        int objectId = getId(edge.object());
+        // Combine the predicate and nodes in a hash to get a unique ID for the edge
+        EdgeData data = new EdgeData((label+subjectId+objectId).hashCode(), label, subjectId, objectId);
         return new Element("edges", data, false);
     }
 
@@ -124,11 +126,11 @@ public class CytoscapeGraph {
         return new Element("nodes", new ChildData(getId(subject), label, getId(parent)), selected);
     }
 
-    private String getId(OWLObject subject) {
+    private int getId(OWLObject subject) {
         if (subject instanceof OWLEntity entity) {
-            return entity.getIRI().toString();
+            return entity.getIRI().toString().hashCode();
         }
-        return mos.render(subject);
+        return mos.render(subject).hashCode();
     }
 
     public List<Element> getElements() {
