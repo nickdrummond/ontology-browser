@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (value !== "") {
             const sel = cy.nodes(`[label *= "${value}"]`); // starts with
             sel.select();
-            nodeSelected(sel);
+            nodeSelected(sel, true);
         } else {
             updatedSelectedList([]);
             cy.reset();
@@ -460,14 +460,14 @@ document.addEventListener('DOMContentLoaded', function () {
             li.onclick = () => {
                 cy.$(SELECTED).unselect();
                 node.select();
-                nodeSelected([node]);
+                nodeSelected([node], true);
             };
             selectedList.appendChild(li);
         });
     }
 
     let lastSelected = "";
-    const nodeSelected = (sel) => {
+    const nodeSelected = (sel, fit= false) => {
         if (sel) {
             const ids = JSON.stringify(sel.map(s => s.data().id));
             if (ids === lastSelected) {
@@ -476,12 +476,14 @@ document.addEventListener('DOMContentLoaded', function () {
             lastSelected = ids;
             updatedSelectedList(sel);
             highlightConnectedEdges(sel);
-            cy.stop(true);
-            cy.animate({
-                fit: { eles: sel },
-            }, {
-                duration: 1000
-            });
+            if (fit) {
+                cy.stop(true);
+                cy.animate({
+                    fit: {eles: sel},
+                }, {
+                    duration: 1000
+                });
+            }
         }
     }
 
