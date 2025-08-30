@@ -215,16 +215,14 @@ document.addEventListener('DOMContentLoaded', function () {
     function fit(sel) {
         cy.stop(true);
         cy.animate({
-            fit: {eles: sel},
+            fit: {eles: sel, padding: 50},
         }, {
             duration: 1000
         });
     }
 
     function search(value) {
-        // cy.edges().removeClass(HIGHLIGHTED);
-        cy.edges().unselect();
-        cy.nodes().unselect();
+        cy.$(SELECTED).unselect();
         if (value !== "") {
             const sel = cy.elements(`[label *= "${value}"]`); // starts with
             sel.select();
@@ -489,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 cy.$(SELECTED).unselect();
                 node.select();
                 nodeSelected([node]);
-                fit([node]);
+                fit(node);
             };
             selectedList.appendChild(li);
         });
