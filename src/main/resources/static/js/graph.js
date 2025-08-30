@@ -222,10 +222,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function search(value) {
-        cy.edges().removeClass(HIGHLIGHTED);
+        // cy.edges().removeClass(HIGHLIGHTED);
+        cy.edges().unselect();
         cy.nodes().unselect();
         if (value !== "") {
-            const sel = cy.nodes(`[label *= "${value}"]`); // starts with
+            const sel = cy.elements(`[label *= "${value}"]`); // starts with
             sel.select();
             nodeSelected(sel);
             fit(sel);
