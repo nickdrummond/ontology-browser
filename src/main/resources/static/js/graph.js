@@ -429,9 +429,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function highlightConnectedEdges(sel) {
         cy.edges().removeClass(HIGHLIGHTED);
-        sel.map(node => {
-            cy.edges("[source='" + node.id() + "']").addClass(HIGHLIGHTED);
-        });
+        if (sel.length === 1) {
+            sel.map(node => {
+                cy.edges("[source='" + node.id() + "']").addClass(HIGHLIGHTED);
+            });
+        }
+        else if (sel.length > 1){
+            // if more than one node selected, only highlight edges between them
+            for(let i = 0; i < sel.length; i++) {
+                for(let j = i + 1; j < sel.length; j++) {
+                    const a = sel[i].id();
+                    const b = sel[j].id();
+                    cy.edges("[source='" + a + "'][target='" + b + "']").addClass(HIGHLIGHTED);
+                    cy.edges("[source='" + b + "'][target='" + a + "']").addClass(HIGHLIGHTED);
+                }
+                }
+        }
     }
 
     const expand = (event, originalEvent) => {
