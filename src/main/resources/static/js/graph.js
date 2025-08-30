@@ -1,6 +1,9 @@
 const INDIVIDUALS = "indivs";
 const SELECTED = ':selected';
 const HIGHLIGHTED = 'highlighted';
+const QUERY = "query";
+const PROPERTIES = "props";
+
 
 function getTheme() {
     return document.documentElement.getAttribute(THEME_ATTRIBUTE);
@@ -228,9 +231,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         setupControl("depth", null, newValue => reload());
-        setupControl("query", null, newValue => reload());
+        setupControl(QUERY, null, newValue => reload());
         setupControl(INDIVIDUALS, null, newValue => reload());
-        setupControl("props", null, newValue => reload());
+        setupControl(PROPERTIES, null, newValue => reload());
         setupControl("incoming", null, newValue => reload());
         setupControl("without", null, newValue => reload());
         setupControl("follow", null, newValue => reload());
@@ -240,9 +243,26 @@ document.addEventListener('DOMContentLoaded', function () {
         const refocus = document.getElementById("refocus");
         refocus.onclick = (e) => {
             e.preventDefault();
-            const sel = cy.$(SELECTED).map(s => s.data().label).join(',');
-            document.getElementById(INDIVIDUALS).value = sel;
-            updateAddress(INDIVIDUALS, sel);
+            const allSelected = cy.$(SELECTED);
+
+            const instances = allSelected
+                .filter(s => s.data().type === 'individual')
+                .map(s => s.data().label).join(',');
+            document.getElementById(INDIVIDUALS).value = instances;
+            updateAddress(INDIVIDUALS, instances);
+
+            const classes = allSelected
+                .filter(s => s.data().type === 'class')
+                .map(s => s.data().label).join(' or '); // build union of classes
+            document.getElementById(QUERY).value = classes;
+            updateAddress(QUERY, classes);
+
+            const properties = allSelected
+                .filter(s => Boolean(s.data().source))
+                .map(s => s.data().label).join(',');
+            document.getElementById(PROPERTIES).value = properties;
+            updateAddress(PROPERTIES, properties);
+
             reload();
         };
 
@@ -481,6 +501,9 @@ document.addEventListener('DOMContentLoaded', function () {
         currentLayout = getLayout(type);
         const spaceCtrl = document.getElementById("space");
         setLengthProp(parseInt(spaceCtrl.value));
+        if (cy) {
+            cy.destroy(); // need to destroy old instance to avoid memory leaks
+        }
         cy = cytoscape({
             container: document.querySelector('.graph'), // container to render in
             ready: function () {
