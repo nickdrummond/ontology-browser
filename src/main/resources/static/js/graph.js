@@ -1,6 +1,7 @@
 const INDIVIDUALS = "indivs";
 const SELECTED = ':selected';
 const HIGHLIGHTED = 'highlighted';
+const HIGHLIGHTED_INCOMING = 'highlighted-incoming';
 const QUERY = "query";
 const PROPERTIES = "props";
 
@@ -121,7 +122,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 'line-opacity': 0.5,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
             },
-        }
+        },
+
+        { // highlight edges connected to selected nodes
+            selector: 'edge.highlighted-incoming',
+            style: {
+                'color': '#2e5cde',
+                'line-color': '#2e5cde',
+                'line-opacity': 0.5,
+                'min-zoomed-font-size': 30, // optimisation for large graphs
+            },
+        },
     ];
 
     // Light/dark style support must be under control of cytoscape for png export to work
@@ -442,10 +453,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function highlightConnectedEdges(sel) {
-        cy.edges().removeClass(HIGHLIGHTED);
+        cy.edges().removeClass(HIGHLIGHTED).removeClass(HIGHLIGHTED_INCOMING);
         if (sel.length === 1) {
             sel.map(node => {
                 cy.edges("[source='" + node.id() + "']").addClass(HIGHLIGHTED);
+                cy.edges("[target='" + node.id() + "']").addClass(HIGHLIGHTED_INCOMING);
             });
         } else if (sel.length > 1) {
             // if more than one node selected, only highlight edges between them
