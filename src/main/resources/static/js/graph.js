@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'background-color': '#F08080',
                 'font-size': '14',
                 'min-zoomed-font-size': 20, // optimisation for large graphs
+                'z-index': 1000,
             },
         },
 
@@ -108,6 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'line-color': '#F08080',
                 'line-opacity': 1,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
+                // cannot use z-index to bring edges forward
             },
         },
 
@@ -210,13 +212,23 @@ document.addEventListener('DOMContentLoaded', function () {
         return getTheme() === 'dark';
     }
 
+    function fit(sel) {
+        cy.stop(true);
+        cy.animate({
+            fit: {eles: sel},
+        }, {
+            duration: 1000
+        });
+    }
+
     function search(value) {
         cy.edges().removeClass(HIGHLIGHTED);
         cy.nodes().unselect();
         if (value !== "") {
             const sel = cy.nodes(`[label *= "${value}"]`); // starts with
             sel.select();
-            nodeSelected(sel, true);
+            nodeSelected(sel);
+            fit(sel);
         } else {
             updatedSelectedList([]);
             cy.reset();
@@ -436,17 +448,16 @@ document.addEventListener('DOMContentLoaded', function () {
             sel.map(node => {
                 cy.edges("[source='" + node.id() + "']").addClass(HIGHLIGHTED);
             });
-        }
-        else if (sel.length > 1){
+        } else if (sel.length > 1) {
             // if more than one node selected, only highlight edges between them
-            for(let i = 0; i < sel.length; i++) {
-                for(let j = i + 1; j < sel.length; j++) {
+            for (let i = 0; i < sel.length; i++) {
+                for (let j = i + 1; j < sel.length; j++) {
                     const a = sel[i].id();
                     const b = sel[j].id();
                     cy.edges("[source='" + a + "'][target='" + b + "']").addClass(HIGHLIGHTED);
                     cy.edges("[source='" + b + "'][target='" + a + "']").addClass(HIGHLIGHTED);
                 }
-                }
+            }
         }
     }
 
@@ -476,14 +487,15 @@ document.addEventListener('DOMContentLoaded', function () {
             li.onclick = () => {
                 cy.$(SELECTED).unselect();
                 node.select();
-                nodeSelected([node], true);
+                nodeSelected([node]);
+                fit([node]);
             };
             selectedList.appendChild(li);
         });
     }
 
     let lastSelected = "";
-    const nodeSelected = (sel, fit= false) => {
+    const nodeSelected = (sel) => {
         if (sel) {
             const ids = JSON.stringify(sel.map(s => s.data().id));
             if (ids === lastSelected) {
@@ -492,14 +504,6 @@ document.addEventListener('DOMContentLoaded', function () {
             lastSelected = ids;
             updatedSelectedList(sel);
             highlightConnectedEdges(sel);
-            if (fit) {
-                cy.stop(true);
-                cy.animate({
-                    fit: {eles: sel},
-                }, {
-                    duration: 1000
-                });
-            }
         }
     }
 
