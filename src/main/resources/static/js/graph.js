@@ -524,13 +524,12 @@ document.addEventListener('DOMContentLoaded', function () {
             layout: currentLayout,
         });
 
-        cy.on('click', function (e) {
-            if (e.target.cy && e.target.group() === 'nodes') {
-                // Give it a sec to allow the selection to update
-                setTimeout(() => {
-                    nodeSelected(cy.$(SELECTED));
-                }, 100);
-            }
+        cy.on('select', function (e) {
+            nodeSelected(cy.$(SELECTED));
+        });
+
+        cy.on('unselect', function (e) {
+            nodeSelected(cy.$(SELECTED));
         });
 
         const doubleClickDelayMs = 300;
