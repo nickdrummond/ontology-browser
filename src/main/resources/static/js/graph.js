@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'node',
             style: {
                 'background-color': '#999999',
-                'color': '#000000',
+                'color': '#999999',
                 'label': 'data(label)',
                 'font-size': '10',
                 'min-zoomed-font-size': 25, // optimisation for large graphs
@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             selector: 'node' + SELECTED,
             style: {
+                'color': '#000000',
                 'background-color': '#F08080',
                 'font-size': '14',
                 'min-zoomed-font-size': 20, // optimisation for large graphs
@@ -103,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             selector: 'edge' + SELECTED,
             style: {
+                'color': '#000000',
                 'line-color': '#F08080',
                 'line-opacity': 1,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
@@ -112,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { // highlight edges connected to selected nodes
             selector: 'edge.highlighted',
             style: {
+                'color': '#F08080',
                 'line-color': '#F08080',
                 'line-opacity': 0.5,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
