@@ -13,7 +13,6 @@ import uk.co.nickdrummond.parsejs.ParseException;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.Set;
 
 @Service
 public class EditService {
@@ -28,24 +27,24 @@ public class EditService {
      * TODO take a transaction ID from the frontend to keep adding to the same ontology
      */
     public OWLOntology add(OWLAxiom newAxiom, OWLOntology targetOnt, String transaction, OWLOntology rootOntology) {
-        OWLOntologyManager mngr = targetOnt.getOWLOntologyManager();
-        OWLOntology ont = getOntologyForTransaction(mngr, transaction, rootOntology);
-        OWLDataFactory df = mngr.getOWLDataFactory();
+//        OWLOntologyManager mngr = targetOnt.getOWLOntologyManager();
+//        OWLOntology ont = getOntologyForTransaction(mngr, transaction, rootOntology);
+//        OWLDataFactory df = mngr.getOWLDataFactory();
 
-        OWLAxiom annotated = newAxiom.getAnnotatedAxiom(Set.of(
-                df.getOWLAnnotation(
-                        df.getOWLAnnotationProperty(TransactionUtils.TARGET_PROPERTY_IRI),
-                        df.getOWLLiteral(targetOnt.getOntologyID().getOntologyIRI().get().toString())
-                ),
-                df.getOWLAnnotation(
-                        df.getOWLAnnotationProperty(TransactionUtils.OPERATION_PROPERTY_IRI),
-                        df.getOWLLiteral("ADD")
-                )
-        ));
+//        OWLAxiom annotated = newAxiom.getAnnotatedAxiom(Set.of(
+//                df.getOWLAnnotation(
+//                        df.getOWLAnnotationProperty(TransactionUtils.TARGET_PROPERTY_IRI),
+//                        df.getOWLLiteral(targetOnt.getOntologyID().getOntologyIRI().get().toString())
+//                ),
+//                df.getOWLAnnotation(
+//                        df.getOWLAnnotationProperty(TransactionUtils.OPERATION_PROPERTY_IRI),
+//                        df.getOWLLiteral("ADD")
+//                )
+//        ));
 
-        ont.addAxiom(annotated);
+        targetOnt.addAxiom(newAxiom);
 
-        return ont;
+        return targetOnt;
     }
 
     /**
@@ -57,25 +56,34 @@ public class EditService {
             OWLAxiom originalAxiom, OWLAxiom newAxiom,
             OWLOntology originalOnt, OWLOntology targetOnt,
             String transactionID, OWLOntology rootOntology) {
+//
+//        OWLOntologyManager mngr = originalOnt.getOWLOntologyManager();
+//        OWLOntology ont = getOntologyForTransaction(mngr, transactionID, rootOntology);
+//        OWLDataFactory df = mngr.getOWLDataFactory();
+//
+//        OWLAxiom annotated = newAxiom.getAnnotatedAxiom(Set.of(
+//                df.getOWLAnnotation(
+//                        df.getOWLAnnotationProperty(TransactionUtils.TARGET_PROPERTY_IRI),
+//                        df.getOWLLiteral(targetOnt.getOntologyID().getOntologyIRI().get().toString())
+//                ),
+//                df.getOWLAnnotation(
+//                        df.getOWLAnnotationProperty(TransactionUtils.OPERATION_PROPERTY_IRI),
+//                        df.getOWLLiteral("ADD")
+//                )
+//        ));
 
-        OWLOntologyManager mngr = originalOnt.getOWLOntologyManager();
-        OWLOntology ont = getOntologyForTransaction(mngr, transactionID, rootOntology);
-        OWLDataFactory df = mngr.getOWLDataFactory();
+        targetOnt.addAxiom(newAxiom);
 
-        OWLAxiom annotated = newAxiom.getAnnotatedAxiom(Set.of(
-                df.getOWLAnnotation(
-                        df.getOWLAnnotationProperty(TransactionUtils.TARGET_PROPERTY_IRI),
-                        df.getOWLLiteral(targetOnt.getOntologyID().getOntologyIRI().get().toString())
-                ),
-                df.getOWLAnnotation(
-                        df.getOWLAnnotationProperty(TransactionUtils.OPERATION_PROPERTY_IRI),
-                        df.getOWLLiteral("ADD")
-                )
-        ));
+        return targetOnt;
+    }
 
-        ont.addAxiom(annotated);
-
-        return ont;
+    public OWLOntology remove(
+            OWLAxiom originalAxiom,
+            OWLOntology originalOnt,
+            String transactionID,
+            OWLOntology rootOntology) {
+        originalOnt.removeAxiom(originalAxiom);
+        return originalOnt;
     }
 
     private OWLOntology getOntologyForTransaction(

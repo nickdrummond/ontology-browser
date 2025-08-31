@@ -69,7 +69,7 @@ div.errorhighlight{
     background-color: #999999;
 }
 
-div.errorhighlight .error{
+div.errorhighlight .error-token{
     border-bottom: 2px dotted red; /* add a dotted red line under the error */
 }
 

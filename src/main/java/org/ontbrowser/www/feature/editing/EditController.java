@@ -142,7 +142,6 @@ public class EditController extends ApplicationController {
                 .build().toString());
     }
 
-
     @GetMapping(value = "/ac", produces = MediaType.APPLICATION_XML_VALUE)
     public String autocompleteOWLAxiom(
             @RequestParam String expression) {

@@ -48,7 +48,7 @@ KEY_CTRL = 17;
 
 CSS_SELECTED = "selected";
 CSS_INVALID = "invalid";
-CSS_ERROR = "error";
+CSS_ERROR = "error-token";
 CSS_EDITOR = "expression";
 
 // fix IE lack of Array.indexOf
@@ -978,7 +978,7 @@ function createSpan(cssClass, string, start, length){
     let openSpan = "%%LT%%span%%SP%%class=%%QU%%" + cssClass + "%%QU%%%%GT%%";
     let closeSpan = "%%LT%%/span%%GT%%";
 
-    if (start == end){                                           // if end of line
+    if (start === end){                                           // if end of line
         string = string + openSpan + "%%AMP%%nbsp;" + closeSpan; // add a trailing space for the error highlight
     }
     else{                                                        // insert error span tags
@@ -1005,47 +1005,23 @@ function setSel(editor, pos, length) {
     }
 }
 
-function getSel(){
-    // see http://the-stickman.com/web-development/javascript/finding-selection-cursor-position-in-a-textarea-in-internet-explorer/
-    if (window.selection){ // IE
-        return window.selection.createRange();
-    }
-    else if(document.selection){ // Opera
-        return document.selection.createRange();
-    }
-    throw("Cannot get selection start for editor");
-}
-
 function getSelectionStart(editor) {
     if (editor.selectionStart){
         return editor.selectionStart;
     }
-
-    let range = getSel();
-    let stored_range = range.duplicate();
-    stored_range.moveToElementText(editor);
-    stored_range.setEndPoint( 'EndToEnd', range );
-    return stored_range.text.length - range.text.length;
 }
 
 function getSelectionEnd(editor) {
     if (editor.selectionEnd){
         return editor.selectionEnd;
     }
-
-    let range = getSel();
-    let stored_range = range.duplicate();
-    stored_range.moveToElementText(editor);
-    stored_range.setEndPoint( 'EndToEnd', range );
-    let start = stored_range.text.length - range.text.length;
-    return start + range.text.length;
 }
 
 function skipToNextWord(editor, addSpace) {
     let sel = getSelectionEnd(editor);
     let nextSpace = editor.value.indexOf(" ", sel); // the space after the current word
 
-    if (nextSpace == -1){
+    if (nextSpace === -1){
         if (addSpace){
             editor.value = editor.value + " "; // add the space
         }
@@ -1056,7 +1032,7 @@ function skipToNextWord(editor, addSpace) {
 
 function getStartOfSelectedWord(editor) {
     let sel = getSelectionStart(editor);
-    if (sel == -1){
+    if (sel === -1){
         return 0;
     }
     let str = editor.value;
