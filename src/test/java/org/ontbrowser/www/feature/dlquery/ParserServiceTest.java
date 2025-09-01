@@ -1,8 +1,7 @@
-package org.ontbrowser.www.service;
+package org.ontbrowser.www.feature.dlquery;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.ontbrowser.www.feature.dlquery.ParserService;
 import org.ontbrowser.www.feature.expression.AutocompleteService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.IRI;
@@ -10,18 +9,14 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
-import uk.co.nickdrummond.parsejs.ParseException;
-import uk.co.nickdrummond.parsejs.ParseResult;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 
 public class ParserServiceTest {
 
     @Test
-    public void shouldParseGoodOWLExpression() throws ParseException {
+    public void shouldParseGoodOWLExpression() {
         String validOWLExpression = "hasTopping some PizzaTopping";
 
         OWLDataFactory df = new OWLDataFactoryImpl();
@@ -35,9 +30,9 @@ public class ParserServiceTest {
 
         ParserService service = new ParserService(new AutocompleteService());
 
-        ParseResult results = service.parse(validOWLExpression, df, checker);
+        ParseResultJson results = service.parse(validOWLExpression, df, checker);
 
-        assertThat(results.toString(), containsString("success"));
+        assertEquals(ParseStatus.OK, results.status());
     }
 
     @Test
@@ -54,13 +49,8 @@ public class ParserServiceTest {
 
         ParserService service = new ParserService(new AutocompleteService());
 
-        try {
-            service.parse(validOWLExpression, df, checker);
-            fail("Should have thrown ParseException");
-        }
-        catch (ParseException e) {
-            assertThat(e.toString(), containsString("error  pos=\"16\""));
-        }
+        var result = service.parse(validOWLExpression, df, checker);
+        assertEquals(16, result.startPos());
     }
 
 

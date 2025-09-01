@@ -1,5 +1,6 @@
 package org.ontbrowser.www.feature.dlquery;
 
+import org.ontbrowser.www.feature.expression.AutocompleteResultJson;
 import org.ontbrowser.www.feature.expression.AutocompleteService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -9,9 +10,8 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
-import uk.co.nickdrummond.parsejs.AutocompleteResult;
-import uk.co.nickdrummond.parsejs.ParseException;
-import uk.co.nickdrummond.parsejs.ParseResult;
+
+import java.util.Map;
 
 /**
  * Manchester OWL Syntax parser.
@@ -43,29 +43,31 @@ public class ParserService {
     /**
      * Wraps result in Gaphu ParseResult or ParseException for client processing.
      */
-    public ParseResult parse(final String expression,
-                             final OWLDataFactory df,
-                             final OWLEntityChecker owlEntityChecker) throws ParseException {
+    public ParseResultJson parse(
+            final String expression,
+            final OWLDataFactory df,
+            final OWLEntityChecker owlEntityChecker) {
         try {
             getOWLClassExpression(expression, df, owlEntityChecker);
-            return new ParseResult(expression, "OK");
+            return new ParseResultJson(ParseStatus.OK, expression,  "OK", 0, "");
         } catch (ParserException e) {
-            throw new ParseException(expression, e.getMessage(), e.getStartPos(), e.getCurrentToken());
+            return new ParseResultJson(ParseStatus.ERROR, expression, e.getMessage(), e.getStartPos(), e.getCurrentToken());
         }
     }
 
     /**
      * Wraps results in Gaphu AutocompleteResult for client processing.
      */
-    public AutocompleteResult autocomplete(final String expression,
-                                           final OWLDataFactory df,
-                                           final OWLEntityChecker owlEntityChecker,
-                                           final OWLEntityFinder finder,
-                                           final ShortFormProvider sfp) {
+    public AutocompleteResultJson autocomplete(final String expression,
+                                               final OWLDataFactory df,
+                                               final OWLEntityChecker owlEntityChecker,
+                                               final OWLEntityFinder finder,
+                                               final ShortFormProvider sfp) {
 
         try {
             getOWLClassExpression(expression, df, owlEntityChecker);
-            throw new RuntimeException("Cannot get here if we have correctly forced an error");
+            // TODO it DOES get here if "hadSibling some " as it returns a filler of owl:Thing
+            return new AutocompleteResultJson(expression, 0, "", Map.of());
         } catch (ParserException e) {
             return autocompleteService.exceptionToAutocomplete(expression, e, finder, sfp);
         }

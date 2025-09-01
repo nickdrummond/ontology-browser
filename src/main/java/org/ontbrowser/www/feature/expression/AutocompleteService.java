@@ -7,7 +7,6 @@ import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
-import uk.co.nickdrummond.parsejs.AutocompleteResult;
 
 import java.util.*;
 
@@ -17,7 +16,7 @@ public class AutocompleteService {
     private static final String ERROR_TOKEN = "$$";
 
     // TODO review if the OWLAPI even produces $$ token now
-    public AutocompleteResult exceptionToAutocomplete(final String expression,
+    public AutocompleteResultJson exceptionToAutocomplete(final String expression,
                                                       final ParserException e,
                                                       final OWLEntityFinder finder,
                                                       final ShortFormProvider sfp) {
@@ -94,7 +93,7 @@ public class AutocompleteService {
             addResults(expected, EntityType.NAMED_INDIVIDUAL, finder.getOWLIndividuals(search), sfp);
         }
 
-        return new AutocompleteResult(expression, pos, lastToken, expected);
+        return new AutocompleteResultJson(expression, pos, lastToken, expected);
     }
 
 

@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.expression.AutocompleteResultJson;
 import org.ontbrowser.www.feature.graph.GraphURLScheme;
-import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
@@ -16,7 +16,6 @@ import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
-import uk.co.nickdrummond.parsejs.ParseException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -162,31 +160,20 @@ public class DLQueryController extends ApplicationController {
         }
     }
 
-    @GetMapping(value = "/ac")//, produces = MediaType.APPLICATION_XML_VALUE)
-    public String autocompleteOWLClassExpression(
-            @RequestParam String expression) {
-
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-        OWLEntityFinder finder = kit.getFinder();
-        ShortFormProvider sfp = kit.getShortFormProvider();
-
-        return parserService.autocomplete(expression, df, checker, finder, sfp).toString();
+    @GetMapping(value = "/ac")
+    public AutocompleteResultJson autocompleteOWLClassExpression(@RequestParam String expression) {
+        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var checker = kit.getOWLEntityChecker();
+        var finder = kit.getFinder();
+        var sfp = kit.getShortFormProvider();
+        return parserService.autocomplete(expression, df, checker, finder, sfp);
     }
 
-    // TODO return the actual ParseResult or an XML rendering of the parse exception
-    @GetMapping(value = "/parse")//, produces = MediaType.APPLICATION_XML_VALUE)
-    public String parseOWLClassExpression(
-            @RequestParam String expression) {
-
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-
-        try {
-            return parserService.parse(expression, df, checker).toString();
-        } catch (ParseException e) {
-            return e.toString();
-        }
+    @GetMapping(value = "/parse")
+    public ParseResultJson parseOWLClassExpression(@RequestParam String expression) {
+        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var checker = kit.getOWLEntityChecker();
+        return parserService.parse(expression, df, checker);
     }
 
     private Characteristic buildCharacteristic(

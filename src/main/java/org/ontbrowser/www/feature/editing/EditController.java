@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.feature.expression.AutocompleteResultJson;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.IRI;
@@ -142,8 +143,8 @@ public class EditController extends ApplicationController {
                 .build().toString());
     }
 
-    @GetMapping(value = "/ac", produces = MediaType.APPLICATION_XML_VALUE)
-    public String autocompleteOWLAxiom(
+    @GetMapping(value = "/ac")
+    public AutocompleteResultJson autocompleteOWLAxiom(
             @RequestParam String expression) {
 
         OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
@@ -151,7 +152,7 @@ public class EditController extends ApplicationController {
         OWLEntityFinder finder = kit.getFinder();
         ShortFormProvider sfp = kit.getShortFormProvider();
 
-        return editService.autocompleteAxiom(expression, df, checker, finder, sfp).toString();
+        return editService.autocompleteAxiom(expression, df, checker, finder, sfp);
     }
 
     @GetMapping(value = "/parse", produces = MediaType.APPLICATION_XML_VALUE)

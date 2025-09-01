@@ -146,45 +146,21 @@ function ExpressionEditor(editorId, userOptions){
         makeRequest("parse", expression, that.options.parser, handleParse, that.parseCache);
     }
 
-    function makeRequest(name, expression, method, callback, responseCache){
+    async function makeRequest(name, expression, method, callback, responseCache){
 
+        const url = method + "?expression=" + expression;
         // check cache for values that have already been used
-        let response = responseCache[expression];
+        let response = responseCache[url];
         if (response){
-            if (DEBUG_RESULTS){
-                console.log(that.editorId + " " + name + " (cache hit)");
-            }
             callback(response);
-            showResponse(response.getXML());
         }
-        else if (jQuery.isFunction(method)){
-            if (DEBUG_RESULTS){
-                console.log(that.editorId + " " + name + " (function call)");
+        else {
+            const response = await fetch(url);
+            if (response.ok) {
+                const result = await response.json();
+                responseCache[url] = result; // cache the responses
+                callback(result);
             }
-            response = method(expression);
-            responseCache[expression] = response; // cache the responses
-            callback(response);
-            showResponse(response.getXML());
-        }
-        else{
-            let data = {};
-            data[that.options.queryParam] = expression;
-            $.ajax({
-                url: method,
-                data: data,
-                context: name, // hacky way of getting the request name in
-                datatype: "xml",
-                parseCache: false, // don't cache the results (at least not while debugging)
-                success: function(xmlData, textStatus, request){
-                    if (DEBUG_RESULTS){
-                        console.log(that.editorId + " " + this + " " + request + " (" + textStatus + ")");
-                    }
-                    let response = parseResponse(xmlData);
-                    responseCache[response.expr] = response; // cache the responses
-                    callback(response);
-                    showResponse(xmlData);
-                },
-                error: handleAjaxError});
         }
     }
 
@@ -195,13 +171,15 @@ function ExpressionEditor(editorId, userOptions){
         else{
             that.lastAutocompleteResponse = response;
 
-            let elements = response.expected;
+            const types = getTypes(response);
 
-            if (elements.length == 1){
-                accept(elements[0], true, true);
+            if (types.length === 0) {
+                // DO NOTHING!
             }
-            else if (elements.length > 1){
-
+            else if (types.length === 1 && response.expected[types[0]].length === 1){
+                accept(response.expected[types[0]][0], true, true);
+            }
+            else {
                 if (isAutocompleteShowing()){
                     // TODO retain the current width for continuity?
                     jAutoComplete.empty().append(createAutocompleteContent(response));
@@ -215,7 +193,7 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function updateAutocomplete(response){
-        let expr = createSpan(AC_TOKEN_CLASS, response.expr, response.pos, response.token.length);
+        let expr = createSpan(AC_TOKEN_CLASS, response.expression, response.pos, response.lastToken.length);
         updateErrorHighlighter(expr);
         jAutoComplete.empty().append(createAutocompleteContent(response));
 
@@ -254,16 +232,22 @@ function ExpressionEditor(editorId, userOptions){
         return pos;
     }
 
+    // get the keys for the expected types that have values
+    function getTypes(response){
+        let expected = response.expected;
+        let keys = Object.keys(expected);
+        return keys.filter(type => expected[type].length > 0);
+    }
+
     function createAutocompleteContent(response){
         let list = $("<ul>");
 
-        let types = response.getTypes();
-
+        let types = getTypes(response);
         let first = true;
 
         for (let i=0; i<types.length; i++){
             let type = types[i];
-            let expected = response.getExpected(type);
+            let expected = response.expected[type];
 
             for (let j=0; j<expected.length; j++){
                 let element = $("<li>");
@@ -295,36 +279,29 @@ function ExpressionEditor(editorId, userOptions){
     }
 
     function handleParse(response) {
-        if (DEBUG_RESULTS) {
-            console.log(response);
-        }
-        if (typeof response.pos === "undefined"){ // hack to see if this is an error
-            response = null;
-        }
-
-        if (response){
+        if (response && response.status === "ERROR"){
             if (!DEBUG_DISABLE_BORDER){
                 jEditor.addClass(CSS_INVALID);
             }
-            let expr = createSpan(CSS_ERROR, response.expr, response.pos, response.token.length);
+            let expr = createSpan(CSS_ERROR, response.expression, response.startPos, response.currentToken.length);
 
             updateErrorHighlighter(expr);
+
+            if (that.options.errorHandler){
+                that.options.errorHandler(response);
+            }
         }
         else{
             if (!DEBUG_DISABLE_BORDER){
                 jEditor.removeClass(CSS_INVALID);
             }
         }
-
-        if (that.options.errorHandler){
-            that.options.errorHandler(response);
-        }
     }
 
     function updateErrorHighlighter(expr){
         expr = encode(expr);
         expr = expr.replace(/ (?= )/g, "&nbsp;");   // replace multiple spaces (but still allow the last for wrap)
-        expr = expr.replace(/\n /g, "<br/>&nbsp;"); // newline followed by space should retain space      
+        expr = expr.replace(/\n /g, "<br/>&nbsp;"); // newline followed by space should retain space
         expr = expr.replace(/\n/g, "<br/>");        // wrap in the appropriate places
         expr = expr.replace(/%%AMP%%/g, "&");
         expr = expr.replace(/%%LT%%/g, "<");
@@ -342,13 +319,6 @@ function ExpressionEditor(editorId, userOptions){
             jErrorHighlighter = createErrorHighlighter(); // lazy create a div under the editor for error highlighting
         }
         return jErrorHighlighter
-    }
-
-    function handleAjaxError(request, textStatus, errorThrown){
-        if (!errorThrown){
-            errorThrown = "Service failed to satisfy this request";
-        }
-        console.log(that.editorId, " (" + request.statusText + "): ", errorThrown);
     }
 
     function cursorIsInError(error){
@@ -774,170 +744,7 @@ function ExpressionEditor(editorId, userOptions){
     }
 }
 
-////////////////////////    Responses   ///////////////////////////////////////
-
-
-function parseResponse(xmlData){
-    if (typeof xmlData == 'string'){ // if this is plain text XML
-        xmlData = parseXML(xmlData);     // if so, convert it into a dom
-    }
-
-    let root = $("error", xmlData);
-
-    if (root.length > 0){
-        let err = new ParseError($("expression", root).text(),
-                                 $("message", root).text(),
-                                 parseInt(root.attr("pos")),
-                                 root.attr("found"));
-        err.xml = xmlData;
-        return err
-    }
-
-    root = $("success", xmlData);
-
-    if (root.length > 0){
-        let success = new ParseSuccess($("expression", root).text(),
-                                       $("message", root).text());
-        success.xml = xmlData;
-        return success;
-    }
-
-    root = $("results", xmlData);
-    if (root.length > 0){
-
-        let acResult = new AutocompleteResult($("expression", root).text(),
-                                              parseInt(root.attr("pos")),
-                                              root.attr("found"));
-
-        $("expected", root).each(function(){
-            let type = $(this).attr("type");
-            let expected = new Array();
-            $("token", $(this)).each(function(){
-                expected.push($(this).text());
-            });
-            acResult.addExpected(type, expected);
-        });
-
-        acResult.xml = xmlData;
-        return acResult;
-    }
-
-    throw new Error("Unknown response type: " + xmlData.child);
-}
-
-/**
- * The ParseError object abstracts from the xml representation returned from the server.
- * In future we could easily add JSON as an alternative
- * @param expr
- * @param message
- * @param pos
- * @param token
- */
-function ParseError(expr, message, pos, token){
-
-    if (DEBUG_RESULTS) {
-        console.log("error", expr, message, pos, token);
-    }
-
-    this.expr = expr;
-    this.message = message;
-    this.pos = pos;
-    this.token = token;
-
-    this.getXML = function(){
-        if (!this.xml){
-            this.xml = parseXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                                "\n<error pos=\"" + this.pos + "\" found=\"" + encode(this.token) + "\">" +
-                                "\n    <expression>" + encode(this.expr) + "</expression>" +
-                                "\n    <message>" + encode(this.message) + "</message>" +
-                                "\n</error>");
-        }
-        return this.xml;
-    };
-}
-
-function ParseSuccess(expr, message){
-
-    if (DEBUG_RESULTS) {
-       console.log("success", expr, message);
-    }
-
-    this.expr = expr;
-    this.message = message;
-
-    this.getXML = function(){
-        if (!this.xml){
-            this.xml = parseXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                                "\n<success>" +
-                                "\n    <expression>" + encode(this.expr) + "</expression>" +
-                                "\n    <message>" + encode(this.message) + "</message>" +
-                                "\n</success>");
-        }
-        return this.xml;
-    };
-}
-
-function AutocompleteResult(expr, pos, token){
-
-    this.expr = expr;                     // the expression that AC was performed against
-    this.pos = pos;                       // the position of the start of the token
-    this.token = token;                   // the token that AC was performed against (as this may not be space delimited)
-    this.expected = new Array();          // all expected values
-    this.types = new Array();             // all types
-    this.expectedByType = new Array();    // expected values by type
-
-    this.getXML = function(){
-        if (!this.xml){
-            this.xml = parseXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                                "\n<results pos=\"" + this.pos + "\" found=\"" + encode(this.token) + "\">" +
-                                "\n    <expression>" + encode(this.expr) + "</expression>" +
-                                "\n    <expected>TODO Serialise this " + encode(this.expected) + "</expected>" +
-                                "\n</results>");
-        }
-        return this.xml;
-    };
-
-    this.addExpected = function(type, values){
-        if (this.expectedByType[type]){
-            pushAll(values, this.expectedByType[type]);
-        }
-        else{
-            this.expectedByType[type] = values;
-            this.types.push(type);
-        }
-        pushAll(values, this.expected);
-    };
-
-    this.getExpected = function(type){
-        if (type){
-            return this.expectedByType[type];
-        }
-        else{
-            return this.expected;
-        }
-    };
-
-    this.getTypes = function(){
-        return this.types;
-    }
-}
-
-
 ////////////////////////    Utilities   ///////////////////////////////////////
-
-
-function parseXML(xml) {
-    if(window.ActiveXObject && window.GetObject) {
-        let dom = new ActiveXObject('Microsoft.XMLDOM');
-        dom.loadXML(xml);
-        return dom;
-    }
-    else if(window.DOMParser){
-        return new DOMParser().parseFromString(xml, 'text/xml');
-    }
-    throw new Error('No XML parser available');
-}
-
 // revisit all of this by looking at Range (http://www.quirksmode.org/dom/range_intro.html)
 
 function replaceInString(str, start, end, word){
@@ -971,7 +778,6 @@ function replaceWord(editor, pos, word){
     editor.value = replaceWordInString(editor.value, pos, word);
 }
 
-
 function createSpan(cssClass, string, start, length){
     let end = start + length;
 
@@ -981,7 +787,8 @@ function createSpan(cssClass, string, start, length){
     if (start === end){                                           // if end of line
         string = string + openSpan + "%%AMP%%nbsp;" + closeSpan; // add a trailing space for the error highlight
     }
-    else{                                                        // insert error span tags
+    else{
+        // insert error span tags
         string = insertIntoString(string, end, closeSpan);       // in reverse order so not to mess up the indices
         string = insertIntoString(string, start, openSpan);
     }
@@ -1089,84 +896,82 @@ function appendOverlay(target, css){
     }
 }
 
+// styles from Firebug's computed styles inspector
+let styles = [
+    "font-family",
+    "font-size",
+    "font-weight",
+    "font-style",
+    "color",
+    "text-transform",
+    "text-decoration",
+    "letter-spacing",
+    "word-spacing",
+    "line-height",
+    "text-align",
+    "vertical-align",
+    "direction",
+
+    // background
+    "background-color",
+    "background-image",
+    "background-repeat",
+    "background-position",
+    "background-attachment",
+    "opacity",
+
+    // box model
+    "width",
+    "height",
+    "top",
+    "right",
+    "bottom",
+    "left",
+    "margin-top",
+    "margin-right",
+    "margin-bottom",
+    "margin-left",
+    "padding-top",
+    "padding-right",
+    "padding-bottom",
+    "padding-left",
+    "border-top-width",
+    "border-right-width",
+    "border-bottom-width",
+    "border-left-width",
+    "border-top-color",
+    "border-right-color",
+    "border-bottom-color",
+    "border-left-color",
+    "border-top-style",
+    "border-right-style",
+    "border-bottom-style",
+    "border-left-style",
+
+    // layout
+    "position",
+    "display",
+    "visibility",
+    "z-index",
+    "overflow-x",
+    "overflow-y",
+    "white-space",
+    "clip",
+    "float",
+    "clear",
+    "-moz-box-sizing",
+    "-moz-appearance", // for Firefox "glow"
+    "-moz-border-radius", // for Firefox rounded corners
+    "resize",
+
+    // other
+    "cursor",
+    "list-style-image",
+    "list-style-position",
+    "list-style-type",
+    "marker-offset"];
+
 function copyCSS(element) {
-
-    // styles from Firebug's computed styles inspector
-    let styles = new Array(
-        // text
-            "font-family",
-            "font-size",
-            "font-weight",
-            "font-style",
-            "color",
-            "text-transform",
-            "text-decoration",
-            "letter-spacing",
-            "word-spacing",
-            "line-height",
-            "text-align",
-            "vertical-align",
-            "direction",
-
-        // background
-            "background-color",
-            "background-image",
-            "background-repeat",
-            "background-position",
-            "background-attachment",
-            "opacity",
-
-        // box model
-            "width",
-            "height",
-            "top",
-            "right",
-            "bottom",
-            "left",
-            "margin-top",
-            "margin-right",
-            "margin-bottom",
-            "margin-left",
-            "padding-top",
-            "padding-right",
-            "padding-bottom",
-            "padding-left",
-            "border-top-width",
-            "border-right-width",
-            "border-bottom-width",
-            "border-left-width",
-            "border-top-color",
-            "border-right-color",
-            "border-bottom-color",
-            "border-left-color",
-            "border-top-style",
-            "border-right-style",
-            "border-bottom-style",
-            "border-left-style",
-
-        // layout
-            "position",
-            "display",
-            "visibility",
-            "z-index",
-            "overflow-x",
-            "overflow-y",
-            "white-space",
-            "clip",
-            "float",
-            "clear",
-            "-moz-box-sizing",
-            "-moz-appearance", // for Firefox "glow"
-            "-moz-border-radius", // for Firefox rounded corners
-            "resize",
-
-        // other
-            "cursor",
-            "list-style-image",
-            "list-style-position",
-            "list-style-type",
-            "marker-offset"
-            );
 
     let css = {};
 
@@ -1194,74 +999,6 @@ function pushAll(source, target){
         target.push(source[i]);
     }
 }
-
-///////////////// debug info ////////////////////////////
-
-function showResponse(xmlData) {
-    let xmlConsole = $("#xml");
-    if (xmlConsole && xmlConsole.length > 0){
-        let message;
-        try{
-            message = new XMLSerializer().serializeToString(xmlData);
-        }
-        catch(e){
-            // IE
-            message = xmlData.xml;
-        }
-        message = encode(message);
-        xmlConsole.html(message);
-    }
-}
-
-
-//////////////// test parser implementation //////////////////
-
-let dictionary = new Array("one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
-                           "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty");
-
-function TestParser(expression){
-
-    let pos = 0;
-    let unrecognized = null;
-
-    let tokens = expression.replace(/\n/g, " ").split(" "); // replace all newlines
-    for (let i=0; i<tokens.length; i++){
-        let token = tokens[i];
-        if (dictionary.indexOf(token) == -1){
-            unrecognized = encode(token);
-            break;
-        }
-        pos+=token.length + 1;
-    }
-
-    if (!unrecognized){
-        return new ParseSuccess(expression, "OK");
-    }
-    else{
-        let message = "Expected the name of a Number";
-        return new ParseError(expression, message, pos, unrecognized);
-    }
-}
-
-function TestAutocomplete(expression){
-
-    let lastSpace = expression.replace(/\n/g, " ").lastIndexOf(" ")+1;
-    let lastWord = expression.substring(lastSpace, expression.length);
-
-    let matchingTerms = new Array();
-
-    for (let i=0; i<dictionary.length; i++){
-        let term = dictionary[i];
-        if (term.match("^" + lastWord)){
-            matchingTerms.push(term);
-        }
-    }
-
-    let result = new AutocompleteResult(expression, lastSpace, lastWord);
-    result.addExpected("Number", matchingTerms);
-    return result;
-}
-
 
 // DOM changes event handling
 // thanks to Darcy Clarke (http://darcyclarke.me/development/detect-attribute-changes-with-jquery/)

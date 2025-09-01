@@ -1,6 +1,7 @@
 package org.ontbrowser.www.feature.editing;
 
 import org.ontbrowser.www.feature.editing.parser.MOSAxiomTreeParser;
+import org.ontbrowser.www.feature.expression.AutocompleteResultJson;
 import org.ontbrowser.www.feature.expression.AutocompleteService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -8,7 +9,6 @@ import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
-import uk.co.nickdrummond.parsejs.AutocompleteResult;
 import uk.co.nickdrummond.parsejs.ParseException;
 
 import java.time.Instant;
@@ -72,6 +72,7 @@ public class EditService {
 //                )
 //        ));
 
+        originalOnt.removeAxiom(originalAxiom);
         targetOnt.addAxiom(newAxiom);
 
         return targetOnt;
@@ -118,11 +119,11 @@ public class EditService {
         }
     }
 
-    public AutocompleteResult autocompleteAxiom(final String axiom,
-                                                final OWLDataFactory df,
-                                                final OWLEntityChecker owlEntityChecker,
-                                                final OWLEntityFinder finder,
-                                                final ShortFormProvider sfp) {
+    public AutocompleteResultJson autocompleteAxiom(final String axiom,
+                                                    final OWLDataFactory df,
+                                                    final OWLEntityChecker owlEntityChecker,
+                                                    final OWLEntityFinder finder,
+                                                    final ShortFormProvider sfp) {
 
         try {
             new MOSAxiomTreeParser(df, owlEntityChecker).parse(axiom);
