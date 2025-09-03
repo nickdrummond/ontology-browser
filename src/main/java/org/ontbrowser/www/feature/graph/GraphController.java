@@ -3,7 +3,7 @@ package org.ontbrowser.www.feature.graph;
 import com.google.common.collect.Streams;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
-import org.ontbrowser.www.feature.dlquery.ParserService;
+import org.ontbrowser.www.feature.parser.ParserService;
 import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.kit.OWLEntityFinder;

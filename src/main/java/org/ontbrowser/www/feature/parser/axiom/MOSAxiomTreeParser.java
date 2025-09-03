@@ -1,4 +1,4 @@
-package org.ontbrowser.www.feature.editing.parser;
+package org.ontbrowser.www.feature.parser.axiom;
 
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
@@ -7,7 +7,7 @@ import org.semanticweb.owlapi.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ontbrowser.www.feature.editing.parser.ParseTree.branch;
+import static org.ontbrowser.www.feature.parser.axiom.ParseTree.branch;
 import static org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax.*;
 
 public class MOSAxiomTreeParser {

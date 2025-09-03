@@ -24,8 +24,8 @@ const dlquery = (baseUrl, entityPane) => {
     function init() {
 
         const options = {
-            parser : baseUrl + 'dlquery/parse',
-            autocomplete: baseUrl + 'dlquery/ac'
+            parser : baseUrl + 'parse/class-expression',
+            autocomplete: baseUrl + 'autocomplete/class-expression'
         };
         new ExpressionEditor("dlQuery", options).initialise();
         new ExpressionEditor("dlQuery2", options).initialise();

@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.feature.expression.AutocompleteResultJson;
 import org.ontbrowser.www.feature.graph.GraphURLScheme;
+import org.ontbrowser.www.feature.parser.ParserService;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
@@ -158,22 +158,6 @@ public class DLQueryController extends ApplicationController {
         } catch (InterruptedException | TimeoutException e) {
             throw new QueryTimeoutException();
         }
-    }
-
-    @GetMapping(value = "/ac")
-    public AutocompleteResultJson autocompleteOWLClassExpression(@RequestParam String expression) {
-        var df = kit.getOWLOntologyManager().getOWLDataFactory();
-        var checker = kit.getOWLEntityChecker();
-        var finder = kit.getFinder();
-        var sfp = kit.getShortFormProvider();
-        return parserService.autocomplete(expression, df, checker, finder, sfp);
-    }
-
-    @GetMapping(value = "/parse")
-    public ParseResultJson parseOWLClassExpression(@RequestParam String expression) {
-        var df = kit.getOWLOntologyManager().getOWLDataFactory();
-        var checker = kit.getOWLEntityChecker();
-        return parserService.parse(expression, df, checker);
     }
 
     private Characteristic buildCharacteristic(

@@ -1,27 +1,13 @@
 package org.ontbrowser.www.feature.editing;
 
-import org.ontbrowser.www.feature.editing.parser.MOSAxiomTreeParser;
-import org.ontbrowser.www.feature.expression.AutocompleteResultJson;
-import org.ontbrowser.www.feature.expression.AutocompleteService;
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
-import uk.co.nickdrummond.parsejs.ParseException;
 
 import java.time.Instant;
 import java.util.Date;
 
 @Service
 public class EditService {
-
-    private final AutocompleteService autocompleteService;
-
-    public EditService(AutocompleteService autocompleteService) {
-        this.autocompleteService = autocompleteService;
-    }
 
     /**
      * TODO take a transaction ID from the frontend to keep adding to the same ontology
@@ -108,28 +94,5 @@ public class EditService {
             }
         }
         return ont;
-    }
-
-
-    public OWLAxiom parseAxiom(String axiom, OWLDataFactory df, OWLEntityChecker checker) throws ParseException {
-        try {
-            return new MOSAxiomTreeParser(df, checker).parse(axiom);
-        } catch (ParserException e) {
-            throw new ParseException(axiom, e.getMessage(), e.getStartPos(), e.getCurrentToken());
-        }
-    }
-
-    public AutocompleteResultJson autocompleteAxiom(final String axiom,
-                                                    final OWLDataFactory df,
-                                                    final OWLEntityChecker owlEntityChecker,
-                                                    final OWLEntityFinder finder,
-                                                    final ShortFormProvider sfp) {
-
-        try {
-            new MOSAxiomTreeParser(df, owlEntityChecker).parse(axiom);
-            throw new RuntimeException("Cannot get here if we have correctly forced an error " + axiom);
-        } catch (ParserException e) {
-            return autocompleteService.exceptionToAutocomplete(axiom, e, finder, sfp);
-        }
     }
 }

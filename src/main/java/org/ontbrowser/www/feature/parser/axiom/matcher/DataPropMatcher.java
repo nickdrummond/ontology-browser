@@ -1,31 +1,31 @@
-package org.ontbrowser.www.feature.editing.parser.matcher;
+package org.ontbrowser.www.feature.parser.axiom.matcher;
 
-import org.ontbrowser.www.feature.editing.parser.MyTokenizer;
+import org.ontbrowser.www.feature.parser.axiom.MyTokenizer;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 
 import java.util.Collections;
 
-public class DataPropExpressionMatcher extends AbstractParseMatcher<OWLDataPropertyExpression> {
+public class DataPropMatcher extends AbstractParseMatcher<OWLDataProperty> {
 
-    private OWLDataPropertyExpression prop;
+    private OWLDataProperty prop;
 
     @Override
-    public OWLDataPropertyExpression get() {
+    public OWLDataProperty get() {
         return prop;
     }
 
     @Override
-    public OWLDataPropertyExpression getDataPropertyExpression() {
+    public OWLDataProperty getDataProperty() {
         return prop;
     }
 
     @Override
     public void check(MyTokenizer tokenizer, OWLEntityChecker checker, OWLDataFactory df) throws ParserException {
-        int pointer = tokenizer.getPointer();
-        OWLDataPropertyExpression prop = checker.getOWLDataProperty(tokenizer.consumeNext());
+        int pointer = tokenizer.getPointer()+1;
+        OWLDataProperty prop = checker.getOWLDataProperty(tokenizer.consumeNext());
         if (prop == null) {
             throw new ParserException(tokenizer.tokens(), pointer, 0, pointer+1, false, false, false, true, false, false, false, false, Collections.emptySet());
         }

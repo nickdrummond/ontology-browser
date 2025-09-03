@@ -1,9 +1,12 @@
-package org.ontbrowser.www.feature.expression;
+package org.ontbrowser.www.feature.parser;
 
+import org.ontbrowser.www.feature.parser.axiom.MOSAxiomTreeParser;
 import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.EntityType;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,43 @@ import java.util.*;
 public class AutocompleteService {
 
     private static final String ERROR_TOKEN = "$$";
+    private ParserService parserService;
+
+    public AutocompleteService(ParserService parserService) {
+        this.parserService = parserService;
+    }
+
+    /**
+     * Wraps results in Gaphu AutocompleteResult for client processing.
+     */
+    public AutocompleteResultJson autocomplete(final String expression,
+                                               final OWLDataFactory df,
+                                               final OWLEntityChecker owlEntityChecker,
+                                               final OWLEntityFinder finder,
+                                               final ShortFormProvider sfp) {
+
+        try {
+            parserService.getOWLClassExpression(expression, df, owlEntityChecker);
+            // TODO it DOES get here if "hadSibling some " as it returns a filler of owl:Thing
+            return new AutocompleteResultJson(expression, 0, "", Map.of());
+        } catch (ParserException e) {
+            return exceptionToAutocomplete(expression, e, finder, sfp);
+        }
+    }
+
+    public AutocompleteResultJson autocompleteAxiom(final String axiom,
+                                                    final OWLDataFactory df,
+                                                    final OWLEntityChecker owlEntityChecker,
+                                                    final OWLEntityFinder finder,
+                                                    final ShortFormProvider sfp) {
+
+        try {
+            new MOSAxiomTreeParser(df, owlEntityChecker).parse(axiom);
+            throw new RuntimeException("Cannot get here if we have correctly forced an error " + axiom);
+        } catch (ParserException e) {
+            return exceptionToAutocomplete(axiom, e, finder, sfp);
+        }
+    }
 
     // TODO review if the OWLAPI even produces $$ token now
     public AutocompleteResultJson exceptionToAutocomplete(final String expression,

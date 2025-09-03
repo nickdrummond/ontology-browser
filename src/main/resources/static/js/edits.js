@@ -19,8 +19,8 @@ export const edits = () => {
         // let editOriginalAxiom = document.getElementById("edit-original-axiom");
 
         var options = {
-            parser: baseUrl + 'axioms/parse',
-            autocomplete: baseUrl + 'axioms/ac'
+            parser: baseUrl + 'parse/axiom',
+            autocomplete: baseUrl + 'autocomplete/axiom'
         };
         new ExpressionEditor("edit-axiom", options).initialise();
 

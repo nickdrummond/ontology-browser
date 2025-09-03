@@ -19,7 +19,7 @@
 DEBUG_GAPHU = false;
 DEBUG_RESULTS = false;
 DEBUG_KEYS = false;
-DEBUG_AUTOCOMPLETE = true;
+DEBUG_AUTOCOMPLETE = false;
 INLINE_ERROR_HIGHLIGHTER = false; // show the error highlighter after the editor
 DEBUG_SHOW_ERROR_DIV = INLINE_ERROR_HIGHLIGHTER || false; // show the error highlighter text
 DEBUG_DISABLE_BORDER = false;
@@ -59,7 +59,7 @@ if(!Array.indexOf){
         }
         let len = this.length;
         for(let i=start; i<len; i++){
-            if(this[i]==obj){
+            if(this[i]===obj){
                 return i;
             }
         }

@@ -4,25 +4,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.feature.expression.AutocompleteResultJson;
-import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.feature.parser.ParserService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import uk.co.nickdrummond.parsejs.ParseException;
-import uk.co.nickdrummond.parsejs.ParseResult;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,9 +36,11 @@ public class EditController extends ApplicationController {
     private static final Logger log = LoggerFactory.getLogger(EditController.class);
 
     private final EditService editService;
+    private final ParserService parserService;
 
-    public EditController(EditService editService) {
+    public EditController(EditService editService, ParserService parserService) {
         this.editService = editService;
+        this.parserService = parserService;
     }
 
     /**
@@ -67,8 +65,8 @@ public class EditController extends ApplicationController {
         OWLAxiom newAxiom;
 
         try {
-            newAxiom = editService.parseAxiom(axiom, df, owlEntityChecker);
-        } catch (ParseException e) {
+            newAxiom = parserService.parseAxiom(axiom, df, owlEntityChecker);
+        } catch (ParserException e) {
             throw new ResponseStatusException(BAD_REQUEST, "New axiom is not valid Manchester OWL syntax: " + e.getMessage());
         }
 
@@ -118,14 +116,14 @@ public class EditController extends ApplicationController {
         OWLAxiom newAxiom;
 
         try {
-            originalAx = editService.parseAxiom(originalAxiom, df, owlEntityChecker);
-        } catch (ParseException e) {
+            originalAx = parserService.parseAxiom(originalAxiom, df, owlEntityChecker);
+        } catch (ParserException e) {
             throw new ResponseStatusException(BAD_REQUEST, "Original axiom is not valid Manchester OWL syntax: " + e.getMessage());
         }
 
         try {
-            newAxiom = editService.parseAxiom(axiom, df, owlEntityChecker);
-        } catch (ParseException e) {
+            newAxiom = parserService.parseAxiom(axiom, df, owlEntityChecker);
+        } catch (ParserException e) {
             throw new ResponseStatusException(BAD_REQUEST, "New axiom is not valid Manchester OWL syntax: " + e.getMessage());
         }
 
@@ -142,32 +140,4 @@ public class EditController extends ApplicationController {
                 .replaceQueryParam("transaction", transaction)
                 .build().toString());
     }
-
-    @GetMapping(value = "/ac")
-    public AutocompleteResultJson autocompleteOWLAxiom(
-            @RequestParam String expression) {
-
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-        OWLEntityFinder finder = kit.getFinder();
-        ShortFormProvider sfp = kit.getShortFormProvider();
-
-        return editService.autocompleteAxiom(expression, df, checker, finder, sfp);
-    }
-
-    @GetMapping(value = "/parse", produces = MediaType.APPLICATION_XML_VALUE)
-    public String parseOWLAxiom(
-            @RequestParam String expression) {
-
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
-
-        try {
-            // TODO this needs to be tidier - return the Axiom and let the OK be the response status
-            return new ParseResult(kit.getStringRenderer().render(editService.parseAxiom(expression, df, checker)), "OK").toString();
-        } catch (ParseException e) {
-            return e.toString();
-        }
-    }
-
 }

@@ -1,6 +1,6 @@
-package org.ontbrowser.www.feature.editing.parser;
+package org.ontbrowser.www.feature.parser.axiom;
 
-import org.ontbrowser.www.feature.editing.parser.matcher.*;
+import org.ontbrowser.www.feature.parser.axiom.matcher.*;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;

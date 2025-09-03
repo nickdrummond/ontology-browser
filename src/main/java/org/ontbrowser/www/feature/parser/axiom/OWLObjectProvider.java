@@ -1,4 +1,4 @@
-package org.ontbrowser.www.feature.editing.parser;
+package org.ontbrowser.www.feature.parser.axiom;
 
 import org.semanticweb.owlapi.model.*;
 

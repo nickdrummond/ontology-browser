@@ -1,5 +1,6 @@
 import {BUSY_IMAGE, getUrlWithParameter, getUrlWithSuffix} from "./util.js";
 import {characteristics} from "./characteristics.js";
+import {edits} from "./edits.js";
 
 export const entity = (sel = "#content") => {
 
@@ -48,10 +49,20 @@ export const entity = (sel = "#content") => {
     }
 
     function entityLoaded() {
-        characteristics("#content").init(".characteristic, #metrics");
+        if (editingEnabled) {
+            edits().rememberTransaction();
+        }
+
+        characteristics(sel).init(".characteristic, #metrics");
+
+        if (editingEnabled) {
+            edits().init(".characteristic");
+        }
     }
 
-    entityLoaded();
+    if (document.querySelector(sel).children.length > 0) {
+        entityLoaded();
+    }
 
     return {
         loadEntity: loadEntity,

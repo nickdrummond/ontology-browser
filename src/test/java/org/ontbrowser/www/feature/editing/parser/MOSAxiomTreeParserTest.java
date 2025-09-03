@@ -2,6 +2,7 @@ package org.ontbrowser.www.feature.editing.parser;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.ontbrowser.www.feature.parser.axiom.MOSAxiomTreeParser;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;

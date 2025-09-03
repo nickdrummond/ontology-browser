@@ -1,4 +1,4 @@
-package org.ontbrowser.www.feature.editing.parser;
+package org.ontbrowser.www.feature.parser.axiom;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,4 @@
 import {theme} from "./theme.js";
-import {edits} from "./edits.js";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -8,19 +7,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
     theme(THEME_DEFAULT, "dark", THEME_ATTRIBUTE, THEME_KEY)
         .attachTo("#darkmode");
 
-    if (editingEnabled) {
-        edits().rememberTransaction();
-    }
-
     openFullscreen();
 
     burgerNavigation();
 
     initSearch();
-
-    if (editingEnabled) { // TODO when entity reloaded
-        edits().init(".characteristic");
-    }
 });
 
 function openFullscreen() {
