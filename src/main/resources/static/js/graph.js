@@ -508,12 +508,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const nodeSelected = (sel) => {
         if (sel) {
             const ids = JSON.stringify(sel.map(s => s.data().id));
+            highlightConnectedEdges(sel);
             if (ids === lastSelected) {
                 return;
             }
             lastSelected = ids;
             updatedSelectedList(sel);
-            highlightConnectedEdges(sel);
         }
     }
 
@@ -552,7 +552,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 nodes.forEach(function (node) {
                     render(node);
                 });
-                nodeSelected(this.$(SELECTED));
+                let sel = this.$(SELECTED);
+                nodeSelected(sel);
             },
             elements: elements,
             style: style,
