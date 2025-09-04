@@ -5,7 +5,6 @@ const HIGHLIGHTED_INCOMING = 'highlighted-incoming';
 const QUERY = "query";
 const PROPERTIES = "props";
 
-
 function getTheme() {
     return document.documentElement.getAttribute(THEME_ATTRIBUTE);
 }
@@ -293,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById("expand").onclick = (e) => {
             e.preventDefault();
-            let selected = cy.$(SELECTED);
+            const selected = cy.$(SELECTED);
             const selectedLabels = selected.map(s => s.data().label);
             const current = document.getElementById(INDIVIDUALS);
             const merged = unionSet(selectedLabels, current.value.split(","));
@@ -303,11 +302,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById("delete").onclick = (e) => {
             e.preventDefault();
-            let selected = cy.$(SELECTED);
+            const selected = cy.$(SELECTED);
             const selectedLabels = selected.map(s => s.data().label);
             const selectedIds = selected.map(s => s.data().id);
             const current = document.getElementById(INDIVIDUALS);
-            let existingIndividuals = current.value.split(",");
+            const existingIndividuals = current.value.split(",");
             const newIndividuals = existingIndividuals.filter(sel => !selectedLabels.includes(sel));
             current.value = newIndividuals.join(',');
             remove(selectedLabels, selectedIds);
@@ -315,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById("png").onclick = (e) => {
             e.preventDefault();
-            let png64 = cy.png({
+            const png64 = cy.png({
                 output: 'base64',
                 scale: 2,
                 bg: isDark() ? '#000000' : '#FFFFFF',
@@ -342,14 +341,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function openBase64InNewTab(data, mimeType) {
-        var byteCharacters = atob(data);
-        var byteNumbers = new Array(byteCharacters.length);
-        for (var i = 0; i < byteCharacters.length; i++) {
+        const byteCharacters = atob(data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
             byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
-        var byteArray = new Uint8Array(byteNumbers);
-        var file = new Blob([byteArray], {type: mimeType + ';base64'});
-        var fileURL = URL.createObjectURL(file);
+        const byteArray = new Uint8Array(byteNumbers);
+        const file = new Blob([byteArray], {type: mimeType + ';base64'});
+        const fileURL = URL.createObjectURL(file);
         window.open(fileURL);
     }
 
@@ -535,8 +534,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const spaceCtrl = document.getElementById("space");
         setLengthProp(parseInt(spaceCtrl.value));
         if (cy) {
+            cy.off('select');
+            cy.off('unselect');
+            cy.off('tap');
+            cy.off('doubleTap');
             cy.destroy(); // need to destroy old instance to avoid memory leaks
         }
+
         cy = cytoscape({
             container: document.querySelector('.graph'), // container to render in
             ready: function () {
@@ -577,9 +581,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         cy.on('doubleTap', 'node', expand);
-
-        setupControls();
     }
 
     reload();
+    setupControls();
 });
