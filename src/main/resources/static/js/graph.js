@@ -57,11 +57,32 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             selector: 'node',
             style: {
-                'background-color': '#999999',
                 'color': '#999999',
+                'background-color': '#999999',
                 'label': 'data(label)',
                 'font-size': '10',
                 'min-zoomed-font-size': 25, // optimisation for large graphs
+            },
+        },
+
+        {
+            selector: 'node.' + HIGHLIGHTED,
+            style: {
+                'background-color': '#efbaba',
+                'font-size': '12',
+                'min-zoomed-font-size': 20, // optimisation for large graphs
+                'z-index': 500,
+            },
+        },
+
+        {
+            selector: 'node' + SELECTED,
+            style: {
+                'color': '#000000',
+                'background-color': '#F08080',
+                'font-size': '14',
+                'min-zoomed-font-size': 20, // optimisation for large graphs
+                'z-index': 1000,
             },
         },
 
@@ -90,19 +111,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         {
-            selector: 'node' + SELECTED,
-            style: {
-                'color': '#000000',
-                'background-color': '#F08080',
-                'font-size': '14',
-                'min-zoomed-font-size': 20, // optimisation for large graphs
-                'z-index': 1000,
-            },
-        },
-
-        // TODO node highlighted if one step from selected node?
-
-        {
             selector: 'edge' + SELECTED,
             style: {
                 'color': '#000000',
@@ -114,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         { // highlight edges connected to selected nodes
-            selector: 'edge.highlighted',
+            selector: 'edge.' + HIGHLIGHTED,
             style: {
                 'color': '#F08080',
                 'line-color': '#F08080',
@@ -124,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         { // highlight edges connected to selected nodes
-            selector: 'edge.highlighted-incoming',
+            selector: 'edge.' + HIGHLIGHTED_INCOMING,
             style: {
                 'color': '#2e5cde',
                 'line-color': '#2e5cde',
@@ -452,11 +460,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function highlightConnectedEdges(sel) {
-        cy.edges().removeClass(HIGHLIGHTED).removeClass(HIGHLIGHTED_INCOMING);
+        cy.elements().removeClass(HIGHLIGHTED).removeClass(HIGHLIGHTED_INCOMING);
         if (sel.length === 1) {
             sel.map(node => {
-                cy.edges("[source='" + node.id() + "']").addClass(HIGHLIGHTED);
-                cy.edges("[target='" + node.id() + "']").addClass(HIGHLIGHTED_INCOMING);
+                const outgoing = cy.edges("[source='" + node.id() + "']");
+                outgoing.addClass(HIGHLIGHTED);
+                // node highlighted if one step from selected node
+                outgoing.map(edge => edge.target().addClass(HIGHLIGHTED));
+                const incoming = cy.edges("[target='" + node.id() + "']");
+                incoming.addClass(HIGHLIGHTED_INCOMING);
+                // node highlighted if one step from selected node
+                incoming.map(edge => edge.source().addClass(HIGHLIGHTED));
             });
         } else if (sel.length > 1) {
             // if more than one node selected, only highlight edges between them
