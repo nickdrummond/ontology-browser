@@ -65,3 +65,10 @@
     background-color: #000;
     border-color: white;
 }
+
+@media screen and (min-width: 800px) {
+
+    .graph-controls {
+        width: 15rem;
+    }
+}

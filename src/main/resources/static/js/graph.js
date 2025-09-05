@@ -11,6 +11,14 @@ function getTheme() {
 
 document.addEventListener('DOMContentLoaded', function () {
 
+    const containerDiv = document.querySelector('.graph');
+    const controls = document.querySelector('.graph-controls');
+
+    if (!containerDiv) {
+        console.error("No container div with class 'graph' found");
+        return;
+    }
+
     let currentLayout;
 
     const defaultLayout = {
@@ -551,12 +559,12 @@ document.addEventListener('DOMContentLoaded', function () {
             cy.off('select');
             cy.off('unselect');
             cy.off('tap');
-            cy.off('doubleTap');
+            // try cy.removeAllListeners();
             cy.destroy(); // need to destroy old instance to avoid memory leaks
         }
 
         cy = cytoscape({
-            container: document.querySelector('.graph'), // container to render in
+            container: containerDiv, // container to render in
             ready: function () {
                 const nodes = this.nodes();
                 const edges = this.edges();
@@ -600,4 +608,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     reload();
     setupControls();
+
+    // On any resize of the controls (because of the sel list), resize the graph
+    new ResizeObserver(() => {
+        if (cy) {
+            cy.resize();
+        }
+    }).observe(controls);
 });
