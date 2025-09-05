@@ -249,16 +249,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function search(value) {
+        disableManualSelectionListener = true;
         cy.$(SELECTED).unselect();
         if (value !== "") {
             const sel = cy.elements(`[label *= "${value}"]`); // starts with
             sel.select();
-            nodeSelected(sel);
+            updateSelected(sel);
             fit(sel);
         } else {
             updatedSelectedList([]);
             cy.reset();
         }
+        disableManualSelectionListener = false;
     }
 
     function setupControls() {
@@ -490,7 +492,14 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (sel.length > 1) {
             // if more than one node selected, only highlight edges between them
             for (let i = 0; i < sel.length; i++) {
+                if (sel[i].isEdge()) {
+                    continue;
+                }
                 for (let j = i + 1; j < sel.length; j++) {
+                    if (sel[j].isEdge()) {
+                        continue;
+                    }
+                    // otherwise they must be nodes
                     const a = sel[i].id();
                     const b = sel[j].id();
                     cy.edges("[source='" + a + "'][target='" + b + "']").addClass(HIGHLIGHTED);
@@ -524,17 +533,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const li = document.createElement("li");
             li.textContent = node.data().label;
             li.onclick = () => {
+                disableManualSelectionListener = true;
                 cy.$(SELECTED).unselect();
                 node.select();
-                nodeSelected([node]);
+                updateSelected([node]);
                 fit(node);
+                disableManualSelectionListener = false;
             };
             selectedList.appendChild(li);
         });
     }
 
     let lastSelected = "";
-    const nodeSelected = (sel) => {
+    const updateSelected = (sel) => {
         if (sel) {
             const ids = JSON.stringify(sel.map(s => s.data().id));
             highlightConnectedEdges(sel);
@@ -582,19 +593,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     render(node);
                 });
                 let sel = this.$(SELECTED);
-                nodeSelected(sel);
+                updateSelected(sel);
             },
             elements: elements,
             style: style,
             layout: currentLayout,
         });
 
+        // Prevent the listeners from being triggered when we select/unselect programmatically - eg search
+        let disableManualSelectionListener = false;
         cy.on('select', function (e) {
-            nodeSelected(cy.$(SELECTED));
+            if (!disableManualSelectionListener) {
+                updateSelected(cy.$(SELECTED));
+            }
         });
 
         cy.on('unselect', function (e) {
-            nodeSelected(cy.$(SELECTED));
+            if (!disableManualSelectionListener) {
+                updateSelected(cy.$(SELECTED));
+            }
         });
 
         const doubleClickDelayMs = 300;
