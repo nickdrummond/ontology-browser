@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'node' + SELECTED,
             style: {
                 'color': '#000000',
-                'background-color': '#F08080',
+                'background-color': '#2e5cde',
                 'font-size': '14',
                 'min-zoomed-font-size': 20, // optimisation for large graphs
                 'z-index': 1000,
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
             selector: 'edge' + SELECTED,
             style: {
                 'color': '#000000',
-                'line-color': '#F08080',
+                'line-color': '#2e5cde',
                 'line-opacity': 1,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
                 // cannot use z-index to bring edges forward
@@ -132,8 +132,8 @@ document.addEventListener('DOMContentLoaded', function () {
         { // highlight edges connected to selected nodes
             selector: 'edge.' + HIGHLIGHTED,
             style: {
-                'color': '#F08080',
-                'line-color': '#F08080',
+                'color': '#2e5cde',
+                'line-color': '#2e5cde',
                 'line-opacity': 0.5,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
             },
@@ -142,8 +142,8 @@ document.addEventListener('DOMContentLoaded', function () {
         { // highlight edges connected to selected nodes
             selector: 'edge.' + HIGHLIGHTED_INCOMING,
             style: {
-                'color': '#2e5cde',
-                'line-color': '#2e5cde',
+                'color': '#F08080',
+                'line-color': '#F08080',
                 'line-opacity': 0.5,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
             },
