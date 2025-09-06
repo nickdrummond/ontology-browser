@@ -263,99 +263,104 @@ document.addEventListener('DOMContentLoaded', function () {
         disableManualSelectionListener = false;
     }
 
-    function setupControls() {
-        setupControl("type", defaultLayout.name, (newValue) => {
-            currentLayout = getLayout(newValue);
-            cy.layout(currentLayout).run();
+
+    const controlConfig = [
+        {id: "depth", defaultValue: null, onChange: () => reload(), onEdit: null},
+        {id: QUERY, defaultValue: null, onChange: () => reload(), onEdit: null},
+        {id: INDIVIDUALS, defaultValue: null, onChange: () => reload(), onEdit: null},
+        {id: PROPERTIES, defaultValue: null, onChange: () => reload(), onEdit: null},
+        {id: "incoming", defaultValue: null, onChange: () => reload(), onEdit: null},
+        {id: "without", defaultValue: null, onChange: () => reload(), onEdit: null},
+        {id: "follow", defaultValue: null, onChange: () => reload(), onEdit: null},
+        {id: "parents", defaultValue: null, onChange: () => reload(), onEdit: null},
+        {id: "graph-search", defaultValue: null, onChange: null, onEdit: newValue => search(newValue)},
+        {
+            id: "type", defaultValue: defaultLayout.name, onChange: (newValue) => {
+                currentLayout = getLayout(newValue);
+                cy.layout(currentLayout).run();
+            }, onEdit: null,
+        },
+        {
+            id: "space", defaultValue: null, onChange: (newValue) => {
+                setLengthProp(parseInt(newValue));
+                cy.layout(currentLayout).run();
+            }, onEdit: null,
+        },
+    ];
+
+    document.getElementById("refocus").onclick = (e) => {
+        e.preventDefault();
+        const allSelected = cy.$(SELECTED);
+
+        // TODO don't update the address multiple times.
+        // Set the components and then update the address once from the controls
+        const instances = allSelected
+            .filter(s => s.data().type === 'individual')
+            .map(s => s.data().label).join(',');
+        document.getElementById(INDIVIDUALS).value = instances;
+        updateAddress(INDIVIDUALS, instances);
+
+        const classes = allSelected
+            .filter(s => s.data().type === 'class')
+            .map(s => s.data().label).join(' or '); // build union of classes
+        document.getElementById(QUERY).value = classes;
+        updateAddress(QUERY, classes);
+
+        const properties = allSelected
+            .filter(s => Boolean(s.data().source))
+            .map(s => s.data().label).join(',');
+        document.getElementById(PROPERTIES).value = properties;
+        updateAddress(PROPERTIES, properties);
+
+        reload();
+    };
+
+    document.getElementById("expand").onclick = (e) => {
+        e.preventDefault();
+        const selected = cy.$(SELECTED);
+        const selectedLabels = selected.map(s => s.data().label);
+        const current = document.getElementById(INDIVIDUALS);
+        const merged = unionSet(selectedLabels, current.value.split(","));
+        current.value = merged.join(',');
+        append(selectedLabels);
+    };
+
+    document.getElementById("delete").onclick = (e) => {
+        e.preventDefault();
+        const selected = cy.$(SELECTED);
+        const selectedLabels = selected.map(s => s.data().label);
+        const selectedIds = selected.map(s => s.data().id);
+        const current = document.getElementById(INDIVIDUALS);
+        const existingIndividuals = current.value.split(",");
+        const newIndividuals = existingIndividuals.filter(sel => !selectedLabels.includes(sel));
+        current.value = newIndividuals.join(',');
+        remove(selectedLabels, selectedIds);
+    };
+
+    document.getElementById("png").onclick = (e) => {
+        e.preventDefault();
+        const png64 = cy.png({
+            output: 'base64',
+            scale: 2,
+            bg: isDark() ? '#000000' : '#FFFFFF',
         });
-        setupControl("space", null, (newValue) => {
-            setLengthProp(parseInt(newValue));
-            cy.layout(currentLayout).run();
-        });
+        openBase64InNewTab(png64, 'image/png');
+    };
 
-        setupControl("depth", null, newValue => reload());
-        setupControl(QUERY, null, newValue => reload());
-        setupControl(INDIVIDUALS, null, newValue => reload());
-        setupControl(PROPERTIES, null, newValue => reload());
-        setupControl("incoming", null, newValue => reload());
-        setupControl("without", null, newValue => reload());
-        setupControl("follow", null, newValue => reload());
-        setupControl("parents", null, newValue => reload());
-        setupControl("graph-search", null, null, newValue => search(newValue));
+    document.getElementById("save").onclick = (e) => {
+        e.preventDefault();
+        console.log("Saving graph layout to local storage");
+        const params = new URLSearchParams(window.location.search);
+        localStorage.setItem(params.toString(), JSON.stringify(cy.json()));
+    };
 
-        const refocus = document.getElementById("refocus");
-        refocus.onclick = (e) => {
-            e.preventDefault();
-            const allSelected = cy.$(SELECTED);
-
-            const instances = allSelected
-                .filter(s => s.data().type === 'individual')
-                .map(s => s.data().label).join(',');
-            document.getElementById(INDIVIDUALS).value = instances;
-            updateAddress(INDIVIDUALS, instances);
-
-            const classes = allSelected
-                .filter(s => s.data().type === 'class')
-                .map(s => s.data().label).join(' or '); // build union of classes
-            document.getElementById(QUERY).value = classes;
-            updateAddress(QUERY, classes);
-
-            const properties = allSelected
-                .filter(s => Boolean(s.data().source))
-                .map(s => s.data().label).join(',');
-            document.getElementById(PROPERTIES).value = properties;
-            updateAddress(PROPERTIES, properties);
-
-            reload();
-        };
-
-        document.getElementById("expand").onclick = (e) => {
-            e.preventDefault();
-            const selected = cy.$(SELECTED);
-            const selectedLabels = selected.map(s => s.data().label);
-            const current = document.getElementById(INDIVIDUALS);
-            const merged = unionSet(selectedLabels, current.value.split(","));
-            current.value = merged.join(',');
-            append(selectedLabels);
-        };
-
-        document.getElementById("delete").onclick = (e) => {
-            e.preventDefault();
-            const selected = cy.$(SELECTED);
-            const selectedLabels = selected.map(s => s.data().label);
-            const selectedIds = selected.map(s => s.data().id);
-            const current = document.getElementById(INDIVIDUALS);
-            const existingIndividuals = current.value.split(",");
-            const newIndividuals = existingIndividuals.filter(sel => !selectedLabels.includes(sel));
-            current.value = newIndividuals.join(',');
-            remove(selectedLabels, selectedIds);
-        };
-
-        document.getElementById("png").onclick = (e) => {
-            e.preventDefault();
-            const png64 = cy.png({
-                output: 'base64',
-                scale: 2,
-                bg: isDark() ? '#000000' : '#FFFFFF',
-            });
-            openBase64InNewTab(png64, 'image/png');
-        };
-
-        document.getElementById("save").onclick = (e) => {
-            e.preventDefault();
-            console.log("Saving graph layout to local storage");
-            const params = new URLSearchParams(window.location.search);
-            localStorage.setItem(params.toString(), JSON.stringify(cy.json()));
-        };
-
-        document.getElementById("recover").onclick = (e) => {
-            e.preventDefault();
-            console.log("Recovering graph layout from local storage");
-            const params = new URLSearchParams(window.location.search);
-            const saved = localStorage.getItem(params.toString());
-            if (saved != null) {
-                cy.json(JSON.parse(saved));
-            }
+    document.getElementById("recover").onclick = (e) => {
+        e.preventDefault();
+        console.log("Recovering graph layout from local storage");
+        const params = new URLSearchParams(window.location.search);
+        const saved = localStorage.getItem(params.toString());
+        if (saved != null) {
+            cy.json(JSON.parse(saved));
         }
     }
 
@@ -371,39 +376,70 @@ document.addEventListener('DOMContentLoaded', function () {
         window.open(fileURL);
     }
 
+    window.addEventListener('popstate', function (event) {
+        console.log("Pop state event", event);
+        controlConfig.forEach(ctrl => {
+            setupControlValue(ctrl.id, ctrl.defaultValue);
+        });
+        reload();
+    });
+
     function updateAddress(name, value) {
+        if (value === "") {
+            value = null;
+        }
+
         const params = new URLSearchParams(window.location.search);
-        params.set(name, value);
+        const current = params.get(name);
+        if (current === value) {
+            return;
+        }
+        if (value) {
+            params.set(name, value);
+        } else {
+            params.delete(name);
+        }
         window.history.pushState({}, '', window.location.pathname + '?' + params);
     }
 
-    function setupControl(name, defaultValue, changed, edited) {
-        const ctrl = document.getElementById(name);
+    function setupControlValue(id, defaultValue) {
+        const ctrl = document.getElementById(id);
         if (ctrl) {
-            const type = new URLSearchParams(window.location.search).get(name);
-            if (type) {
-                ctrl.value = type;
+            const valueFromUrl = new URLSearchParams(window.location.search).get(id);
+            if (valueFromUrl) {
+                ctrl.value = valueFromUrl;
             } else if (defaultValue) {
                 ctrl.value = defaultValue;
             }
-            if (changed) {
+            else {
+                ctrl.value = null;
+            }
+        }
+    }
+
+    function setupControlListeners(id, onChange, onEdit) {
+        const ctrl = document.getElementById(id);
+        if (ctrl) {
+            if (onChange) {
                 ctrl.addEventListener('change', () => {
-                    updateAddress(name, ctrl.value);
-                    changed(ctrl.value);
+                    updateAddress(id, ctrl.value);
+                    onChange(ctrl.value);
                 });
             }
-            if (edited) {
+            if (onEdit) {
                 ctrl.addEventListener('keyup', (event) => {
-                    edited(ctrl.value);
+                    onEdit(ctrl.value);
                 });
             }
         }
     }
 
     function reload() {
+        console.log("RELOADING GRAPH");
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
+        document.title = urlSearchParams.get(INDIVIDUALS);
         let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
@@ -483,8 +519,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     incoming.addClass(HIGHLIGHTED_INCOMING);
                     // node highlighted if one step from selected node
                     incoming.map(edge => edge.source().addClass(HIGHLIGHTED));
-                }
-                else if (element.isEdge()) {
+                } else if (element.isEdge()) {
                     element.source().addClass(HIGHLIGHTED);
                     element.target().addClass(HIGHLIGHTED);
                 }
@@ -532,6 +567,7 @@ document.addEventListener('DOMContentLoaded', function () {
         sel.forEach(node => {
             const li = document.createElement("li");
             li.textContent = node.data().label;
+            // TODO put an icon to navigate to the page for this entity
             li.onclick = () => {
                 disableManualSelectionListener = true;
                 cy.$(SELECTED).unselect();
@@ -631,7 +667,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     reload();
-    setupControls();
+    controlConfig.forEach(ctrl => {
+        setupControlValue(ctrl.id, ctrl.defaultValue);
+        setupControlListeners(ctrl.id, ctrl.onChange, ctrl.onEdit);
+    });
 
     // On any resize of the controls (because of the sel list), resize the graph
     new ResizeObserver(() => {
