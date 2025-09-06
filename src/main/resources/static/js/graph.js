@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { // highlight edges connected to selected nodes
             selector: 'edge.' + HIGHLIGHTED,
             style: {
-                'color': '#2e5cde',
+                'color': '#000000',
                 'line-color': '#2e5cde',
                 'line-opacity': 0.7,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { // highlight edges connected to selected nodes
             selector: 'edge.' + HIGHLIGHTED_INCOMING,
             style: {
-                'color': '#edb0b0',
+                'color': '#000000',
                 'line-color': '#edb0b0',
                 'line-opacity': 1,
                 'min-zoomed-font-size': 30, // optimisation for large graphs
@@ -294,7 +294,6 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         const allSelected = cy.$(SELECTED);
 
-        // TODO don't update the address multiple times.
         // Set the components and then update the address once from the controls
         const instances = allSelected
             .filter(s => s.data().type === 'individual')
@@ -557,6 +556,30 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function selectWithFocus(node) {
+        disableManualSelectionListener = true;
+        cy.$(SELECTED).unselect();
+        node.select();
+        updateSelected([node]);
+        fit(node);
+        disableManualSelectionListener = false;
+    }
+
+    function pluralType(type) {
+        switch (type) {
+            case 'individual':
+                return 'individuals';
+            case 'class':
+                return 'classes';
+            case 'objectproperty':
+                return 'objectproperties';
+            case 'dataproperty':
+                return 'dataproperties';
+            default:
+                return '';
+        }
+    }
+
     function updatedSelectedList(sel) {
         const selectedList = document.getElementById("selected-nodes");
         while (selectedList.firstChild) {
@@ -564,15 +587,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         sel.forEach(node => {
             const li = document.createElement("li");
-            li.textContent = node.data().label;
-            // TODO put an icon to navigate to the page for this entity
+            li.textContent = node.data().label + " ";
+            // link to the entity page
+            const pageLink = document.createElement("a");
+            pageLink.href = baseUrl + pluralType(node.data().type) + '/' + node.data().entityId;
+            pageLink.target = "_blank";
+            pageLink.textContent = "↗";
+            li.append(pageLink);
             li.onclick = () => {
-                disableManualSelectionListener = true;
-                cy.$(SELECTED).unselect();
-                node.select();
-                updateSelected([node]);
-                fit(node);
-                disableManualSelectionListener = false;
+                selectWithFocus(node)
             };
             selectedList.appendChild(li);
         });

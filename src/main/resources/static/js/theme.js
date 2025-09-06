@@ -29,11 +29,11 @@ export const theme = (normal, alt, attribute, key) => {
     }
 
     function store(theme) {
-        sessionStorage.setItem(key, theme);
+        localStorage.setItem(key, theme);
     }
 
     function retrieve() {
-        return sessionStorage.getItem(key);
+        return localStorage.getItem(key);
     }
 
     return {

@@ -2,6 +2,8 @@ package org.ontbrowser.www.url;
 
 import org.semanticweb.owlapi.model.*;
 
+import static org.ontbrowser.www.url.EntityId.getIdForEntity;
+
 /**
  * A URL scheme for dynamic server-side resolution
  *
@@ -87,7 +89,4 @@ public class RestURLScheme implements URLScheme {
         return owlEntity.accept(typeVisitor);
     }
 
-    protected String getIdForEntity(OWLEntity entity) {
-        return String.valueOf(entity.getIRI().hashCode());
-    }
 }

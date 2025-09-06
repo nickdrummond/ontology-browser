@@ -5,6 +5,8 @@ import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import static org.ontbrowser.www.url.EntityId.getIdForEntity;
+
 public class RelationPropertyURLScheme extends RestURLScheme {
 
     public static final String ROOT_PATH = "/relations";

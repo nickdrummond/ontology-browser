@@ -35,7 +35,7 @@
         let TREE_LINKS_SIMPLE = false;
 
         // Set dark mode early to avoid flicker
-        document.documentElement.setAttribute(THEME_ATTRIBUTE, sessionStorage.getItem(THEME_KEY) || THEME_DEFAULT);
+        document.documentElement.setAttribute(THEME_ATTRIBUTE, localStorage.getItem(THEME_KEY) || THEME_DEFAULT);
     </script>
     <script type='text/javascript' src='/js/libs/jquery-1.4.3.min.js'
             th:src="@{/js/libs/jquery-1.4.3.min.js}"></script>

@@ -10,6 +10,8 @@ import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.util.Arrays;
 
+import static org.ontbrowser.www.url.EntityId.getIdForEntity;
+
 public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLScheme {
 
     public final String rootPath;
