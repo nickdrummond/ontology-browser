@@ -8,7 +8,10 @@ export const theme = (normal, alt, attribute, key) => {
 
     function attachTo(selector) {
         component = document.querySelector(selector);
-        component.addEventListener("click", () => setTheme(not(retrieve())));
+        component.addEventListener("click", (event) => {
+            event.preventDefault(); // prevent navigation if a link
+            setTheme(not(retrieve()));
+        });
         toggle(retrieve());
     }
 

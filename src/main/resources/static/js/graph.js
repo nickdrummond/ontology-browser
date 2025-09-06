@@ -377,7 +377,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     window.addEventListener('popstate', function (event) {
-        console.log("Pop state event", event);
         controlConfig.forEach(ctrl => {
             setupControlValue(ctrl.id, ctrl.defaultValue);
         });
@@ -435,7 +434,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function reload() {
-        console.log("RELOADING GRAPH");
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
