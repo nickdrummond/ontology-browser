@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
             for (let key in style) {
                 let value = style[key];
                 if (typeof value === 'string' && value.startsWith('#')) {
-                    inverted = invertHex(value.substring(1));
+                    const inverted = invertHex(value.substring(1));
                     style[key] = '#' + inverted;
                 }
             }
@@ -247,6 +247,8 @@ document.addEventListener('DOMContentLoaded', function () {
             duration: 1000
         });
     }
+
+    let disableManualSelectionListener = false;
 
     function search(value) {
         disableManualSelectionListener = true;
@@ -376,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.open(fileURL);
     }
 
-    window.addEventListener('popstate', function (event) {
+    window.addEventListener('popstate', function () {
         controlConfig.forEach(ctrl => {
             setupControlValue(ctrl.id, ctrl.defaultValue);
         });
@@ -409,8 +411,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ctrl.value = valueFromUrl;
             } else if (defaultValue) {
                 ctrl.value = defaultValue;
-            }
-            else {
+            } else {
                 ctrl.value = null;
             }
         }
@@ -426,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
             if (onEdit) {
-                ctrl.addEventListener('keyup', (event) => {
+                ctrl.addEventListener('keyup', () => {
                     onEdit(ctrl.value);
                 });
             }
@@ -455,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function () {
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
         urlSearchParams.set(INDIVIDUALS, labels);
-        urlSearchParams.set("depth", 0);
+        urlSearchParams.set("depth", "0");
         let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
@@ -545,7 +546,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const expand = (event, originalEvent) => {
         const node = originalEvent.target;
         const sel = node.data().label;
-        const id = node.data().id;
         const indivsId = INDIVIDUALS;
         const indivs = document.getElementById(indivsId);
         const current = indivs.value.split(",");
@@ -635,14 +635,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // Prevent the listeners from being triggered when we select/unselect programmatically - eg search
-        let disableManualSelectionListener = false;
-        cy.on('select', function (e) {
+        cy.on('select', () => {
             if (!disableManualSelectionListener) {
                 updateSelected(cy.$(SELECTED));
             }
         });
 
-        cy.on('unselect', function (e) {
+        cy.on('unselect', () => {
             if (!disableManualSelectionListener) {
                 updateSelected(cy.$(SELECTED));
             }
