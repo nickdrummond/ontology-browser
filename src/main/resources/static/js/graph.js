@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
-        document.title = "Graph: " + urlSearchParams.get(INDIVIDUALS) ?? urlSearchParams.get(QUERY) ?? urlSearchParams.get(PROPERTIES) ?? "";
+        document.title = "Graph: " + (urlSearchParams.get(QUERY) ?? urlSearchParams.get(INDIVIDUALS) ??  urlSearchParams.get(PROPERTIES) ?? "");
         let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
