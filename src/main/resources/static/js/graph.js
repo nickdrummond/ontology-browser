@@ -335,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const existingIndividuals = current.value.split(",");
         const newIndividuals = existingIndividuals.filter(sel => !selectedLabels.includes(sel));
         current.value = newIndividuals.join(',');
+        updateAddress(INDIVIDUALS, current.value);
         remove(selectedLabels, selectedIds);
     };
 
@@ -477,9 +478,19 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
+    function removeOrphans() {
+        cy.nodes().forEach(node => {
+            const connected = node.connectedEdges();
+            if (connected.length === 0) {
+                cy.remove(node);
+            }
+        });
+    }
+
     function remove(labels, ids) {
         ids.forEach(id => {
             cy.remove('node[id="' + id + '"]');
+            removeOrphans();
         })
     }
 
