@@ -1,160 +1,48 @@
-const INDIVIDUALS = "indivs";
-const SELECTED = ':selected';
-const HIGHLIGHTED = 'highlighted';
-const HIGHLIGHTED_INCOMING = 'highlighted-incoming';
-const QUERY = "query";
-const PROPERTIES = "props";
-
-function getTheme() {
-    return document.documentElement.getAttribute(THEME_ATTRIBUTE);
-}
+import {graphControls, INDIVIDUALS, PROPERTIES, QUERY} from "./graph-controls.js";
+import {updateAddress} from "./url-helper.js";
+import {getStyle, isDark, HIGHLIGHTED, HIGHLIGHTED_INCOMING, SELECTED} from "./graph-style.js";
+import {layouts, updateLength} from "./graph-layouts.js";
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    const containerDiv = document.querySelector('.graph');
-    const controls = document.querySelector('.graph-controls');
+    console.log("Document loaded, initializing graph");
+    const g = graph('.graph');
+    const controls = graphControls('.graph-controls', g);
+
+    // On any resize of the controls (because of the sel list), resize the graph
+    new ResizeObserver(() => {
+        if (g.cy) {
+            g.cy.resize();
+        }
+    }).observe(controls.getContainer());
+});
+
+export function graph(selector) {
+    const containerDiv = document.querySelector(selector);
 
     if (!containerDiv) {
-        console.error("No container div with class 'graph' found");
+        console.error("No container with class " + selector + " found");
         return;
     }
 
-    let currentLayout;
+    let cy = null;
+    let currentLayout = null;
 
     const defaultLayout = {
         name: 'cola',
         animationDuration: 5000,
     }
 
-    const layouts = {
-        'breadthfirst': {
-            name: 'breadthfirst',
-            directed: true,
-            circle: true,
-        },
-        'fcose': {
-            name: 'fcose',
-            idealEdgeLength: 50,
-        },
-        'concentric': {
-            name: 'concentric',
-            minNodeSpacing: 100,
-            concentric: function (node) { // returns numeric value for each node, placing higher nodes in levels towards the centre
-                return node.degree();
-            }
-        },
-        'circle': {
-            name: 'circle',
-            spacingFactor: 1,
-        },
-        'grid': {
-            name: 'grid',
-            avoidOverlap: true,
-            avoidOverlapPadding: 10,
-        },
-        'cola': {
-            name: 'cola',
-        },
-        'dagre': {
-            name: 'dagre',
-            rankDir: 'RL',
-        },
-    };
+    let disableManualSelectionListener = false;
+    let lastSelected = "";
+    let selListeners = [];
 
-    let lightStyle = [
-        {
-            selector: 'node',
-            style: {
-                'color': '#999999',
-                'background-color': '#999999',
-                'label': 'data(label)',
-                'font-size': '10',
-                'min-zoomed-font-size': 25, // optimisation for large graphs
-            },
-        },
+    reload();
 
-        {
-            selector: 'node.' + HIGHLIGHTED,
-            style: {
-                'color': '#edb0b0',
-                'background-color': '#edb0b0',
-                'font-size': '12',
-                'min-zoomed-font-size': 20, // optimisation for large graphs
-                'z-index': 500,
-            },
-        },
-
-        {
-            selector: 'node' + SELECTED,
-            style: {
-                'color': '#000000',
-                'background-color': '#2e5cde',
-                'font-size': '14',
-                'min-zoomed-font-size': 20, // optimisation for large graphs
-                'z-index': 1000,
-            },
-        },
-
-        {
-            selector: ':parent',
-            style: {
-                'background-opacity': 0.02,
-                'border-color': '#2B65EC',
-                'font-size': '12',
-            },
-        },
-
-        {
-            selector: 'edge',
-            style: {
-                'color': '#888888',
-                'line-color': '#000000',
-                'line-opacity': 0.2,
-                'width': 5,
-                'curve-style': 'straight-triangle',
-                'label': 'data(label)',
-                'font-size': '8',
-                'text-opacity': 1,
-                'min-zoomed-font-size': 35, // optimisation for large graphs
-            },
-        },
-
-        { // highlight edges connected to selected nodes
-            selector: 'edge.' + HIGHLIGHTED,
-            style: {
-                'color': '#000000',
-                'line-color': '#2e5cde',
-                'line-opacity': 0.7,
-                'min-zoomed-font-size': 30, // optimisation for large graphs
-            },
-        },
-
-        { // highlight edges connected to selected nodes
-            selector: 'edge.' + HIGHLIGHTED_INCOMING,
-            style: {
-                'color': '#000000',
-                'line-color': '#edb0b0',
-                'line-opacity': 1,
-                'min-zoomed-font-size': 30, // optimisation for large graphs
-            },
-        },
-
-        {
-            selector: 'edge' + SELECTED,
-            style: {
-                'color': '#000000',
-                'line-color': '#2e5cde',
-                'line-opacity': 1,
-                'min-zoomed-font-size': 30, // optimisation for large graphs
-                // cannot use z-index to bring edges forward
-            },
-        },
-    ];
-
-    // Light/dark style support must be under control of cytoscape for png export to work
-    function getStyle() {
-        return getTheme() === 'dark' ? invert(lightStyle) : lightStyle;
+    function onSelectChange(callback) {
+        selListeners.push(callback);
     }
+
 
     // Check if the theme changes
     new MutationObserver(function (mutations) {
@@ -166,28 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }).observe(document.documentElement, {
         attributes: true,
     });
-
-    // Equivalent of filter(invert(1)) - colors must all be in #RRGGBB format
-    function invert(original) {
-        const copy = JSON.parse(JSON.stringify(original));
-        copy.forEach(s => {
-            let style = s.style;
-            for (let key in style) {
-                let value = style[key];
-                if (typeof value === 'string' && value.startsWith('#')) {
-                    const inverted = invertHex(value.substring(1));
-                    style[key] = '#' + inverted;
-                }
-            }
-        });
-        return copy;
-    }
-
-    function invertHex(hex) {
-        return (Number(`0x1${hex}`) ^ 0xFFFFFF).toString(16).substring(1).toUpperCase()
-    }
-
-    let cy = null;
 
     function getLayout(type) {
         if (!type) {
@@ -203,40 +69,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function setLengthProp(newValue) {
-        switch (currentLayout.name) {
-            case 'fcose':
-                currentLayout.idealEdgeLength = newValue * 2;
-                break;
-            case 'euler':
-                currentLayout.springLength = 100 + (newValue * 2);
-                break;
-            case 'cola':
-                currentLayout.edgeLength = 50 + (newValue * 2);
-                break;
-            case 'concentric':
-                currentLayout.minNodeSpacing = newValue;
-                break;
-            case 'dagre':
-                currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue / 50));
-                break;
-            case 'circle':
-                currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue / 50));
-                break;
-            case 'breadthfirst':
-                currentLayout.spacingFactor = 0.5 + (newValue === 0 ? 0 : (newValue / 50));
-                break;
-            case 'grid':
-                currentLayout.avoidOverlapPadding = newValue * 2;
-                break;
+        if (!cy) {
+            return;
         }
+        updateLength(currentLayout, newValue);
+        cy.layout(currentLayout).run();
     }
 
     function unionSet(a, b) {
         return [...new Set(a).union(new Set(b))];
-    }
-
-    function isDark() {
-        return getTheme() === 'dark';
     }
 
     function fit(sel) {
@@ -248,8 +89,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    let disableManualSelectionListener = false;
-
     function search(value) {
         disableManualSelectionListener = true;
         cy.$(SELECTED).unselect();
@@ -259,39 +98,13 @@ document.addEventListener('DOMContentLoaded', function () {
             updateSelected(sel);
             fit(sel);
         } else {
-            updatedSelectedList([]);
+            notifySelectionListeners([]);
             cy.reset();
         }
         disableManualSelectionListener = false;
     }
 
-
-    const controlConfig = [
-        {id: "depth", defaultValue: null, onChange: () => reload(), onEdit: null},
-        {id: QUERY, defaultValue: null, onChange: () => reload(), onEdit: null},
-        {id: INDIVIDUALS, defaultValue: null, onChange: () => reload(), onEdit: null},
-        {id: PROPERTIES, defaultValue: null, onChange: () => reload(), onEdit: null},
-        {id: "incoming", defaultValue: null, onChange: () => reload(), onEdit: null},
-        {id: "without", defaultValue: null, onChange: () => reload(), onEdit: null},
-        {id: "follow", defaultValue: null, onChange: () => reload(), onEdit: null},
-        {id: "parents", defaultValue: null, onChange: () => reload(), onEdit: null},
-        {id: "graph-search", defaultValue: null, onChange: null, onEdit: newValue => search(newValue)},
-        {
-            id: "type", defaultValue: defaultLayout.name, onChange: (newValue) => {
-                currentLayout = getLayout(newValue);
-                cy.layout(currentLayout).run();
-            }, onEdit: null,
-        },
-        {
-            id: "space", defaultValue: null, onChange: (newValue) => {
-                setLengthProp(parseInt(newValue));
-                cy.layout(currentLayout).run();
-            }, onEdit: null,
-        },
-    ];
-
-    document.getElementById("refocus").onclick = (e) => {
-        e.preventDefault();
+    function refocus() {
         const allSelected = cy.$(SELECTED);
 
         // Set the components and then update the address once from the controls
@@ -314,20 +127,32 @@ document.addEventListener('DOMContentLoaded', function () {
         updateAddress(PROPERTIES, properties);
 
         reload();
-    };
+    }
 
-    document.getElementById("expand").onclick = (e) => {
-        e.preventDefault();
+    function expandSelected() {
         const selected = cy.$(SELECTED);
         const selectedLabels = selected.map(s => s.data().label);
         const current = document.getElementById(INDIVIDUALS);
         const merged = unionSet(selectedLabels, current.value.split(","));
         current.value = merged.join(',');
         append(selectedLabels);
-    };
+    }
 
-    document.getElementById("delete").onclick = (e) => {
-        e.preventDefault();
+    function expand(event, originalEvent) {
+        const node = originalEvent.target;
+        const sel = node.data().label;
+        const indivsId = INDIVIDUALS;
+        const indivs = document.getElementById(indivsId);
+        const current = indivs.value.split(",");
+        if (!current.includes(sel)) {
+            current.push(sel);
+            indivs.value = current.join(",");
+            append(sel);
+            updateAddress(indivsId, indivs.value);
+        }
+    }
+
+    function removeSelected() {
         const selected = cy.$(SELECTED);
         const selectedLabels = selected.map(s => s.data().label);
         const selectedIds = selected.map(s => s.data().id);
@@ -337,28 +162,22 @@ document.addEventListener('DOMContentLoaded', function () {
         current.value = newIndividuals.join(',');
         updateAddress(INDIVIDUALS, current.value);
         remove(selectedLabels, selectedIds);
-    };
+    }
 
-    document.getElementById("png").onclick = (e) => {
-        e.preventDefault();
-        const png64 = cy.png({
+    function exportPng() {
+        return cy.png({
             output: 'base64',
             scale: 2,
             bg: isDark() ? '#000000' : '#FFFFFF',
         });
-        openBase64InNewTab(png64, 'image/png');
-    };
+    }
 
-    document.getElementById("save").onclick = (e) => {
-        e.preventDefault();
-        console.log("Saving graph layout to local storage");
+    function saveToLocal() {
         const params = new URLSearchParams(window.location.search);
         localStorage.setItem(params.toString(), JSON.stringify(cy.json()));
-    };
+    }
 
-    document.getElementById("recover").onclick = (e) => {
-        e.preventDefault();
-        console.log("Recovering graph layout from local storage");
+    function recoverFromLocal() {
         const params = new URLSearchParams(window.location.search);
         const saved = localStorage.getItem(params.toString());
         if (saved != null) {
@@ -366,79 +185,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function openBase64InNewTab(data, mimeType) {
-        const byteCharacters = atob(data);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const file = new Blob([byteArray], {type: mimeType + ';base64'});
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL);
-    }
-
-    window.addEventListener('popstate', function () {
-        controlConfig.forEach(ctrl => {
-            setupControlValue(ctrl.id, ctrl.defaultValue);
-        });
-        reload();
-    });
-
-    function updateAddress(name, value) {
-        if (value === "") {
-            value = null;
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        const current = params.get(name);
-        if (current === value) {
-            return;
-        }
-        if (value) {
-            params.set(name, value);
-        } else {
-            params.delete(name);
-        }
-        window.history.pushState({}, '', window.location.pathname + '?' + params);
-    }
-
-    function setupControlValue(id, defaultValue) {
-        const ctrl = document.getElementById(id);
-        if (ctrl) {
-            const valueFromUrl = new URLSearchParams(window.location.search).get(id);
-            if (valueFromUrl) {
-                ctrl.value = valueFromUrl;
-            } else if (defaultValue) {
-                ctrl.value = defaultValue;
-            } else {
-                ctrl.value = null;
-            }
-        }
-    }
-
-    function setupControlListeners(id, onChange, onEdit) {
-        const ctrl = document.getElementById(id);
-        if (ctrl) {
-            if (onChange) {
-                ctrl.addEventListener('change', () => {
-                    updateAddress(id, ctrl.value);
-                    onChange(ctrl.value);
-                });
-            }
-            if (onEdit) {
-                ctrl.addEventListener('keyup', () => {
-                    onEdit(ctrl.value);
-                });
-            }
-        }
-    }
-
     function reload() {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
-        document.title = "Graph: " + (urlSearchParams.get(QUERY) ?? urlSearchParams.get(INDIVIDUALS) ??  urlSearchParams.get(PROPERTIES) ?? "");
+        document.title = "Graph: " + (urlSearchParams.get(QUERY) ?? urlSearchParams.get(INDIVIDUALS) ?? urlSearchParams.get(PROPERTIES) ?? "");
         let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
@@ -553,20 +304,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    const expand = (event, originalEvent) => {
-        const node = originalEvent.target;
-        const sel = node.data().label;
-        const indivsId = INDIVIDUALS;
-        const indivs = document.getElementById(indivsId);
-        const current = indivs.value.split(",");
-        if (!current.includes(sel)) {
-            current.push(sel);
-            indivs.value = current.join(",");
-            append(sel);
-            updateAddress(indivsId, indivs.value);
-        }
-    }
-
     function selectWithFocus(node) {
         disableManualSelectionListener = true;
         cy.$(SELECTED).unselect();
@@ -576,44 +313,13 @@ document.addEventListener('DOMContentLoaded', function () {
         disableManualSelectionListener = false;
     }
 
-    function pluralType(type) {
-        switch (type) {
-            case 'individual':
-                return 'individuals';
-            case 'class':
-                return 'classes';
-            case 'objectproperty':
-                return 'objectproperties';
-            case 'dataproperty':
-                return 'dataproperties';
-            default:
-                return '';
-        }
-    }
-
-    function updatedSelectedList(sel) {
-        const selectedList = document.getElementById("selected-nodes");
-        while (selectedList.firstChild) {
-            selectedList.removeChild(selectedList.lastChild);
-        }
-        sel.forEach(node => {
-            const li = document.createElement("li");
-            li.textContent = node.data().label + " ";
-            // link to the entity page
-            const pageLink = document.createElement("a");
-            pageLink.href = baseUrl + pluralType(node.data().type) + '/' + node.data().entityId;
-            pageLink.target = "_blank";
-            pageLink.textContent = "↗";
-            li.append(pageLink);
-            li.onclick = () => {
-                selectWithFocus(node)
-            };
-            selectedList.appendChild(li);
+    function notifySelectionListeners(sel) {
+        selListeners.forEach(callback => {
+            callback(sel);
         });
     }
 
-    let lastSelected = "";
-    const updateSelected = (sel) => {
+    function updateSelected(sel) {
         if (sel) {
             const ids = JSON.stringify(sel.map(s => s.data().id));
             highlightConnectedEdges(sel);
@@ -621,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             lastSelected = ids;
-            updatedSelectedList(sel);
+            notifySelectionListeners(sel);
         }
     }
 
@@ -697,16 +403,28 @@ document.addEventListener('DOMContentLoaded', function () {
         cy.on('doubleTap', 'node', expand);
     }
 
-    reload();
-    controlConfig.forEach(ctrl => {
-        setupControlValue(ctrl.id, ctrl.defaultValue);
-        setupControlListeners(ctrl.id, ctrl.onChange, ctrl.onEdit);
-    });
+    function setCurrentLayout(newValue) {
+        currentLayout = getLayout(newValue);
+        cy.layout(currentLayout).run();
+    }
 
-    // On any resize of the controls (because of the sel list), resize the graph
-    new ResizeObserver(() => {
-        if (cy) {
-            cy.resize();
-        }
-    }).observe(controls);
-});
+    function getCurrentLayout() {
+        return currentLayout ?? defaultLayout;
+    }
+
+    return {
+        setCurrentLayout,
+        getCurrentLayout,
+        setLengthProp,
+        reload,
+        search,
+        selectWithFocus,
+        refocus,
+        expandSelected,
+        removeSelected,
+        exportPng,
+        saveToLocal,
+        recoverFromLocal,
+        onSelectChange,
+    }
+}

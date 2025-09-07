@@ -26,7 +26,9 @@
     <script src='/js/libs/klay.js' th:src="@{/js/libs/klay.js}"></script>
     <script src='/js/libs/cytoscape-klay.js' th:src="@{/js/libs/cytoscape-klay.js}"></script>
 
-    <script src='/js/graph.js' th:src="@{/js/graph.js}"></script>
+    <script type='module' src='/js/graph.js'
+            th:src='@{/js/graph.js}'>
+    </script>
 
 </head>
 
