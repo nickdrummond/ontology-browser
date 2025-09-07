@@ -131,6 +131,9 @@
         <li><a th:href='@{/datatypes}'>Datatypes</a></li>
     </th:block>
     <li><a th:href='@{/axioms}'>Axioms</a></li>
+    <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'graph')}">
+        <li><a th:href="@{/graph}">Graph</a></li>
+    </th:block>
     <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'reasoners')}">
         <li><a th:href='@{/dlquery}'>DL&nbsp;Query</a></li>
     </th:block>
