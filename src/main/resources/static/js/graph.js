@@ -93,7 +93,7 @@ export function graph(selector) {
         disableManualSelectionListener = true;
         cy.$(SELECTED).unselect();
         if (value !== "") {
-            const sel = cy.elements(`[label *= "${value}"]`); // starts with
+            const sel = cy.elements(`[label *= "${value}"]`); // contains match
             sel.select();
             updateSelected(sel);
             fit(sel);

@@ -59,15 +59,15 @@ body.wrapper {
     justify-content: center;
 }
 
-#search {
+.search {
     height: 2rem;
     border-radius: 1rem;
     border: solid 2px rgba(125, 125, 125, 0.8);
+    padding-left: 10px;
 }
 
 #search, .autosuggest li {
     width: 98%;
-    padding-left: 10px;
 }
 
 #burger {
@@ -231,6 +231,7 @@ img.button {
 .search-icon-wrapper {
     position: relative;
     height: 1.5em;
+    width: 0;
 }
 
 .search-icon {
@@ -242,15 +243,9 @@ img.button {
     background-repeat: no-repeat;
     background-image: url("/images/search-svgrepo-com.svg");
     position: absolute;
-    left: -3em;
+    left: -2.5rem;
+    top: 0.2rem;
     cursor: pointer;
-}
-
-.icon {
-    position: relative;
-    top: 2px;
-    width: 24px;
-    height: 24px;
 }
 
 /* IRI */
@@ -404,7 +399,7 @@ img.button {
         flex-direction: column;
     }
 
-    #search, .autosuggest li {
+    .search, .autosuggest li {
         line-height: 24px;
         font-size: 1.5rem;
     }

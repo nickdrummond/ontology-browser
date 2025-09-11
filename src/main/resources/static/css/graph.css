@@ -52,6 +52,21 @@
     margin-bottom: auto;
 }
 
+.graph-actions .graph-search {
+    display: flex;
+    align-content: center;
+}
+
+.graph-actions .graph-search .search-icon {
+    top: 0.4rem;
+    left: -2.2rem;
+}
+
+.graph-actions .graph-search .search {
+    font-size: 1rem;
+    height: 1.5rem;
+}
+
 .graph-stats {
     display: flex;
     justify-content: end;
