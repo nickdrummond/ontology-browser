@@ -23,6 +23,10 @@
     margin-bottom: 1em;
 }
 
+#query {
+    margin-bottom: 1rem;
+}
+
 #selected-nodes-wrapper {
     overflow: auto;
 }

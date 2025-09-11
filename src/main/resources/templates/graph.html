@@ -7,6 +7,12 @@
 
     <link rel='stylesheet' type='text/css' href="/css/graph.css" th:href='@{/css/graph.css}'/>
 
+    <!-- Class expression -->
+    <link rel='stylesheet' type='text/css' href='/css/gaphu-0.0.9.css'
+          th:href='@{/css/gaphu-0.0.9.css}'/>
+    <script type='text/javascript' src='/js/gaphu-0.0.9.js'
+            th:src='@{/js/gaphu-0.0.9.js}'></script>
+
     <!-- TODO only load necessary layout -->
     <script src='/js/libs/cytoscape.min.js' th:src="@{/js/libs/cytoscape.min.js}"></script>
 
@@ -42,7 +48,12 @@
     <div class="graph-controls">
         <form>
             <label for="query">Query</label>
-            <input id="query" type="text"/>
+            <textarea id="query"
+                      name='query'
+                      placeholder="Query - eg participant value R2-D2"
+                      class='editor dl'
+                      rows="5">
+            </textarea>
 
             <label for="indivs">Individuals</label>
             <input id="indivs" type="text"/>

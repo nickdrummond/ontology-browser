@@ -8,6 +8,11 @@ export const graphControls = (selector, graph) => {
     const controls = document.querySelector(selector);
     const selectedList = document.getElementById("selected-nodes");
 
+    new ExpressionEditor(QUERY, {
+        parser : baseUrl + 'parse/class-expression',
+        autocomplete: baseUrl + 'autocomplete/class-expression'
+    }).initialise();
+
     if (selectedList != null) {
         graph.onSelectChange((sel) => {
             while (selectedList.firstChild) {
