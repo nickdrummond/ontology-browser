@@ -1,7 +1,7 @@
 import {graphControls, INDIVIDUALS, PROPERTIES, QUERY} from "./graph-controls.js";
 import {updateAddress} from "./url-helper.js";
 import {getStyle, isDark, HIGHLIGHTED, HIGHLIGHTED_INCOMING, SELECTED} from "./graph-style.js";
-import {layouts, updateLength} from "./graph-layouts.js";
+import {getLayout, updateLength, defaultLayout} from "./graph-layouts.js";
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -28,11 +28,6 @@ export function graph(selector) {
     let cy = null;
     let currentLayout = null;
 
-    const defaultLayout = {
-        name: 'cola',
-        animationDuration: 5000,
-    }
-
     let disableManualSelectionListener = false;
     let lastSelected = "";
     let selListeners = [];
@@ -54,19 +49,6 @@ export function graph(selector) {
     }).observe(document.documentElement, {
         attributes: true,
     });
-
-    function getLayout(type) {
-        if (!type) {
-            return {...defaultLayout};
-        }
-
-        if (layouts.hasOwnProperty(type)) {
-            const layout = layouts[type];
-            return {...defaultLayout, ...layout}
-        }
-
-        return {...defaultLayout, ...{name: type}};
-    }
 
     function setLengthProp(newValue) {
         if (!cy) {
@@ -355,9 +337,10 @@ export function graph(selector) {
             cy.destroy(); // need to destroy old instance to avoid memory leaks
         }
 
-        cy = cytoscape({
+        cytoscape({
             container: containerDiv, // container to render in
             ready: function () {
+                cy = this;
                 const nodes = this.nodes();
                 const edges = this.edges();
 

@@ -1,3 +1,21 @@
+export function getLayout(type) {
+    if (!type) {
+        return {...defaultLayout};
+    }
+
+    if (layouts.hasOwnProperty(type)) {
+        const layout = layouts[type];
+        return {...defaultLayout, ...layout}
+    }
+
+    return {...defaultLayout, ...{name: type}};
+}
+
+export const defaultLayout = {
+    name: 'cola',
+    animationDuration: 5000,
+}
+
 export const layouts = {
     'breadthfirst': {
         name: 'breadthfirst',
