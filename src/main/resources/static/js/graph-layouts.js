@@ -49,6 +49,11 @@ export const layouts = {
         name: 'dagre',
         rankDir: 'RL',
     },
+    'klay': {
+        name: 'klay',
+        klay: {
+        }
+    }
 };
 
 export function updateLength(currentLayout, newValue) {
@@ -76,6 +81,9 @@ export function updateLength(currentLayout, newValue) {
             break;
         case 'grid':
             currentLayout.avoidOverlapPadding = newValue * 2;
+            break;
+        case 'klay':
+            currentLayout.klay.spacing = 20 + newValue;
             break;
     }
 }
