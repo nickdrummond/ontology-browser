@@ -1,5 +1,6 @@
 import {BUSY_IMAGE, getPath, getPlural, getSearchStr, getUrlWithSuffix} from "./util.js";
 import {entity} from "./entity.js";
+import {minimise} from "./minimise.js";
 
 const ACTIVE_ENTITY = "active-entity";
 const MINIHIERARCHY = '.minihierarchy';
@@ -34,25 +35,9 @@ const tree = (treeElement, baseUrl, entityPane) => {
     function init(callback) {
         selectedEntityCallback = callback;
 
-        addMinimise();
+        minimise(treeElement).addMinimise();
         scrollToSelection();
         createExpandListeners();
-    }
-
-    function addMinimise() {
-        let classList = treeElement.className;
-        const name = classList.replace(" hidden", "");
-        const hidden = sessionStorage.getItem(name);
-        if (hidden && hidden === "true") {
-            treeElement.classList.add("hidden");
-        }
-        const title = treeElement.querySelector("h4.header .title");
-        if (title) {
-            title.onclick = (e) => {
-                treeElement.classList.toggle("hidden");
-                sessionStorage.setItem(name, treeElement.classList.contains("hidden"));
-            };
-        }
     }
 
     function showSelected(component) {
@@ -166,7 +151,7 @@ const tree = (treeElement, baseUrl, entityPane) => {
                         const throwaway = document.createElement('span');
                         throwaway.innerHTML = html;
                         treeElement.replaceChildren(...throwaway.firstElementChild.childNodes);
-                        addMinimise();
+                        minimise(treeElement).addMinimise();
                     } else {
                         treeElement.innerHTML = "<h4>Members (0)</h4>";
                     }

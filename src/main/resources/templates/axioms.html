@@ -3,7 +3,15 @@
       xmlns:th="http://www.thymeleaf.org">
     <head>
         <th:block th:replace='~{base :: header (title=${title})}'/>
-        <th:block th:replace="~{base :: includeTree}"/>
+        <link rel='stylesheet' type='text/css' href='/css/tree.css'
+              th:href='@{/css/tree.css}'/>
+        <script type='module'>
+            import {minimise} from '/js/minimise.js';
+            document.addEventListener("DOMContentLoaded", () => {
+                let nav = document.getElementsByClassName("owlselector primary")[0];
+                minimise(nav).addMinimise();
+            });
+        </script>
     </head>
 
     <body class="wrapper">
