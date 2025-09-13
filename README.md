@@ -30,13 +30,15 @@ renders it for easy navigation.
 The following profiles are supported
 * **dev** for turning off caching and other local options
 * **reasoners** enable scanning for various DL reasoners (eg Pellet, JFact) on startup for use in DL Query, otherwise simple structural reasoner is used
-* **graph** show graphs for individuals (experimental)
+* **graph** show graphs for individuals
 * **git** show a history for the ontology if it is stored in a git repo (experimental)
 
 Use the following java option on run to enable the profile
 ```
--Dspring.profiles.active=dev,reasoners
+-Dspring.profiles.active=dev,reasoners,graph,git
 ```
+
+![Image of Ontology browser - graph](docs/graph-yavin.png)
 
 ## Deploy
 
