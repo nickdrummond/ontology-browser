@@ -27,12 +27,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * Simply checks if the root ontology is in a git repo, and if so, uses that.
+ */
 @Profile("git")
 @Service
 public class GitService implements BeforeLoad {
@@ -44,49 +46,30 @@ public class GitService implements BeforeLoad {
     private final String branch;
 
     public GitService(
-            @Value("${git.remote}") String remote,
-            @Value("${git.local}") String local,
+            @Value("${ontology.root.location}") String ontologyRoot,
             @Value("${git.branch}") String branch
     ) {
-        this.local = new File(local);
         this.branch = branch;
 
-        if (!this.local.exists()) {
-            log.info("Creating repo directory: {}", this.local.getAbsolutePath());
-            if (!this.local.mkdirs()) {
-                throw new RuntimeException("Cannot create a directory for local git repo");
-            }
+        var repoContainingRoot = findGitRepoFromFile(new File(ontologyRoot));
+        if (repoContainingRoot.isEmpty()) {
+            throw new RuntimeException("Ontology root is not in a git repo. Remove git profile.");
         }
 
-        if (!this.local.isDirectory()) {
-            throw new RuntimeException("git repo must be a directory: " + this.local.getAbsolutePath() + " - specify correct GIT_LOCAL in ENV");
-        }
-
-        String foundRemote = null;
+        this.local = repoContainingRoot.get();
 
         try (Git git = Git.open(this.local)) {
             log.info("Found git repo at {}", this.local.getAbsolutePath());
             log.info("Fetching...");
             git.fetch().call();
-            foundRemote = getRemoteURL(git).orElse(null);
+            String foundRemote = getRemoteURL(git).orElse(null);
             if (foundRemote != null) {
-                if (remote != null && !Objects.equals(remote, foundRemote)) {
-                    log.warn("Ignoring given git remote in favour of remote from local repo - {}", foundRemote);
-                } else {
-                    log.info("Local repo is tracking remote - {}", foundRemote);
-                }
+                log.info("Local repo is tracking remote - {}", foundRemote);
             }
-        } catch (IOException e) {
-            if (remote != null) {
-                clone(remote, this.local, branch);
-                foundRemote = remote;
-            } else {
-                throw new RuntimeException("No remote found - specify GIT_REMOTE in ENV");
-            }
-        } catch (GitAPIException e) {
+            this.remote = foundRemote;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        this.remote = foundRemote;
     }
 
     @Scheduled(fixedRateString = "${git.refresh}")
@@ -263,5 +246,25 @@ public class GitService implements BeforeLoad {
 
     private Git open() throws IOException {
         return Git.open(local);
+    }
+
+    private Optional<File> findGitRepoFromFile(File file) {
+        try {
+            File directory = file.isDirectory() ? file : file.getParentFile();
+            org.eclipse.jgit.storage.file.FileRepositoryBuilder builder =
+                    new org.eclipse.jgit.storage.file.FileRepositoryBuilder()
+                            .setMustExist(true)
+                            .addCeilingDirectory(new File("/"))
+                            .findGitDir(directory);
+
+            if (builder.getGitDir() != null) {
+                // Return the parent of .git directory which is the repository root
+                return Optional.of(builder.getGitDir().getParentFile());
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            log.warn("Could not find git repository for file: {}", file, e);
+            return Optional.empty();
+        }
     }
 }

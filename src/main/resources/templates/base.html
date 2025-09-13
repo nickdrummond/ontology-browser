@@ -111,9 +111,6 @@
 
 <ul id='tabs' th:fragment='tabs'>
     <li><a th:href='@{/ontologies}'>Ontologies</a></li>
-    <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'git')}">
-        <li><a th:href="@{/git/history}">Git</a></li>
-    </th:block>
     <th:block th:if="${entityCounts.classes > 0}">
         <li><a th:href='@{/classes}'>Classes</a></li>
     </th:block>
@@ -151,6 +148,10 @@
         </th:block>
         <th:block th:if="${entityCounts.datatypes > 0}"><a th:href='@{/clouds/datatypes}'>dt</a></th:block>
     </li>
+
+    <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'git')}">
+        <li><a th:href="@{/git/history}">Git</a></li>
+    </th:block>
 </ul> <!-- tabs -->
 
 

@@ -106,10 +106,9 @@ Instead of just referencing a local OWL file, the browser can be set to track on
 This enables a browsable history of the ontology repo in the browser.
 And, if the repo is tracking, with a remote specified, it will show if the ontologies have been updated remotely since they were loaded.
 
-If you have the "git" profile enabled, you must either supply a local repo or a remote repo (which will be cloned).
+If you have the "git" profile enabled, the browser will try to detect if the ontology root location is in a git repo.
+You can also specify a branch to use (default is "master").
 
-    GIT_LOCAL=<the root of the git directory> (default = data/) # should be aligned with ONTOLOGY_ROOT_LOCATION
-    GIT_REMOTE=<remote git repository>
     GIT_BRANCH=<branch> (default = master)
 
 ## Implementation
