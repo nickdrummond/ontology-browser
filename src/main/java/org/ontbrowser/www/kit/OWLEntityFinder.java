@@ -19,8 +19,10 @@ public interface OWLEntityFinder {
     Set<OWLClass> getOWLClasses(String str);
 
     Set<OWLObjectProperty> getOWLObjectProperties(String str);
+    Set<OWLObjectProperty> getOWLObjectProperties(String str, int limit);
 
     Set<OWLDataProperty> getOWLDataProperties(String str);
+    Set<OWLDataProperty> getOWLDataProperties(String str, int limit);
 
     Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str);
 

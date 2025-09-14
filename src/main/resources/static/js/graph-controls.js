@@ -13,11 +13,6 @@ export const graphControls = (selector, graph) => {
         autocomplete: baseUrl + 'autocomplete/class-expression'
     }).initialise();
 
-
-    new ExpressionEditor(INDIVIDUALS, {
-        autocomplete: baseUrl + 'autocomplete/individuals'
-    }).initialise();
-
     if (selectedList != null) {
         graph.onSelectChange((sel) => {
             while (selectedList.firstChild) {
@@ -74,12 +69,12 @@ export const graphControls = (selector, graph) => {
     const controlConfig = [
         {id: "depth", defaultValue: null, onChange: () => graph.reload(), onEdit: null},
         {id: QUERY, defaultValue: null, onChange: () => graph.reload(), onEdit: null},
-        {id: INDIVIDUALS, defaultValue: null, onChange: () => graph.reload(), onEdit: null},
-        {id: PROPERTIES, defaultValue: null, onChange: () => graph.reload(), onEdit: null},
-        {id: "incoming", defaultValue: null, onChange: () => graph.reload(), onEdit: null},
-        {id: "without", defaultValue: null, onChange: () => graph.reload(), onEdit: null},
-        {id: "follow", defaultValue: null, onChange: () => graph.reload(), onEdit: null},
-        {id: "parents", defaultValue: null, onChange: () => graph.reload(), onEdit: null},
+        {id: INDIVIDUALS, defaultValue: null, onChange: () => graph.reload(), onEdit: null, autocomplete: 'autocomplete/individuals'},
+        {id: PROPERTIES, defaultValue: null, onChange: () => graph.reload(), onEdit: null, autocomplete: 'autocomplete/properties'},
+        {id: "incoming", defaultValue: null, onChange: () => graph.reload(), onEdit: null, autocomplete: 'autocomplete/properties'},
+        {id: "without", defaultValue: null, onChange: () => graph.reload(), onEdit: null, autocomplete: 'autocomplete/properties'},
+        {id: "follow", defaultValue: null, onChange: () => graph.reload(), onEdit: null, autocomplete: 'autocomplete/properties'},
+        {id: "parents", defaultValue: null, onChange: () => graph.reload(), onEdit: null, autocomplete: 'autocomplete/properties'},
         {id: "graph-search", defaultValue: null, onChange: null, onEdit: newValue => graph.search(newValue)},
         {
             id: "type", defaultValue: graph.getCurrentLayout().name, onChange: (newValue) => {
@@ -93,9 +88,19 @@ export const graphControls = (selector, graph) => {
         },
     ];
 
+    function setupControlAutocomplete(id, autocomplete) {
+        if (autocomplete) {
+            new ExpressionEditor(id, {
+                autocomplete: baseUrl + autocomplete
+            }).initialise();
+            document.getElementById(id).setAttribute("placeholder", "Comma-separated. Ctrl-space to autocomplete");
+        }
+    }
+
     controlConfig.forEach(ctrl => {
         setupControlValue(ctrl.id, ctrl.defaultValue);
         setupControlListeners(ctrl.id, ctrl.onChange, ctrl.onEdit);
+        setupControlAutocomplete(ctrl.id, ctrl.autocomplete);
     });
 
     document.getElementById("refocus").onclick = (e) => {

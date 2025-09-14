@@ -46,8 +46,16 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         return getMatches(str, EntityType.OBJECT_PROPERTY);
     }
 
+    public Set<OWLObjectProperty> getOWLObjectProperties(String str, int limit) {
+        return getMatches(str, EntityType.OBJECT_PROPERTY, limit);
+    }
+
     public Set<OWLDataProperty> getOWLDataProperties(String str) {
         return getMatches(str, EntityType.DATA_PROPERTY);
+    }
+
+    public Set<OWLDataProperty> getOWLDataProperties(String str, int limit) {
+        return getMatches(str, EntityType.DATA_PROPERTY, limit);
     }
 
     public Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str) {

@@ -59,8 +59,6 @@ public class AutocompleteService {
     // CSV of individuals
     public AutocompleteResultJson autocompleteIndividualsList(
             String expression,
-            OWLDataFactory df,
-            OWLEntityChecker checker,
             OWLEntityFinder finder,
             ShortFormProvider sfp
     ) {
@@ -76,6 +74,25 @@ public class AutocompleteService {
         addResults(expected, EntityType.NAMED_INDIVIDUAL, finder.getOWLIndividuals(search, MAX_ENTITIES_AC), sfp);
         return new AutocompleteResultJson(expression, pos, lastPart, expected);
     }
+
+    public AutocompleteResultJson autocompletePropertiesList(
+            String expression,
+            OWLEntityFinder finder,
+            ShortFormProvider sfp) {
+        var trimmed = expression.trim();
+        if (trimmed.endsWith(",") || trimmed.isEmpty()) {
+            trimmed = trimmed + " "; // so we get suggestions on empty or after a comma
+        }
+        String[] parts = trimmed.split(",");
+        String lastPart = parts[parts.length - 1].trim();
+        int pos = expression.length() - lastPart.length();
+        Map<String, List<String>> expected = new HashMap<>();
+        String search = lastPart + ".*"; // starts with
+        addResults(expected, EntityType.OBJECT_PROPERTY, finder.getOWLObjectProperties(search, MAX_ENTITIES_AC/2), sfp);
+        addResults(expected, EntityType.DATA_PROPERTY, finder.getOWLDataProperties(search, MAX_ENTITIES_AC/2), sfp);
+        return new AutocompleteResultJson(expression, pos, lastPart, expected);
+    }
+
 
     // TODO review if the OWLAPI even produces $$ token now
     public AutocompleteResultJson exceptionToAutocomplete(final String expression,

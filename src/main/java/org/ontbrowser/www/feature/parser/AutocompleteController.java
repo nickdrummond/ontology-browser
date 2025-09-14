@@ -45,10 +45,16 @@ public class AutocompleteController extends ApplicationController {
 
     @GetMapping(value = "/individuals")
     public AutocompleteResultJson autocompleteIndividualsList(@RequestParam String expression) {
-        var df = kit.getOWLOntologyManager().getOWLDataFactory();
-        var checker = kit.getOWLEntityChecker();
         var finder = kit.getFinder();
         var sfp = kit.getShortFormProvider();
-        return autocompleteService.autocompleteIndividualsList(expression, df, checker, finder, sfp);
+        return autocompleteService.autocompleteIndividualsList(expression, finder, sfp);
+    }
+
+    // Object and data properties
+    @GetMapping(value = "/properties")
+    public AutocompleteResultJson autocompletePropertiesList(@RequestParam String expression) {
+        var finder = kit.getFinder();
+        var sfp = kit.getShortFormProvider();
+        return autocompleteService.autocompletePropertiesList(expression, finder, sfp);
     }
 }
