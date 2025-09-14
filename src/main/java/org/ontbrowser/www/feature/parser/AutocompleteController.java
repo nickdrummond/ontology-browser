@@ -42,4 +42,13 @@ public class AutocompleteController extends ApplicationController {
 
         return autocompleteService.autocompleteAxiom(expression, df, checker, finder, sfp);
     }
+
+    @GetMapping(value = "/individuals")
+    public AutocompleteResultJson autocompleteIndividualsList(@RequestParam String expression) {
+        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var checker = kit.getOWLEntityChecker();
+        var finder = kit.getFinder();
+        var sfp = kit.getShortFormProvider();
+        return autocompleteService.autocompleteIndividualsList(expression, df, checker, finder, sfp);
+    }
 }

@@ -31,7 +31,7 @@ USE_CTRL = true;
 USE_ALT = true;
 
 // we currently do not support text input fields as there are issues with scrolling and cross browser compat.
-SUPPORT_TEXT_INPUT = false;
+SUPPORT_TEXT_INPUT = true;
 DEFAULT_ERROR_OFFSET = 10;
 AC_TOKEN_CLASS = "actoken";
 
@@ -123,9 +123,11 @@ function ExpressionEditor(editorId, userOptions){
 
     this.show = function() {
         if (DEBUG_AUTOCOMPLETE) {
-            console.log("showing");
+            console.log("showing ", jAutoComplete);
         }
-        jError.fadeOut("fast");
+        if (jError) {
+            jError.fadeOut("fast");
+        }
         jAutoComplete.fadeIn("fast");
     };
 
@@ -143,7 +145,9 @@ function ExpressionEditor(editorId, userOptions){
         if (jErrorHighlighter){
             jErrorHighlighter.html(""); // clear the error highlighter if it exists
         }
-        makeRequest("parse", expression, that.options.parser, handleParse, that.parseCache);
+        if (that.options.parser) {
+            makeRequest("parse", expression, that.options.parser, handleParse, that.parseCache);
+        }
     }
 
     async function makeRequest(name, expression, method, callback, responseCache){
@@ -487,7 +491,9 @@ function ExpressionEditor(editorId, userOptions){
         // hide the autocompleter when focus is lost
         jEditor.blur(function(event){
             that.hide();
-            jError.fadeOut("slow");
+            if (jError) {
+                jError.fadeOut("slow");
+            }
         });
 
         // register a handler to synchronise the scroll positions of the editor and error highlighter

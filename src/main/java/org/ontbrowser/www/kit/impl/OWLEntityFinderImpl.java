@@ -58,6 +58,10 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         return getMatches(str, EntityType.NAMED_INDIVIDUAL);
     }
 
+    public Set<OWLNamedIndividual> getOWLIndividuals(String str, int limit) {
+        return getMatches(str, EntityType.NAMED_INDIVIDUAL, limit);
+    }
+
     public Set<OWLDatatype> getOWLDatatypes(String str) {
         return getMatches(str, EntityType.DATATYPE);
     }
@@ -153,6 +157,17 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         return getOWLEntities(str).stream()
                 .filter(e -> type.equals(e.getEntityType()))
                 .map(e -> correctType(e, type))
+                .collect(Collectors.toSet());
+    }
+
+    private <T extends OWLEntity> Set<T> getMatches(
+            @Nonnull String str,
+            @Nonnull EntityType<T> type,
+            @Nonnull int limit){
+        return getOWLEntities(str).stream()
+                .filter(e -> type.equals(e.getEntityType()))
+                .map(e -> correctType(e, type))
+                .limit(limit)
                 .collect(Collectors.toSet());
     }
 

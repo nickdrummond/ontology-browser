@@ -17,6 +17,7 @@ import java.util.*;
 public class AutocompleteService {
 
     private static final String ERROR_TOKEN = "$$";
+    private static final int MAX_ENTITIES_AC = 30;
     private ParserService parserService;
 
     public AutocompleteService(ParserService parserService) {
@@ -53,6 +54,27 @@ public class AutocompleteService {
         } catch (ParserException e) {
             return exceptionToAutocomplete(axiom, e, finder, sfp);
         }
+    }
+
+    // CSV of individuals
+    public AutocompleteResultJson autocompleteIndividualsList(
+            String expression,
+            OWLDataFactory df,
+            OWLEntityChecker checker,
+            OWLEntityFinder finder,
+            ShortFormProvider sfp
+    ) {
+        var trimmed = expression.trim();
+        if (trimmed.endsWith(",") || trimmed.isEmpty()) {
+            trimmed = trimmed + " "; // so we get suggestions on empty or after a comma
+        }
+        String[] parts = trimmed.split(",");
+        String lastPart = parts[parts.length - 1].trim();
+        int pos = expression.length() - lastPart.length();
+        Map<String, List<String>> expected = new HashMap<>();
+        String search = lastPart + ".*"; // starts with
+        addResults(expected, EntityType.NAMED_INDIVIDUAL, finder.getOWLIndividuals(search, MAX_ENTITIES_AC), sfp);
+        return new AutocompleteResultJson(expression, pos, lastPart, expected);
     }
 
     // TODO review if the OWLAPI even produces $$ token now

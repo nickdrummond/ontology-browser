@@ -3,7 +3,6 @@ package org.ontbrowser.www.kit;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -26,6 +25,7 @@ public interface OWLEntityFinder {
     Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str);
 
     Set<OWLNamedIndividual> getOWLIndividuals(String str);
+    Set<OWLNamedIndividual> getOWLIndividuals(String str, int limit);
 
     Set<OWLDatatype> getOWLDatatypes(String str);
 

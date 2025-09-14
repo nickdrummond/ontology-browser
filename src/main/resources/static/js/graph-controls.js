@@ -13,6 +13,11 @@ export const graphControls = (selector, graph) => {
         autocomplete: baseUrl + 'autocomplete/class-expression'
     }).initialise();
 
+
+    new ExpressionEditor(INDIVIDUALS, {
+        autocomplete: baseUrl + 'autocomplete/individuals'
+    }).initialise();
+
     if (selectedList != null) {
         graph.onSelectChange((sel) => {
             while (selectedList.firstChild) {
