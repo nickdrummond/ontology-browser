@@ -12,7 +12,7 @@ div.autosuggest
 {
 	position: absolute;
 	padding: 0 0 0 0;
-    border: solid 1px #000044;
+    border: solid 1px #000000;
 	z-index: 10;
 	background-color: white;
 }

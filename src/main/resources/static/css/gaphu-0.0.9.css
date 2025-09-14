@@ -89,7 +89,7 @@ div.errormessage {
 }
 
 [data-theme="dark"] div.autocomplete {
-    background-color: #000022;
+    background-color: #181818;
     color: #ddddff;
 }
 
@@ -111,5 +111,5 @@ div.autocomplete li.selected {
 }
 
 [data-theme="dark"] div.errormessage {
-    background-color: #000022;
+    background-color: #181818;
 }
