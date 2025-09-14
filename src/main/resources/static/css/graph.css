@@ -10,13 +10,24 @@
     height: 40rem;
     border-width: 1px;
     border-style: solid;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+}
+
+.graph-controls {
+    margin: 1rem 0.5rem 0.5rem;
 }
 
 .graph-controls form {
     height: 100%;
     display: flex;
     flex-direction: column;
-    margin: 1em;
+    padding-top: 3rem;
+}
+
+.graph-controls label {
+    font-weight: 400;
+    margin-bottom: 0.2rem;
 }
 
 .graph-controls input, .graph-controls select {
@@ -42,7 +53,7 @@
 .graph-actions {
     display: flex;
     align-content: center;
-    gap: 1em;
+    gap: 0.2rem;
     list-style: none;
     padding-left: 1rem;
 }
@@ -67,6 +78,10 @@
     height: 1.5rem;
 }
 
+.graph-actions #space {
+    margin-right: 1rem;
+}
+
 .graph-stats {
     display: flex;
     justify-content: end;
@@ -88,6 +103,7 @@
 @media screen and (min-width: 800px) {
 
     .graph-controls {
-        width: 15rem;
+        flex: 1;
+        max-width: 24rem;
     }
 }
