@@ -351,39 +351,39 @@ export function graph(selector) {
                 });
                 let sel = this.$(SELECTED);
                 updateSelected(sel);
+
+                // Prevent the listeners from being triggered when we select/unselect programmatically - eg search
+                cy.on('select', () => {
+                    if (!disableManualSelectionListener) {
+                        updateSelected(cy.$(SELECTED));
+                    }
+                });
+
+                cy.on('unselect', () => {
+                    if (!disableManualSelectionListener) {
+                        updateSelected(cy.$(SELECTED));
+                    }
+                });
+
+                const doubleClickDelayMs = 300;
+                let previousTapStamp;
+
+                cy.on('tap', function (e) {
+                    const currentTapStamp = e.timeStamp;
+                    const msFromLastTap = currentTapStamp - previousTapStamp;
+
+                    if (msFromLastTap < doubleClickDelayMs) {
+                        e.target.trigger('doubleTap', e);
+                    }
+                    previousTapStamp = currentTapStamp;
+                });
+
+                cy.on('doubleTap', 'node', expand);
             },
             elements: elements,
             style: style,
             layout: currentLayout,
         });
-
-        // Prevent the listeners from being triggered when we select/unselect programmatically - eg search
-        cy.on('select', () => {
-            if (!disableManualSelectionListener) {
-                updateSelected(cy.$(SELECTED));
-            }
-        });
-
-        cy.on('unselect', () => {
-            if (!disableManualSelectionListener) {
-                updateSelected(cy.$(SELECTED));
-            }
-        });
-
-        const doubleClickDelayMs = 300;
-        let previousTapStamp;
-
-        cy.on('tap', function (e) {
-            const currentTapStamp = e.timeStamp;
-            const msFromLastTap = currentTapStamp - previousTapStamp;
-
-            if (msFromLastTap < doubleClickDelayMs) {
-                e.target.trigger('doubleTap', e);
-            }
-            previousTapStamp = currentTapStamp;
-        });
-
-        cy.on('doubleTap', 'node', expand);
     }
 
     function setCurrentLayout(newValue) {
