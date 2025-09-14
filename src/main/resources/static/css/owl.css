@@ -97,7 +97,7 @@ a.Named.individual:hover{
 /* dark theme */
 
 [data-theme="dark"] .Object.property{
-    color: #018b8c;
+    color: #1bd7d8;
 }
 
 [data-theme="dark"] a.Object.property:hover{
@@ -121,7 +121,19 @@ a.Named.individual:hover{
     color: #7caaef;
 }
 
+[data-theme="dark"] .Annotation.property{
+    color: #4cd964;
+}
+
+[data-theme="dark"] .literal {
+    color: #7ff38f;
+}
+
 [data-theme="dark"] .literal a {
-    color: #2266ff;
+    color: #417cff;
+}
+
+[data-theme="dark"] .some, .only, .value, .min, .max, .exactly {
+    color: #fa2efa;
 }
 
