@@ -5,7 +5,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.graph.GraphURLScheme;
 import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -92,6 +94,11 @@ public class OWLObjectPropertiesController extends ApplicationController {
         List<With> withOrEmpty = with == null ? List.of() : with;
 
         List<Characteristic> characteristics = service.getCharacteristics(prop, ont, kit.getComparator(), withOrEmpty, 30);
+
+        if (projectInfo.activeProfiles().contains("graph")) {
+            var mos = new MOSStringRenderer(kit.getFinder(), ont);
+            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(prop, ont));
+        }
 
         model.addAttribute("title", entityName + " (Object Property)");
         model.addAttribute("type", "Object Properties");

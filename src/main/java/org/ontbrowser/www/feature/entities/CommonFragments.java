@@ -67,6 +67,11 @@ public class CommonFragments {
 
         String title = entityName + (supers.isEmpty() ? "" : " (" + supers + ")");
 
+        if (projectInfo.activeProfiles().contains("graph")) {
+            var mos = new MOSStringRenderer(kit.getFinder(), ont);
+            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlClass, ont));
+        }
+
         model.addAttribute("title", title);
         model.addAttribute("type", "Classes");
         model.addAttribute("iri", owlClass.getIRI());
