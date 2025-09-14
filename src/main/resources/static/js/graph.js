@@ -5,7 +5,6 @@ import {getLayout, updateLength, defaultLayout} from "./graph-layouts.js";
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    console.log("Document loaded, initializing graph");
     const g = graph('.graph');
     const controls = graphControls('.graph-controls', g);
 
@@ -113,24 +112,37 @@ export function graph(selector) {
 
     function expandSelected() {
         const selected = cy.$(SELECTED);
-        const selectedLabels = selected.map(s => s.data().label);
-        const current = document.getElementById(INDIVIDUALS);
-        const merged = unionSet(selectedLabels, current.value.split(","));
-        current.value = merged.join(',');
-        append(selectedLabels);
+        selected.forEach(s => expand(s));
     }
 
-    function expand(event, originalEvent) {
+    function handleDoubleClick(event, originalEvent) {
         const node = originalEvent.target;
-        const sel = node.data().label;
-        const indivsId = INDIVIDUALS;
-        const indivs = document.getElementById(indivsId);
-        const current = indivs.value.split(",");
-        if (!current.includes(sel)) {
-            current.push(sel);
-            indivs.value = current.join(",");
-            append(sel);
-            updateAddress(indivsId, indivs.value);
+        expand(node);
+    }
+
+    function expand(node) {
+        const data = node.data();
+        const label = data.label;
+        if (data.type === 'individual') {
+            const indivs = document.getElementById(INDIVIDUALS);
+            const current = indivs.value.trim().split(",");
+            if (!current.includes(label)) {
+                current.push(label);
+                indivs.value = current.join(",");
+                append(label, INDIVIDUALS);
+                updateAddress(INDIVIDUALS, indivs.value);
+            }
+        }
+        else if (data.type === 'class' || data.type === 'expression') {
+            const query = document.getElementById(QUERY);
+            const current = query.value.trim();
+            const classes = current === "" ? [] : current.split(" or ");
+            if (!classes.includes(label)) {
+                classes.push(label);
+                query.value = classes.join(" or ");
+                append(label, QUERY);
+                updateAddress(QUERY, query.value);
+            }
         }
     }
 
@@ -184,11 +196,11 @@ export function graph(selector) {
             });
     }
 
-    function append(labels) {
+    function append(labels, param = INDIVIDUALS) {
         const myHeaders = new Headers();
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
-        urlSearchParams.set(INDIVIDUALS, labels);
+        urlSearchParams.set(param, labels);
         urlSearchParams.set("depth", "0");
         let url = '/graph/data?' + urlSearchParams.toString();
         fetch(url, {
@@ -378,7 +390,7 @@ export function graph(selector) {
                     previousTapStamp = currentTapStamp;
                 });
 
-                cy.on('doubleTap', 'node', expand);
+                cy.on('doubleTap', 'node', handleDoubleClick);
             },
             elements: elements,
             style: style,

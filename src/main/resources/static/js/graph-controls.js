@@ -22,11 +22,14 @@ export const graphControls = (selector, graph) => {
                 const li = document.createElement("li");
                 li.textContent = node.data().label + " ";
                 // link to the entity page
-                const pageLink = document.createElement("a");
-                pageLink.href = baseUrl + pluralType(node.data().type) + '/' + node.data().entityId;
-                pageLink.target = "_blank";
-                pageLink.textContent = "↗";
-                li.append(pageLink);
+                const pluralType = getPluralType(node.data().type);
+                if (pluralType !== '') {
+                    const pageLink = document.createElement("a");
+                    pageLink.href = baseUrl + pluralType + '/' + node.data().entityId;
+                    pageLink.target = "_blank";
+                    pageLink.textContent = "↗";
+                    li.append(pageLink);
+                }
                 li.onclick = () => {
                     graph.selectWithFocus(node)
                 };
@@ -145,7 +148,7 @@ export const graphControls = (selector, graph) => {
         graph.reload();
     });
 
-    function pluralType(type) {
+    function getPluralType(type) {
         switch (type) {
             case 'individual':
                 return 'individuals';
