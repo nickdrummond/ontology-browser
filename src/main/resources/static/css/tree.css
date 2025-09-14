@@ -11,13 +11,15 @@
 }
 
 .owlselector .header {
-    cursor: pointer;
     white-space: nowrap;
 }
+.owlselector .header .hide-trigger {
+    cursor: pointer;
+    display: inline-block;
+}
 
-.owlselector .header::before {
+.owlselector .header .hide-trigger::before {
     content: "▶";
-    margin-right: 0.5rem;
 }
 
 .owlselector.hidden .minihierarchy {

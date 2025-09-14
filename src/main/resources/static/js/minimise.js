@@ -8,9 +8,9 @@ export const minimise = (component) => {
         if (hidden && hidden === "true") {
             component.classList.add("hidden");
         }
-        const title = component.querySelector("h4.header .title"); // TODO make this a selector too?
-        if (title) {
-            title.onclick = (e) => {
+        const trigger = component.querySelector("h4.header .hide-trigger"); // TODO make this a selector too?
+        if (trigger) {
+            trigger.onclick = (e) => {
                 component.classList.toggle("hidden");
                 sessionStorage.setItem(name, component.classList.contains("hidden"));
             };

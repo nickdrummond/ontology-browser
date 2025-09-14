@@ -17,17 +17,21 @@
     display: inline-block;
     align-items: center;
     font-size: 1rem;
-    cursor: pointer;
 }
 
-.characteristic .header::before {
-    transition: rotate 0.3s ease-in-out;
-    content: "▼";
+.characteristic .header .hide-trigger {
+    cursor: pointer;
     margin-right: 0.2rem;
+}
+
+.characteristic .header .hide-trigger::before {
+    transition: rotate 0.3s ease-in-out;
+    display: inline-block;
+    content: "▼";
     rotate: 0;
 }
 
-.characteristic.hidden .header::before {
+.characteristic.hidden .header .hide-trigger::before {
     rotate: -90deg;
 }
 

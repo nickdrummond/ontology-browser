@@ -1,6 +1,7 @@
 export const characteristics = (parentSelector) => {
 
-    const HIDDEN = "hidden characteristics";
+    const HIDDEN_CLASS = "hidden";
+    const HIDDEN_CHARACTERISTIC_KEY = "hidden characteristics";
 
     const parentElement = document.querySelector(parentSelector);
 
@@ -11,8 +12,9 @@ export const characteristics = (parentSelector) => {
 
     function createSlideToggles(selectors) {
         parentElement.querySelectorAll(selectors).forEach(characteristic => {
-            let firstChild = characteristic.querySelector("h4");
-            firstChild.onclick = (e) => {
+            let trigger = characteristic.querySelector(".hide-trigger");
+            trigger.onclick = (e) => {
+                console.log("clicked");
                 // Add animation back in when element is interacted with
                 const ul = characteristic.querySelector("ul, .table-wrapper");
                 if (ul) {
@@ -25,13 +27,13 @@ export const characteristics = (parentSelector) => {
 
     function toggle(characteristic) {
         const classList = characteristic.classList;
-        classList.toggle("hidden");
+        classList.toggle(HIDDEN_CLASS);
         const name = getCharacteristicName(characteristic);
-        setCharacteristic(name, !classList.contains("hidden"));
+        setCharacteristic(name, !classList.contains(HIDDEN_CLASS));
     }
 
     function getCharacteristicName(characteristicElement) {
-        return characteristicElement.classList.value.replace(" hidden", "");
+        return characteristicElement.classList.value.replace(" " + HIDDEN_CLASS, "");
     }
 
     function setCharacteristic(characteristic, visible) {
@@ -39,16 +41,16 @@ export const characteristics = (parentSelector) => {
         const isAlreadyHidden = arr.includes(characteristic);
         if (visible && isAlreadyHidden) {
             arr.splice(arr.indexOf(characteristic), 1);
-            sessionStorage.setItem(HIDDEN, JSON.stringify(arr));
+            sessionStorage.setItem(HIDDEN_CHARACTERISTIC_KEY, JSON.stringify(arr));
         }
         else if (!visible && !isAlreadyHidden) {
             arr.push(characteristic);
-            sessionStorage.setItem(HIDDEN, JSON.stringify(arr));
+            sessionStorage.setItem(HIDDEN_CHARACTERISTIC_KEY, JSON.stringify(arr));
         }
     }
 
     function getHidden() {
-        const str = sessionStorage.getItem(HIDDEN);
+        const str = sessionStorage.getItem(HIDDEN_CHARACTERISTIC_KEY);
         return str ? JSON.parse(str) : [];
     }
 
@@ -62,7 +64,7 @@ export const characteristics = (parentSelector) => {
     }
 
     function closeInstantly(characteristic) {
-        characteristic.classList.add("hidden");
+        characteristic.classList.add(HIDDEN_CLASS);
     }
 
     return {

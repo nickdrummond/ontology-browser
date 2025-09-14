@@ -21,7 +21,11 @@
         <div id="main">
 
             <div class='owlselector primary'>
-                <h4 class="header"><span class="title">Axiom types</span></h4>
+                <h4 class="header">
+                    <span class="hide-trigger">
+                        <span class="title">Axiom types</span>
+                    </span>
+                </h4>
                 <ul class="minihierarchy axiom-types">
                     <li th:each="axiomType : ${axiomTypes}">
                         <span class="axiom-category" th:text="${axiomType.category}">category</span>

@@ -191,7 +191,9 @@
      th:class='${"characteristic " + name}'>
 
     <div class="header">
-        <h4 th:text='${ch.name}'>Some Characteristic</h4>
+        <span class="hide-trigger">
+            <h4 th:text='${ch.name}'>Some Characteristic</h4>
+        </span>
         <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
     </div>
 
@@ -316,7 +318,11 @@
 </ul>
 
 <div class='owlselector primary' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
-    <h4 class="header"><span class="title" th:text="${title}">Title</span></h4>
+    <h4 class="header">
+        <span class="hide-trigger">
+            <span class="title" th:text="${title}">Title</span>
+        </span>
+    </h4>
     <ul class="minihierarchy" th:classappend="${title}">
         <li th:replace="~{base::tree(t=${hierarchy})}">Top Thing</li>
     </ul>
@@ -327,10 +333,12 @@
      th:if="${hierarchy2 != null}">
 
     <h4 class="header">
-        <span th:if="${inverse != null && !inverse}" class="keyword">Inverse</span>
-        <span class="title" th:text="${type2}">Title</span>
-        <a th:if="${inverse}" href="?" class="keyword">↩</a>
-        <a th:if="${inverse != null && !inverse}" href="?inverse=true" class="keyword">↪</a>
+        <span class="hide-trigger">
+            <span th:if="${inverse != null && inverse}" class="keyword">Inverse</span>
+            <span class="title" th:text="${type2}">Title</span>
+        </span>
+        <a th:if="${inverse}" href="?" class="keyword">↪</a>
+        <a th:if="${inverse != null && !inverse}" href="?inverse=true" class="keyword" title="Inverse">↩</a>
     </h4>
 
     <ul class="minihierarchy" th:classappend="${type2}" th:if="${!hierarchy2.children.isEmpty()}">
@@ -341,7 +349,7 @@
 </div>
 
 <div class='owlselector primary' th:fragment="list (title, entities)" th:if="${entities != null}">
-    <h4 class="header"><span class="title"  th:text="${title}">Title</span></h4>
+    <h4 class="header"><span class="title" th:text="${title}">Title</span></h4>
     <ul class="minihierarchy" th:classappend="${type}">
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
             a thing
