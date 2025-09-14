@@ -93,7 +93,9 @@ export const graphControls = (selector, graph) => {
             new ExpressionEditor(id, {
                 autocomplete: baseUrl + autocomplete
             }).initialise();
-            document.getElementById(id).setAttribute("placeholder", "Comma-separated. Ctrl-space to autocomplete");
+            let ctrl = document.getElementById(id);
+            ctrl.setAttribute("placeholder", "Comma-separated. Ctrl-space to autocomplete");
+            ctrl.setAttribute("autocomplete", "off");
         }
     }
 
