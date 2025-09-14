@@ -13,7 +13,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900"
           rel="stylesheet">
 
     <link rel='icon' type='image/x-icon' href='/images/favicon.ico'
@@ -363,7 +363,9 @@
 
     <h4 class="header"
         th:with='name=${T(org.ontbrowser.www.feature.entities.characteristics.PagingUtils).getIdFor(direct.name)}'>
-        <span class="title" th:text='${direct.name}'>Some Characteristic</span>
+        <span class="hide-trigger">
+            <span class="title" th:text='${direct.name}'>Some Characteristic</span>
+        </span>
         <span th:replace="~{base::paged (${direct.getPageData()}, ${name})}">(2)</span>
     </h4>
 
