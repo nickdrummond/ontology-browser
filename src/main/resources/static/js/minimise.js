@@ -1,7 +1,6 @@
 export const minimise = (component) => {
 
     function addMinimise() {
-        console.log("Adding minimise to component", component.className);
         let classList = component.className;
         const name = classList.replace(" hidden", "");
         const hidden = sessionStorage.getItem(name);

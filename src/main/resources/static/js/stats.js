@@ -1,33 +1,21 @@
+import { importsToggle } from './imports-toggle.js';
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const charts = [];
-
-    const renderToggle = (ontId, statsHolder, imports) => {
-        const included = "<input id='imports-included' class='imports-selector' type='checkbox' name='imports' " + ((imports === "INCLUDED") ? " checked" : "") + "/>";
-        const label = " <label for='imports-included'>Include imports</label>"
-        const html = "<span>" + included + label + "</span>";
-
-        statsHolder.insertAdjacentHTML("afterBegin", html);
-
-        document.querySelectorAll(".imports-selector").forEach(element => {
-            element.onclick = (e) => {
-                let imports = e.target.checked ? "INCLUDED" : "EXCLUDED";
-                const searchParams = new URLSearchParams(window.location.search);
-                searchParams.set("imports", imports);
-                window.history.pushState({}, "", "?" + searchParams.toString());
-                load(ontId, imports);
-            }
-        });
-    }
+    const statsHolder = document.querySelector(".stats-holder");
+    const ontId = statsHolder.getAttribute("data-ont-id");
 
     const init = () => {
-        const statsHolder = document.querySelector(".stats-holder");
         if (statsHolder) {
-            const ontId = statsHolder.getAttribute("data-ont-id");
             const imports = statsHolder.getAttribute("data-imports-included");
             const importControl = statsHolder.getAttribute("data-import-control");
             if (importControl === null || importControl !== "false") {
-                renderToggle(ontId, statsHolder, imports);
+                const parent = document.getElementsByClassName("imports-placeholder")[0];
+
+                importsToggle().renderToggle(parent, imports, (newValue) => {
+                    window.location.reload();
+                } );
             }
             load(ontId, imports);
         }
@@ -68,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         showLegend: true,
         infoPosition: "top",
         isLog: false,
-        getURL: (label) => "/" + label.toLowerCase() + "?" + getOntIdQuery(),
+        getURL: (label) => "/" + label.toLowerCase() + "?" + getOntIdQuery(ontId),
     };
 
     const render = (stats, ontId, imports) => {
@@ -106,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // createScatter("classChildCount", "Class child count", childCountDistribution);
     };
 
-    const getOntIdQuery = (ontId) => {
+    const getOntIdQuery = () => {
         if (ontId) {
             return "ontId=" + ontId;
         }

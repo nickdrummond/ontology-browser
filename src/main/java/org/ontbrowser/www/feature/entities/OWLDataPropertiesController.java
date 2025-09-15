@@ -35,13 +35,15 @@ public class OWLDataPropertiesController extends ApplicationController {
 
     @GetMapping(value = "/")
     public void getOWLDataPropertiesOld(
+            @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
-        getOWLDataProperties(response);
+        getOWLDataProperties(ontId, response);
     }
 
     @GetMapping()
     public void getOWLDataProperties(
+            @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
 
@@ -51,7 +53,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         String id = kit.lookup().getId(owlTopDataProperty);
 
-        response.sendRedirect("/dataproperties/" + id);
+        response.sendRedirect("/dataproperties/" + id + "?ontId=" + ontId);
     }
 
 

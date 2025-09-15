@@ -63,7 +63,9 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
 
         String id = kit.lookup().getId(firstAnnotationProperty);
 
-        response.sendRedirect("/annotationproperties/" + id);
+        var ontId = String.valueOf(ont.getOntologyID().hashCode()); // TODO get this from somewhere else
+
+        response.sendRedirect("/annotationproperties/" + id + "?ontId=" + ontId);
     }
 
     @SuppressWarnings("SameReturnValue")

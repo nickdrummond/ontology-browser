@@ -61,7 +61,7 @@
 <th:block th:fragment="includeOntology">
     <link rel='stylesheet' type='text/css' href="/css/ontology.css" th:href='@{/css/ontology.css}'/>
     <script src="/js/libs/chart.umd.js" th:src="@{/js/libs/chart.umd.js}"></script>
-    <script src="/js/stats.js" th:src="@{/js/stats.js}"></script>
+    <script type="module" src="/js/stats.js" th:src="@{/js/stats.js}"></script>
 </th:block>
 
 <th:block th:fragment="includeEditing"
@@ -249,18 +249,13 @@
 </div>
 
 <div id="metrics" class="characteristic metrics" th:fragment="metrics (metrics)" th:if="${metrics != null}">
-    <h4>Metrics</h4>
+    <h4 class="header"><span class="hide-trigger">Metrics</span></h4>
     <div class="table-wrapper">
         <table>
-            <thead>
-            <tr>
-                <td th:if="${showImportMetrics}">with imports</td>
-            </tr>
-            </thead>
             <tbody>
             <tr th:each="metric : ${metrics}">
                 <td class="metric" th:utext="${metric.getName()}"></td>
-                <td class="mvalue" th:utext="${metric.getValue()}"></td>
+                <td class="mvalue" th:utext="${metric.getValue()}" th:if="${!showImportMetrics}"></td>
                 <th:block th:utext="${metric.setImportsClosureUsed(true)}" th:if="${showImportMetrics}"/>
                 <td class="mvalueimp" th:utext='${metric.getValue()}' th:if="${showImportMetrics}"></td>
             </tr>

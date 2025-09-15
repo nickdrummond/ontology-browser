@@ -47,12 +47,15 @@ public class OWLClassesController extends ApplicationController {
     }
 
     @GetMapping(value = "/")
-    public void getOWLClassesOld(final HttpServletResponse response) throws IOException {
-        getOWLClasses(response);
+    public void getOWLClassesOld(
+            @RequestParam(required = false) final String ontId,
+            final HttpServletResponse response) throws IOException {
+        getOWLClasses(ontId, response);
     }
 
     @GetMapping()
     public void getOWLClasses(
+            @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
 
@@ -60,7 +63,7 @@ public class OWLClassesController extends ApplicationController {
 
         String id = kit.lookup().getId(owlThing);
 
-        response.sendRedirect("/classes/" + id);
+        response.sendRedirect("/classes/" + id + "?ontId=" + ontId);
     }
 
     @SuppressWarnings("SameReturnValue")

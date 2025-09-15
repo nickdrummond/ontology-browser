@@ -114,7 +114,7 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("imports", imports);
         model.addAttribute("ontologiesSfp", ontologySFP);
         model.addAttribute("metrics", service.getMetrics(ont));
-        model.addAttribute("showImportMetrics", !ont.getImports().isEmpty());
+        model.addAttribute("showImportMetrics", imports == Imports.INCLUDED && !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
 

@@ -1,6 +1,10 @@
 <div id='content' th:fragment="ontology">
     <div class="entity-header">
-        <h2 th:text="${title}">An Ontology</h2>
+
+        <div style="margin: 0.5rem">
+            <h2 th:text="${title}">Title</h2>
+            <span class="imports-placeholder"></span>
+        </div>
 
         <div class="iri">
             <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>

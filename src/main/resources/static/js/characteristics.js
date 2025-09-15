@@ -14,7 +14,6 @@ export const characteristics = (parentSelector) => {
         parentElement.querySelectorAll(selectors).forEach(characteristic => {
             let trigger = characteristic.querySelector(".hide-trigger");
             trigger.onclick = (e) => {
-                console.log("clicked");
                 // Add animation back in when element is interacted with
                 const ul = characteristic.querySelector("ul, .table-wrapper");
                 if (ul) {

@@ -120,8 +120,6 @@ public class OWLAxiomsController extends ApplicationController {
             sb.append(type);
             sb.append(" axioms");
         }
-        sb.append(" - imports ");
-        sb.append(imports.name().toLowerCase());
 
         if (search != null) {
             sb.append(": ");

@@ -67,16 +67,18 @@ public class OWLIndividualsController extends ApplicationController {
 
     @GetMapping(value = "/")
     public void getOWLIndividualsOld(
+            @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
-        getOWLIndividuals(response);
+        getOWLIndividuals(ontId, response);
     }
 
     @GetMapping()
     public void getOWLIndividuals(
+            @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
-        response.sendRedirect("/individuals/by/type");
+        response.sendRedirect("/individuals/by/type?ontId=" + ontId);
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -104,11 +106,11 @@ public class OWLIndividualsController extends ApplicationController {
 
     @GetMapping(value = "/by/type")
     public void byType(
-            @ModelAttribute final OWLOntology ont,
+            @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
-        response.sendRedirect("/individuals/by/type/" +
-                kit.lookup().getId(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing()));
+        String thingId = kit.lookup().getId(kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
+        response.sendRedirect("/individuals/by/type/" + thingId + "?ontId=" + ontId);
     }
 
     @GetMapping(value = "/by/type/{classId}")

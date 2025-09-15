@@ -5,13 +5,7 @@
         <th:block th:replace='~{base :: header (title=${title})}'/>
         <link rel='stylesheet' type='text/css' href='/css/tree.css'
               th:href='@{/css/tree.css}'/>
-        <script type='module'>
-            import {minimise} from '/js/minimise.js';
-            document.addEventListener("DOMContentLoaded", () => {
-                let nav = document.getElementsByClassName("owlselector primary")[0];
-                minimise(nav).addMinimise();
-            });
-        </script>
+        <script type='module' src='/js/axioms.js' th:src="@{/js/axioms.js}"></script>
     </head>
 
     <body class="wrapper">
@@ -42,7 +36,10 @@
 
             <div id="content">
 
-                <h2 th:text="${title}">Title</h2>
+                <div style="margin: 0.5rem">
+                    <h2 th:text="${title}">Title</h2>
+                    <span class="imports-placeholder"></span>
+                </div>
 
                 <div th:replace="~{base :: characteristic (${axioms})}">
                     A characteristic
