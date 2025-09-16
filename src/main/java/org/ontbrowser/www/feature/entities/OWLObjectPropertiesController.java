@@ -53,7 +53,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
 
         String id = kit.lookup().getId(owlTopObjectProperty);
 
-        response.sendRedirect("/objectproperties/" + id + "?ontId=" + ontId);
+        response.sendRedirect("/objectproperties/" + id+ (ontId != null ? "?ontId=" + ontId : ""));
     }
 
 

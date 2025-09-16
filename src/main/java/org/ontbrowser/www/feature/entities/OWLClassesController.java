@@ -63,7 +63,7 @@ public class OWLClassesController extends ApplicationController {
 
         String id = kit.lookup().getId(owlThing);
 
-        response.sendRedirect("/classes/" + id + "?ontId=" + ontId);
+        response.sendRedirect("/classes/" + id+ (ontId != null ? "?ontId=" + ontId : ""));
     }
 
     @SuppressWarnings("SameReturnValue")
