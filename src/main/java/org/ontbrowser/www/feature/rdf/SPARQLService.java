@@ -13,7 +13,9 @@ import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.DatasetOne;
 import org.apache.jena.tdb2.TDB2Factory;
 import org.apache.jena.tdb2.loader.LoaderFactory;
+import org.apache.jena.util.FileManager;
 import org.apache.jena.util.LocationMapper;
+import org.apache.jena.util.LocatorFile;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -48,7 +50,7 @@ public class SPARQLService implements DisposableBean {
             throw new RuntimeException("SPARQL root file does not exist: " + rootFile);
         }
         File dir = rootFile.getParentFile();
-        log.info("Loading SPARQL model from {}", dir);
+        log.info("Loading SPARQL model from {}", rootFile);
 //        this.dataset = loadToTDB(rootFile, dir, dbLoc);
         this.dataset = loadInMemoryInfModel(rootFile, dir);
     }
@@ -94,23 +96,49 @@ public class SPARQLService implements DisposableBean {
     public Model loadMemoryModel(final File root, final File baseDir) {
         long t1 = System.currentTimeMillis();
 
+        FileManager mngr = getFileManager(baseDir);
         OntDocumentManager dm = new OntDocumentManager();
-        dm.setReadFailureHandler((url, m, e) -> System.err.println("Failed to load " + url + e.getMessage()));
-        LocationMapper locManager = dm.getFileManager().getLocationMapper();
-        // TODO proper mapping
-        locManager.addAltPrefix("https://nickdrummond.github.io/star-wars-ontology/ontologies/", "file:" + baseDir + "/");
+        dm.setFileManager(mngr);
+        dm.setProcessImports(true);
+        dm.setReadFailureHandler((url, m, e) ->
+                log.warn("Failed to load " + url + " " + e.getMessage())
+        );
 
-        OntModelSpec spec = OntModelSpec.OWL_MEM;
+        OntModelSpec spec = new OntModelSpec(OntModelSpec.OWL_MEM);
         spec.setDocumentManager(dm);
         OntModel model = ModelFactory.createOntologyModel(spec);
         model.read(root.toString());
 
         long t2 = System.currentTimeMillis();
 
-        listImports(model);
-        System.out.println("loaded in " + (t2 - t1) + "ms");
+//        listImports(model);
+        System.out.println("SPARQL model loaded " + model.size() + " triples, " + model.getSubGraphs().size() + " imports, in " + (t2 - t1) + "ms");
 
         return model;
+    }
+
+    private static FileManager getFileManager(File baseDir) {
+        LocationMapper locMapper = new LocationMapper() {
+            @Override
+            public String altMapping(String uri, String otherwise) {
+                String fileName = uri.substring(uri.lastIndexOf('/') + 1);
+                File localFile = new File(baseDir, fileName);
+
+                if (localFile.exists()) {
+                    String localURI = localFile.getAbsolutePath();
+                    log.debug("Mapping {} -> {}", uri, localURI);
+                    return super.altMapping(uri, localURI);
+                }
+
+                log.warn("No local file found for: {}", uri);
+                return super.altMapping(uri, null); // Let Jena know we couldn't map this
+            }
+        };
+
+        // Set up document manager with our mapper and a file locator
+        var mngr = new FileManager(locMapper);
+        mngr.addLocator(new LocatorFile(baseDir.getAbsolutePath()));
+        return mngr;
     }
 
     private void listImports(OntModel model) {
@@ -120,14 +148,13 @@ public class SPARQLService implements DisposableBean {
 
             OntModel m = dm.getOntology(mURI, OntModelSpec.OWL_MEM);
             if (m != null) {
-                System.out.println("import = " + mURI + " from " + alt);
+                log.info("import = " + mURI + " from " + alt);
             }
             else {
-                System.err.println("Cannot find model for " + mURI);
+                log.warn("Cannot find model for " + mURI);
             }
         });
     }
-
 
     @Override
     public void destroy() {
