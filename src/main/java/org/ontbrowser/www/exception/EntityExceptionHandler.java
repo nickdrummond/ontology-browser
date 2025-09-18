@@ -24,7 +24,7 @@ public class EntityExceptionHandler {
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        if (!ex.getOntology().equals(kit.getRootOntology())) {
+        if (!ex.getOntology().getOntologyID().equals(kit.getRootOntology().getOntologyID())) {
             return new ModelAndView(generateRedirectWithoutOntology(request));
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex);
