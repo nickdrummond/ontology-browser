@@ -140,6 +140,6 @@ public class OWLDatatypesController extends ApplicationController {
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
 
-        return new ModelAndView("base :: tree");
+        return new ModelAndView("tree::tree");
     }
 }

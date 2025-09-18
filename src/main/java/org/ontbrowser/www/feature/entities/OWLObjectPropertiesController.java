@@ -129,6 +129,6 @@ public class OWLObjectPropertiesController extends ApplicationController {
         model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
         model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
 
-        return new ModelAndView("base::children");
+        return new ModelAndView("tree::children");
     }
 }

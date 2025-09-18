@@ -27,7 +27,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
 
     private static final Logger log = LoggerFactory.getLogger(CommonRelations.class);
 
-    public static final String BASE_TREE = "base::children";
+    public static final String BASE_TREE = "tree::children";
 
     private final String path;
     private final OWLHTMLKit kit;

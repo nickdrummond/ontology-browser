@@ -18,11 +18,11 @@
 
 <div id="main">
 
-    <div id='entities' th:replace="~{base :: list(${type}, ${entities})}">
+    <div id='entities' th:replace="~{tree :: list(${type}, ${entities})}">
         A list
     </div>
 
-    <div id='hierarchy'  th:replace="~{base :: hierarchy(${type}, ${hierarchy})}">
+    <div id='hierarchy'  th:replace="~{tree :: hierarchy(${type}, ${hierarchy})}">
         A hierarchy
     </div>
 

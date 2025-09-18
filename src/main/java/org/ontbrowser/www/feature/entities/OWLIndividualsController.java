@@ -291,7 +291,7 @@ public class OWLIndividualsController extends ApplicationController {
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, with));
         model.addAttribute("mos", getRenderer(type, null, ont, request));
 
-        return new ModelAndView("base::secondary");
+        return new ModelAndView("tree::secondary");
     }
 
     private void buildSecondaryNavigation(OWLOntology ont, List<With> with, Model model, OWLClass type) {

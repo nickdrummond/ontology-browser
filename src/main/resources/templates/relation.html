@@ -16,23 +16,23 @@
 
 <div id="main">
 
-    <div id='entities' th:replace="~{base :: list(${type}, ${entities})}">
+    <div id='entities' th:replace="~{tree :: list(${type}, ${entities})}">
         A list
     </div>
 
-    <div id='hierarchy'  th:replace="~{base :: hierarchy(${type}, ${hierarchy})}">
+    <div id='hierarchy'  th:replace="~{tree :: hierarchy(${type}, ${hierarchy})}">
         A hierarchy
     </div>
 
     <div id='hierarchy2'
          th:if="${hierarchy2 != null}"
-         th:replace="~{base :: secondaryhierarchy}">
+         th:replace="~{tree :: secondaryhierarchy}">
         Another hierarchy
     </div>
 
     <div id='list'
          th:if="${entities2 != null}"
-         th:replace="~{base :: list(${type2}, ${entities2})}">
+         th:replace="~{tree :: list(${type2}, ${entities2})}">
         A list of entities
     </div>
 

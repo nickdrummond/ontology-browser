@@ -18,11 +18,11 @@
 
 <div id="main">
 
-    <div id='hierarchy' th:replace="~{base :: hierarchy(${type}, ${hierarchy})}">
+    <div id='hierarchy' th:replace="~{tree :: hierarchy(${type}, ${hierarchy})}">
         A hierarchy
     </div>
 
-    <div th:replace="~{base::secondary}"></div>
+    <div th:replace="~{tree :: secondary}"></div>
 
     <!--    <div id='indirect'-->
     <!--         th:if="${indirect != null}"-->

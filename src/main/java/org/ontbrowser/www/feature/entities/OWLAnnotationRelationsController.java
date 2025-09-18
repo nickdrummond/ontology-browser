@@ -126,7 +126,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
         common.buildSecondaryTree(relationsHierarchyService, null, model, request);
 
-        return new ModelAndView("base::secondaryhierarchy");
+        return new ModelAndView("tree::secondaryhierarchy");
     }
 
     @GetMapping(value = "/{propertyId}/withindividual/{individualId}")

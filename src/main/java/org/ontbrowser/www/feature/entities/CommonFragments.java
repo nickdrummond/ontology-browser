@@ -100,7 +100,7 @@ public class CommonFragments {
         model.addAttribute("statsName", stats.getName());
         model.addAttribute("mos", owlRenderer);
 
-        return new ModelAndView("base::children");
+        return new ModelAndView("tree::children");
     }
 
 
@@ -119,7 +119,7 @@ public class CommonFragments {
         model.addAttribute("t", prunedTree);
         model.addAttribute("mos", owlRenderer);
 
-        return new ModelAndView("base::children");
+        return new ModelAndView("tree::children");
     }
 
 
