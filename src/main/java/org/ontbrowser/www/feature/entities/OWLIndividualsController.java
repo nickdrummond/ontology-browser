@@ -110,7 +110,7 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletResponse response
     ) throws IOException {
         String thingId = kit.lookup().getId(kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
-        response.sendRedirect("/individuals/by/type/" + thingId+ (ontId != null ? "?ontId=" + ontId : ""));
+        response.sendRedirect("/individuals/by/type/" + thingId + (ontId != null ? "?ontId=" + ontId : ""));
     }
 
     @GetMapping(value = "/by/type/{classId}")

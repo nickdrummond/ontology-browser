@@ -28,6 +28,21 @@ public class OWLUtils {
                         .orElse("anonymous"));
     }
 
+    public static String shortOntName(OWLOntologyID ontologyID) {
+        return ontologyID.getOntologyIRI().map(OWLUtils::shortName)
+                .orElse(ontologyID.getDefaultDocumentIRI().map(OWLUtils::shortName)
+                        .orElse("anonymous"));
+    }
+
+    public static String shortName(IRI iri) {
+        String s = iri.toString();
+        int pos = Math.max(s.lastIndexOf('#'), s.lastIndexOf('/'));
+        if (pos != -1 && pos < s.length() - 1) {
+            return s.substring(pos + 1);
+        }
+        return s;
+    }
+
     public static EntityType<?> getEntityTypeFromPath(String name) {
         return switch(name) {
             case "classes" -> EntityType.CLASS;

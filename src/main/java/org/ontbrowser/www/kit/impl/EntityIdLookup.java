@@ -1,13 +1,14 @@
 package org.ontbrowser.www.kit.impl;
 
-import org.semanticweb.owlapi.model.*;
+import org.ontbrowser.www.exception.EntityNotFoundException;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyID;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
  * ID cache for OWL entities. ID is the hash code of the IRI.
@@ -42,6 +43,6 @@ public class EntityIdLookup {
                 .filter(clazz::isInstance)
                 .findFirst()
                 .map(clazz::cast)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, clazz.getSimpleName() + " not found: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(id, ont, clazz));
     }
 }
