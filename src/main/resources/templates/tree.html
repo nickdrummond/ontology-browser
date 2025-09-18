@@ -3,6 +3,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
+
+<th:block th:fragment="includeTree">
+    <link rel='stylesheet' type='text/css' href='/css/tree.css'
+          th:href='@{/css/tree.css}'/>
+
+    <script type='module' src='/js/tree.js'
+            th:src='@{/js/tree.js}'>
+    </script>
+</th:block>
+<body>
+
 <li th:fragment="tree"
     th:if="${t != null}"
     th:classappend="${t.childCount > 0 ? 'with-children' + (!t.children.isEmpty() ? ' expanded' : '') : ''}"
