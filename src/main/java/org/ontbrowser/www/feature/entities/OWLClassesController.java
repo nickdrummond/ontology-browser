@@ -74,17 +74,16 @@ public class OWLClassesController extends ApplicationController {
             @RequestParam(defaultValue = "classDescendants") final String statsName,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-
+            final HttpServletRequest request
+    ) {
         var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        commonContent.addCommonContent(request, model, ont);
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(owlClass));
         model.addAttribute("stats", statsService.getClassStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
 
-        getOWLClassFragment(classId, ont, with, model, request, response);
+        getOWLClassFragment(classId, ont, with, model, request);
 
         return new ModelAndView("owlentity");
     }
@@ -96,12 +95,11 @@ public class OWLClassesController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-
+            final HttpServletRequest request
+    ) {
         var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlClass);
-        return getCommon().getOWLClassFragment(service, owlClass, ont, owlRenderer, with, model, request, response);
+        return getCommon().getOWLClassFragment(service, owlClass, ont, owlRenderer, with, model, request.getQueryString());
     }
 
     @SuppressWarnings("SameReturnValue")

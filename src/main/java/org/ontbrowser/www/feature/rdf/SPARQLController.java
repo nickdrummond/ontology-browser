@@ -44,7 +44,7 @@ public class SPARQLController extends ApplicationController {
         model.addAttribute("prefixes", prefixes);
 
         // paging
-        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request.getQueryString()));
         model.addAttribute("pageData", new PageData(start, pageSize));
 
         if (select == null) {

@@ -1,20 +1,18 @@
 package org.ontbrowser.www.feature.entities;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.graph.GraphURLScheme;
+import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
+import org.ontbrowser.www.feature.stats.Stats;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.feature.dlquery.ReasonerService;
-import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
-import org.ontbrowser.www.feature.stats.Stats;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
-import org.ontbrowser.www.feature.graph.GraphURLScheme;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -23,7 +21,10 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
 
@@ -47,8 +48,7 @@ public class CommonFragments {
             final OWLHTMLRenderer owlRenderer,
             List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
+            final String queryString) {
 
         ShortFormProvider sfp = kit.getShortFormProvider();
 
@@ -79,9 +79,8 @@ public class CommonFragments {
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, withOrEmpty));
 
-        response.addHeader("title", projectInfo.name() + ": " + title);
         return new ModelAndView("owlentityfragment");
     }
 
@@ -122,7 +121,6 @@ public class CommonFragments {
         return new ModelAndView("tree::children");
     }
 
-
     public ModelAndView getOWLIndividualFragment(
             final OWLIndividualsService service,
             final OWLNamedIndividual owlIndividual,
@@ -131,17 +129,13 @@ public class CommonFragments {
             final OWLOntology ont,
             final OWLHTMLRenderer owlHtmlRenderer,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-
-        ShortFormProvider sfp = kit.getShortFormProvider();
-
-        String entityName = sfp.getShortForm(owlIndividual);
-
+            final String queryString
+    ) {
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
         List<Characteristic> characteristics = new ArrayList<>(
-                service.getCharacteristics(owlIndividual, ont, kit.getComparator(), withOrEmpty, ApplicationController.DEFAULT_PAGE_SIZE));
+                service.getCharacteristics(owlIndividual, ont, kit.getComparator(),
+                        withOrEmpty, ApplicationController.DEFAULT_PAGE_SIZE));
 
         if (inferred) {
             OWLReasoner reasoner = reasonerService.getReasoner();
@@ -150,8 +144,11 @@ public class CommonFragments {
 
         Set<OWLClass> namedTypes = service.getNamedTypes(owlIndividual, ont);
 
+        var sfp = kit.getShortFormProvider();
+
         String types = String.join(", ", namedTypes.stream().map(sfp::getShortForm).toList());
 
+        String entityName = sfp.getShortForm(owlIndividual);
         String title = entityName + (types.isEmpty() ? "" : " (" + types + ")");
 
         model.addAttribute("title", title);
@@ -160,15 +157,13 @@ public class CommonFragments {
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, withOrEmpty));
         model.addAttribute("mos", owlHtmlRenderer);
 
         if (projectInfo.activeProfiles().contains("graph")) {
             var mos = new MOSStringRenderer(kit.getFinder(), ont);
             model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlIndividual, ont));
         }
-
-        response.addHeader("title", projectInfo.name() + ": " + title);
 
         return new ModelAndView("owlentityfragment");
     }

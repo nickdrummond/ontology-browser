@@ -74,7 +74,7 @@ public class GitController extends ApplicationController {
             model.addAttribute("status", status);
             model.addAttribute("local", local.getName());
             model.addAttribute("commits", commits);
-            model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+            model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request.getQueryString()));
             model.addAttribute("pageData", new PageData(start, pageSize, Integer.MAX_VALUE));
         });
         return new ModelAndView("history");

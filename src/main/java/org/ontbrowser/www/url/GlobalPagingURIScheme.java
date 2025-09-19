@@ -1,14 +1,13 @@
 package org.ontbrowser.www.url;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 
 public class GlobalPagingURIScheme extends PagingURIScheme {
 
-    public GlobalPagingURIScheme(HttpServletRequest request) {
-        super(request);
+    public GlobalPagingURIScheme(String queryString) {
+        super(queryString);
     }
 
     public URI updateForPage(String componentName, int start, int pageSize) {

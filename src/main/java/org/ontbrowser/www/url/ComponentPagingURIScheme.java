@@ -3,7 +3,6 @@ package org.ontbrowser.www.url;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.model.paging.WithEditor;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
@@ -14,8 +13,8 @@ public class ComponentPagingURIScheme extends PagingURIScheme {
 
     private final List<With> with;
 
-    public ComponentPagingURIScheme(HttpServletRequest request, List<With> with) {
-        super(request);
+    public ComponentPagingURIScheme(String queryString, List<With> with) {
+        super(queryString);
         this.with = with == null ? List.of() : with;
     }
 

@@ -76,15 +76,14 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-
+            final HttpServletRequest request
+    ) {
         var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
-        commonContent.addCommonContent(request, model, ont);
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
-        getOWLAnnotationPropertyFragment(propertyId, ont, pageSize, with, model, request, response);
+        getOWLAnnotationPropertyFragment(propertyId, ont, pageSize, with, model, request);
 
         return new ModelAndView("owlentity");
     }
@@ -98,8 +97,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
+            final HttpServletRequest request) {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
@@ -121,9 +119,7 @@ public class OWLAnnotationPropertiesController extends ApplicationController {
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
-
-        response.addHeader("title", projectInfo.name() + ": " + entityName);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), withOrEmpty));
 
         return new ModelAndView("owlentityfragment");
     }

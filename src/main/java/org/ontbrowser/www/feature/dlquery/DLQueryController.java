@@ -84,7 +84,7 @@ public class DLQueryController extends ApplicationController {
         model.addAttribute("order", order);
         model.addAttribute("query", queryType);
         model.addAttribute("queries", QueryType.values());
-        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request.getQueryString()));
 
         if (projectInfo.activeProfiles().contains("graph") && owlClassExpression != null) {
             var mos = new MOSStringRenderer(kit.getFinder(), ont);
@@ -150,7 +150,7 @@ public class DLQueryController extends ApplicationController {
             model.addAttribute("urlBuilder", uriBuilder);
             model.addAttribute("results", resultsCharacteristic);
             model.addAttribute("mos", owlRenderer);
-            model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+            model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request.getQueryString()));
 
             return new ModelAndView("base::results");
         } catch (ExecutionException e) {

@@ -1,6 +1,5 @@
 package org.ontbrowser.www.url;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -10,8 +9,7 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 public abstract class PagingURIScheme {
     protected final URI original;
 
-    protected PagingURIScheme(HttpServletRequest request) {
-        String queryString = request.getQueryString();
+    protected PagingURIScheme(String queryString) {
         this.original = URI.create(queryString != null ? "?" + queryString : "");
     }
 

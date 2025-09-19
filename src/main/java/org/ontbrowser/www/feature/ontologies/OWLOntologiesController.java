@@ -66,19 +66,13 @@ public class OWLOntologiesController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-
+            final HttpServletRequest request
+    ) {
         OWLOntology ont = service.getOntologyFor(ontId, kit);
-
         OWLOntologyHierarchyService hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), treeComparator());
-
         Tree<OWLOntology> ontologyTree = hierarchyService.getPrunedTree(ont);
-
         model.addAttribute("hierarchy", ontologyTree);
-
-        getOntologyFragment(ontId, imports, with, model, request, response);
-
+        getOntologyFragment(ontId, imports, with, model, request);
         return new ModelAndView("ontology");
     }
 
@@ -90,8 +84,7 @@ public class OWLOntologiesController extends ApplicationController {
             @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
+            final HttpServletRequest request) {
 
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
@@ -116,9 +109,7 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("metrics", service.getMetrics(ont));
         model.addAttribute("showImportMetrics", imports == Imports.INCLUDED && !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
-
-        response.addHeader("title", projectInfo.name() + ": " + title);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), withOrEmpty));
 
         return new ModelAndView("ontologyfragment");
     }

@@ -1,6 +1,5 @@
 package org.ontbrowser.www.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
@@ -36,7 +35,7 @@ public class CommonContent {
         this.statsService = statsService;
     }
 
-    public void addCommonContent(HttpServletRequest request, Model model, OWLOntology ont) {
+    public void addCommonContent(String queryString, Model model, OWLOntology ont) {
         // required for header and footer text and links
         model.addAttribute("projectInfo", projectInfo);
         // required for entity visibility in the menu
@@ -46,6 +45,6 @@ public class CommonContent {
         model.addAttribute("allOntologies", kit.getOntologies().stream().sorted().toList());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("ont", ont);
-        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(request));
+        model.addAttribute("pageURIScheme", new GlobalPagingURIScheme(queryString));
     }
 }

@@ -1,7 +1,6 @@
 package org.ontbrowser.www.feature.axioms;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -44,10 +43,9 @@ public class OWLAxiomsController extends ApplicationController {
             @RequestParam(required = false) String type,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
-            HttpServletRequest request,
-            HttpServletResponse response
+            HttpServletRequest request
     ) throws IOException {
-        return axioms(model, search, ont, imports, type, pageSize, start, request, response);
+        return axioms(model, search, ont, imports, type, pageSize, start, request);
     }
 
     @GetMapping()
@@ -59,8 +57,7 @@ public class OWLAxiomsController extends ApplicationController {
             @RequestParam(required = false) @Nullable String type,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "1") int start,
-            HttpServletRequest request,
-            HttpServletResponse response
+            HttpServletRequest request
     ) throws IOException {
 
         if (start < 1) {
@@ -70,9 +67,8 @@ public class OWLAxiomsController extends ApplicationController {
             pageSize = DEFAULT_PAGE_SIZE;
         }
         if (search != null) {
-            if (search.isEmpty()) {
-                response.sendRedirect("/axioms");
-                return null;
+            if (search.isBlank()) {
+                return new ModelAndView("redirect:/axioms");
             }
 
             model.addAttribute("mos", getHighlightRenderer(search, rendererFactory.getHTMLRenderer(ont)));
@@ -99,7 +95,7 @@ public class OWLAxiomsController extends ApplicationController {
             }
         }
 
-        commonContent.addCommonContent(request, model, ont);
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
         model.addAttribute("title", getTitle(search, type, imports));
         model.addAttribute("axiomTypes", getAxiomTypes());
 

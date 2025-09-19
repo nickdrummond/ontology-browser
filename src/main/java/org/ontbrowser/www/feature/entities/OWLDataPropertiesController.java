@@ -53,7 +53,7 @@ public class OWLDataPropertiesController extends ApplicationController {
 
         String id = kit.lookup().getId(owlTopDataProperty);
 
-        response.sendRedirect("/dataproperties/" + id+ (ontId != null ? "?ontId=" + ontId : ""));
+        response.sendRedirect("/dataproperties/" + id + (ontId != null ? "?ontId=" + ontId : ""));
     }
 
 
@@ -65,15 +65,14 @@ public class OWLDataPropertiesController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             @ModelAttribute OWLOntology ont,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-
+            final HttpServletRequest request
+    ) {
         var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
-        commonContent.addCommonContent(request, model, ont);
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
-        getOWLDataPropertyFragment(propertyId, pageSize, with, ont, model, request, response);
+        getOWLDataPropertyFragment(propertyId, pageSize, with, ont, model, request);
 
         return new ModelAndView("owlentity");
     }
@@ -87,8 +86,7 @@ public class OWLDataPropertiesController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             @ModelAttribute OWLOntology ont,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
+            final HttpServletRequest request) {
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLDataProperty.class);
 
@@ -112,9 +110,7 @@ public class OWLDataPropertiesController extends ApplicationController {
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
-
-        response.addHeader("title", projectInfo.name() + ": " + entityName);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), withOrEmpty));
 
         return new ModelAndView("owlentityfragment");
 

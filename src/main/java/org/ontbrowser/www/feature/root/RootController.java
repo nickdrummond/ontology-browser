@@ -53,7 +53,7 @@ public class RootController extends ApplicationController {
             model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
 
             var ontologyId = String.valueOf(ont.getOntologyID().hashCode());
-            ontologyController.getOntologyFragment(ontologyId, imports, with, model, request, response);
+            ontologyController.getOntologyFragment(ontologyId, imports, with, model, request);
 
             return new ModelAndView("index");
         }

@@ -64,15 +64,14 @@ public class OWLObjectPropertiesController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-
+            final HttpServletRequest request
+    ) {
         var prop = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
-        commonContent.addCommonContent(request, model, ont);
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
 
-        getOWLObjectPropertyFragment(propertyId, ont, with, model, request, response);
+        getOWLObjectPropertyFragment(propertyId, ont, with, model, request);
 
         return new ModelAndView("owlentity");
     }
@@ -84,9 +83,8 @@ public class OWLObjectPropertiesController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false) List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-
+            final HttpServletRequest request
+    ) {
         var prop = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         String entityName = kit.getShortFormProvider().getShortForm(prop);
@@ -109,9 +107,7 @@ public class OWLObjectPropertiesController extends ApplicationController {
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, withOrEmpty));
-
-        response.addHeader("title", projectInfo.name() + ": " + entityName);
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), withOrEmpty));
 
         return new ModelAndView("owlentityfragment");
 

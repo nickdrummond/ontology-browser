@@ -89,8 +89,7 @@ public class OWLIndividualsController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             @RequestParam(defaultValue = "false") final boolean inferred,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response
+            final HttpServletRequest request
     ) {
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -101,7 +100,7 @@ public class OWLIndividualsController extends ApplicationController {
         return byType(
                 kit.lookup().getId(firstType),
                 individualId, inferred,
-                "inferredInstances", withOrEmpty, ont, model, request, response);
+                "inferredInstances", withOrEmpty, ont, model, request);
     }
 
     @GetMapping(value = "/by/type")
@@ -125,7 +124,7 @@ public class OWLIndividualsController extends ApplicationController {
     ) {
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
-        commonContent.addCommonContent(request, model, ont);
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
 
         OWLClass type = buildNav(classId, withOrEmpty, statsName, ont, model, request);
 
@@ -148,7 +147,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
 
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, with));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
         buildPrimaryHierarchy(statsName, model, type, r);
 
@@ -167,18 +166,17 @@ public class OWLIndividualsController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             @ModelAttribute final OWLOntology ont,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response
+            final HttpServletRequest request
     ) {
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
         var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
-        commonContent.addCommonContent(request, model, ont);
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
 
         OWLClass type = buildNav(classId, withOrEmpty, statsName, ont, model, request);
 
-        getOWLIndividualFragment(individualId, inferred, withOrEmpty, ont, model, request, response);
+        getOWLIndividualFragment(individualId, inferred, withOrEmpty, ont, model, request);
 
         model.addAttribute("mos", getRenderer(type, ind, ont, request));
 
@@ -244,8 +242,7 @@ public class OWLIndividualsController extends ApplicationController {
             @RequestParam(required = false) List<With> with,
             @ModelAttribute final OWLOntology ont,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
+            final HttpServletRequest request) {
 
         List<With> withOrEmpty = with != null ? with : Collections.emptyList();
 
@@ -253,7 +250,8 @@ public class OWLIndividualsController extends ApplicationController {
 
         // TODO custom renderer - linked to tree (see relations)
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(ind);
-        return getCommon().getOWLIndividualFragment(individualsService, ind, inferred, withOrEmpty, ont, owlRenderer, model, request, response);
+        return getCommon().getOWLIndividualFragment(individualsService, ind, inferred, withOrEmpty,
+                ont, owlRenderer, model, request.getQueryString());
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -271,7 +269,8 @@ public class OWLIndividualsController extends ApplicationController {
 
         // TODO custom renderer
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(type);
-        return getCommon().getOWLClassFragment(owlClassesService, type, ont, owlRenderer, withOrEmpty, model, request, response);
+        return getCommon().getOWLClassFragment(owlClassesService, type, ont, owlRenderer,
+                withOrEmpty, model, request.getQueryString());
     }
 
     @GetMapping(value = "/by/type/{classId}/secondary")
@@ -288,7 +287,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         buildSecondaryNavigation(ont, withOrEmpty, model, type);
 
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, with));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
         model.addAttribute("mos", getRenderer(type, null, ont, request));
 
         return new ModelAndView("tree::secondary");

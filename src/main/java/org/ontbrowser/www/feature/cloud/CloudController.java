@@ -44,7 +44,7 @@ public class CloudController extends ApplicationController {
 
         var title = et.getPluralPrintName() + " usage";
 
-        commonContent.addCommonContent(request, model, ont);
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
 
         var helper = new CloudHelper<>(cloudModel);
         helper.setZoom(zoom);

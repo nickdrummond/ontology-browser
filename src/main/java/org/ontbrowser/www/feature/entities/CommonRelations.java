@@ -1,18 +1,15 @@
 package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.RestartListener;
-import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsMemo;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.url.ComponentPagingURIScheme;
+import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.model.Tree;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
+import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
@@ -59,28 +56,6 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
         String type = entity.getEntityType().getPrintName();
         model.addAttribute("title", shortForm + " (" + type + ")");
         model.addAttribute("iri", entity.getIRI());
-    }
-
-    public OWLNamedIndividual renderIndividual(
-            String individualId,
-            OWLOntology ont,
-            List<With> with,
-            int pageSize,
-            HttpServletRequest request,
-            Model model,
-            Comparator<OWLObject> comparator) {
-
-        var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
-
-        renderEntity(individual, model);
-
-        List<Characteristic> characteristics = individualsService.getCharacteristics(individual, ont, comparator, with, pageSize);
-
-        model.addAttribute("characteristics", characteristics);
-        model.addAttribute("ontologies", ont.getImportsClosure());
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request, with));
-
-        return individual;
     }
 
     public AbstractRelationsHierarchyService<T> getRelationsHierarchyService(
