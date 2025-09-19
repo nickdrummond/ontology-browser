@@ -1,9 +1,9 @@
 <div id='content' th:fragment="owlentity">
     <div class="entity-header">
-        <h2 th:text="${title}">An OWLClass</h2>
-
-        <span th:replace="~{base :: graphLink}"></span>
-
+        <div class="entity-title">
+            <h2 th:text="${title}">An OWLClass</h2>
+            <span th:replace="~{base :: graphLink}"></span>
+        </div>
         <div class="iri">
             <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
         </div>

@@ -153,11 +153,6 @@ body.wrapper {
     margin: 0 0.5rem;
 }
 
-#entityPane {
-    height: 25rem;
-}
-
-
 .skip-nav {
     display: none;
 }
@@ -201,13 +196,9 @@ img.button {
     top: 8px;
 }
 
-.graph-button {
-    font-size: 1.8rem;
-}
-
 .icon-button {
+    display: inline-block;
     font-size: 2rem;
-    margin: 5px;
     background: none;
     border: none;
     cursor: pointer;
@@ -226,6 +217,14 @@ img.button {
     height: 1.5rem;
     margin-top: 0.5rem;
 }
+
+.entity-title {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+}
+
 
 /* Needed to prevent the icon from taking space when we move it left "inside" the search field */
 .search-icon-wrapper {
