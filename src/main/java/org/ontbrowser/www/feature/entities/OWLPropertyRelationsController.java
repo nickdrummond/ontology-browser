@@ -26,7 +26,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
@@ -150,14 +149,12 @@ public class OWLPropertyRelationsController extends ApplicationController {
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @RequestParam(defaultValue = "relationsCount") final String statsName,
             @ModelAttribute final OWLOntology ont,
             final Model model,
             HttpServletRequest request
     ) {
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(individual);
@@ -165,7 +162,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
         String queryString = request.getQueryString();
 
         commonFragments.getOWLIndividualFragment(
-                individualsService, individual, false, withOrEmpty, ont, owlRenderer, model, queryString);
+                individualsService, individual, false, with, ont, owlRenderer, model, queryString);
 
         var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
@@ -190,20 +187,17 @@ public class OWLPropertyRelationsController extends ApplicationController {
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @RequestParam final String statsName,
             @ModelAttribute final OWLOntology ont,
             final Model model,
             HttpServletRequest request
     ) {
-
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(individual);
 
-        commonFragments.getOWLIndividualFragment(individualsService, individual, false, withOrEmpty,
+        commonFragments.getOWLIndividualFragment(individualsService, individual, false, with,
                 ont, owlRenderer, model, request.getQueryString());
 
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());

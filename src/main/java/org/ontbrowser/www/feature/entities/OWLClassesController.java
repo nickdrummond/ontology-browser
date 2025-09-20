@@ -75,7 +75,7 @@ public class OWLClassesController extends ApplicationController {
             @PathVariable final String classId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(defaultValue = "classDescendants") final String statsName,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             final Model model,
             final HttpServletRequest request
     ) {
@@ -96,7 +96,7 @@ public class OWLClassesController extends ApplicationController {
     public ModelAndView getOWLClassFragment(
             @PathVariable final String classId,
             @ModelAttribute final OWLOntology ont,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             final Model model,
             final HttpServletRequest request
     ) {

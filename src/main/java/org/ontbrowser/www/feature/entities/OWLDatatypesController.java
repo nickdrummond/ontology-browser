@@ -67,7 +67,7 @@ public class OWLDatatypesController extends ApplicationController {
             @PathVariable final String datatypeId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             final Model model,
             final HttpServletRequest request
     ) {
@@ -77,12 +77,10 @@ public class OWLDatatypesController extends ApplicationController {
 
         Tree<OWLDatatype> prunedTree = hierarchyService.getPrunedTree(owlDatatype);
 
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         commonContent.addCommonContent(request.getQueryString(), model, ont);
         model.addAttribute("hierarchy", prunedTree);
 
-        getOWLDatatypeFragment(datatypeId, ont, pageSize, withOrEmpty, model, request);
+        getOWLDatatypeFragment(datatypeId, ont, pageSize, with, model, request);
 
         return new ModelAndView("owlentity");
     }
@@ -94,7 +92,7 @@ public class OWLDatatypesController extends ApplicationController {
             @PathVariable final String datatypeId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             final Model model,
             final HttpServletRequest request) {
 
@@ -104,9 +102,7 @@ public class OWLDatatypesController extends ApplicationController {
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlDatatype);
 
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
-        List<Characteristic> characteristics = service.getCharacteristics(owlDatatype, ont, kit.getComparator(), withOrEmpty, pageSize);
+        List<Characteristic> characteristics = service.getCharacteristics(owlDatatype, ont, kit.getComparator(), with, pageSize);
 
         model.addAttribute("title", entityName + " (Datatype)");
         model.addAttribute("type", "Datatypes");
@@ -115,7 +111,7 @@ public class OWLDatatypesController extends ApplicationController {
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), withOrEmpty));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
         return new ModelAndView("owlentityfragment");
 

@@ -1,5 +1,6 @@
 package org.ontbrowser.www.url;
 
+import jakarta.annotation.Nonnull;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.model.paging.WithEditor;
 
@@ -13,9 +14,9 @@ public class ComponentPagingURIScheme extends PagingURIScheme {
 
     private final List<With> with;
 
-    public ComponentPagingURIScheme(String queryString, List<With> with) {
+    public ComponentPagingURIScheme(String queryString, @Nonnull List<With> with) {
         super(queryString);
-        this.with = with == null ? List.of() : with;
+        this.with = with;
     }
 
     public URI updateForPage(String componentName, int start, int pageSize) {

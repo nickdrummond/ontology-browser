@@ -144,20 +144,18 @@ public class OWLAnnotationRelationsController extends ApplicationController {
             @ModelAttribute final OWLOntology ont,
             @RequestParam final @Nullable String orderBy,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @RequestParam(defaultValue = "annotationsCount") final String statsName,
             final Model model,
-            HttpServletRequest request,
-            HttpServletResponse response) {
-
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
+            HttpServletRequest request
+    ) {
 
         var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(individual);
 
         commonFragments.getOWLIndividualFragment(individualsService, individual, false,
-                withOrEmpty, ont, owlRenderer, model, request.getQueryString());
+                with, ont, owlRenderer, model, request.getQueryString());
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 

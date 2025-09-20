@@ -68,7 +68,7 @@ public class OWLOntologiesController extends ApplicationController {
     public ModelAndView getOntology(
             @PathVariable final String ontId,
             @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             final Model model,
             final HttpServletRequest request
     ) {
@@ -86,10 +86,10 @@ public class OWLOntologiesController extends ApplicationController {
     public ModelAndView getOntologyFragment(
             @PathVariable final String ontId,
             @RequestParam(required = false, defaultValue = "EXCLUDED") Imports imports,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             final Model model,
-            final HttpServletRequest request) {
-
+            final HttpServletRequest request
+    ) {
         OWLOntology ont = service.getOntologyFor(ontId, kit);
 
         var ontologySFP = kit.getOntologySFP();
@@ -99,8 +99,7 @@ public class OWLOntologiesController extends ApplicationController {
 
         final IRI iri = ont.getOntologyID().getOntologyIRI().orElse(IRI.create("Anonymous"));
 
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-        List<Characteristic> characteristics = service.getCharacteristics(ont, withOrEmpty, DEFAULT_PAGE_SIZE, kit);
+        List<Characteristic> characteristics = service.getCharacteristics(ont, with, DEFAULT_PAGE_SIZE, kit);
 
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
@@ -113,7 +112,7 @@ public class OWLOntologiesController extends ApplicationController {
         model.addAttribute("metrics", service.getMetrics(ont));
         model.addAttribute("showImportMetrics", imports == Imports.INCLUDED && !ont.getImports().isEmpty());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), withOrEmpty));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
         return new ModelAndView("ontologyfragment");
     }

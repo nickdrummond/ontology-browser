@@ -73,7 +73,7 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
     public ModelAndView getPage(
             @PathVariable final String propertyId,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @ModelAttribute OWLOntology ont,
             final Model model,
             final HttpServletRequest request
@@ -94,7 +94,7 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
     public ModelAndView getFragment(
             @PathVariable final String propertyId,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @ModelAttribute OWLOntology ont,
             final Model model,
             final HttpServletRequest request
@@ -104,10 +104,8 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
         String entityName = kit.getShortFormProvider().getShortForm(prop);
 
         var owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(prop);
-
-        List<With> withOrEmpty = with == null ? List.of() : with;
-
-        var characteristics = service.getCharacteristics(prop, ont, kit.getComparator(), withOrEmpty, pageSize);
+        
+        var characteristics = service.getCharacteristics(prop, ont, kit.getComparator(), with, pageSize);
 
         if (projectInfo.activeProfiles().contains("graph")) {
             var mos = new MOSStringRenderer(kit.getFinder(), ont);
@@ -121,7 +119,7 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), withOrEmpty));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
         return new ModelAndView("owlentityfragment");
 

@@ -90,13 +90,11 @@ public class OWLIndividualsController extends ApplicationController {
     public ModelAndView getOWLIndividual(
             @PathVariable final String individualId,
             @ModelAttribute final OWLOntology ont,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @RequestParam(defaultValue = "false") final boolean inferred,
             final Model model,
             final HttpServletRequest request
     ) {
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         var owlIndividual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
         OWLClass firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
                 .orElse(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
@@ -104,7 +102,7 @@ public class OWLIndividualsController extends ApplicationController {
         return byType(
                 kit.lookup().getId(firstType),
                 individualId, inferred,
-                "inferredInstances", withOrEmpty, ont, model, request);
+                "inferredInstances", with, ont, model, request);
     }
 
     @GetMapping(value = "/by/type")
@@ -120,19 +118,16 @@ public class OWLIndividualsController extends ApplicationController {
     public ModelAndView byType(
             @PathVariable final String classId,
             @RequestParam(defaultValue = "inferredInstances") final String statsName,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @ModelAttribute final OWLOntology ont,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response
+            final HttpServletRequest request
     ) {
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
-        OWLClass type = buildNav(classId, withOrEmpty, statsName, ont, model, request);
+        OWLClass type = buildNav(classId, with, statsName, ont, model, request);
 
-        getOWLClassFragment(classId, ont, withOrEmpty, model, request, response);
+        getOWLClassFragment(classId, ont, with, model, request);
 
         model.addAttribute("mos", getRenderer(type, null, ont, request));
 
@@ -167,20 +162,18 @@ public class OWLIndividualsController extends ApplicationController {
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inferred,
             @RequestParam(defaultValue = "inferredInstances") final String statsName,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @ModelAttribute final OWLOntology ont,
             final Model model,
             final HttpServletRequest request
     ) {
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
-        OWLClass type = buildNav(classId, withOrEmpty, statsName, ont, model, request);
+        OWLClass type = buildNav(classId, with, statsName, ont, model, request);
 
-        getOWLIndividualFragment(individualId, inferred, withOrEmpty, ont, model, request);
+        getOWLIndividualFragment(individualId, inferred, with, ont, model, request);
 
         model.addAttribute("mos", getRenderer(type, ind, ont, request));
 
@@ -243,18 +236,16 @@ public class OWLIndividualsController extends ApplicationController {
     public ModelAndView getOWLIndividualFragment(
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inferred,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @ModelAttribute final OWLOntology ont,
             final Model model,
-            final HttpServletRequest request) {
-
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
+            final HttpServletRequest request
+    ) {
         var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         // TODO custom renderer - linked to tree (see relations)
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(ind);
-        return getCommon().getOWLIndividualFragment(individualsService, ind, inferred, withOrEmpty,
+        return getCommon().getOWLIndividualFragment(individualsService, ind, inferred, with,
                 ont, owlRenderer, model, request.getQueryString());
     }
 
@@ -263,33 +254,29 @@ public class OWLIndividualsController extends ApplicationController {
     public ModelAndView getOWLClassFragment(
             @PathVariable final String classId,
             @ModelAttribute final OWLOntology ont,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response) {
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
+            final HttpServletRequest request
+    ) {
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
         // TODO custom renderer
         OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(type);
         return getCommon().getOWLClassFragment(owlClassesService, type, ont, owlRenderer,
-                withOrEmpty, model, request.getQueryString());
+                with, model, request.getQueryString());
     }
 
     @GetMapping(value = "/by/type/{classId}/secondary")
     public ModelAndView getSecondaryFragment(
             @PathVariable final String classId,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @ModelAttribute final OWLOntology ont,
             final Model model,
             final HttpServletRequest request
     ) {
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        buildSecondaryNavigation(ont, withOrEmpty, model, type);
+        buildSecondaryNavigation(ont, with, model, type);
 
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
         model.addAttribute("mos", getRenderer(type, null, ont, request));

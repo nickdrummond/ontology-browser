@@ -22,7 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -54,11 +53,9 @@ public class CommonFragments {
 
         String entityName = sfp.getShortForm(owlClass);
 
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         List<Characteristic> characteristics = service.getCharacteristics(
                 owlClass, ont, kit.getComparator(),
-                withOrEmpty,
+                with,
                 ApplicationController.DEFAULT_PAGE_SIZE);
 
         Set<OWLClass> namedSuperclasses = service.getNamedTypes(owlClass, ont);
@@ -79,7 +76,7 @@ public class CommonFragments {
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("mos", owlRenderer);
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, withOrEmpty));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, with));
 
         return new ModelAndView("owlentityfragment");
     }
@@ -131,11 +128,9 @@ public class CommonFragments {
             final Model model,
             final String queryString
     ) {
-        List<With> withOrEmpty = with != null ? with : Collections.emptyList();
-
         List<Characteristic> characteristics = new ArrayList<>(
                 service.getCharacteristics(owlIndividual, ont, kit.getComparator(),
-                        withOrEmpty, ApplicationController.DEFAULT_PAGE_SIZE));
+                        with, ApplicationController.DEFAULT_PAGE_SIZE));
 
         if (inferred) {
             OWLReasoner reasoner = reasonerService.getReasoner();
@@ -157,7 +152,7 @@ public class CommonFragments {
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, withOrEmpty));
+        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, with));
         model.addAttribute("mos", owlHtmlRenderer);
 
         if (projectInfo.activeProfiles().contains("graph")) {

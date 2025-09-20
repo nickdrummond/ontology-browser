@@ -45,7 +45,7 @@ public class RootController extends ApplicationController {
             final Model model,
             @ModelAttribute OWLOntology ont,
             @RequestParam(required = false, defaultValue = "INCLUDED") Imports imports,
-            @RequestParam(required = false) List<With> with,
+            @RequestParam(required = false, defaultValue = "") List<With> with,
             @RequestParam(required = false) final String redirect,
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
