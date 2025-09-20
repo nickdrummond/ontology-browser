@@ -19,6 +19,11 @@ public class OWLOntologyHierarchyService implements OWLHierarchyService<OWLOntol
     }
 
     @Override
+    public Tree<OWLOntology> getTree() {
+        return getTree(rootOntology, new HashSet<>());
+    }
+
+    @Override
     public Tree<OWLOntology> getPrunedTree(OWLOntology focus) {
         return getTree(rootOntology, new HashSet<>());
     }

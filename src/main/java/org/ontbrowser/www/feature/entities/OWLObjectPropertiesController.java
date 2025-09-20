@@ -18,7 +18,6 @@ public class OWLObjectPropertiesController extends OWLPropertiesController<OWLOb
         super(kit,
                 service,
                 commonContent,
-                OWLObjectProperty.class,
-                kit.getOWLOntologyManager().getOWLDataFactory().getOWLTopObjectProperty());
+                OWLObjectProperty.class);
     }
 }

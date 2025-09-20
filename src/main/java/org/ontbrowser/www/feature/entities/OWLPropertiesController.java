@@ -27,20 +27,17 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
     private final PropertiesService<P> service;
     private final CommonContent commonContent;
     private final Class<P> clz;
-    private final String topPropertyId;
 
     public OWLPropertiesController(
             OWLHTMLKit kit,
             PropertiesService<P> service,
             CommonContent commonContent,
-            Class<P> clz,
-            P topProperty
+            Class<P> clz
     ) {
         super(kit);
         this.service = service;
         this.commonContent = commonContent;
         this.clz = clz;
-        this.topPropertyId = kit.lookup().getId(topProperty);
     }
 
     @GetMapping(value = "/")
@@ -48,16 +45,27 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
             @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
-        getIndex(ontId, response);
+        String path = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
+        response.sendRedirect(path + ".." + (ontId != null ? "?ontId=" + ontId : ""));
     }
 
     @GetMapping()
-    public void getIndex(
-            @RequestParam(required = false) final String ontId,
-            final HttpServletResponse response
-    ) throws IOException {
-        String path = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
-        response.sendRedirect(path + "/" + topPropertyId + (ontId != null ? "?ontId=" + ontId : ""));
+    public ModelAndView getIndex(
+            @ModelAttribute OWLOntology ont,
+            final Model model,
+            final HttpServletRequest request
+    ) {
+        commonContent.addCommonContent(request.getQueryString(), model, ont);
+        var hierarchyService = service.getHierarchyService(ont);
+        model.addAttribute("hierarchy", hierarchyService.getTree());
+        var pluralType = service.getEntityType().getPluralPrintName();
+        model.addAttribute("title", pluralType);
+        model.addAttribute("type", pluralType);
+
+        var owlRenderer = rendererFactory.getHTMLRenderer(ont);
+        model.addAttribute("mos", owlRenderer);
+
+        return new ModelAndView("owlentity");
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -74,6 +82,7 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
 
         commonContent.addCommonContent(request.getQueryString(), model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
+        model.addAttribute("type", service.getEntityType().getPluralPrintName());
 
         getFragment(propertyId, pageSize, with, ont, model, request);
 
@@ -105,8 +114,8 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
             model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(prop, ont));
         }
 
-        model.addAttribute("title", entityName + " ( " + prop.getEntityType().getPrintName() + " )");
-        model.addAttribute("type", prop.getEntityType().getPluralPrintName());
+        String typeName = service.getEntityType().getPrintName();
+        model.addAttribute("title", entityName + " ( " + typeName + " )");
         model.addAttribute("iri", prop.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());

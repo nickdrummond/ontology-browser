@@ -60,7 +60,7 @@ export const entity = (sel = "#content") => {
         }
     }
 
-    if (document.querySelector(sel).children.length > 0) {
+    if (document.querySelector(sel)?.children.length > 0) {
         entityLoaded();
     }
 

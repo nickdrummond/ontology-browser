@@ -53,4 +53,9 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
             Comparator<Tree<OWLNamedIndividual>> comparator) {
         return new RelationsHierarchyService(comparator);
     }
+
+    @Override
+    public EntityType<OWLObjectProperty> getEntityType() {
+        return EntityType.OBJECT_PROPERTY;
+    }
 }

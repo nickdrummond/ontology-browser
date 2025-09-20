@@ -103,8 +103,8 @@ ul.minihierarchy {
 }
 
 /* hide the dummy nodes for annotations */
-.minihierarchy.Annotation.Properties > li > .node,
-.minihierarchy.Annotation.Properties > li > .tree-node,
+.minihierarchy.Annotation.properties > li > .node,
+.minihierarchy.Annotation.properties > li > .tree-node,
 .minihierarchy.Annotations.on > li > .node,
 .minihierarchy.Annotations.on > li > .tree-node {
     display: none;

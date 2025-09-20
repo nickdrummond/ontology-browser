@@ -5,11 +5,7 @@ import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.hierarchy.*;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.parameters.Imports;
+import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -47,8 +43,8 @@ public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnno
         return new AnnotationsHierarchyService(comparator);
     }
 
-    public List<OWLAnnotationProperty> getAnnotationProperties(final OWLOntology ont,
-                                                               final Comparator<OWLObject> comparator) {
-        return ont.getAnnotationPropertiesInSignature(Imports.INCLUDED).stream().sorted(comparator).toList();
+    @Override
+    public EntityType<OWLAnnotationProperty> getEntityType() {
+        return EntityType.ANNOTATION_PROPERTY;
     }
 }

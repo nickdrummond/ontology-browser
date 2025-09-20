@@ -1,25 +1,26 @@
 <div id='content' th:fragment="owlentity">
-    <div class="entity-header">
-        <div class="entity-title">
-            <h2 th:text="${title}">An OWLClass</h2>
-            <span th:replace="~{base :: graphLink}"></span>
-        </div>
-        <div class="iri">
-            <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
-        </div>
-    </div>
-
-    <div th:if="${editingEnabled}"
-         th:replace='~{edits :: axiom(${""}, ${""})}'>
-        Edit this axiom
-    </div>
-
-    <div class="characteristics">
-        <div th:each="ch : ${characteristics}" th:remove="tag">
-            <div th:replace="~{base :: characteristic (${ch})}">
-                A characteristic
+    <th:block th:if="${iri != null}">
+        <div class="entity-header">
+            <div class="entity-title">
+                <h2 th:text="${title}">An OWLClass</h2>
+                <span th:replace="~{base :: graphLink}"></span>
+            </div>
+            <div class="iri">
+                <h3 th:utext="${mos.renderFullIRI(iri)}">http://example.com/entity-url</h3>
             </div>
         </div>
-    </div>
 
+        <div th:if="${editingEnabled}"
+             th:replace='~{edits :: axiom(${""}, ${""})}'>
+            Edit this axiom
+        </div>
+
+        <div class="characteristics">
+            <div th:each="ch : ${characteristics}" th:remove="tag">
+                <div th:replace="~{base :: characteristic (${ch})}">
+                    A characteristic
+                </div>
+            </div>
+        </div>
+    </th:block>
 </div>

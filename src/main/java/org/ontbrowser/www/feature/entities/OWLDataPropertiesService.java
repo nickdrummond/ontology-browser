@@ -9,10 +9,7 @@ import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -53,5 +50,10 @@ public class OWLDataPropertiesService implements PropertiesService<OWLDataProper
     @Override
     public AbstractRelationsHierarchyService<OWLDataProperty> getRelationsHierarchy(Comparator<Tree<OWLNamedIndividual>> comparator) {
         throw new NotImplementedException("Not implemented");
+    }
+
+    @Override
+    public EntityType<OWLDataProperty> getEntityType() {
+        return EntityType.DATA_PROPERTY;
     }
 }

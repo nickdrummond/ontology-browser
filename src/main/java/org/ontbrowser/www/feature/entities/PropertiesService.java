@@ -1,14 +1,11 @@
 package org.ontbrowser.www.feature.entities;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.model.Tree;
-import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLProperty;
+import org.ontbrowser.www.model.Tree;
+import org.ontbrowser.www.model.paging.With;
+import org.semanticweb.owlapi.model.*;
 
 import java.util.Comparator;
 import java.util.List;
@@ -26,5 +23,7 @@ public interface PropertiesService<T extends OWLProperty> {
 
      OWLHierarchyService<? super T> getHierarchyService(OWLOntology ont);
 
-     AbstractRelationsHierarchyService<T> getRelationsHierarchy (Comparator<Tree<OWLNamedIndividual>> comparator);
+     AbstractRelationsHierarchyService<T> getRelationsHierarchy(Comparator<Tree<OWLNamedIndividual>> comparator);
+
+     EntityType<T> getEntityType();
 }

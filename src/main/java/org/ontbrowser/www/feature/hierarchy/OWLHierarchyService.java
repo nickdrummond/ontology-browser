@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 
 public interface OWLHierarchyService<T extends OWLObject> {
 
+    Tree<T> getTree();
+
     Tree<T> getPrunedTree(T focus);
 
     Tree<T> getChildren(T base);
