@@ -7,6 +7,7 @@ import org.apache.commons.io.output.WriterOutputStream;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -36,7 +37,10 @@ public class OWLOntologiesController extends ApplicationController {
 
     private final OWLOntologiesService service;
 
-    public OWLOntologiesController(OWLOntologiesService service) {
+    public OWLOntologiesController(
+            OWLHTMLKit kit,
+            OWLOntologiesService service) {
+        super(kit);
         this.service = service;
     }
 

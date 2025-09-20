@@ -1,6 +1,7 @@
 package org.ontbrowser.www.feature.search;
 
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.http.MediaType;
@@ -16,8 +17,11 @@ public class SearchController extends ApplicationController {
     private final NameService nameService;
 
     public SearchController(
+            OWLHTMLKit kit,
             SearchService service,
-            NameService nameService) {
+            NameService nameService
+    ) {
+        super(kit);
         this.service = service;
         this.nameService = nameService;
     }

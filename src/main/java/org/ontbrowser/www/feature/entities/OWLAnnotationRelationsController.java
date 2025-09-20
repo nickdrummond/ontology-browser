@@ -44,18 +44,18 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
 
     public OWLAnnotationRelationsController(
+            OWLHTMLKit kit,
             OWLAnnotationPropertiesService propertiesService,
             OWLIndividualsService individualsService,
-            OWLHTMLKit kit,
             ProjectInfo projectInfo,
             RendererFactory rendererFactory,
             StatsService statsService,
             ReasonerService reasonerService) {
+        super(kit);
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.statsService = statsService;
         this.projectInfo = projectInfo;
-        this.kit = kit;
         this.commonRelations = new CommonRelations<>(
                 PATH,
                 kit,

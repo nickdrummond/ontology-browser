@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.parser.ParserService;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.IRI;
@@ -38,7 +39,12 @@ public class EditController extends ApplicationController {
     private final EditService editService;
     private final ParserService parserService;
 
-    public EditController(EditService editService, ParserService parserService) {
+    public EditController(
+            OWLHTMLKit kit,
+            EditService editService,
+            ParserService parserService
+    ) {
+        super(kit);
         this.editService = editService;
         this.parserService = parserService;
     }

@@ -17,17 +17,21 @@ public abstract class ApplicationController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    protected final OWLHTMLKit kit;
+
+    // TODO remove autowiring
     @Autowired
     protected ProjectInfo projectInfo;
-
-    @Autowired
-    protected OWLHTMLKit kit;
 
     @Autowired
     protected RendererFactory rendererFactory;
 
     @Autowired
     private StatsService statsService;
+
+    public ApplicationController(OWLHTMLKit kit) {
+        this.kit = kit;
+    }
 
     @ModelAttribute("projectInfo")
     public ProjectInfo getProjectInfo() {

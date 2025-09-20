@@ -8,6 +8,7 @@ import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.Stats;
 import org.ontbrowser.www.feature.stats.StatsService;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -31,10 +32,12 @@ public class OWLClassesController extends ApplicationController {
     private final CommonContent commonContent;
 
     public OWLClassesController(
+            OWLHTMLKit kit,
             OWLClassesService service,
             ReasonerFactoryService reasonerFactoryService,
             StatsService statsService,
             ReasonerService reasonerService, CommonContent commonContent) {
+        super(kit);
         this.service = service;
         this.reasonerFactoryService = reasonerFactoryService;
         this.statsService = statsService;

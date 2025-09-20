@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.axioms;
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -28,8 +29,11 @@ public class OWLAxiomsController extends ApplicationController {
     private final OWLAxiomService axiomService;
     private final CommonContent commonContent;
 
-    OWLAxiomsController(OWLAxiomService axiomService,
-                        CommonContent commonContent) {
+    OWLAxiomsController(
+            OWLHTMLKit kit,
+            OWLAxiomService axiomService,
+            CommonContent commonContent) {
+        super(kit);
         this.axiomService = axiomService;
         this.commonContent = commonContent;
     }

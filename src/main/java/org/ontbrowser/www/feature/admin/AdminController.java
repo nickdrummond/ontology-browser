@@ -1,6 +1,7 @@
 package org.ontbrowser.www.feature.admin;
 
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminController extends ApplicationController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
+
+    public AdminController(OWLHTMLKit kit) {
+        super(kit);
+    }
 
     @GetMapping()
     public ModelAndView admin() {

@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.ontologies.OWLOntologiesController;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -23,7 +24,11 @@ public class RootController extends ApplicationController {
 
     private final OWLOntologiesController ontologyController;
 
-    public RootController(OWLOntologiesController ontologyController) {
+    public RootController(
+            OWLHTMLKit kit,
+            OWLOntologiesController ontologyController
+    ) {
+        super(kit);
         this.ontologyController = ontologyController;
     }
 

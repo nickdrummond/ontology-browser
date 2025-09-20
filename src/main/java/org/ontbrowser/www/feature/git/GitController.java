@@ -3,6 +3,7 @@ package org.ontbrowser.www.feature.git;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -26,7 +27,10 @@ public class GitController extends ApplicationController {
 
     private final GitService gitService;
 
-    public GitController(GitService gitService) {
+    public GitController(
+            OWLHTMLKit kit,
+            GitService gitService) {
+        super(kit);
         this.gitService = gitService;
     }
 

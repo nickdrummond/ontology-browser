@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.*;
@@ -22,7 +23,11 @@ public class FindByAnnotationController extends ApplicationController {
 
     private final FindByAnnotation service;
 
-    public FindByAnnotationController(FindByAnnotation service) {
+    public FindByAnnotationController(
+            OWLHTMLKit kit,
+            FindByAnnotation service
+    ) {
+        super(kit);
         this.service = service;
     }
 

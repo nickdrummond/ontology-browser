@@ -56,6 +56,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
             ProjectInfo projectInfo,
             CommonContent commonContent
     ) {
+        super(kit);
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.reasonerFactoryService = reasonerFactoryService;
@@ -63,7 +64,6 @@ public class OWLPropertyRelationsController extends ApplicationController {
         this.commonContent = commonContent;
         this.rendererFactory = rendererFactory;
         this.projectInfo = projectInfo;
-        this.kit = kit;
 
         this.common = new CommonRelations<>(
                 PATH,

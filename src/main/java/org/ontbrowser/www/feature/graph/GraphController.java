@@ -7,6 +7,7 @@ import org.ontbrowser.www.feature.parser.ParserService;
 import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -34,9 +35,11 @@ public class GraphController extends ApplicationController {
     private final ReasonerService reasonerService;
 
     public GraphController(
+            OWLHTMLKit kit,
             ParserService parserService,
             ReasonerService reasonerService
     ) {
+        super(kit);
         this.parserService = parserService;
         this.reasonerService = reasonerService;
     }

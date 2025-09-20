@@ -5,6 +5,7 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
 import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.ui.Model;
@@ -23,7 +24,11 @@ public class CloudController extends ApplicationController {
 
     private final CommonContent commonContent;
 
-    public CloudController(CommonContent commonContent) {
+    public CloudController(
+            OWLHTMLKit kit,
+            CommonContent commonContent
+    ) {
+        super(kit);
         this.commonContent = commonContent;
     }
 

@@ -2,6 +2,7 @@ package org.ontbrowser.www.feature.parser;
 
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -18,7 +19,11 @@ public class AutocompleteController extends ApplicationController {
 
     private AutocompleteService autocompleteService;
 
-    public AutocompleteController(AutocompleteService autocompleteService) {
+    public AutocompleteController(
+            OWLHTMLKit kit,
+            AutocompleteService autocompleteService
+    ) {
+        super(kit);
         this.autocompleteService = autocompleteService;
     }
 
