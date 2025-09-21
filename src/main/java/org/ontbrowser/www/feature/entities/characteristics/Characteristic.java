@@ -12,6 +12,8 @@ public class Characteristic {
 
     private final String name;
 
+    private final String safeName;
+
     private final List<AxiomWithMetadata> objects;
 
     private final PageData pageData;
@@ -27,6 +29,7 @@ public class Characteristic {
             final PageData pageData) {
         this.subject = subject;
         this.name = name;
+        this.safeName = PagingUtils.getIdFor(name);
         this.objects = objects;
         this.pageData = pageData;
     }
@@ -37,6 +40,11 @@ public class Characteristic {
 
     public String getName() {
         return name;
+    }
+
+    // Used in templates
+    public String getSafeName() {
+        return safeName;
     }
 
     public List<AxiomWithMetadata> getObjects() {

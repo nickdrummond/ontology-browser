@@ -79,11 +79,11 @@
             </div>
         </form>
         <div th:if="${allOntologies != null && allOntologies.size() > 1}" id="ontology-selector">
-            <p class="current-ontology" th:text="${ontologiesSfp.getShortForm(ont)}">current ontology</p>
+            <p class="current-ontology" th:text="${ont}">current ontology</p>
             <ul>
                 <li th:each="ont : ${allOntologies}">
-                    <a th:href='${pageURIScheme.replacingParam("ontId", ont.getOntologyID().hashCode().toString())}'
-                       th:text="${ontologiesSfp.getShortForm(ont)}"
+                    <a th:href='${ont.link}'
+                       th:text="${ont.label}"
                        rel="nofollow">
                         ontology
                     </a>
@@ -149,24 +149,25 @@
 
 <!-- paging -->
 <span class="paging" th:fragment="paged (data, componentName)"
-      th:switch="${(data.start == 1) and (data.pageSize >= data.total)}">
+      th:switch="${data.isSinglePage()}">
     <span th:case="${true}" th:text='${"(" + data.total + ")"}'>(2)</span>
     <span th:case="${false}">
 
-        <span class="paging-arrow" th:switch="${data.start gt 1}">
+        <span class="paging-arrow" th:switch="${data.hasPrevious()}">
             <a th:case="${true}" rel="nofollow"
-               th:with="start=${data.start-data.pageSize gt 1 ? data.start-data.pageSize : 1}"
-               th:href='${pageURIScheme.updateForPage(componentName, start, data.pageSize)}'>&#8678;</a>
+               th:with="previous=${data.getPrevious()}"
+               th:href='${pageURIScheme.updateForPage(componentName, previous.start, previous.pageSize)}'>&#8678;</a>
             <span th:case="${false}">&#8678;</span>
         </span>
 
-        <span th:with="end=${T(java.lang.Math).min(data.total, data.start + data.pageSize-1)},
-                       total=${T(java.lang.Integer).MAX_VALUE == data.total ? '' : ' of ' + data.total}"
-              th:text='${"(" + data.start + "-" + end + total + ")"}'>(1-20 of 100)</span>
+        <span th:with="end=${data.end()},
+                       totalString=${data.hasTotal() ? ' of ' + data.total : ''}"
+              th:text='${"(" + data.start + "-" + end + totalString + ")"}'>(1-20 of 100)</span>
 
-        <span class="paging-arrow" th:with="start=${data.start + data.pageSize}" th:switch="${start lt data.total}">
+        <span class="paging-arrow" th:switch="${data.hasNext()}">
             <a th:case="${true}" rel="nofollow"
-               th:href='${pageURIScheme.updateForPage(componentName, start, data.pageSize)}'>&#8680;</a>
+               th:with="next=${data.getNext()}"
+               th:href='${pageURIScheme.updateForPage(componentName, next.start, next.pageSize)}'>&#8680;</a>
             <span th:case="${false}">&#8680;</span>
         </span>
     </span>
@@ -174,14 +175,14 @@
 
 
 <div th:fragment="characteristic (ch)"
-     th:with='name=${T(org.ontbrowser.www.feature.entities.characteristics.PagingUtils).getIdFor(ch.name)}'
-     th:class='${"characteristic " + name}'>
+     th:with="safeName=${ch.getSafeName()}"
+     th:class='${"characteristic " + safeName}'>
 
     <div class="header">
         <span class="hide-trigger">
             <h4 th:text='${ch.name}'>Some Characteristic</h4>
         </span>
-        <span th:replace="~{base::paged (${ch.getPageData()}, ${name})}">(2)</span>
+        <span th:replace="~{base::paged (${ch.getPageData()}, ${safeName})}">(2)</span>
     </div>
 
     <ul th:remove="all-but-first" th:class="${cls}">
