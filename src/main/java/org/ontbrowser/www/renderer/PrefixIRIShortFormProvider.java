@@ -20,7 +20,8 @@ public class PrefixIRIShortFormProvider implements IRIShortFormProvider {
             String namespace = prefix2IRI.getValue();
             if (iriString.startsWith(namespace)) {
                 String shortForm = iriString.substring(namespace.length());
-                return prefix2IRI.getKey() + shortForm;
+                String prefix = prefix2IRI.getKey().isEmpty() ? "" : prefix2IRI.getKey() + ":";
+                return prefix + shortForm;
             }
         }
         String fragment = iri.getFragment();

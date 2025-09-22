@@ -259,6 +259,6 @@ public class SPARQLService implements DisposableBean {
     }
 
     private static String toSparqlPrefix(Map.Entry<String, String> entry) {
-        return "PREFIX " + entry.getKey() + " <" + entry.getValue() + ">";
+        return "PREFIX " + entry.getKey() + ": <" + entry.getValue() + ">";
     }
 }

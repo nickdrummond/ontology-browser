@@ -155,10 +155,11 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     public Map<String, String> getPrefixes() {
         if (prefixes == null) {
             prefixes = new HashMap<>();
-            prefixes.put("swrlb:", "http://www.w3.org/2003/11/swrlb#");
+            prefixes.put("swrlb", "http://www.w3.org/2003/11/swrlb#");
             var format = rootOntology.getFormat();
             if (format != null && format.isPrefixOWLDocumentFormat()) {
-                prefixes.putAll(format.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap());
+                format.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap()
+                        .forEach((key, value) -> prefixes.put(key.substring(0, key.length() - 1), value));
             }
         }
         return prefixes;
