@@ -103,7 +103,8 @@ public class SPARQLService implements DisposableBean {
         OntModelSpec spec = new OntModelSpec(OntModelSpec.OWL_MEM);
         spec.setDocumentManager(dm);
         OntModel model = ModelFactory.createOntologyModel(spec);
-        model.read(root.toString());
+        String absolutePath = root.getAbsolutePath();
+        model.read(absolutePath);
         return model;
     }
 
