@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 public class OntologyLoader {
@@ -47,14 +49,35 @@ public class OntologyLoader {
         };
         mngr.addOntologyLoaderListener(ontLoadListener);
 
-        if (location.startsWith("/")) {
+        if (location.startsWith("/")) { // absolute file path
             var physicalURI = "file://" + location;
             addBaseMapperFor(physicalURI);
             return mngr.loadOntologyFromOntologyDocument(IRI.create(physicalURI));
         }
-        else {
+        else if (location.contains("://")) { // Looks like a URL
             addBaseMapperFor(location);
             return mngr.loadOntologyFromOntologyDocument(iri);
+        }
+        else { // relative file path?
+            File file = new File(location);
+            if (file.exists()) {
+                var physicalURI = "file://" + file.getAbsolutePath();
+                addBaseMapperFor(physicalURI);
+                logger.info("Loading ontology from {}", physicalURI);
+                return mngr.loadOntologyFromOntologyDocument(IRI.create(physicalURI));
+            }
+            else { // Classpath?
+                var res = getClass().getClassLoader().getResource(location);
+                logger.info("Loading ontology from {}", res);
+                try(var inputStream = res.openStream()) {
+                    if (inputStream == null) {
+                        throw new RuntimeException("Could not open ontology from " + location);
+                    }
+                    return mngr.loadOntologyFromOntologyDocument(inputStream);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 

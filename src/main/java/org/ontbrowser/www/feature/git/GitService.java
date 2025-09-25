@@ -52,23 +52,26 @@ public class GitService implements BeforeLoad {
         this.branch = branch;
 
         var repoContainingRoot = findGitRepoFromFile(new File(ontologyRoot));
-        if (repoContainingRoot.isEmpty()) {
-            throw new RuntimeException("Ontology root is not in a git repo. Remove git profile.");
-        }
+        if (repoContainingRoot.isPresent()) {
+            this.local = repoContainingRoot.get();
 
-        this.local = repoContainingRoot.get();
-
-        try (Git git = Git.open(this.local)) {
-            log.info("Found git repo at {}", this.local.getAbsolutePath());
-            log.info("Fetching...");
-            git.fetch().call();
-            String foundRemote = getRemoteURL(git).orElse(null);
-            if (foundRemote != null) {
-                log.info("Local repo is tracking remote - {}", foundRemote);
+            try (Git git = Git.open(this.local)) {
+                log.info("Found git repo at {}", this.local.getAbsolutePath());
+                log.info("Fetching...");
+                git.fetch().call();
+                String foundRemote = getRemoteURL(git).orElse(null);
+                if (foundRemote != null) {
+                    log.info("Local repo is tracking remote - {}", foundRemote);
+                }
+                this.remote = foundRemote;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-            this.remote = foundRemote;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }
+        else {
+            log.warn("Local git repo at {} not found", ontologyRoot);
+            this.local = null;
+            this.remote = null;
         }
     }
 
@@ -134,6 +137,9 @@ public class GitService implements BeforeLoad {
     }
 
     public void withGit(CheckedConsumer<Git> actions) {
+        if (local == null) {
+            return;
+        }
         try (Git git = open()) {
             actions.accept(git);
         } catch (Exception e) {

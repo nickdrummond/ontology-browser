@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.rdf;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
@@ -11,8 +10,6 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.DatasetOne;
-import org.apache.jena.tdb2.TDB2Factory;
-import org.apache.jena.tdb2.loader.LoaderFactory;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.util.LocationMapper;
 import org.apache.jena.util.LocatorFile;
@@ -24,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,47 +41,12 @@ public class SPARQLService implements DisposableBean {
     private final Dataset dataset;
 
     public SPARQLService(String root, String dbLoc) {
-        File rootFile = new File(root);
-        if (!rootFile.exists()) {
-            throw new RuntimeException("SPARQL root file does not exist: " + rootFile);
-        }
-        File dir = rootFile.getParentFile();
-        log.info("Loading SPARQL model from {}", rootFile);
-//        this.dataset = loadToTDB(rootFile, dir, dbLoc);
-        this.dataset = loadInMemoryInfModel(rootFile, dir);
+        this.dataset = loadInMemoryInfModel(root);
     }
 
-    private Dataset loadToTDB(File rootFile, File dir, String dbLoc) {
-        String fileExtension = rootFile.getName().substring(rootFile.getName().lastIndexOf(".") + 1);
-        var sources = dir.listFiles((file, name) -> name.endsWith(fileExtension));
-        if (sources == null) {
-            throw new RuntimeException("No files found in " + dir);
-        }
-
-        // Delete the existing DB on startup (until we're able to detect ont changes)
-        File dbLocFile = new File(dbLoc);
-        if (dbLocFile.exists()) {
-            try {
-                FileUtils.deleteDirectory(dbLocFile);
-            } catch (IOException e) {
-                log.error("Could not delete SPARQL database directory: {}", dbLocFile, e);
-            }
-        }
-        var dataset = TDB2Factory.connectDataset(dbLoc);
-        var loader = LoaderFactory.parallelLoader(
-                dataset.asDatasetGraph(),
-                (s, args) -> log.info(String.format(s, args))
-        );
-
-        loader.startBulk();
-        loader.load(Arrays.stream(sources).map(File::getAbsolutePath).toArray(String[]::new));
-        loader.finishBulk();
-        return dataset;
-    }
-
-    public Dataset loadInMemoryInfModel(final File root, final File baseDir) {
+    public Dataset loadInMemoryInfModel(final String root) {
         // TODO make inference optional
-        var basicModel = loadMemoryModel(root, baseDir);
+        var basicModel = loadMemoryModel(root);
 
         Reasoner rdfsReasoner = ReasonerRegistry.getRDFSReasoner();
         var rdfsInfModel = ModelFactory.createInfModel(rdfsReasoner, basicModel);
@@ -93,8 +54,43 @@ public class SPARQLService implements DisposableBean {
         return DatasetOne.create(rdfsInfModel);
     }
 
-    public Model loadMemoryModel(final File root, final File baseDir) {
+    // TODO STARWARS imports not working!
+    public Model loadMemoryModel(final String root) {
+        OntModel model;
         long t1 = System.currentTimeMillis();
+
+        File rootFile = new File(root);
+        if (rootFile.exists()) {
+            model = loadFromFile(rootFile);
+        } else {
+            model = loadFromClassPath(root); // for demo purposes
+        }
+
+        long t2 = System.currentTimeMillis();
+
+        log.info("SPARQL model loaded {} triples, {} imports, in {}ms", model.size(), model.getSubGraphs().size(), t2 - t1);
+
+        return model;
+    }
+
+    // NOTE - only works for single file, no imports!!
+    private OntModel loadFromClassPath(String root) {
+        var res = getClass().getClassLoader().getResource(root);
+        if (res != null) {
+            try (var in = res.openStream()) {
+                OntModel model = ModelFactory.createOntologyModel();
+                model.read(in, "base");
+                return model;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new RuntimeException("Could not find root ontology on classpath: " + root);
+        }
+    }
+
+    public OntModel loadFromFile(final File root) {
+        File baseDir = root.getParentFile();
 
         FileManager mngr = getFileManager(baseDir);
         OntDocumentManager dm = new OntDocumentManager();
@@ -108,12 +104,6 @@ public class SPARQLService implements DisposableBean {
         spec.setDocumentManager(dm);
         OntModel model = ModelFactory.createOntologyModel(spec);
         model.read(root.toString());
-
-        long t2 = System.currentTimeMillis();
-
-//        listImports(model);
-        System.out.println("SPARQL model loaded " + model.size() + " triples, " + model.getSubGraphs().size() + " imports, in " + (t2 - t1) + "ms");
-
         return model;
     }
 
@@ -149,8 +139,7 @@ public class SPARQLService implements DisposableBean {
             OntModel m = dm.getOntology(mURI, OntModelSpec.OWL_MEM);
             if (m != null) {
                 log.info("import = " + mURI + " from " + alt);
-            }
-            else {
+            } else {
                 log.warn("Cannot find model for " + mURI);
             }
         });
@@ -179,8 +168,7 @@ public class SPARQLService implements DisposableBean {
                     RDFNode rdfNode = sol.get(variable);
                     if (rdfNode != null) { // can have no binding if vars are not in the query
                         map.put(variable, toOWL(rdfNode, df, ont));
-                    }
-                    else {
+                    } else {
                         map.put(variable, null); // empty literal for no binding
                     }
                 }
@@ -201,8 +189,7 @@ public class SPARQLService implements DisposableBean {
             var entity = getEntity(iri, ont, df);
             if (entity.isPresent()) {
                 return entity.get();
-            }
-            else {
+            } else {
                 return df.getOWLLiteral(iri.getFragment());
             }
         } else if (rdfNode.isLiteral()) {
