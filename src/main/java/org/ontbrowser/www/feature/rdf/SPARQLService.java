@@ -61,16 +61,19 @@ public class SPARQLService implements DisposableBean, RestartListener {
         return DatasetOne.create(rdfsInfModel);
     }
 
-    // TODO STARWARS imports not working!
     public Model loadMemoryModel(final String root) {
         OntModel model;
         long t1 = System.currentTimeMillis();
 
-        File rootFile = new File(root);
-        if (rootFile.exists()) {
-            model = loadFromFile(rootFile);
+        if (root.startsWith("http://") || root.startsWith("https://")) {
+            model = loadFromURL(root); // for demo purposes
         } else {
-            model = loadFromClassPath(root); // for demo purposes
+            File rootFile = new File(root);
+            if (rootFile.exists()) {
+                model = loadFromFile(rootFile);
+            } else {
+                model = loadFromClassPath(root); // for demo purposes
+            }
         }
 
         long t2 = System.currentTimeMillis();
@@ -94,6 +97,13 @@ public class SPARQLService implements DisposableBean, RestartListener {
         } else {
             throw new RuntimeException("Could not find root ontology on classpath: " + root);
         }
+    }
+
+    // NOTE - only works for single file, no imports!!
+    private OntModel loadFromURL(String root) {
+        OntModel model = ModelFactory.createOntologyModel();
+        model.read(root);
+        return model;
     }
 
     public OntModel loadFromFile(final File root) {
