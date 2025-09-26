@@ -1,5 +1,6 @@
 package org.ontbrowser.www.kit.impl;
 
+import org.ontbrowser.www.BeforeLoad;
 import org.ontbrowser.www.io.OntologyLoader;
 import org.ontbrowser.www.kit.Config;
 import org.ontbrowser.www.kit.RestartListener;
@@ -12,27 +13,41 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 // Delegate pattern allows the implementation to be switched out
 public class DelegatingOWLHTMLKit implements OWLHTMLKit {
 
+    private static final Logger log = LoggerFactory.getLogger(DelegatingOWLHTMLKit.class);
+
     private OWLHTMLKit delegate;
 
+    private final List<BeforeLoad> beforeLoad;
     private final List<RestartListener> listeners = new ArrayList<>();
 
-    public DelegatingOWLHTMLKit(OWLHTMLKit delegate) {
+    public DelegatingOWLHTMLKit(OWLHTMLKit delegate, List<BeforeLoad> beforeLoad) {
         this.delegate = delegate;
+        this.beforeLoad = beforeLoad;
     }
 
     @Override
-    public void restart() throws OWLOntologyCreationException {
-        var config = getConfig();
+    public void restart(Config config) throws OWLOntologyCreationException {
+        beforeLoad.forEach(bl -> {
+            log.info("Before load: {}", bl.getClass().getSimpleName());
+            bl.beforeLoad(config);
+        });
         var ont = new OntologyLoader().loadOntologies(config.root());
         // only switches the implementation if the loading was successful
         delegate = new OWLHTMLKitInternals(ont, config);
         listeners.forEach(RestartListener::onRestart);
+    }
+
+    @Override
+    public void restart() throws OWLOntologyCreationException {
+        restart(getConfig());
     }
 
     @Override

@@ -3,14 +3,14 @@
       xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <th:block th:insert='~{base :: header (title=${"Error"})}'/>
+<!--    <th:block th:insert='~{base :: header (title=${"Error"})}'/>-->
 </head>
 
 <body class="wrapper">
 
-<div th:replace='~{base :: title}'></div>
+<!--<div th:replace='~{base :: title}'></div>-->
 
-<div th:replace='~{base :: menu}'></div>
+<!--<div th:replace='~{base :: menu}'></div>-->
 
 <div id='main'>
 
@@ -23,10 +23,10 @@
         <p th:text="${message}">
             Sorry, an error has occurred.
         </p>
-        <p>
-            If this is unexpected, consider reporting this to your <a th:href='${"mailto:" + projectInfo.contact}'>project contact</a>
-            who can check the application logs.
-        </p>
+<!--        <p>-->
+<!--            If this is unexpected, consider reporting this to your <a th:href='${"mailto:" + projectInfo.contact}'>project contact</a>-->
+<!--            who can check the application logs.-->
+<!--        </p>-->
         <p>
             Or, as an issue on the
             <a target="_blank" href='https://github.com/nickdrummond/ontology-browser/'>Github Ontology Browser
@@ -36,7 +36,7 @@
 
 </div>
 
-<div th:replace='~{base :: footer}'></div>
+<!--<div th:replace='~{base :: footer}'></div>-->
 
 </body>
 </html>

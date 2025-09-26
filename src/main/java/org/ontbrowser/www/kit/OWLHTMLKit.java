@@ -18,6 +18,8 @@ public interface OWLHTMLKit extends Restartable {
 
     Config getConfig();
 
+    void restart(Config config) throws OWLOntologyCreationException;
+
     void restart() throws OWLOntologyCreationException;
 
     URLScheme getURLScheme();

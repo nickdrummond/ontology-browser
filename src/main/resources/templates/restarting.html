@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Restarting Application</title>
+    <meta charset="UTF-8" />
+</head>
+<body>
+    <h1>Restarting Application...</h1>
+    <p>Please wait while the application restarts. You will be redirected automatically.</p>
+    <script type="text/javascript">
+        function checkApp() {
+            fetch("/", { method: "GET" })
+                .then(function(response) {
+                    if (response.status === 200) {
+                        window.location.href = "/";
+                    } else {
+                        setTimeout(checkApp, 2000);
+                    }
+                })
+                .catch(function() {
+                    setTimeout(checkApp, 2000);
+                });
+        }
+        setTimeout(checkApp, 2000);
+    </script>
+</body>
+</html>
+

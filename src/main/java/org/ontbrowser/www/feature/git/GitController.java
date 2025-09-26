@@ -7,6 +7,8 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.ui.Model;
@@ -25,6 +27,8 @@ import java.util.Objects;
 @RequestMapping(value = "/git")
 public class GitController extends ApplicationController {
 
+    private static final Logger log = LoggerFactory.getLogger(GitController.class);
+
     private final GitService gitService;
 
     public GitController(
@@ -38,8 +42,9 @@ public class GitController extends ApplicationController {
     public void update(
             HttpServletResponse response
     ) throws IOException, OWLOntologyCreationException {
-        gitService.pull();
-        kit.restart();
+        if (gitService.pull()) {
+            kit.restart();
+        }
         response.sendRedirect("/git/history");
     }
 
@@ -51,6 +56,10 @@ public class GitController extends ApplicationController {
             HttpServletRequest request,
             Principal principal
     ) {
+        if (!gitService.isAvailable()) {
+            return new ModelAndView("redirect:/");
+        }
+
         gitService.withGit(git -> {
             var local = gitService.getLocal(git);
             var commits = gitService.getCommits(git, start, pageSize);
@@ -68,6 +77,7 @@ public class GitController extends ApplicationController {
                 } else {
                     status = "with updates available";
                     var divergence = gitService.calculateDivergence(git, local, remote.get());
+                    log.info("divergence: {}", divergence);
                     model.addAttribute("divergence", divergence);
                 }
             }

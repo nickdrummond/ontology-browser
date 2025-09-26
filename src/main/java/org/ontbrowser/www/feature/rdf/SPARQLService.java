@@ -14,18 +14,24 @@ import org.apache.jena.util.FileManager;
 import org.apache.jena.util.LocationMapper;
 import org.apache.jena.util.LocatorFile;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.RestartListener;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 // TODO each ont as a separate graph?
-public class SPARQLService implements DisposableBean {
+@Profile("rdf")
+@Service
+public class SPARQLService implements DisposableBean, RestartListener {
 
     private static final Logger log = LoggerFactory.getLogger(SPARQLService.class);
 
@@ -38,9 +44,10 @@ public class SPARQLService implements DisposableBean {
 
     private String defaultPrefixes;
 
-    private final Dataset dataset;
+    private Dataset dataset;
 
-    public SPARQLService(String root, String dbLoc) {
+    public SPARQLService(@Value("${ontology.root.location}") String root, OWLHTMLKit kit) {
+        kit.registerListener(this);
         this.dataset = loadInMemoryInfModel(root);
     }
 
@@ -248,5 +255,13 @@ public class SPARQLService implements DisposableBean {
 
     private static String toSparqlPrefix(Map.Entry<String, String> entry) {
         return "PREFIX " + entry.getKey() + ": <" + entry.getValue() + ">";
+    }
+
+    @Override
+    public void onRestart() {
+        String rootLocation = System.getProperty("ontology.root.location");
+        this.dataset.close();
+        log.info("SPARQLService restarting with root: {}", rootLocation);
+        this.dataset = loadInMemoryInfModel(rootLocation);
     }
 }

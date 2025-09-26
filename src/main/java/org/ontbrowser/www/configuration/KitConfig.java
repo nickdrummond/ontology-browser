@@ -9,7 +9,6 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.DelegatingOWLHTMLKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitInternals;
 import org.ontbrowser.www.model.ProjectInfo;
-import org.ontbrowser.www.feature.rdf.SPARQLService;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -56,11 +55,14 @@ public class KitConfig {
             Config config
     ) throws OWLOntologyCreationException {
 
-        beforeLoad.forEach(bl -> logger.info("Before load: {}", bl.getClass().getSimpleName()));
+        beforeLoad.forEach(bl -> {
+            logger.info("Before load: {}", bl.getClass().getSimpleName());
+            bl.beforeLoad(config);
+        });
         OWLOntology ont = new OntologyLoader().loadOntologies(config.root());
         var internals = new OWLHTMLKitInternals(ont, config);
 
-        return new DelegatingOWLHTMLKit(internals);
+        return new DelegatingOWLHTMLKit(internals, beforeLoad);
     }
 
     @Bean
@@ -78,11 +80,5 @@ public class KitConfig {
     @Bean
     public Directory luceneDirectory() {
         return new ByteBuffersDirectory();
-    }
-
-    @Profile("rdf")
-    @Bean
-    public SPARQLService rdfDirectory(@Value("${ontology.root.location}") String root) {
-        return new SPARQLService(root, "tdb2/"); // NOTE: the TDB directory gets deleted each restart
     }
 }

@@ -60,6 +60,11 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     }
 
     @Override
+    public void restart(Config config) {
+        throw new RuntimeException("Cannot restart the internal implementation");
+    }
+
+    @Override
     public void restart() {
         throw new RuntimeException("Cannot restart the internal implementation");
     }

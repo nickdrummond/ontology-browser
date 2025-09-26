@@ -13,6 +13,7 @@ import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.FileTreeIterator;
 import org.ontbrowser.www.BeforeLoad;
+import org.ontbrowser.www.kit.Config;
 import org.ontbrowser.www.util.OWLUtils;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
@@ -41,8 +42,8 @@ public class GitService implements BeforeLoad {
 
     private static final Logger log = LoggerFactory.getLogger(GitService.class);
 
-    private final String remote;
-    private final File local;
+    private String remote;
+    private File local;
     private final String branch;
 
     public GitService(
@@ -50,7 +51,9 @@ public class GitService implements BeforeLoad {
             @Value("${git.branch}") String branch
     ) {
         this.branch = branch;
+    }
 
+    private void findRepo(String ontologyRoot) {
         var repoContainingRoot = findGitRepoFromFile(new File(ontologyRoot));
         if (repoContainingRoot.isPresent()) {
             this.local = repoContainingRoot.get();
@@ -75,6 +78,10 @@ public class GitService implements BeforeLoad {
         }
     }
 
+    public boolean isAvailable() {
+        return local != null;
+    }
+
     @Scheduled(fixedRateString = "${git.refresh}")
     private void fetch() {
         withGit(git -> git.fetch().call());
@@ -88,18 +95,22 @@ public class GitService implements BeforeLoad {
                 .findFirst();
     }
 
-    public void pull() {
+    public boolean pull() {
+        if (local == null) {
+            return false;
+        }
         withGit(git -> {
             var remote = getRemote(git);
-            remote.ifPresent(r -> {
+            if(remote.isPresent()) {
                 try {
                     log.info("Pulling from remote");
                     git.pull().call();
                 } catch (GitAPIException e) {
                     throw new RuntimeException(e);
                 }
-            });
+            }
         });
+        return true;
     }
 
 
@@ -129,6 +140,11 @@ public class GitService implements BeforeLoad {
         }
         File file = new File(docURI);
         return isChanged(file, diffEntries);
+    }
+
+    @Override
+    public void beforeLoad(Config config) {
+        findRepo(config.root());
     }
 
     @FunctionalInterface
