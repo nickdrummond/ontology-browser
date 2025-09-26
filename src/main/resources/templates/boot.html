@@ -2,16 +2,32 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Ontology Browser Boot</title>
+<!--    <title>Ontology Browser Boot</title>-->
+    <th:block th:replace='~{base :: header (title=${title})}'/>
 </head>
-<body>
-    <h1>Ontology Browser Boot</h1>
-    <p th:if="${error != null}" th:text="${error}"></p>
-    <form method="post" action="/boot">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <label for="ontologyRootLocation">Ontology Root Location:</label>
-        <input type="text" id="ontologyRootLocation" name="ontologyRootLocation" required />
-        <button type="submit">Set and Restart</button>
-    </form>
+
+<body class="wrapper">
+
+    <div th:replace='~{base :: title}'></div>
+    <div th:replace='~{base :: menu}'></div>
+
+    <div id="main">
+        <div id="content">
+        <h2>Boot</h2>
+        <p th:if="${error != null}" th:text="${error}"></p>
+        <form method="post" action="/boot">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <label for="projectName">Project name:</label>
+            <input type="text" id="projectName" name="projectName" required/>
+
+            <label for="ontologyRootLocation">Ontology Root Location:</label>
+            <input type="text" id="ontologyRootLocation" name="ontologyRootLocation" required/>
+            <button type="submit">Set and Restart</button>
+        </form>
+        </div>
+    </div>
+
+    <div th:replace='~{base :: footer}'></div>
 </body>
 </html>

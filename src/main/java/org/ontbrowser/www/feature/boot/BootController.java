@@ -1,16 +1,21 @@
 package org.ontbrowser.www.feature.boot;
 
+import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.kit.Config;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.model.ProjectInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
@@ -24,35 +29,62 @@ import java.net.URL;
  */
 @RestController
 @RequestMapping(value = "/boot")
-@ConditionalOnProperty(prefix = "ontology.root", name = "location", havingValue = "examples/pizza.owl")
+@ConditionalOnProperty(name = BootController.ROOT_PROPERTY, havingValue = BootController.DEFAULT_LOC)
 public class BootController {
     private static final Logger log = LoggerFactory.getLogger(BootController.class);
+    public static final String DEFAULT_LOC = "examples/pizza.owl";
+    public static final String ROOT_PROPERTY = "ontology.root.location";
+    public static final String PROPS_FILE = "application.properties";
+    public static final String PROJECT_NAME_PROP = "project.name";
 
     private final OWLHTMLKit kit;
+    private final CommonContent commonContent;
+    private final ProjectInfo projectInfo;
+    private final Environment environment;
 
     @Autowired
-    public BootController(OWLHTMLKit kit) {
+    public BootController(OWLHTMLKit kit, CommonContent commonContent, ProjectInfo projectInfo, Environment environment) {
         this.kit = kit;
+        this.commonContent = commonContent;
+        this.projectInfo = projectInfo;
+        this.environment = environment;
     }
 
     @RequestMapping()
-    public ModelAndView boot() {
+    public ModelAndView boot(Model model) {
+        checkEnabled();
+        commonContent.addCommonContent("", model, kit.getRootOntology());
         return new ModelAndView("boot");
+    }
+
+    private void checkEnabled() {
+        String loc = environment.getProperty(ROOT_PROPERTY);
+        if (!DEFAULT_LOC.equals(loc)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping()
     public ModelAndView configureAndRestart(
+            @RequestParam("projectName") String projectName,
             @RequestParam("ontologyRootLocation") String newLocation,
             Model model
     ) {
-        if (!isValidOntologyLocation(newLocation)) {
+        checkEnabled();
+        if (!isHtmlSafe(projectName)) {
+            log.warn("Rejected invalid projectName: {}", projectName);
+            model.addAttribute("error", "Invalid project name: " + projectName + ". Please supply a non-empty name without special characters.");
+            return boot(model);
+        }
+        if (!isValidLocation(newLocation)) {
             log.warn("Rejected invalid ontologyRootLocation: {}", newLocation);
             model.addAttribute("error", "Invalid location: " + newLocation + ". Please supply an OWL file. Either a local file or a valid URL: ");
-            return new ModelAndView("boot");
+            return boot(model);
         }
-        persistProperties(newLocation);
-        System.setProperty("ontology.root.location", newLocation);
-        log.info("Set ontology.root.location to {}. Restarting context...", newLocation);
+        persistProperties(newLocation, projectName);
+        System.setProperty(ROOT_PROPERTY, newLocation);
+        projectInfo.setName(projectName); // Update the bean
+        log.info("Boot update. Restarting...");
         Thread restartThread = new Thread(() -> {
             try {
                 var oldConfig = kit.getConfig();
@@ -67,15 +99,28 @@ public class BootController {
         return new ModelAndView("redirect:/boot/restarting");
     }
 
-    private static void persistProperties(String newLocation) {
-        try (java.io.FileWriter writer = new java.io.FileWriter("application.properties", false)) {
-            writer.write("ontology.root.location=" + newLocation + "\n");
+    @RequestMapping("/restarting")
+    public ModelAndView restarting() {
+        return new ModelAndView("restarting");
+    }
+
+    private static void persistProperties(String newLocation, String projectName) {
+        try (java.io.FileWriter writer = new java.io.FileWriter(PROPS_FILE, false)) {
+            writer.write(PROJECT_NAME_PROP + "=" + projectName + "\n");
+            writer.write(ROOT_PROPERTY + "=" + newLocation + "\n");
         } catch (Exception e) {
             log.error("Failed to persist ontology.root.location", e);
         }
     }
 
-    private static boolean isValidOntologyLocation(String location) {
+
+    private boolean isHtmlSafe(String projectName) {
+        if (projectName == null || projectName.isEmpty()) return false;
+        if (projectName.contains("<") || projectName.contains(">") || projectName.contains("&")) return false;
+        return true;
+    }
+
+    private static boolean isValidLocation(String location) {
         if (location == null || location.isBlank()) return false;
         try {
             // Check if it's a valid URL
@@ -92,10 +137,5 @@ public class BootController {
             }
         }
         return false;
-    }
-
-    @RequestMapping("/restarting")
-    public ModelAndView restarting() {
-        return new ModelAndView("restarting");
     }
 }
