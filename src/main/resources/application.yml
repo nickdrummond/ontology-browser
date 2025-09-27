@@ -1,5 +1,12 @@
 # properties
 
+spring:
+  thymeleaf:
+    servlet:
+      # needed for csrf token in /boot
+      produce-partial-output-while-processing: false
+
+
 logging:
     level:
         ROOT: WARN

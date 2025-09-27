@@ -4,6 +4,7 @@ import org.apache.commons.collections4.map.LRUMap;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -27,7 +28,7 @@ public class StatsService implements RestartListener {
     private final LRUMap<StatsMemo, Stats> cache = new LRUMap<>(20);
     private EntityCounts entityCountsTotal = null;
 
-    public StatsService(OWLHTMLKit kit) {
+    public StatsService(RestartableKit kit) {
         kit.registerListener(this);
         this.kit = kit;
     }

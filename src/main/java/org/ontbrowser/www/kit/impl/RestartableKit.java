@@ -1,11 +1,9 @@
 package org.ontbrowser.www.kit.impl;
 
 import org.ontbrowser.www.BeforeLoad;
+import org.ontbrowser.www.controller.AppStatus;
 import org.ontbrowser.www.io.OntologyLoader;
-import org.ontbrowser.www.kit.Config;
-import org.ontbrowser.www.kit.RestartListener;
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.*;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -19,35 +17,48 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 // Delegate pattern allows the implementation to be switched out
-public class DelegatingOWLHTMLKit implements OWLHTMLKit {
+public class RestartableKit implements OWLHTMLKit, Restartable {
 
-    private static final Logger log = LoggerFactory.getLogger(DelegatingOWLHTMLKit.class);
+    private static final Logger log = LoggerFactory.getLogger(RestartableKit.class);
 
     private OWLHTMLKit delegate;
 
     private final List<BeforeLoad> beforeLoad;
     private final List<RestartListener> listeners = new ArrayList<>();
+    private AppStatus status = new AppStatus(AppStatus.Status.STARTING);
 
-    public DelegatingOWLHTMLKit(OWLHTMLKit delegate, List<BeforeLoad> beforeLoad) {
+    public RestartableKit(OWLHTMLKit delegate, List<BeforeLoad> beforeLoad) {
         this.delegate = delegate;
         this.beforeLoad = beforeLoad;
+        status = new AppStatus(AppStatus.Status.UP);
     }
 
     @Override
-    public void restart(Config config) throws OWLOntologyCreationException {
+    public void restart(Config config) {
+        status = new AppStatus(AppStatus.Status.STARTING);
         beforeLoad.forEach(bl -> {
             log.info("Before load: {}", bl.getClass().getSimpleName());
             bl.beforeLoad(config);
         });
-        var ont = new OntologyLoader().loadOntologies(config.root());
-        // only switches the implementation if the loading was successful
-        delegate = new OWLHTMLKitInternals(ont, config);
-        listeners.forEach(RestartListener::onRestart);
+        try {
+            OWLOntology ont = new OntologyLoader().loadOntologies(config.root());
+            // only switches the implementation if the loading was successful
+            delegate = new OWLHTMLKitInternals(ont, config);
+            listeners.forEach(RestartListener::onRestart);
+            status = new AppStatus(AppStatus.Status.UP);
+        } catch (OWLOntologyCreationException e) {
+            log.error("Failed to restart", e);
+        }
     }
 
     @Override
-    public void restart() throws OWLOntologyCreationException {
+    public void restart() {
         restart(getConfig());
+    }
+
+    @Override
+    public AppStatus getStatus() {
+        return status;
     }
 
     @Override

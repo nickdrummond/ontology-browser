@@ -1,0 +1,28 @@
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+}
+
+label {
+    margin-top: 10px;
+}
+
+input {
+    padding: 5px;
+    font-size: 1em;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px;
+    font-size: 1em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}

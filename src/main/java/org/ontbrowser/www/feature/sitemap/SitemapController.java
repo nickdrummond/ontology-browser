@@ -1,7 +1,7 @@
 package org.ontbrowser.www.feature.sitemap;
 
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 @RequestMapping(value="/sitemap.xml")
 public class SitemapController extends ApplicationController {
 
-    public SitemapController(OWLHTMLKit kit) {
+    public SitemapController(RestartableKit kit) {
         super(kit);
     }
 

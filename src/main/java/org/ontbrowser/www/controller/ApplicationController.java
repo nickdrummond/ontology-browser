@@ -2,7 +2,7 @@ package org.ontbrowser.www.controller;
 
 import org.ontbrowser.www.feature.stats.EntityCounts;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ public abstract class ApplicationController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected final OWLHTMLKit kit;
+    protected final RestartableKit kit;
 
     // TODO remove autowiring
     @Autowired
@@ -29,7 +29,7 @@ public abstract class ApplicationController {
     @Autowired
     private StatsService statsService;
 
-    public ApplicationController(OWLHTMLKit kit) {
+    public ApplicationController(RestartableKit kit) {
         this.kit = kit;
     }
 

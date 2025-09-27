@@ -9,9 +9,17 @@
     <p>Please wait while the application restarts. You will be redirected automatically.</p>
     <script type="text/javascript">
         function checkApp() {
-            fetch("/", { method: "GET" })
+            fetch("/status", { method: "GET" })
                 .then(function(response) {
                     if (response.status === 200) {
+                        return response.json();
+                    } else {
+                        setTimeout(checkApp, 2000);
+                        return Promise.reject();
+                    }
+                })
+                .then(function(data) {
+                    if (data.status === "UP") {
                         window.location.href = "/";
                     } else {
                         setTimeout(checkApp, 2000);

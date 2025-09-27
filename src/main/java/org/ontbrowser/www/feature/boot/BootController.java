@@ -2,8 +2,9 @@ package org.ontbrowser.www.feature.boot;
 
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.kit.Config;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.ProjectInfo;
+import org.semanticweb.owlapi.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +37,16 @@ public class BootController {
     public static final String ROOT_PROPERTY = "ontology.root.location";
     public static final String PROPS_FILE = "application.properties";
     public static final String PROJECT_NAME_PROP = "project.name";
+    private static final String LABEL_IRI_PROPERTY = "renderer.annotation.iri";
+    private static final String LANGUAGE_PROPERTY = "renderer.annotation.lang";
 
-    private final OWLHTMLKit kit;
+    private final RestartableKit kit;
     private final CommonContent commonContent;
     private final ProjectInfo projectInfo;
     private final Environment environment;
 
     @Autowired
-    public BootController(OWLHTMLKit kit, CommonContent commonContent, ProjectInfo projectInfo, Environment environment) {
+    public BootController(RestartableKit kit, CommonContent commonContent, ProjectInfo projectInfo, Environment environment) {
         this.kit = kit;
         this.commonContent = commonContent;
         this.projectInfo = projectInfo;
@@ -53,7 +56,12 @@ public class BootController {
     @RequestMapping()
     public ModelAndView boot(Model model) {
         checkEnabled();
+        var oldConfig = kit.getConfig();
         commonContent.addCommonContent("", model, kit.getRootOntology());
+        model.addAttribute("title", "Boot configuration");
+        model.addAttribute("currentProjectName", projectInfo.name());
+        model.addAttribute("labelIRI", oldConfig.labelIRI().toString());
+        model.addAttribute("language", oldConfig.labelLang());
         return new ModelAndView("boot");
     }
 
@@ -68,35 +76,46 @@ public class BootController {
     public ModelAndView configureAndRestart(
             @RequestParam("projectName") String projectName,
             @RequestParam("ontologyRootLocation") String newLocation,
+            @RequestParam("labelIRI") String labelIRI,
+            @RequestParam("language") String language,
             Model model
     ) {
         checkEnabled();
         if (!isHtmlSafe(projectName)) {
-            log.warn("Rejected invalid projectName: {}", projectName);
             model.addAttribute("error", "Invalid project name: " + projectName + ". Please supply a non-empty name without special characters.");
             return boot(model);
         }
         if (!isValidLocation(newLocation)) {
-            log.warn("Rejected invalid ontologyRootLocation: {}", newLocation);
             model.addAttribute("error", "Invalid location: " + newLocation + ". Please supply an OWL file. Either a local file or a valid URL: ");
             return boot(model);
         }
-        persistProperties(newLocation, projectName);
+        if (!isValidIRI(labelIRI)) {
+            model.addAttribute("error", "Invalid label IRI: " + labelIRI + ". Please supply the IRI of an annotation property: ");
+            return boot(model);
+        }
+        if (!isValidLanguage(language)) {
+            model.addAttribute("error", "Invalid language: " + language + ". Please supply a valid BCP47 language code, or leave empty for no language filtering.");
+            return boot(model);
+        }
+        persistProperties(newLocation, projectName, labelIRI, language);
         System.setProperty(ROOT_PROPERTY, newLocation);
         projectInfo.setName(projectName); // Update the bean
         log.info("Boot update. Restarting...");
-        Thread restartThread = new Thread(() -> {
+        ModelAndView mv = new ModelAndView("redirect:/boot/restarting");
+        // Start restart thread only after response is returned
+        new Thread(() -> {
             try {
-                var oldConfig = kit.getConfig();
-                var config = new Config(newLocation, oldConfig.labelIRI(), oldConfig.labelLang());
+                var config = new Config(newLocation, IRI.create(labelIRI), language);
                 kit.restart(config); // Actually restart the kit
             } catch (Exception e) {
                 log.error("Restart thread error", e);
             }
-        });
-        restartThread.setDaemon(false);
-        restartThread.start();
-        return new ModelAndView("redirect:/boot/restarting");
+        }).start();
+        return mv;
+    }
+
+    private boolean isValidLanguage(String language) {
+        return language.isEmpty() || language.matches("^[a-zA-Z]{2}$");
     }
 
     @RequestMapping("/restarting")
@@ -104,10 +123,14 @@ public class BootController {
         return new ModelAndView("restarting");
     }
 
-    private static void persistProperties(String newLocation, String projectName) {
+    private static void persistProperties(String newLocation, String projectName, String labelIRI, String language) {
         try (java.io.FileWriter writer = new java.io.FileWriter(PROPS_FILE, false)) {
             writer.write(PROJECT_NAME_PROP + "=" + projectName + "\n");
             writer.write(ROOT_PROPERTY + "=" + newLocation + "\n");
+            writer.write(LABEL_IRI_PROPERTY + "=" + labelIRI + "\n");
+            writer.write(LANGUAGE_PROPERTY + "=" + language + "\n");
+            //renderer:
+            //  annotation
         } catch (Exception e) {
             log.error("Failed to persist ontology.root.location", e);
         }
@@ -120,21 +143,25 @@ public class BootController {
         return true;
     }
 
+    private static boolean isValidIRI(String labelIRI) {
+        try {
+            URL url = new URL(labelIRI);
+            String protocol = url.getProtocol();
+            return (protocol != null);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private static boolean isValidLocation(String location) {
         if (location == null || location.isBlank()) return false;
-        try {
-            // Check if it's a valid URL
-            URL url = new URL(location);
-            String protocol = url.getProtocol();
-            if (protocol.equals("http") || protocol.equals("https") || protocol.equals("file")) {
-                return true;
-            }
-        } catch (Exception e) {
-            // Not a valid URL, check if it's a file that exists
-            File file = new File(location);
-            if (file.exists() && file.isFile()) {
-                return true;
-            }
+        if (isValidIRI(location)) {
+            return true;
+        }
+        // Not a valid URL, check if it's a file that exists
+        File file = new File(location);
+        if (file.exists() && file.isFile()) {
+            return true;
         }
         return false;
     }

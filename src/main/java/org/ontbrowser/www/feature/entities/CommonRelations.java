@@ -7,6 +7,7 @@ import org.ontbrowser.www.feature.stats.StatsMemo;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.renderer.RendererFactory;
@@ -37,7 +38,7 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
 
     public CommonRelations(
             String path,
-            OWLHTMLKit kit,
+            RestartableKit kit,
             PropertiesService<T> propertiesService,
             OWLIndividualsService individualsService,
             @Nonnull RendererFactory rendererFactory,

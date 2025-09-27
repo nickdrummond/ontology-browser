@@ -15,6 +15,7 @@ import org.apache.jena.util.LocationMapper;
 import org.apache.jena.util.LocatorFile;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public class SPARQLService implements DisposableBean, RestartListener {
 
     private Dataset dataset;
 
-    public SPARQLService(@Value("${ontology.root.location}") String root, OWLHTMLKit kit) {
+    public SPARQLService(@Value("${ontology.root.location}") String root, RestartableKit kit) {
         kit.registerListener(this);
         this.dataset = loadInMemoryInfModel(root);
     }

@@ -3,11 +3,11 @@ package org.ontbrowser.www.feature.graph;
 import com.google.common.collect.Streams;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
-import org.ontbrowser.www.feature.parser.ParserService;
 import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
+import org.ontbrowser.www.feature.parser.ParserService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -35,7 +35,7 @@ public class GraphController extends ApplicationController {
     private final ReasonerService reasonerService;
 
     public GraphController(
-            OWLHTMLKit kit,
+            RestartableKit kit,
             ParserService parserService,
             ReasonerService reasonerService
     ) {

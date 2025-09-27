@@ -9,7 +9,7 @@ import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLObjectPropertyHierarchyService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -49,7 +49,7 @@ public class OWLPropertyRelationsController extends ApplicationController {
             OWLIndividualsService individualsService,
             ReasonerFactoryService reasonerFactoryService,
             ReasonerService reasonerService,
-            OWLHTMLKit kit,
+            RestartableKit kit,
             RendererFactory rendererFactory,
             StatsService statsService,
             ProjectInfo projectInfo,

@@ -16,6 +16,7 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.renderer.LabelShortFormProvider;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
@@ -52,7 +53,7 @@ public class LuceneSearchService implements SearchService, RestartListener {
 
     public LuceneSearchService(
             Directory directory,
-            OWLHTMLKit kit) {
+            RestartableKit kit) {
         this.directory = directory;
         this.kit = kit;
         kit.registerListener(this);

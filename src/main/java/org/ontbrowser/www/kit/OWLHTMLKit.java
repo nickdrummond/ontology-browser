@@ -4,7 +4,10 @@ import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -14,13 +17,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public interface OWLHTMLKit extends Restartable {
+public interface OWLHTMLKit {
 
     Config getConfig();
-
-    void restart(Config config) throws OWLOntologyCreationException;
-
-    void restart() throws OWLOntologyCreationException;
 
     URLScheme getURLScheme();
 

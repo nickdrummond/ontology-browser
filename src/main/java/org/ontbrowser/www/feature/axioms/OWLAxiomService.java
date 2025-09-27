@@ -1,8 +1,8 @@
 package org.ontbrowser.www.feature.axioms;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.kit.Restartable;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
@@ -31,7 +31,7 @@ class OWLAxiomService implements RestartListener {
 
     private final Map<OWLOntology, Map<OWLAxiom, String>> axiomsRenderingsByOntology = new HashMap<>();
 
-    public OWLAxiomService(OWLHTMLKit kit) {
+    public OWLAxiomService(Restartable kit) {
         kit.registerListener(this);
     }
 

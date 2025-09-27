@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -41,7 +42,7 @@ public class ReasonerService implements RestartListener {
     private final ReasonerFactoryService reasonerFactoryService;
 
     public ReasonerService(
-            OWLHTMLKit kit,
+            RestartableKit kit,
             ExecutorService es,
             Map<DLQuery, Future<Set<OWLEntity>>> cache,
             ReasonerFactoryService reasonerFactoryService) {

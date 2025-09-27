@@ -9,7 +9,7 @@ import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import uk.ac.manchester.cs.owl.owlapi.OWLClassImpl;
@@ -30,7 +30,7 @@ public class ReasonerServiceTest {
     public final DLQuery q2 = new DLQuery(new OWLClassImpl(IRI.create("test2")), QueryType.instances);
 
     @Mock
-    private OWLHTMLKit kit;
+    private RestartableKit kit;
 
     @Mock
     private ReasonerFactoryService reasonerFactoryService;

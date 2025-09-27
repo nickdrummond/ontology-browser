@@ -6,7 +6,7 @@ import org.ontbrowser.www.BeforeLoad;
 import org.ontbrowser.www.io.OntologyLoader;
 import org.ontbrowser.www.kit.Config;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.impl.DelegatingOWLHTMLKit;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.kit.impl.OWLHTMLKitInternals;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.RendererFactory;
@@ -50,7 +50,7 @@ public class KitConfig {
     }
 
     @Bean
-    public OWLHTMLKit owlhtmlKit(
+    public RestartableKit owlhtmlKit(
             List<BeforeLoad> beforeLoad,
             Config config
     ) throws OWLOntologyCreationException {
@@ -62,7 +62,7 @@ public class KitConfig {
         OWLOntology ont = new OntologyLoader().loadOntologies(config.root());
         var internals = new OWLHTMLKitInternals(ont, config);
 
-        return new DelegatingOWLHTMLKit(internals, beforeLoad);
+        return new RestartableKit(internals, beforeLoad);
     }
 
     @Bean

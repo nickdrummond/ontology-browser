@@ -6,7 +6,7 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -23,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -44,7 +43,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
 
     public OWLAnnotationRelationsController(
-            OWLHTMLKit kit,
+            RestartableKit kit,
             OWLAnnotationPropertiesService propertiesService,
             OWLIndividualsService individualsService,
             ProjectInfo projectInfo,
