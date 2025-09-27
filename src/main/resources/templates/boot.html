@@ -13,11 +13,16 @@
 <div th:replace='~{base :: menu}'></div>
 
 <div id="main">
+<div class="sidebar">
+    <p>This is a one-off configuration of your ontology browser.</p>
+    <p>The following options will be saved in an application.properties file that will be used on subsequent starts.</p>
+
+    <p>This page will no longer be accessible by users once you have restarted, unless you delete the properties file.</p>
+</div>
+
     <div id="content">
         <h2>Boot</h2>
         <form method="post" action="/boot">
-            <p>This is a one-off configuration of your ontology browser.</p>
-            <p>The following options will be saved in an application.properties file that will be used on subsequent starts.</p>
             <p th:if="${error != null}" th:text="${error}"></p>
 
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -35,7 +40,6 @@
             <input type="text" id="language" name="language" th:value="${language}"/>
 
             <button type="submit">Configure and Restart</button>
-            <p>This page will no longer be accessible by users once you have restarted, unless you delete the properties file.</p>
         </form>
     </div>
 </div>
