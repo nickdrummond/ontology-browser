@@ -1,5 +1,6 @@
 package org.ontbrowser.www.feature.rdf;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
@@ -10,12 +11,10 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.DatasetOne;
-import org.apache.jena.util.FileManager;
-import org.apache.jena.util.LocationMapper;
-import org.apache.jena.util.LocatorFile;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.slf4j.Logger;
@@ -25,7 +24,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,13 +43,28 @@ public class SPARQLService implements DisposableBean, RestartListener {
             }
             """.stripLeading();
 
+    private String root;
+    private RestartableKit kit;
+
     private String defaultPrefixes;
 
     private Dataset dataset;
 
     public SPARQLService(@Value("${ontology.root.location}") String root, RestartableKit kit) {
+        this.root = root;
+        this.kit = kit;
         kit.registerListener(this);
-        this.dataset = loadInMemoryInfModel(root);
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            this.dataset = loadInMemoryInfModel(root);
+        } catch (Exception e) {
+            // Do not kill the browser if jena fails to load the ontology
+            log.error("SPARQL Failed to load ontology: {}", e.getMessage());
+            this.dataset = null; // or set to a fallback Dataset if desired
+        }
     }
 
     public Dataset loadInMemoryInfModel(final String root) {
@@ -66,16 +81,7 @@ public class SPARQLService implements DisposableBean, RestartListener {
         OntModel model;
         long t1 = System.currentTimeMillis();
 
-        if (root.startsWith("http://") || root.startsWith("https://")) {
-            model = loadFromURL(root); // for demo purposes
-        } else {
-            File rootFile = new File(root);
-            if (rootFile.exists()) {
-                model = loadFromFile(rootFile);
-            } else {
-                model = loadFromClassPath(root); // for demo purposes
-            }
-        }
+        model = toJenaModelWithImports(kit.getOWLOntologyManager());
 
         long t2 = System.currentTimeMillis();
 
@@ -84,92 +90,16 @@ public class SPARQLService implements DisposableBean, RestartListener {
         return model;
     }
 
-    // NOTE - only works for single file, no imports!!
-    private OntModel loadFromClassPath(String root) {
-        var res = getClass().getClassLoader().getResource(root);
-        if (res != null) {
-            try (var in = res.openStream()) {
-                OntModel model = ModelFactory.createOntologyModel();
-                model.read(in, "base");
-                return model;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            throw new RuntimeException("Could not find root ontology on classpath: " + root);
-        }
-    }
-
-    // NOTE - only works for single file, no imports!!
-    private OntModel loadFromURL(String root) {
-        OntModel model = ModelFactory.createOntologyModel();
-        model.read(root);
-        return model;
-    }
-
-    public OntModel loadFromFile(final File root) {
-        File baseDir = root.getParentFile();
-
-        FileManager mngr = getFileManager(baseDir);
-        OntDocumentManager dm = new OntDocumentManager();
-        dm.setFileManager(mngr);
-        dm.setProcessImports(true);
-        dm.setReadFailureHandler((url, m, e) ->
-                log.warn("Failed to load " + url + " " + e.getMessage())
-        );
-
-        OntModelSpec spec = new OntModelSpec(OntModelSpec.OWL_MEM);
-        spec.setDocumentManager(dm);
-        OntModel model = ModelFactory.createOntologyModel(spec);
-        String absolutePath = root.getAbsolutePath();
-        model.read(absolutePath);
-        return model;
-    }
-
-    private static FileManager getFileManager(File baseDir) {
-        LocationMapper locMapper = new LocationMapper() {
-            @Override
-            public String altMapping(String uri, String otherwise) {
-                String fileName = uri.substring(uri.lastIndexOf('/') + 1);
-                File localFile = new File(baseDir, fileName);
-
-                if (localFile.exists()) {
-                    String localURI = localFile.getAbsolutePath();
-                    log.debug("Mapping {} -> {}", uri, localURI);
-                    return super.altMapping(uri, localURI);
-                }
-
-                log.warn("No local file found for: {}", uri);
-                return super.altMapping(uri, null); // Let Jena know we couldn't map this
-            }
-        };
-
-        // Set up document manager with our mapper and a file locator
-        var mngr = new FileManager(locMapper);
-        mngr.addLocator(new LocatorFile(baseDir.getAbsolutePath()));
-        return mngr;
-    }
-
-    private void listImports(OntModel model) {
-        model.getImportModelMaker().listModels().forEachRemaining(mURI -> {
-            OntDocumentManager dm = model.getDocumentManager();
-            String alt = dm.getFileManager().getLocationMapper().altMapping(mURI);
-
-            OntModel m = dm.getOntology(mURI, OntModelSpec.OWL_MEM);
-            if (m != null) {
-                log.info("import = " + mURI + " from " + alt);
-            } else {
-                log.warn("Cannot find model for " + mURI);
-            }
-        });
-    }
-
     @Override
     public void destroy() {
         this.dataset.close();
     }
 
     public List<Map<String, OWLObject>> select(String select, OWLOntology ont) {
+        if (this.dataset == null) {
+            throw new IllegalStateException("No RDF dataset loaded");
+        }
+
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
 
         Query qry = QueryFactory.create(select);
@@ -270,9 +200,34 @@ public class SPARQLService implements DisposableBean, RestartListener {
 
     @Override
     public void onRestart() {
-        String rootLocation = System.getProperty("ontology.root.location");
+        this.root = System.getProperty("ontology.root.location");
         this.dataset.close();
-        log.info("SPARQLService restarting with root: {}", rootLocation);
-        this.dataset = loadInMemoryInfModel(rootLocation);
+        log.info("SPARQLService restarting with root: {}", this.root);
+        init();
+    }
+
+    /**
+     * Converts all ontologies loaded in the OWLOntologyManager (including imports) to a single Jena OntModel using Turtle format.
+     */
+    public static OntModel toJenaModelWithImports(OWLOntologyManager manager) {
+        try {
+            OntDocumentManager dm = new OntDocumentManager();
+            dm.setProcessImports(false); // We handle imports ourselves
+            dm.setReadFailureHandler((url, m, e) ->
+                    log.warn("Failed to load " + url + " " + e.getMessage())
+            );
+
+            OntModelSpec spec = new OntModelSpec(OntModelSpec.OWL_MEM);
+            spec.setDocumentManager(dm);
+            OntModel jenaModel = ModelFactory.createOntologyModel(spec);
+            for (OWLOntology ont : manager.getOntologies()) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                manager.saveOntology(ont, new TurtleDocumentFormat(), out);
+                jenaModel.read(new ByteArrayInputStream(out.toByteArray()), null, "TTL");
+            }
+            return jenaModel;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert OWLOntology (with imports) to Jena OntModel", e);
+        }
     }
 }
