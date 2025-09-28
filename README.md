@@ -113,6 +113,17 @@ You can also specify a branch to use (default is "master").
 
     GIT_BRANCH=<branch> (default = master)
 
+## Loading ontologies from https
+
+You can load ontologies from https locations by specifying a trust store containing the relevant CA certs.
+
+Download the pem file from the server (eg using your browser) and import it into a jks truststore using keytool.
+```keytool -import -alias myserver -keystore /path/to/truststore.jks -file myserver.pem```
+
+Then specify the truststore location and password when starting the app:
+
+```-Djavax.net.ssl.trustStore=/path/to/truststore.jks -Djavax.net.ssl.trustStorePassword=changeit```
+
 ## Implementation
 
 This is implemented using Java 20, Spring Boot, [OWLAPI](https://github.com/owlcs/owlapi) and Thymeleaf.
