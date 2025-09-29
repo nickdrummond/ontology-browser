@@ -3,7 +3,7 @@ package org.ontbrowser.www.feature.rdf;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.query.QueryParseException;
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
@@ -25,7 +25,7 @@ public class SPARQLController extends ApplicationController {
     private final SPARQLService sparqlService;
 
     public SPARQLController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             SPARQLService sparqlService
     ) {
         super(kit);

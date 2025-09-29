@@ -8,11 +8,10 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.DatasetOne;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.RestartListener;
+import org.ontbrowser.www.kit.event.RestartEvent;
 import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
 import org.semanticweb.owlapi.model.*;
@@ -20,8 +19,8 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 // TODO each ont as a separate graph?
 @Profile("rdf")
 @Service
-public class SPARQLService implements DisposableBean, RestartListener {
+public class SPARQLService implements DisposableBean {
 
     private static final Logger log = LoggerFactory.getLogger(SPARQLService.class);
 
@@ -43,23 +42,20 @@ public class SPARQLService implements DisposableBean, RestartListener {
             }
             """.stripLeading();
 
-    private String root;
     private RestartableKit kit;
 
     private String defaultPrefixes;
 
     private Dataset dataset;
 
-    public SPARQLService(@Value("${ontology.root.location}") String root, RestartableKit kit) {
-        this.root = root;
+    public SPARQLService(RestartableKit kit) {
         this.kit = kit;
-        kit.registerListener(this);
     }
 
     @PostConstruct
     public void init() {
         try {
-            this.dataset = loadInMemoryInfModel(root);
+            this.dataset = loadInMemoryInfModel();
         } catch (Exception e) {
             // Do not kill the browser if jena fails to load the ontology
             log.error("SPARQL Failed to load ontology: {}", e.getMessage());
@@ -67,17 +63,17 @@ public class SPARQLService implements DisposableBean, RestartListener {
         }
     }
 
-    public Dataset loadInMemoryInfModel(final String root) {
+    public Dataset loadInMemoryInfModel() {
         // TODO make inference optional
-        var basicModel = loadMemoryModel(root);
+        var basicModel = loadMemoryModel();
 
-        Reasoner rdfsReasoner = ReasonerRegistry.getRDFSReasoner();
+        var rdfsReasoner = ReasonerRegistry.getRDFSReasoner();
         var rdfsInfModel = ModelFactory.createInfModel(rdfsReasoner, basicModel);
 
         return DatasetOne.create(rdfsInfModel);
     }
 
-    public Model loadMemoryModel(final String root) {
+    public Model loadMemoryModel() {
         OntModel model;
         long t1 = System.currentTimeMillis();
 
@@ -102,7 +98,7 @@ public class SPARQLService implements DisposableBean, RestartListener {
 
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
 
-        Query qry = QueryFactory.create(select);
+        var qry = QueryFactory.create(select);
 
         this.dataset.begin(ReadWrite.READ);
 
@@ -198,12 +194,16 @@ public class SPARQLService implements DisposableBean, RestartListener {
         return "PREFIX " + entry.getKey() + ": <" + entry.getValue() + ">";
     }
 
-    @Override
-    public void onRestart() {
-        this.root = System.getProperty("ontology.root.location");
-        this.dataset.close();
-        log.info("SPARQLService restarting with root: {}", this.root);
-        init();
+    @EventListener
+    public void onRestart(RestartEvent event) {
+        log.info("SPARQLService received RestartEvent, reloading ontology...");
+        try {
+            this.dataset.close();
+            init();
+        } catch (Exception e) {
+            log.error("SPARQL Failed to reload ontology on restart: {}", e.getMessage());
+            this.dataset = null;
+        }
     }
 
     /**
@@ -211,19 +211,21 @@ public class SPARQLService implements DisposableBean, RestartListener {
      */
     public static OntModel toJenaModelWithImports(OWLOntologyManager manager) {
         try {
-            OntDocumentManager dm = new OntDocumentManager();
+            var dm = new OntDocumentManager();
             dm.setProcessImports(false); // We handle imports ourselves
             dm.setReadFailureHandler((url, m, e) ->
                     log.warn("Failed to load " + url + " " + e.getMessage())
             );
 
-            OntModelSpec spec = new OntModelSpec(OntModelSpec.OWL_MEM);
+            var spec = new OntModelSpec(OntModelSpec.OWL_MEM);
             spec.setDocumentManager(dm);
-            OntModel jenaModel = ModelFactory.createOntologyModel(spec);
+            var jenaModel = ModelFactory.createOntologyModel(spec);
             for (OWLOntology ont : manager.getOntologies()) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                manager.saveOntology(ont, new TurtleDocumentFormat(), out);
-                jenaModel.read(new ByteArrayInputStream(out.toByteArray()), null, "TTL");
+                var out = new ByteArrayOutputStream();
+                var format = new TurtleDocumentFormat();
+                manager.saveOntology(ont, format, out);
+                String base = format.getDefaultPrefix(); // Get base from Turtle format
+                jenaModel.read(new ByteArrayInputStream(out.toByteArray()), base, "TTL");
             }
             return jenaModel;
         } catch (Exception e) {

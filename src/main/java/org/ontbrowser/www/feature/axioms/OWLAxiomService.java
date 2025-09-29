@@ -1,8 +1,8 @@
 package org.ontbrowser.www.feature.axioms;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.kit.Restartable;
+import org.ontbrowser.www.kit.event.RestartEvent;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.StringWriter;
@@ -25,14 +26,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-class OWLAxiomService implements RestartListener {
+class OWLAxiomService {
 
     private static final Logger log = LoggerFactory.getLogger(OWLAxiomService.class);
 
     private final Map<OWLOntology, Map<OWLAxiom, String>> axiomsRenderingsByOntology = new HashMap<>();
 
     public OWLAxiomService(Restartable kit) {
-        kit.registerListener(this);
     }
 
     public Characteristic getAxioms(
@@ -203,8 +203,8 @@ class OWLAxiomService implements RestartListener {
         return axioms.map(a -> new AxiomWithMetadata("Axioms", a, a, ont));
     }
 
-    @Override
-    public void onRestart() {
+    @EventListener
+    public void onRestart(RestartEvent event) {
         log.info("Clearing axiom cache");
         axiomsRenderingsByOntology.clear();
     }

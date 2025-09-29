@@ -11,7 +11,7 @@ import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.Stats;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -48,7 +48,7 @@ public class OWLIndividualsController extends ApplicationController {
     private final CommonContent commonContent;
 
     public OWLIndividualsController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             OWLIndividualsService individualsService,
             OWLClassesService owlClassesService,
             ReasonerFactoryService reasonerFactoryService,

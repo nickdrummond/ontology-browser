@@ -1,15 +1,16 @@
 package org.ontbrowser.www.feature.stats;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.RestartListener;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
+import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.event.RestartEvent;
 import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,7 +20,7 @@ import static org.ontbrowser.www.feature.stats.StatsHelper.getBarData;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class StatsService implements RestartListener {
+public class StatsService {
 
     private static final Logger log = LoggerFactory.getLogger(StatsService.class);
 
@@ -29,7 +30,6 @@ public class StatsService implements RestartListener {
     private EntityCounts entityCountsTotal = null;
 
     public StatsService(RestartableKit kit) {
-        kit.registerListener(this);
         this.kit = kit;
     }
 
@@ -129,8 +129,8 @@ public class StatsService implements RestartListener {
         return entityCountsTotal;
     }
 
-    @Override
-    public void onRestart() {
+    @EventListener
+    public void onRestart(RestartEvent event) {
         log.info("Clearing stats cache");
         cache.clear();
         entityCountsTotal = null;

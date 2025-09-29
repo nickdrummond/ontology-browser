@@ -6,7 +6,7 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.hierarchy.OWLDatatypeHierarchyService;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -30,7 +30,7 @@ public class OWLDatatypesController extends ApplicationController {
     private final CommonContent commonContent;
 
     public OWLDatatypesController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             OWLDatatypesService service,
             CommonContent commonContent
     ) {

@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.parser.ParserService;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.IRI;
@@ -40,7 +40,7 @@ public class EditController extends ApplicationController {
     private final ParserService parserService;
 
     public EditController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             EditService editService,
             ParserService parserService
     ) {

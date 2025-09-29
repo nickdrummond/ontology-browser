@@ -39,7 +39,7 @@ public class OWLOntologiesController extends ApplicationController {
     private final OWLOntologiesService service;
 
     public OWLOntologiesController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             OWLOntologiesService service) {
         super(kit);
         this.service = service;

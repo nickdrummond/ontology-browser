@@ -1,9 +1,6 @@
 package org.ontbrowser.www.feature.admin;
 
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.kit.impl.RestartableKit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,12 +10,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Profile("admin")
 @RestController
 @RequestMapping(value="/admin")
-public class AdminController extends ApplicationController {
+public class AdminController {
 
-    private static final Logger log = LoggerFactory.getLogger(AdminController.class);
+    private final RestartableKit kit;
 
     public AdminController(RestartableKit kit) {
-        super(kit);
+        this.kit = kit;
     }
 
     @GetMapping()

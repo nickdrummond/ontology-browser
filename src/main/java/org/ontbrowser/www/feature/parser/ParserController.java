@@ -1,7 +1,7 @@
 package org.ontbrowser.www.feature.parser;
 
 import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class ParserController  extends ApplicationController {
     private ParserService parserService;
 
     public ParserController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             ParserService parserService
     ) {
         super(kit);

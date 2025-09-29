@@ -2,7 +2,6 @@ package org.ontbrowser.www.feature.git;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
@@ -25,16 +24,17 @@ import java.util.Objects;
 @RestController
 @Profile("git")
 @RequestMapping(value = "/git")
-public class GitController extends ApplicationController {
+public class GitController {
 
     private static final Logger log = LoggerFactory.getLogger(GitController.class);
 
     private final GitService gitService;
+    private final RestartableKit kit;
 
     public GitController(
             RestartableKit kit,
             GitService gitService) {
-        super(kit);
+        this.kit = kit;
         this.gitService = gitService;
     }
 

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.URI;
 import java.util.List;
@@ -52,7 +53,8 @@ public class KitConfig {
     @Bean
     public RestartableKit owlhtmlKit(
             List<BeforeLoad> beforeLoad,
-            Config config
+            Config config,
+            ApplicationEventPublisher eventPublisher
     ) throws OWLOntologyCreationException {
 
         beforeLoad.forEach(bl -> {
@@ -62,7 +64,7 @@ public class KitConfig {
         OWLOntology ont = new OntologyLoader().loadOntologies(config.root());
         var internals = new OWLHTMLKitInternals(ont, config);
 
-        return new RestartableKit(internals, beforeLoad);
+        return new RestartableKit(internals, beforeLoad, eventPublisher);
     }
 
     @Bean

@@ -3,7 +3,7 @@ package org.ontbrowser.www.feature.axioms;
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -31,7 +31,7 @@ public class OWLAxiomsController extends ApplicationController {
     private final CommonContent commonContent;
 
     OWLAxiomsController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             OWLAxiomService axiomService,
             CommonContent commonContent) {
         super(kit);

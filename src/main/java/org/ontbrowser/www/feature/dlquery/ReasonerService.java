@@ -3,8 +3,7 @@ package org.ontbrowser.www.feature.dlquery;
 import com.google.common.collect.ImmutableSet;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.RestartListener;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.event.RestartEvent;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -12,6 +11,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 @Service
-public class ReasonerService implements RestartListener {
+public class ReasonerService {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -42,12 +42,11 @@ public class ReasonerService implements RestartListener {
     private final ReasonerFactoryService reasonerFactoryService;
 
     public ReasonerService(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             ExecutorService es,
             Map<DLQuery, Future<Set<OWLEntity>>> cache,
             ReasonerFactoryService reasonerFactoryService) {
         this.kit = kit;
-        kit.registerListener(this);
         this.es = es;
         this.cache = cache;
         this.reasonerFactoryService = reasonerFactoryService;
@@ -112,8 +111,8 @@ public class ReasonerService implements RestartListener {
         return ImmutableSet.copyOf(entities);
     }
 
-    @Override
-    public void onRestart() {
+    @EventListener
+    public void onRestart(RestartEvent event) {
         log.info("Clearing DL results cache");
         cache.clear();
         reasonerFactoryService.clear();

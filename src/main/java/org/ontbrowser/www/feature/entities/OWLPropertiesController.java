@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.graph.GraphURLScheme;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
@@ -29,7 +29,7 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
     private final Class<P> clz;
 
     public OWLPropertiesController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             PropertiesService<P> service,
             CommonContent commonContent,
             Class<P> clz

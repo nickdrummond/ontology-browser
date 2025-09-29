@@ -1,7 +1,7 @@
 package org.ontbrowser.www.feature.entities;
 
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OWLObjectPropertiesController extends OWLPropertiesController<OWLObjectProperty> {
 
     public OWLObjectPropertiesController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             PropertiesService<OWLObjectProperty> service,
             CommonContent commonContent
     ) {

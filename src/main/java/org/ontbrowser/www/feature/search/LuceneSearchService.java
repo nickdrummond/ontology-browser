@@ -15,8 +15,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.RestartListener;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.event.RestartEvent;
 import org.ontbrowser.www.renderer.LabelShortFormProvider;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
@@ -27,6 +26,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ import static org.apache.lucene.document.Field.Store.YES;
 
 @Profile("lucene")
 @Service
-public class LuceneSearchService implements SearchService, RestartListener {
+public class LuceneSearchService implements SearchService {
 
     private static final Logger log = LoggerFactory.getLogger(LuceneSearchService.class);
 
@@ -53,10 +53,10 @@ public class LuceneSearchService implements SearchService, RestartListener {
 
     public LuceneSearchService(
             Directory directory,
-            RestartableKit kit) {
+            OWLHTMLKit kit
+    ) {
         this.directory = directory;
         this.kit = kit;
-        kit.registerListener(this);
         this.analyzer = new DelegatingAnalyzerWrapper(PER_FIELD_REUSE_STRATEGY) {
             private final Analyzer defaultAnalyzer = new StandardAnalyzer();
             private final Analyzer keywordAnalyzer = new KeywordAnalyzer();
@@ -72,8 +72,8 @@ public class LuceneSearchService implements SearchService, RestartListener {
         doIndex();
     }
 
-    @Override
-    public void onRestart() {
+    @EventListener
+    public void onRestart(RestartEvent event) {
         doIndex();
     }
 

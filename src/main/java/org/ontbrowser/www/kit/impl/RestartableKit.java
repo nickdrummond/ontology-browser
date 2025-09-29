@@ -13,6 +13,8 @@ import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
+import org.ontbrowser.www.kit.event.RestartEvent;
 
 import java.util.*;
 
@@ -24,12 +26,13 @@ public class RestartableKit implements OWLHTMLKit, Restartable {
     private OWLHTMLKit delegate;
 
     private final List<BeforeLoad> beforeLoad;
-    private final List<RestartListener> listeners = new ArrayList<>();
     private AppStatus status = new AppStatus(AppStatus.Status.STARTING);
+    private ApplicationEventPublisher eventPublisher;
 
-    public RestartableKit(OWLHTMLKit delegate, List<BeforeLoad> beforeLoad) {
+    public RestartableKit(OWLHTMLKit delegate, List<BeforeLoad> beforeLoad, ApplicationEventPublisher eventPublisher) {
         this.delegate = delegate;
         this.beforeLoad = beforeLoad;
+        this.eventPublisher = eventPublisher;
         status = new AppStatus(AppStatus.Status.UP);
     }
 
@@ -44,7 +47,9 @@ public class RestartableKit implements OWLHTMLKit, Restartable {
             OWLOntology ont = new OntologyLoader().loadOntologies(config.root());
             // only switches the implementation if the loading was successful
             delegate = new OWLHTMLKitInternals(ont, config);
-            listeners.forEach(RestartListener::onRestart);
+            if (eventPublisher != null) {
+                eventPublisher.publishEvent(new RestartEvent(this));
+            }
             status = new AppStatus(AppStatus.Status.UP);
         } catch (OWLOntologyCreationException e) {
             log.error("Failed to restart", e);
@@ -59,11 +64,6 @@ public class RestartableKit implements OWLHTMLKit, Restartable {
     @Override
     public AppStatus getStatus() {
         return status;
-    }
-
-    @Override
-    public void registerListener(RestartListener listener) {
-        listeners.add(listener);
     }
 
     @Override

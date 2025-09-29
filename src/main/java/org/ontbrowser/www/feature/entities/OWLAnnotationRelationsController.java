@@ -6,7 +6,7 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -43,7 +43,7 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
 
     public OWLAnnotationRelationsController(
-            RestartableKit kit,
+            OWLHTMLKit kit,
             OWLAnnotationPropertiesService propertiesService,
             OWLIndividualsService individualsService,
             ProjectInfo projectInfo,
@@ -59,7 +59,6 @@ public class OWLAnnotationRelationsController extends ApplicationController {
                 PATH,
                 kit,
                 propertiesService,
-                individualsService,
                 rendererFactory,
                 statsService
         );

@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.net.URL;
 
 /**
@@ -124,18 +125,15 @@ public class BootController {
     }
 
     private static void persistProperties(String newLocation, String projectName, String labelIRI, String language) {
-        try (java.io.FileWriter writer = new java.io.FileWriter(PROPS_FILE, false)) {
+        try (var writer = new FileWriter(PROPS_FILE, false)) {
             writer.write(PROJECT_NAME_PROP + "=" + projectName + "\n");
             writer.write(ROOT_PROPERTY + "=" + newLocation + "\n");
             writer.write(LABEL_IRI_PROPERTY + "=" + labelIRI + "\n");
             writer.write(LANGUAGE_PROPERTY + "=" + language + "\n");
-            //renderer:
-            //  annotation
         } catch (Exception e) {
             log.error("Failed to persist ontology.root.location", e);
         }
     }
-
 
     private boolean isHtmlSafe(String projectName) {
         if (projectName == null || projectName.isEmpty()) return false;

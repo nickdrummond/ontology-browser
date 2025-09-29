@@ -6,8 +6,7 @@ import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsMemo;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.RestartListener;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.kit.event.RestartEvent;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.renderer.RendererFactory;
@@ -15,13 +14,14 @@ import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.ui.Model;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class CommonRelations<T extends OWLProperty> implements RestartListener {
+public class CommonRelations<T extends OWLProperty> {
 
     private static final Logger log = LoggerFactory.getLogger(CommonRelations.class);
 
@@ -30,7 +30,6 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
     private final String path;
     private final OWLHTMLKit kit;
     private final PropertiesService<T> propertiesService;
-    private final OWLIndividualsService individualsService;
     private final RendererFactory rendererFactory;
     private final StatsService statsService;
 
@@ -38,16 +37,13 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
 
     public CommonRelations(
             String path,
-            RestartableKit kit,
+            OWLHTMLKit kit,
             PropertiesService<T> propertiesService,
-            OWLIndividualsService individualsService,
             @Nonnull RendererFactory rendererFactory,
             StatsService statsService) {
         this.path = path;
         this.kit = kit;
-        kit.registerListener(this);
         this.propertiesService = propertiesService;
-        this.individualsService = individualsService;
         this.rendererFactory = rendererFactory;
         this.statsService = statsService;
     }
@@ -149,8 +145,8 @@ public class CommonRelations<T extends OWLProperty> implements RestartListener {
                 Boolean.toString(hierarchyService.isInverse()));
     }
 
-    @Override
-    public void onRestart() {
+    @EventListener
+    public void onRestart(RestartEvent event) {
         log.info("Clearing hierarchy cache");
         hierarchyCache.clear();
     }
