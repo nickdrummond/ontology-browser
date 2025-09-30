@@ -1,7 +1,6 @@
 package org.ontbrowser.www.feature.axioms;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.kit.Restartable;
 import org.ontbrowser.www.kit.event.RestartEvent;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
@@ -31,9 +30,6 @@ class OWLAxiomService {
     private static final Logger log = LoggerFactory.getLogger(OWLAxiomService.class);
 
     private final Map<OWLOntology, Map<OWLAxiom, String>> axiomsRenderingsByOntology = new HashMap<>();
-
-    public OWLAxiomService(Restartable kit) {
-    }
 
     public Characteristic getAxioms(
             OWLOntology ont,

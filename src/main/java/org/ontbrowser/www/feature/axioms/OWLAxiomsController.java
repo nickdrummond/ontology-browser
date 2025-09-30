@@ -15,6 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Nullable;
 import java.io.IOException;
 
+import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE;
+import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE_STR;
 import static org.ontbrowser.www.feature.axioms.HighlightingHTMLRenderer.getHighlightRenderer;
 import static org.ontbrowser.www.feature.axioms.OWLAxiomsUtils.LOGICAL_AXIOMS_TYPE;
 import static org.ontbrowser.www.feature.axioms.OWLAxiomsUtils.getAxiomTypes;

@@ -113,7 +113,7 @@ public class ReasonerService {
 
     @EventListener
     public void onRestart(RestartEvent event) {
-        log.info("Clearing DL results cache");
+        log.info("Clearing reasoner and DL results cache");
         cache.clear();
         reasonerFactoryService.clear();
     }

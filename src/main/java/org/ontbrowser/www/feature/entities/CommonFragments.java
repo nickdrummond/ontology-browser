@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.entities;
 
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.graph.GraphURLScheme;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE;
 import static org.ontbrowser.www.model.Tree.treeComparator;
 
 public class CommonFragments {
@@ -56,7 +56,7 @@ public class CommonFragments {
         List<Characteristic> characteristics = service.getCharacteristics(
                 owlClass, ont, kit.getComparator(),
                 with,
-                ApplicationController.DEFAULT_PAGE_SIZE);
+                DEFAULT_PAGE_SIZE);
 
         Set<OWLClass> namedSuperclasses = service.getNamedTypes(owlClass, ont);
 
@@ -130,7 +130,7 @@ public class CommonFragments {
     ) {
         List<Characteristic> characteristics = new ArrayList<>(
                 service.getCharacteristics(owlIndividual, ont, kit.getComparator(),
-                        with, ApplicationController.DEFAULT_PAGE_SIZE));
+                        with, DEFAULT_PAGE_SIZE));
 
         if (inferred) {
             OWLReasoner reasoner = reasonerService.getReasoner();

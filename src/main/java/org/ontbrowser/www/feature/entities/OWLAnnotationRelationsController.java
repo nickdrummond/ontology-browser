@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE_STR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController

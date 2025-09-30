@@ -8,7 +8,6 @@ import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -27,9 +26,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 
+import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE;
 import static org.ontbrowser.www.model.Tree.treeComparator;
 
 @RestController

@@ -22,6 +22,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.util.List;
 
+import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE_STR;
+
 public class OWLPropertiesController<P extends OWLProperty> extends ApplicationController {
 
     private final PropertiesService<P> service;
