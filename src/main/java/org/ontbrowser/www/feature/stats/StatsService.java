@@ -12,12 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 
 import static org.ontbrowser.www.feature.stats.StatsHelper.getBarData;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class StatsService {
@@ -37,7 +35,7 @@ public class StatsService {
         return switch (type) {
             case ClassDescendantsStats.NAME -> new ClassDescendantsStats(reasoner);
             case InferredInstancesStats.NAME -> new InferredInstancesStats(reasoner);
-            default -> throw new ResponseStatusException(NOT_FOUND, "No class stats called " + type);
+            default -> null;
         };
     }
 
@@ -47,7 +45,7 @@ public class StatsService {
                     new StatsMemo(type, reasoner.getRootOntology().getOntologyID().toString()), m ->
                         new RelationsCountStats(reasoner)
                     );
-            default -> throw new ResponseStatusException(NOT_FOUND, "No object property stats called " + type);
+            default -> null;
         };
     }
 
@@ -55,14 +53,14 @@ public class StatsService {
             String type, OWLOntology ont, OWLHierarchyService<OWLAnnotationProperty> hierarchyService) {
         return switch (type) {
             case AnnotationRelationsCountStats.NAME -> new AnnotationRelationsCountStats(ont, hierarchyService);
-            default -> throw new ResponseStatusException(NOT_FOUND, "No annotation property stats called " + type);
+            default -> null;
         };
     }
 
     public Stats<OWLNamedIndividual> getIndividualStats(String type, OWLObjectProperty prop, boolean inverse, OWLReasoner reasoner) {
         return switch (type) {
             case TransitiveRelationsStats.NAME -> new TransitiveRelationsStats(reasoner, prop);
-            default -> throw new ResponseStatusException(NOT_FOUND, "No individual stats called " + type);
+            default -> null;
         };
     }
 

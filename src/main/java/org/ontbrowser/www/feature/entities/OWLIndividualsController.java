@@ -2,14 +2,11 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.feature.stats.Stats;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.Tree;
@@ -36,38 +33,35 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 
 @RestController
 @RequestMapping(value = "/individuals")
-public class OWLIndividualsController extends ApplicationController {
+public class OWLIndividualsController {
 
     private static final int DEFAULT_SECONDARY_PAGE_SIZE = 60;
 
+    private final OWLHTMLKit kit;
     private final OWLIndividualsService individualsService;
     private final OWLClassesService owlClassesService;
     private final ReasonerFactoryService reasonerFactoryService;
-    private final ReasonerService reasonerService;
     private final StatsService statsService;
     private final CommonContent commonContent;
+    private final CommonFragments commonFragments;
 
     public OWLIndividualsController(
             OWLHTMLKit kit,
             OWLIndividualsService individualsService,
             OWLClassesService owlClassesService,
             ReasonerFactoryService reasonerFactoryService,
-            ReasonerService reasonerService,
-            StatsService statsService, CommonContent commonContent
+            StatsService statsService,
+            CommonContent commonContent,
+            CommonFragments commonFragments
     ) {
-        super(kit);
+        this.kit = kit;
         this.individualsService = individualsService;
         this.owlClassesService = owlClassesService;
         this.reasonerFactoryService = reasonerFactoryService;
-        this.reasonerService = reasonerService;
         this.statsService = statsService;
         this.commonContent = commonContent;
+        this.commonFragments = commonFragments;
     }
-
-    private CommonFragments getCommon() {
-        return new CommonFragments(kit, projectInfo, reasonerService);
-    }
-
 
     @GetMapping(value = "/")
     public void getOWLIndividualsOld(
@@ -129,7 +123,7 @@ public class OWLIndividualsController extends ApplicationController {
 
         getOWLClassFragment(classId, ont, with, model, request);
 
-        model.addAttribute("mos", getRenderer(type, null, ont, request));
+        updateRenderer(type, null, model, request);
 
         return new ModelAndView("instances");
     }
@@ -175,16 +169,16 @@ public class OWLIndividualsController extends ApplicationController {
 
         getOWLIndividualFragment(individualId, inferred, with, ont, model, request);
 
-        model.addAttribute("mos", getRenderer(type, ind, ont, request));
+        updateRenderer(type, ind, model, request);
 
         return new ModelAndView("instances");
     }
 
-    private OWLHTMLRenderer getRenderer(
+    private void updateRenderer(
             OWLClass type, OWLNamedIndividual ind,
-            OWLOntology ont, HttpServletRequest request) {
+            Model model, HttpServletRequest request) {
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type)
+        var urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type)
                 .withQuery(request.getQueryString());
 
         Set<OWLObject> activeObjects = new HashSet<>();
@@ -192,16 +186,23 @@ public class OWLIndividualsController extends ApplicationController {
         if (ind != null) {
             activeObjects.add(ind);
         }
-        return rendererFactory.getHTMLRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
+
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            mos.withActiveObjects(activeObjects).withURLScheme(urlScheme);
+        }
     }
 
-    private OWLHTMLRenderer getRenderer(OWLClass type, OWLOntology ont, HttpServletRequest request) {
+    private void updateRenderer(OWLClass type, Model model, HttpServletRequest request) {
         URLScheme urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type)
                 .withQuery(request.getQueryString());
 
         Set<OWLObject> activeObjects = new HashSet<>();
         activeObjects.add(type);
-        return rendererFactory.getHTMLRenderer(ont).withActiveObjects(activeObjects).withURLScheme(urlScheme);
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            mos.withActiveObjects(activeObjects).withURLScheme(urlScheme);
+        }
     }
 
     private void buildPrimaryHierarchy(String statsName, Model model, OWLClass type, OWLReasoner r) {
@@ -224,11 +225,11 @@ public class OWLIndividualsController extends ApplicationController {
 
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-        OWLHTMLRenderer owlRenderer = getRenderer(type, ont, request);
-        Stats stats = statsService.getClassStats(statsName, r);
+        var r = reasonerFactoryService.getToldReasoner(ont);
+        updateRenderer(type, model, request);
+        var stats = statsService.getClassStats(statsName, r);
 
-        return getCommon().getClassChildren(type, r, owlRenderer, stats, model);
+        return commonFragments.getClassChildren(type, r, stats, model);
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -242,11 +243,8 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletRequest request
     ) {
         var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
-
-        // TODO custom renderer - linked to tree (see relations)
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(ind);
-        return getCommon().getOWLIndividualFragment(individualsService, ind, inferred, with,
-                ont, owlRenderer, model, request.getQueryString());
+        return commonFragments.getOWLIndividualFragment(individualsService, ind, inferred, with,
+                ont, model, request.getQueryString());
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -259,10 +257,7 @@ public class OWLIndividualsController extends ApplicationController {
             final HttpServletRequest request
     ) {
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
-
-        // TODO custom renderer
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(type);
-        return getCommon().getOWLClassFragment(owlClassesService, type, ont, owlRenderer,
+        return commonFragments.getOWLClassFragment(owlClassesService, type, ont,
                 with, model, request.getQueryString());
     }
 
@@ -279,7 +274,8 @@ public class OWLIndividualsController extends ApplicationController {
         buildSecondaryNavigation(ont, with, model, type);
 
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
-        model.addAttribute("mos", getRenderer(type, null, ont, request));
+
+        updateRenderer(type, null, model, request);
 
         return new ModelAndView("tree::secondary");
     }

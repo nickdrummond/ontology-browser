@@ -2,15 +2,11 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -31,39 +27,36 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequestMapping(value = "/relations/" + OWLAnnotationRelationsController.PATH)
-public class OWLAnnotationRelationsController extends ApplicationController {
+public class OWLAnnotationRelationsController {
 
     public static final String PATH = "onannotationproperty";
     public static final String RELATION_TEMPLATE = "relation";
 
+    private final OWLHTMLKit kit;
     private final OWLAnnotationPropertiesService propertiesService;
     private final OWLIndividualsService individualsService;
     private final StatsService statsService;
     private final CommonRelations<OWLAnnotationProperty> commonRelations;
     private final CommonFragments commonFragments;
 
-
     public OWLAnnotationRelationsController(
             OWLHTMLKit kit,
             OWLAnnotationPropertiesService propertiesService,
             OWLIndividualsService individualsService,
-            ProjectInfo projectInfo,
-            RendererFactory rendererFactory,
             StatsService statsService,
-            ReasonerService reasonerService) {
-        super(kit);
+            CommonFragments commonFragments
+    ) {
+        this.kit = kit;
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.statsService = statsService;
-        this.projectInfo = projectInfo;
         this.commonRelations = new CommonRelations<>(
                 PATH,
                 kit,
                 propertiesService,
-                rendererFactory,
                 statsService
         );
-        this.commonFragments = new CommonFragments(kit, projectInfo, reasonerService);
+        this.commonFragments = commonFragments;
     }
 
 
@@ -151,10 +144,8 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
         var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(individual);
-
         commonFragments.getOWLIndividualFragment(individualsService, individual, false,
-                with, ont, owlRenderer, model, request.getQueryString());
+                with, ont, model, request.getQueryString());
 
         var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
@@ -191,7 +182,10 @@ public class OWLAnnotationRelationsController extends ApplicationController {
         URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop)
                 .withQuery(request.getQueryString());
 
-        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme).withActiveObject(prop));
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            model.addAttribute("mos", mos.withURLScheme(urlScheme).withActiveObject(prop));
+        }
 
         return new ModelAndView(CommonRelations.BASE_TREE);
     }
@@ -219,8 +213,12 @@ public class OWLAnnotationRelationsController extends ApplicationController {
 
         var stats = statsService.getTreeStats(commonRelations.createMemo(relationsHierarchyService), relationsHierarchyService);
 
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            model.addAttribute("mos", mos.withURLScheme(urlScheme));
+        }
+
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
-        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme));
         model.addAttribute("stats", stats);
         model.addAttribute("statsName", "treeStats"); // TODO not used
 

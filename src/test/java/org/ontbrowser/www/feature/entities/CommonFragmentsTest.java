@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -32,8 +31,6 @@ class CommonFragmentsTest {
     private ReasonerService mockReasonerService;
     @Mock
     private OWLIndividualsService mockIndividualsService;
-    @Mock
-    private OWLHTMLRenderer mockOwlRenderer;
     @Mock
     private OWLOntology mockOnt;
     @Mock
@@ -66,7 +63,7 @@ class CommonFragmentsTest {
         // WHEN we get the fragment
         Model model = new ConcurrentModel();
         commonFragments.getOWLIndividualFragment(mockIndividualsService, ind,
-                false, List.of(), mockOnt, mockOwlRenderer, model, "");
+                false, List.of(), mockOnt, model, "");
 
         // THEN the title is the label of the individual and its type
         assertEquals("label (type)", model.getAttribute("title"));

@@ -9,7 +9,6 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.event.RestartEvent;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.ui.Model;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -30,7 +28,6 @@ public class CommonRelations<T extends OWLProperty> {
     private final String path;
     private final OWLHTMLKit kit;
     private final PropertiesService<T> propertiesService;
-    private final RendererFactory rendererFactory;
     private final StatsService statsService;
 
     private final Map<StatsMemo, AbstractRelationsHierarchyService<T>> hierarchyCache = new HashMap<>();
@@ -39,12 +36,10 @@ public class CommonRelations<T extends OWLProperty> {
             String path,
             OWLHTMLKit kit,
             PropertiesService<T> propertiesService,
-            @Nonnull RendererFactory rendererFactory,
             StatsService statsService) {
         this.path = path;
         this.kit = kit;
         this.propertiesService = propertiesService;
-        this.rendererFactory = rendererFactory;
         this.statsService = statsService;
     }
 
@@ -100,19 +95,21 @@ public class CommonRelations<T extends OWLProperty> {
                 relationsHierarchyService.getPrunedTree(individual) :
                 relationsHierarchyService.getClosedTree();
 
+        updateRenderer(relationsHierarchyService, property, individual, model, request);
+
         model.addAttribute("type2", kit.getShortFormProvider().getShortForm(property));
         model.addAttribute("inverse", relationsHierarchyService.isInverse());
-        model.addAttribute("mos", getRenderer(relationsHierarchyService, property, individual, request));
         model.addAttribute("hierarchy2", relationsTree);
         //TODO fix this - generics!!
         model.addAttribute("stats2", statsService.getTreeStats(createMemo(relationsHierarchyService), relationsHierarchyService));
         model.addAttribute("statsName2", "treeStats");
     }
 
-    public OWLHTMLRenderer getRenderer(
+    public void updateRenderer(
             AbstractRelationsHierarchyService<T> relationsHierarchyService,
             T property,
             @Nullable OWLNamedIndividual individual,
+            Model model,
             HttpServletRequest request) {
 
         URLScheme urlScheme = getUrlScheme(relationsHierarchyService, property, request);
@@ -123,9 +120,10 @@ public class CommonRelations<T extends OWLProperty> {
             activeObjects.add(individual);
         }
 
-        return rendererFactory.getHTMLRenderer(relationsHierarchyService.getOnt())
-                .withActiveObjects(activeObjects)
-                .withURLScheme(urlScheme);
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            model.addAttribute("mos", mos.withActiveObjects(activeObjects).withURLScheme(urlScheme));
+        }
     }
 
     private URLScheme getUrlScheme(AbstractRelationsHierarchyService<T> relationsHierarchyService, T property, HttpServletRequest request) {

@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,6 +28,7 @@ import java.util.Set;
 import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE;
 import static org.ontbrowser.www.model.Tree.treeComparator;
 
+@Service
 public class CommonFragments {
 
     private final OWLHTMLKit kit;
@@ -44,7 +46,6 @@ public class CommonFragments {
             final OWLClassesService service,
             final OWLClass owlClass,
             final OWLOntology ont,
-            final OWLHTMLRenderer owlRenderer,
             List<With> with,
             final Model model,
             final String queryString) {
@@ -69,13 +70,18 @@ public class CommonFragments {
             model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlClass, ont));
         }
 
+        // TODO custom renderer
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            model.addAttribute("mos", mos.withActiveObject(owlClass));
+        }
+
         model.addAttribute("title", title);
         model.addAttribute("type", "Classes");
         model.addAttribute("iri", owlClass.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
-        model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, with));
 
         return new ModelAndView("owlentityfragment");
@@ -84,7 +90,6 @@ public class CommonFragments {
     public ModelAndView getClassChildren(
             final OWLClass cls,
             final OWLReasoner r,
-            final OWLHTMLRenderer owlRenderer,
             final Stats stats,
             final Model model) {
 
@@ -94,71 +99,54 @@ public class CommonFragments {
         model.addAttribute("t", prunedTree);
         model.addAttribute("stats", stats);
         model.addAttribute("statsName", stats.getName());
-        model.addAttribute("mos", owlRenderer);
-
-        return new ModelAndView("tree::children");
-    }
-
-
-    public ModelAndView getPropertyChildren(
-            final OWLClass cls,
-            final OWLReasoner r,
-            final OWLHTMLRenderer owlRenderer,
-            final Stats stats,
-            final Model model) {
-
-        OWLClassHierarchyService hierarchyService = new OWLClassHierarchyService(r, treeComparator());
-        Tree<OWLClass> prunedTree = hierarchyService.getChildren(cls);
-
-        model.addAttribute("stats", stats);
-        model.addAttribute("statsName", stats.getName());
-        model.addAttribute("t", prunedTree);
-        model.addAttribute("mos", owlRenderer);
 
         return new ModelAndView("tree::children");
     }
 
     public ModelAndView getOWLIndividualFragment(
             final OWLIndividualsService service,
-            final OWLNamedIndividual owlIndividual,
+            final OWLNamedIndividual ind,
             final boolean inferred,
             List<With> with,
             final OWLOntology ont,
-            final OWLHTMLRenderer owlHtmlRenderer,
             final Model model,
             final String queryString
     ) {
         List<Characteristic> characteristics = new ArrayList<>(
-                service.getCharacteristics(owlIndividual, ont, kit.getComparator(),
+                service.getCharacteristics(ind, ont, kit.getComparator(),
                         with, DEFAULT_PAGE_SIZE));
 
         if (inferred) {
             OWLReasoner reasoner = reasonerService.getReasoner();
-            characteristics.addAll(service.getInferredCharacteristics(owlIndividual, reasoner));
+            characteristics.addAll(service.getInferredCharacteristics(ind, reasoner));
         }
 
-        Set<OWLClass> namedTypes = service.getNamedTypes(owlIndividual, ont);
+        Set<OWLClass> namedTypes = service.getNamedTypes(ind, ont);
 
         var sfp = kit.getShortFormProvider();
 
         String types = String.join(", ", namedTypes.stream().map(sfp::getShortForm).toList());
 
-        String entityName = sfp.getShortForm(owlIndividual);
+        String entityName = sfp.getShortForm(ind);
         String title = entityName + (types.isEmpty() ? "" : " (" + types + ")");
 
+        if (projectInfo.activeProfiles().contains("graph")) {
+            var mos = new MOSStringRenderer(kit.getFinder(), ont);
+            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(ind, ont));
+        }
+
+        // TODO custom renderer - linked to tree (see relations)
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            model.addAttribute("mos", mos.withActiveObject(ind));
+        }
         model.addAttribute("title", title);
         model.addAttribute("type", "Individuals");
-        model.addAttribute("iri", owlIndividual.getIRI());
+        model.addAttribute("iri", ind.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, with));
-        model.addAttribute("mos", owlHtmlRenderer);
-
-        if (projectInfo.activeProfiles().contains("graph")) {
-            var mos = new MOSStringRenderer(kit.getFinder(), ont);
-            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(owlIndividual, ont));
-        }
 
         return new ModelAndView("owlentityfragment");
     }

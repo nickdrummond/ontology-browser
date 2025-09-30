@@ -2,18 +2,14 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLObjectPropertyHierarchyService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -33,13 +29,14 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 
 @RestController
 @RequestMapping(value = "/relations/" + OWLPropertyRelationsController.PATH)
-public class OWLPropertyRelationsController extends ApplicationController {
+public class OWLPropertyRelationsController {
 
     public static final String PATH = "onproperty";
     public static final String RELATION_TEMPLATE = "relation";
     private final OWLObjectPropertiesService propertiesService;
     private final OWLIndividualsService individualsService;
     private final ReasonerFactoryService reasonerFactoryService;
+    private final OWLHTMLKit kit;
     private final StatsService statsService;
     private final CommonRelations<OWLObjectProperty> common;
     private final CommonContent commonContent;
@@ -49,31 +46,26 @@ public class OWLPropertyRelationsController extends ApplicationController {
             OWLObjectPropertiesService propertiesService,
             OWLIndividualsService individualsService,
             ReasonerFactoryService reasonerFactoryService,
-            ReasonerService reasonerService,
             OWLHTMLKit kit,
-            RendererFactory rendererFactory,
             StatsService statsService,
-            ProjectInfo projectInfo,
-            CommonContent commonContent
+            CommonContent commonContent,
+            CommonFragments commonFragments
     ) {
-        super(kit);
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.reasonerFactoryService = reasonerFactoryService;
+        this.kit = kit;
         this.statsService = statsService;
         this.commonContent = commonContent;
-        this.rendererFactory = rendererFactory;
-        this.projectInfo = projectInfo;
 
         this.common = new CommonRelations<>(
                 PATH,
                 kit,
                 propertiesService,
-                rendererFactory,
                 statsService
         );
 
-        this.commonFragments = new CommonFragments(kit, projectInfo, reasonerService);
+        this.commonFragments = commonFragments;
     }
 
 
@@ -157,12 +149,10 @@ public class OWLPropertyRelationsController extends ApplicationController {
     ) {
         var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(individual);
-
         String queryString = request.getQueryString();
 
-        commonFragments.getOWLIndividualFragment(
-                individualsService, individual, false, with, ont, owlRenderer, model, queryString);
+        commonFragments.getOWLIndividualFragment(individualsService, individual,
+                false, with, ont, model, queryString);
 
         var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
@@ -195,10 +185,8 @@ public class OWLPropertyRelationsController extends ApplicationController {
     ) {
         var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(individual);
-
         commonFragments.getOWLIndividualFragment(individualsService, individual, false, with,
-                ont, owlRenderer, model, request.getQueryString());
+                ont, model, request.getQueryString());
 
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
 
@@ -222,8 +210,12 @@ public class OWLPropertyRelationsController extends ApplicationController {
 
         OWLReasoner reasoner = reasonerFactoryService.getToldReasoner(ont);
 
+        var mos = (OWLHTMLRenderer)model.getAttribute("mos");
+        if (mos != null) {
+            model.addAttribute("mos", mos.withURLScheme(new RelationPropertyURLScheme()));
+        }
+
         model.addAttribute("t", hierarchyService.getChildren(property));
-        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(new RelationPropertyURLScheme()));
         model.addAttribute("stats", statsService.getPropertyStats(statsName, reasoner));
         model.addAttribute("statsName", statsName);
 
@@ -251,8 +243,12 @@ public class OWLPropertyRelationsController extends ApplicationController {
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
 
+        var mos = (OWLHTMLRenderer)model.getAttribute("mos");
+        if (mos != null) {
+            model.addAttribute("mos", mos.withURLScheme(urlScheme));
+        }
+
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
-        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont).withURLScheme(urlScheme));
         model.addAttribute("stats", statsService.getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService));
         model.addAttribute("statsName", "treeStats"); // TODO not used
 

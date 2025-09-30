@@ -2,18 +2,14 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.feature.stats.Stats;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,30 +19,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/classes")
-public class OWLClassesController extends ApplicationController {
+public class OWLClassesController {
 
+    private final OWLHTMLKit kit;
     private final OWLClassesService service;
     private final ReasonerFactoryService reasonerFactoryService;
     private final StatsService statsService;
-    private final ReasonerService reasonerService;
     private final CommonContent commonContent;
+    private final CommonFragments commonFragments;
 
     public OWLClassesController(
             OWLHTMLKit kit,
             OWLClassesService service,
             ReasonerFactoryService reasonerFactoryService,
             StatsService statsService,
-            ReasonerService reasonerService, CommonContent commonContent) {
-        super(kit);
+            CommonContent commonContent,
+            CommonFragments commonFragments) {
+        this.kit = kit;
         this.service = service;
         this.reasonerFactoryService = reasonerFactoryService;
         this.statsService = statsService;
-        this.reasonerService = reasonerService;
         this.commonContent = commonContent;
-    }
-
-    private CommonFragments getCommon() {
-        return new CommonFragments(kit, projectInfo, reasonerService);
+        this.commonFragments = commonFragments;
     }
 
     @GetMapping(value = "/")
@@ -101,8 +95,11 @@ public class OWLClassesController extends ApplicationController {
             final HttpServletRequest request
     ) {
         var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlClass);
-        return getCommon().getOWLClassFragment(service, owlClass, ont, owlRenderer, with, model, request.getQueryString());
+        var mos = (OWLHTMLRenderer)model.getAttribute("mos");
+        if (mos != null) {
+            model.addAttribute("mos", mos.withActiveObject(owlClass));
+        }
+        return commonFragments.getOWLClassFragment(service, owlClass, ont, with, model, request.getQueryString());
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -115,10 +112,9 @@ public class OWLClassesController extends ApplicationController {
 
         var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);
-        Stats stats = statsService.getClassStats(statsName, r);
+        var r = reasonerFactoryService.getToldReasoner(ont);
+        var stats = statsService.getClassStats(statsName, r);
 
-        return getCommon().getClassChildren(owlClass, r, owlRenderer, stats, model);
+        return commonFragments.getClassChildren(owlClass, r, stats, model);
     }
 }
