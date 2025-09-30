@@ -1,13 +1,12 @@
 package org.ontbrowser.www.feature.axioms;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,13 +21,13 @@ import static org.ontbrowser.www.feature.axioms.OWLAxiomsUtils.LOGICAL_AXIOMS_TY
 import static org.ontbrowser.www.feature.axioms.OWLAxiomsUtils.getAxiomTypes;
 import static org.semanticweb.owlapi.model.AxiomType.getAxiomType;
 
-// TODO remove ApplicationController
 @RestController
 @RequestMapping(value = "/axioms")
-public class OWLAxiomsController extends ApplicationController {
+public class OWLAxiomsController {
 
     private static final String MODEL_KEY_AXIOMS = "axioms";
 
+    private final OWLHTMLKit kit;
     private final OWLAxiomService axiomService;
     private final CommonContent commonContent;
 
@@ -36,7 +35,7 @@ public class OWLAxiomsController extends ApplicationController {
             OWLHTMLKit kit,
             OWLAxiomService axiomService,
             CommonContent commonContent) {
-        super(kit);
+        this.kit = kit;
         this.axiomService = axiomService;
         this.commonContent = commonContent;
     }
@@ -78,8 +77,11 @@ public class OWLAxiomsController extends ApplicationController {
                 return new ModelAndView("redirect:/axioms");
             }
 
-            model.addAttribute("mos", getHighlightRenderer(search, rendererFactory.getHTMLRenderer(ont)));
-            ShortFormProvider sfp = kit.getShortFormProvider();
+            var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+            if (mos != null) {
+                model.addAttribute("mos", getHighlightRenderer(search, mos));
+            }
+            var sfp = kit.getShortFormProvider();
             if (type == null) {
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findAxioms(search, ont, imports, sfp, start, pageSize));
             } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {
@@ -90,7 +92,6 @@ public class OWLAxiomsController extends ApplicationController {
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findAxiomsByType(search, ont, imports, sfp, start, pageSize, axiomType));
             }
         } else {
-            model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
             if (type == null) {
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.getAxioms(ont, imports, start, pageSize));
             } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {
