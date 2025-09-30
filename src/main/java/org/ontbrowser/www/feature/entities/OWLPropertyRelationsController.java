@@ -151,12 +151,14 @@ public class OWLPropertyRelationsController {
 
         String queryString = request.getQueryString();
 
-        commonFragments.getOWLIndividualFragment(individualsService, individual,
-                false, with, ont, model, queryString);
-
         var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
+        // THIS SETS pageScheme
         commonContent.addCommonContent(queryString, model, ont);
+
+        // AND so does this - we need to scope this better - each fragment/component should set its own
+        commonFragments.getOWLIndividualFragment(individualsService, individual,
+                false, with, ont, model, queryString);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
@@ -178,12 +180,14 @@ public class OWLPropertyRelationsController {
             @RequestParam final @Nullable String orderBy,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
             @RequestParam(required = false, defaultValue = "") List<With> with,
-            @RequestParam final String statsName,
+            @RequestParam(required = false) final String statsName,
             @ModelAttribute final OWLOntology ont,
             final Model model,
             HttpServletRequest request
     ) {
         var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
+
+        // TODO the URLscheme needs to navigate to the relations page if possible - must be working in full page - look there
 
         commonFragments.getOWLIndividualFragment(individualsService, individual, false, with,
                 ont, model, request.getQueryString());
