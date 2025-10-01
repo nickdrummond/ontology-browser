@@ -1,11 +1,11 @@
 package org.ontbrowser.www.feature.cloud;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
 import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.ui.Model;
@@ -20,15 +20,16 @@ import static org.ontbrowser.www.util.OWLUtils.getEntityTypeFromPath;
  */
 @RestController
 @RequestMapping(value = "/clouds")
-public class CloudController extends ApplicationController {
+public class CloudController {
 
+    private final OWLHTMLKit kit;
     private final CommonContent commonContent;
 
     public CloudController(
             OWLHTMLKit kit,
             CommonContent commonContent
     ) {
-        super(kit);
+        this.kit = kit;
         this.commonContent = commonContent;
     }
 
@@ -61,16 +62,16 @@ public class CloudController extends ApplicationController {
         model.addAttribute("hierarchy", ontologyTree);
 
         // All ontologies link to the existing page with an ont filter
-        var customRenderer = rendererFactory
-                .getHTMLRenderer(ont)
-                .withActiveObject(ont)
-                .withURLScheme((owlObject, ontology) -> {
-                    if (owlObject instanceof OWLOntology ontLink) {
-                        return request.getServletPath() + "?imports=EXCLUDED&ontId=" + ontLink.getOntologyID().hashCode();
-                    }
-                    return kit.getURLScheme().getURLForOWLObject(owlObject, ontology);
-                });
-        model.addAttribute("mos", customRenderer);
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            mos.withActiveObject(ont)
+                    .withURLScheme((owlObject, ontology) -> {
+                        if (owlObject instanceof OWLOntology ontLink) {
+                            return request.getServletPath() + "?imports=EXCLUDED&ontId=" + ontLink.getOntologyID().hashCode();
+                        }
+                        return kit.getURLScheme().getURLForOWLObject(owlObject, ontology);
+                    });
+        }
 
         model.addAttribute("title", title);
         model.addAttribute("helper", helper);
