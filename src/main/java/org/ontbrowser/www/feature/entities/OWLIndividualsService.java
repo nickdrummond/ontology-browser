@@ -19,8 +19,9 @@ import java.util.stream.Collectors;
 import static org.semanticweb.owlapi.model.AxiomType.CLASS_ASSERTION;
 
 @Service
-public class OWLIndividualsService implements CharacteristicsProvider<OWLNamedIndividual> {
+public class OWLIndividualsService implements CharacteristicsProvider<OWLNamedIndividual>, NamedTypeProvider<OWLNamedIndividual> {
 
+    @Override
     public CharacteristicsBuilder<OWLNamedIndividual> getCharacteristicsBuilder(
             OWLNamedIndividual owlIndividual,
             OWLOntology ont,
@@ -31,6 +32,7 @@ public class OWLIndividualsService implements CharacteristicsProvider<OWLNamedIn
         return new IndividualCharacteristicsBuilder(owlIndividual, ont, comparator, with, defaultPageSize);
     }
 
+    @Override
     public List<Characteristic> getInferredCharacteristics(
             OWLNamedIndividual owlIndividual,
             OWLReasoner reasoner
@@ -55,7 +57,8 @@ public class OWLIndividualsService implements CharacteristicsProvider<OWLNamedIn
         }
     }
 
-    public Set<OWLClass> getNamedTypes(OWLNamedIndividual ind, OWLOntology ont) {
+    @Override
+    public Set<OWLEntity> getNamedTypes(OWLNamedIndividual ind, OWLOntology ont) {
         return ont.getAxioms(ind, Imports.INCLUDED).stream()
                 .filter(ax -> ax.isOfType(CLASS_ASSERTION))
                 .map(ax -> ((OWLClassAssertionAxiom) ax).getClassExpression())

@@ -19,7 +19,7 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
 
 @Service
-public class OWLClassesService implements CharacteristicsProvider<OWLClass> {
+public class OWLClassesService implements CharacteristicsProvider<OWLClass>, NamedTypeProvider<OWLClass> {
 
     private final ReasonerFactoryService reasonerFactoryService;
 
@@ -41,7 +41,7 @@ public class OWLClassesService implements CharacteristicsProvider<OWLClass> {
         return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize);
     }
 
-    public Set<OWLClass> getNamedTypes(OWLClass cls, OWLOntology ont) {
+    public Set<OWLEntity> getNamedTypes(OWLClass cls, OWLOntology ont) {
         return ont.getAxioms(cls, Imports.INCLUDED).stream()
                 .filter(ax -> ax.isOfType(SUBCLASS_OF))
                 .map(ax -> ((OWLSubClassOfAxiom)ax).getSuperClass())

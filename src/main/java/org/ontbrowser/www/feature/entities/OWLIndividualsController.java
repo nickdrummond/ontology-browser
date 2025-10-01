@@ -14,10 +14,7 @@ import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -89,7 +86,7 @@ public class OWLIndividualsController {
             final HttpServletRequest request
     ) {
         var owlIndividual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
-        OWLClass firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
+        OWLEntity firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
                 .orElse(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
 
         return byType(

@@ -11,10 +11,7 @@ import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -22,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE;
 import static org.ontbrowser.www.model.Tree.treeComparator;
@@ -55,13 +51,7 @@ public class CommonFragments {
     ) {
         model.addAttribute("type", "Classes");
 
-        var sfp = kit.getShortFormProvider();
-        var entityName = sfp.getShortForm(entity);
-
-        var namedSuperclasses = service.getNamedTypes(entity, ont);
-
-        String supers = String.join(", ", namedSuperclasses.stream().map(sfp::getShortForm).toList());
-        String title = entityName + (supers.isEmpty() ? "" : " (" + supers + ")");
+        var title = getTitle(entity, ont, service);
 
         return buildCommonEntityFragment(service, entity, inferred, ont, with, model, queryString, title);
     }
@@ -78,16 +68,20 @@ public class CommonFragments {
     ) {
         model.addAttribute("type", "Individuals");
 
-        Set<OWLClass> namedTypes = service.getNamedTypes(entity, ont);
-
-        var sfp = kit.getShortFormProvider();
-
-        String types = String.join(", ", namedTypes.stream().map(sfp::getShortForm).toList());
-
-        String entityName = sfp.getShortForm(entity);
-        String title = entityName + (types.isEmpty() ? "" : " (" + types + ")");
+        var title = getTitle(entity, ont, service);
 
         return buildCommonEntityFragment(service, entity, inferred, ont, with, model, queryString, title);
+    }
+
+    private <T extends OWLEntity> String getTitle(T entity, OWLOntology ont, NamedTypeProvider<T> namedTypesProvider) {
+
+        var sfp = kit.getShortFormProvider();
+        var entityName = sfp.getShortForm(entity);
+
+        var namedTypes = namedTypesProvider.getNamedTypes(entity, ont);
+
+        String types = String.join(", ", namedTypes.stream().map(sfp::getShortForm).toList());
+        return entityName + (types.isEmpty() ? "" : " (" + types + ")");
     }
 
     public <T extends OWLEntity> ModelAndView buildCommonEntityFragment(
