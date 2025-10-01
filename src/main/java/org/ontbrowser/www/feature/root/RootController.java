@@ -2,9 +2,7 @@ package org.ontbrowser.www.feature.root;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.ontologies.OWLOntologiesController;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -20,15 +18,13 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-public class RootController extends ApplicationController {
+public class RootController {
 
     private final OWLOntologiesController ontologyController;
 
     public RootController(
-            OWLHTMLKit kit,
             OWLOntologiesController ontologyController
     ) {
-        super(kit);
         this.ontologyController = ontologyController;
     }
 
@@ -55,8 +51,6 @@ public class RootController extends ApplicationController {
             return new ModelAndView();
         }
         else {
-            model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
-
             var ontologyId = String.valueOf(ont.getOntologyID().hashCode());
             ontologyController.getOntologyFragment(ontologyId, imports, with, model, request);
 

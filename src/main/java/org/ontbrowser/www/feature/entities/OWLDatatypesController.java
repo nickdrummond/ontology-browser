@@ -2,7 +2,6 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.hierarchy.OWLDatatypeHierarchyService;
@@ -25,8 +24,9 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 
 @RestController
 @RequestMapping(value = "/datatypes")
-public class OWLDatatypesController extends ApplicationController {
+public class OWLDatatypesController {
 
+    private final OWLHTMLKit kit;
     private final OWLDatatypesService service;
     private final CommonContent commonContent;
 
@@ -35,7 +35,7 @@ public class OWLDatatypesController extends ApplicationController {
             OWLDatatypesService service,
             CommonContent commonContent
     ) {
-        super(kit);
+        this.kit = kit;
         this.service = service;
         this.commonContent = commonContent;
     }
@@ -100,9 +100,12 @@ public class OWLDatatypesController extends ApplicationController {
 
         String entityName = kit.getShortFormProvider().getShortForm(owlDatatype);
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(owlDatatype);
-
         List<Characteristic> characteristics = service.getCharacteristics(owlDatatype, ont, kit.getComparator(), with, pageSize);
+
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            mos.withActiveObject(owlDatatype);
+        }
 
         model.addAttribute("title", entityName + " (Datatype)");
         model.addAttribute("type", "Datatypes");
@@ -110,7 +113,6 @@ public class OWLDatatypesController extends ApplicationController {
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
-        model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
         return new ModelAndView("owlentityfragment");
@@ -125,15 +127,10 @@ public class OWLDatatypesController extends ApplicationController {
             final Model model) {
 
         var owlDatatype = kit.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
-
-        OWLDatatypeHierarchyService hierarchyService = new OWLDatatypeHierarchyService(ont, treeComparator());
-
-        Tree<OWLDatatype> prunedTree = hierarchyService.getChildren(owlDatatype);
-
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);
+        var hierarchyService = new OWLDatatypeHierarchyService(ont, treeComparator());
+        var prunedTree = hierarchyService.getChildren(owlDatatype);
 
         model.addAttribute("t", prunedTree);
-        model.addAttribute("mos", owlRenderer);
 
         return new ModelAndView("tree::tree");
     }

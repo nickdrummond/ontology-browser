@@ -3,15 +3,11 @@ package org.ontbrowser.www.feature.editing;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.parser.ParserService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -32,10 +28,11 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 @RestController
 @Profile("editing")
 @RequestMapping(value = "/axioms")
-public class EditController extends ApplicationController {
+public class EditController {
 
     private static final Logger log = LoggerFactory.getLogger(EditController.class);
 
+    private final OWLHTMLKit kit;
     private final EditService editService;
     private final ParserService parserService;
 
@@ -44,7 +41,7 @@ public class EditController extends ApplicationController {
             EditService editService,
             ParserService parserService
     ) {
-        super(kit);
+        this.kit = kit;
         this.editService = editService;
         this.parserService = parserService;
     }
@@ -62,10 +59,10 @@ public class EditController extends ApplicationController {
     ) throws IOException {
 
 
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker owlEntityChecker = kit.getOWLEntityChecker();
+        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var owlEntityChecker = kit.getOWLEntityChecker();
 
-        OWLOntology targetOnt = kit.getOntologyForIRI(IRI.create(ontology))
+        var targetOnt = kit.getOntologyForIRI(IRI.create(ontology))
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Target ontology not found: " + ontology));
 
         OWLAxiom newAxiom;
@@ -81,7 +78,7 @@ public class EditController extends ApplicationController {
             transaction = UUID.randomUUID().toString();
         }
 
-        OWLOntology transactionOntology =
+        var transactionOntology =
                 editService.add(newAxiom, targetOnt, transaction, kit.getRootOntology());
 
         String refererHeader = request.getHeader(HttpHeaders.REFERER);
@@ -111,11 +108,11 @@ public class EditController extends ApplicationController {
             HttpServletResponse response
     ) throws IOException {
 
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker owlEntityChecker = kit.getOWLEntityChecker();
+        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var owlEntityChecker = kit.getOWLEntityChecker();
 
-        OWLOntology originalOnt = kit.getOntologyForIRI(IRI.create(originalOntology)).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Original ontology not found: " + originalOntology));
-        OWLOntology targetOnt = kit.getOntologyForIRI(IRI.create(ontology))
+        var originalOnt = kit.getOntologyForIRI(IRI.create(originalOntology)).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Original ontology not found: " + originalOntology));
+        var targetOnt = kit.getOntologyForIRI(IRI.create(ontology))
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Target ontology not found: " + ontology));
 
         OWLAxiom originalAx;

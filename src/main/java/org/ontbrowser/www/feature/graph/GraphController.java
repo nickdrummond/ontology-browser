@@ -1,7 +1,6 @@
 package org.ontbrowser.www.feature.graph;
 
 import com.google.common.collect.Streams;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
@@ -29,8 +28,9 @@ import java.util.stream.Stream;
 @RestController
 @Profile("graph")
 @RequestMapping(value = "/graph")
-public class GraphController extends ApplicationController {
+public class GraphController {
 
+    private final OWLHTMLKit kit;
     private final ParserService parserService;
     private final ReasonerService reasonerService;
 
@@ -39,7 +39,7 @@ public class GraphController extends ApplicationController {
             ParserService parserService,
             ReasonerService reasonerService
     ) {
-        super(kit);
+        this.kit = kit;
         this.parserService = parserService;
         this.reasonerService = reasonerService;
     }

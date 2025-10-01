@@ -1,21 +1,16 @@
 package org.ontbrowser.www.feature.stats;
 
-import org.ontbrowser.www.controller.ApplicationController;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/stats")
-public class StatsController extends ApplicationController {
+public class StatsController {
 
     private final StatsService statsService;
 
-    public StatsController(
-            OWLHTMLKit kit,
-            StatsService statsService) {
-        super(kit);
+    public StatsController(StatsService statsService) {
         this.statsService = statsService;
     }
 

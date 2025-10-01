@@ -2,6 +2,7 @@ package org.ontbrowser.www.feature.entities;
 
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.model.ProjectInfo;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,8 +14,9 @@ public class OWLAnnotationPropertiesController extends OWLPropertiesController<O
     public OWLAnnotationPropertiesController(
             OWLHTMLKit kit,
             OWLAnnotationPropertiesService service,
-            CommonContent commonContent
+            CommonContent commonContent,
+            ProjectInfo projectInfo
     ) {
-        super(kit, service, commonContent, OWLAnnotationProperty.class);
+        super(kit, service, commonContent, OWLAnnotationProperty.class, projectInfo);
     }
 }

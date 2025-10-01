@@ -2,10 +2,8 @@ package org.ontbrowser.www.feature.rdf;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.query.QueryParseException;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.PageData;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.context.annotation.Profile;
@@ -20,15 +18,16 @@ import static org.ontbrowser.www.feature.rdf.SPARQLService.DEFAULT_QUERY;
 @Profile("rdf")
 @RestController
 @RequestMapping("/sparql")
-public class SPARQLController extends ApplicationController {
+public class SPARQLController {
 
+    private final OWLHTMLKit kit;
     private final SPARQLService sparqlService;
 
     public SPARQLController(
             OWLHTMLKit kit,
             SPARQLService sparqlService
     ) {
-        super(kit);
+        this.kit = kit;
         this.sparqlService = sparqlService;
     }
 
@@ -59,8 +58,6 @@ public class SPARQLController extends ApplicationController {
             try {
                 var results = sparqlService.select(prefixes + select + "\nLIMIT " + pageSize + " OFFSET " + (start-1), ont);
                 model.addAttribute("results", results);
-                OWLHTMLRenderer htmlRenderer = rendererFactory.getHTMLRenderer(ont);
-                model.addAttribute("mos", htmlRenderer);
             }
             catch (QueryParseException e) {
                 model.addAttribute("error", e.getMessage());

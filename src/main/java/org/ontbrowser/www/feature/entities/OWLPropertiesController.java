@@ -2,12 +2,13 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.graph.GraphURLScheme;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
+import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
@@ -24,22 +25,26 @@ import java.util.List;
 
 import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE_STR;
 
-public class OWLPropertiesController<P extends OWLProperty> extends ApplicationController {
+public class OWLPropertiesController<P extends OWLProperty> {
 
+    private final OWLHTMLKit kit;
     private final PropertiesService<P> service;
     private final CommonContent commonContent;
     private final Class<P> clz;
+    private final ProjectInfo projectInfo;
 
     public OWLPropertiesController(
             OWLHTMLKit kit,
             PropertiesService<P> service,
             CommonContent commonContent,
-            Class<P> clz
+            Class<P> clz,
+            ProjectInfo projectInfo
     ) {
-        super(kit);
+        this.kit = kit;
         this.service = service;
         this.commonContent = commonContent;
         this.clz = clz;
+        this.projectInfo = projectInfo;
     }
 
     @GetMapping(value = "/")
@@ -63,10 +68,6 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
         var pluralType = service.getEntityType().getPluralPrintName();
         model.addAttribute("title", pluralType);
         model.addAttribute("type", pluralType);
-
-        var owlRenderer = rendererFactory.getHTMLRenderer(ont);
-        model.addAttribute("mos", owlRenderer);
-
         return new ModelAndView("owlentity");
     }
 
@@ -105,13 +106,16 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
 
         String entityName = kit.getShortFormProvider().getShortForm(prop);
 
-        var owlRenderer = rendererFactory.getHTMLRenderer(ont).withActiveObject(prop);
-        
         var characteristics = service.getCharacteristics(prop, ont, kit.getComparator(), with, pageSize);
 
         if (projectInfo.activeProfiles().contains("graph")) {
             var mos = new MOSStringRenderer(kit.getFinder(), ont);
             model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(prop, ont));
+        }
+
+        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
+        if (mos != null) {
+            mos.withActiveObject(prop);
         }
 
         String typeName = service.getEntityType().getPrintName();
@@ -120,7 +124,6 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
-        model.addAttribute("mos", owlRenderer);
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
         return new ModelAndView("owlentityfragment");
@@ -137,7 +140,6 @@ public class OWLPropertiesController<P extends OWLProperty> extends ApplicationC
         var prop = kit.lookup().entityFor(propertyId, ont, clz);
 
         model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
-        model.addAttribute("mos", rendererFactory.getHTMLRenderer(ont));
 
         return new ModelAndView("tree::children");
     }

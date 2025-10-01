@@ -1,9 +1,6 @@
 package org.ontbrowser.www.feature.parser;
 
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,17 +8,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value= ParserController.PATH)
-public class ParserController  extends ApplicationController {
+public class ParserController {
 
     public static final String PATH = "/parse";
 
+    private final OWLHTMLKit kit;
     private ParserService parserService;
 
     public ParserController(
             OWLHTMLKit kit,
             ParserService parserService
     ) {
-        super(kit);
+        this.kit = kit;
         this.parserService = parserService;
     }
 
@@ -35,8 +33,8 @@ public class ParserController  extends ApplicationController {
     @GetMapping(value = "/axiom")
     public ParseResultJson parseOWLAxiom(@RequestParam String expression) {
 
-        OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
-        OWLEntityChecker checker = kit.getOWLEntityChecker();
+        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var checker = kit.getOWLEntityChecker();
         return parserService.parseAxiomResult(expression, df, checker);
     }
 }

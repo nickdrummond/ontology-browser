@@ -1,12 +1,10 @@
 package org.ontbrowser.www.feature.search;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.AxiomWithMetadata;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.ui.Model;
@@ -19,15 +17,16 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/entities")
-public class FindByAnnotationController extends ApplicationController {
+public class FindByAnnotationController {
 
+    private final OWLHTMLKit kit;
     private final FindByAnnotation service;
 
     public FindByAnnotationController(
             OWLHTMLKit kit,
             FindByAnnotation service
     ) {
-        super(kit);
+        this.kit = kit;
         this.service = service;
     }
 
@@ -61,8 +60,6 @@ public class FindByAnnotationController extends ApplicationController {
             }
         }
 
-        OWLHTMLRenderer owlRenderer = rendererFactory.getHTMLRenderer(ont);
-
         String propLabel = optProp.orElse("All annotations");
 
         Characteristic resultsCharacteristic = new Characteristic(null, propLabel, results);
@@ -70,7 +67,6 @@ public class FindByAnnotationController extends ApplicationController {
         model.addAttribute("property", propLabel);
         model.addAttribute("search", search);
         model.addAttribute("results", resultsCharacteristic);
-        model.addAttribute("mos", owlRenderer);
 
         return new ModelAndView("searchresults");
     }

@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.search;
 
-import org.ontbrowser.www.controller.ApplicationController;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -11,8 +10,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/entities")
-public class SearchController extends ApplicationController {
+public class SearchController {
 
+    private final OWLHTMLKit kit;
     private final SearchService service;
     private final NameService nameService;
 
@@ -21,7 +21,7 @@ public class SearchController extends ApplicationController {
             SearchService service,
             NameService nameService
     ) {
-        super(kit);
+        this.kit = kit;
         this.service = service;
         this.nameService = nameService;
     }
@@ -32,7 +32,7 @@ public class SearchController extends ApplicationController {
             @RequestParam final String name,
             @RequestParam(defaultValue = "20") final int size) {
 
-        SearchResults results = new SearchResults();
+        var results = new SearchResults();
 
         // TODO use the ontology as the basis for the search
 
@@ -40,7 +40,9 @@ public class SearchController extends ApplicationController {
         if (name.length() > 1) {
             List<OWLEntity> entities = service.findByName(name, size, kit);
             for (OWLEntity owlEntity : entities) {
-                results.addResult(new SearchResult(kit.getURLScheme().getURLForOWLObject(owlEntity, ont), "", nameService.getName(owlEntity, kit)));
+                String entityUrl = kit.getURLScheme().getURLForOWLObject(owlEntity, ont);
+                String entityName = nameService.getName(owlEntity, kit);
+                results.addResult(new SearchResult(entityUrl, "", entityName));
             }
         }
 
