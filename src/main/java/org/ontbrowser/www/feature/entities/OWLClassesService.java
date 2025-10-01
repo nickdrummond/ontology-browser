@@ -1,6 +1,7 @@
 package org.ontbrowser.www.feature.entities;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
@@ -11,17 +12,14 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
 import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
 
 @Service
-public class OWLClassesService {
+public class OWLClassesService implements CharacteristicsProvider<OWLClass> {
 
     private final ReasonerFactoryService reasonerFactoryService;
 
@@ -34,23 +32,13 @@ public class OWLClassesService {
         return new OWLClassHierarchyService(r, treeComparator());
     }
 
-    public List<Characteristic> getCharacteristics(
+    public CharacteristicsBuilder<OWLClass> getCharacteristicsBuilder(
             final OWLClass owlClass,
             final OWLOntology ont,
             final Comparator<OWLObject> comparator,
             final List<With> with,
             final int defaultPageSize) {
-        return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize).getCharacteristics();
-    }
-
-    public Optional<Characteristic> getCharacteristic(
-            final String name,
-            final OWLClass owlClass,
-            final OWLOntology ont,
-            final Comparator<OWLObject> comparator,
-            final List<With> with,
-            final int defaultPageSize) {
-        return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize).getCharacteristic(name);
+        return new ClassCharacteristicsBuilder(owlClass, ont, comparator, with, defaultPageSize);
     }
 
     public Set<OWLClass> getNamedTypes(OWLClass cls, OWLOntology ont) {
@@ -60,5 +48,12 @@ public class OWLClassesService {
                 .filter(OWLClassExpression::isNamed)
                 .map(OWLClassExpression::asOWLClass)
                 .collect(Collectors.toSet());
+    }
+
+    public List<Characteristic> getInferredCharacteristics(
+            OWLClass entity,
+            OWLReasoner reasoner
+    ) {
+        return Collections.emptyList(); // TODO see OWLIndividualsService
     }
 }

@@ -6,10 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
+import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.ui.ConcurrentModel;
@@ -35,6 +37,8 @@ class CommonFragmentsTest {
     private OWLOntology mockOnt;
     @Mock
     private ShortFormProvider mockShortFormProvider;
+    @Mock
+    private CharacteristicsBuilder<OWLNamedIndividual> mockCharacteristicsBuilder;
 
     private CommonFragments commonFragments;
 
@@ -47,7 +51,8 @@ class CommonFragmentsTest {
         commonFragments = new CommonFragments(mockKit, stubProjectInfo, mockReasonerService);
         df = OWLManager.getOWLDataFactory();
         when(mockKit.getShortFormProvider()).thenReturn(mockShortFormProvider);
-        when(mockIndividualsService.getCharacteristics(any(), any(), any(), anyList(), anyInt())).thenReturn(List.of());
+        when(mockIndividualsService.getCharacteristicsBuilder(any(), any(), any(), anyList(), anyInt())).thenReturn(mockCharacteristicsBuilder);
+        when(mockCharacteristicsBuilder.getCharacteristics()).thenReturn(List.of());
     }
     @Test
     public void testTitleIsLabelPlusNamedType() {

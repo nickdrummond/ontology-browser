@@ -7,7 +7,6 @@ import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.ui.Model;
@@ -63,7 +62,6 @@ public class OWLClassesController {
         response.sendRedirect("/classes/" + id+ (ontId != null ? "?ontId=" + ontId : ""));
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{classId}")
     public ModelAndView getOWLClass(
             @PathVariable final String classId,
@@ -85,7 +83,6 @@ public class OWLClassesController {
         return new ModelAndView("owlentity");
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{classId}/fragment")
     public ModelAndView getOWLClassFragment(
             @PathVariable final String classId,
@@ -95,14 +92,9 @@ public class OWLClassesController {
             final HttpServletRequest request
     ) {
         var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
-        var mos = (OWLHTMLRenderer)model.getAttribute("mos");
-        if (mos != null) {
-            model.addAttribute("mos", mos.withActiveObject(owlClass));
-        }
-        return commonFragments.getOWLClassFragment(service, owlClass, ont, with, model, request.getQueryString());
+        return commonFragments.getOWLClassFragment(service, owlClass, false, ont, with, model, request.getQueryString());
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{classId}/children")
     public ModelAndView getChildren(
             @PathVariable final String classId,

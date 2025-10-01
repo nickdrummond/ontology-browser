@@ -1,6 +1,7 @@
 package org.ontbrowser.www.feature.entities;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.feature.entities.characteristics.IndividualCharacteristicsBuilder;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.With;
@@ -18,20 +19,22 @@ import java.util.stream.Collectors;
 import static org.semanticweb.owlapi.model.AxiomType.CLASS_ASSERTION;
 
 @Service
-public class OWLIndividualsService {
+public class OWLIndividualsService implements CharacteristicsProvider<OWLNamedIndividual> {
 
-    public List<Characteristic> getCharacteristics(final OWLNamedIndividual owlIndividual,
-                                                   final OWLOntology ont,
-                                                   final Comparator<OWLObject> comparator,
-                                                   final List<With> with,
-                                                   final int defaultPageSize) {
-
-        return new IndividualCharacteristicsBuilder(owlIndividual, ont, comparator, with, defaultPageSize).getCharacteristics();
+    public CharacteristicsBuilder<OWLNamedIndividual> getCharacteristicsBuilder(
+            OWLNamedIndividual owlIndividual,
+            OWLOntology ont,
+            Comparator<OWLObject> comparator,
+            List<With> with,
+            int defaultPageSize
+    ) {
+        return new IndividualCharacteristicsBuilder(owlIndividual, ont, comparator, with, defaultPageSize);
     }
 
     public List<Characteristic> getInferredCharacteristics(
             OWLNamedIndividual owlIndividual,
-            OWLReasoner reasoner) {
+            OWLReasoner reasoner
+    ) {
         OWLOntology reasonerRootOnt = reasoner.getRootOntology();
         OWLOntologyManager mngr = reasonerRootOnt.getOWLOntologyManager();
         OWLDataFactory df = mngr.getOWLDataFactory();
@@ -55,7 +58,7 @@ public class OWLIndividualsService {
     public Set<OWLClass> getNamedTypes(OWLNamedIndividual ind, OWLOntology ont) {
         return ont.getAxioms(ind, Imports.INCLUDED).stream()
                 .filter(ax -> ax.isOfType(CLASS_ASSERTION))
-                .map(ax -> ((OWLClassAssertionAxiom)ax).getClassExpression())
+                .map(ax -> ((OWLClassAssertionAxiom) ax).getClassExpression())
                 .filter(OWLClassExpression::isNamed)
                 .map(OWLClassExpression::asOWLClass)
                 .collect(Collectors.toSet());

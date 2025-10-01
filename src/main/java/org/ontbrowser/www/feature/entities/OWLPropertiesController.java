@@ -3,13 +3,8 @@ package org.ontbrowser.www.feature.entities;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.feature.graph.GraphURLScheme;
 import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.renderer.MOSStringRenderer;
-import org.ontbrowser.www.renderer.OWLHTMLRenderer;
-import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
 import org.springframework.ui.Model;
@@ -31,20 +26,20 @@ public class OWLPropertiesController<P extends OWLProperty> {
     private final PropertiesService<P> service;
     private final CommonContent commonContent;
     private final Class<P> clz;
-    private final ProjectInfo projectInfo;
+    private final CommonFragments commonFragments;
 
     public OWLPropertiesController(
             OWLHTMLKit kit,
             PropertiesService<P> service,
             CommonContent commonContent,
             Class<P> clz,
-            ProjectInfo projectInfo
+            CommonFragments commonFragments
     ) {
         this.kit = kit;
         this.service = service;
         this.commonContent = commonContent;
         this.clz = clz;
-        this.projectInfo = projectInfo;
+        this.commonFragments = commonFragments;
     }
 
     @GetMapping(value = "/")
@@ -71,7 +66,6 @@ public class OWLPropertiesController<P extends OWLProperty> {
         return new ModelAndView("owlentity");
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}")
     public ModelAndView getPage(
             @PathVariable final String propertyId,
@@ -92,7 +86,6 @@ public class OWLPropertiesController<P extends OWLProperty> {
         return new ModelAndView("owlentity");
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/fragment")
     public ModelAndView getFragment(
             @PathVariable final String propertyId,
@@ -102,35 +95,19 @@ public class OWLPropertiesController<P extends OWLProperty> {
             final Model model,
             final HttpServletRequest request
     ) {
-        var prop = kit.lookup().entityFor(propertyId, ont, clz);
+        var entity = kit.lookup().entityFor(propertyId, ont, clz);
 
-        String entityName = kit.getShortFormProvider().getShortForm(prop);
-
-        var characteristics = service.getCharacteristics(prop, ont, kit.getComparator(), with, pageSize);
-
-        if (projectInfo.activeProfiles().contains("graph")) {
-            var mos = new MOSStringRenderer(kit.getFinder(), ont);
-            model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(prop, ont));
-        }
-
-        var mos = (OWLHTMLRenderer) model.getAttribute("mos");
-        if (mos != null) {
-            mos.withActiveObject(prop);
-        }
-
+        String entityName = kit.getShortFormProvider().getShortForm(entity);
         String typeName = service.getEntityType().getPrintName();
-        model.addAttribute("title", entityName + " ( " + typeName + " )");
-        model.addAttribute("iri", prop.getIRI());
-        model.addAttribute("characteristics", characteristics);
-        model.addAttribute("ontologies", ont.getImportsClosure());
-        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
-        model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
+        String title = entityName + " ( " + typeName + " )";
 
-        return new ModelAndView("owlentityfragment");
+        boolean inferred = false;
 
+        String queryString = request.getQueryString();
+
+        return commonFragments.buildCommonEntityFragment(service, entity, inferred, ont, with, model, queryString, title);
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
             @PathVariable final String propertyId,

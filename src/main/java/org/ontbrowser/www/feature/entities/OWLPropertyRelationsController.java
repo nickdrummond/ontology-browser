@@ -86,7 +86,6 @@ public class OWLPropertyRelationsController {
         response.sendRedirect("/relations/" + PATH + "/" + id);
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}")
     public ModelAndView getRelationsForProperty(
             @PathVariable final String propertyId,
@@ -192,12 +191,9 @@ public class OWLPropertyRelationsController {
         commonFragments.getOWLIndividualFragment(individualsService, individual, false, with,
                 ont, model, request.getQueryString());
 
-        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
-
         return new ModelAndView("owlentityfragment");
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
             @PathVariable final String propertyId,

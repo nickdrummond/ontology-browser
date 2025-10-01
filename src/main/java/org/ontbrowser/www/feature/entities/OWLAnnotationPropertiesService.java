@@ -1,7 +1,7 @@
 package org.ontbrowser.www.feature.entities;
 
 import org.ontbrowser.www.feature.entities.characteristics.AnnotationPropertyCharacteristicsBuilder;
-import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.*;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
@@ -16,13 +16,13 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 @Service
 public class OWLAnnotationPropertiesService implements PropertiesService<OWLAnnotationProperty> {
 
-    public List<Characteristic> getCharacteristics(
+    public CharacteristicsBuilder<OWLAnnotationProperty> getCharacteristicsBuilder(
             final OWLAnnotationProperty property,
             final OWLOntology ont,
             final Comparator<OWLObject> comparator,
             final List<With> with,
             final int pageSize) {
-        return new AnnotationPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize).getCharacteristics();
+        return new AnnotationPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize);
     }
 
     @Override

@@ -79,7 +79,6 @@ public class OWLIndividualsController {
         response.sendRedirect("/individuals/by/type" + (ontId != null ? "?ontId=" + ontId : ""));
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{individualId}")
     public ModelAndView getOWLIndividual(
             @PathVariable final String individualId,
@@ -149,7 +148,6 @@ public class OWLIndividualsController {
         return type;
     }
 
-
     @GetMapping(value = "/by/type/{classId}/withindividual/{individualId}")
     public ModelAndView byType(
             @PathVariable final String classId,
@@ -214,7 +212,6 @@ public class OWLIndividualsController {
         model.addAttribute("statsName", statsName);
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/by/type/{classId}/children")
     public ModelAndView getChildren(
             @PathVariable final String classId,
@@ -232,7 +229,6 @@ public class OWLIndividualsController {
         return commonFragments.getClassChildren(type, r, stats, model);
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{individualId}/fragment")
     public ModelAndView getOWLIndividualFragment(
             @PathVariable final String individualId,
@@ -247,7 +243,6 @@ public class OWLIndividualsController {
                 ont, model, request.getQueryString());
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/by/type/{classId}/fragment")
     public ModelAndView getOWLClassFragment(
             @PathVariable final String classId,
@@ -257,7 +252,7 @@ public class OWLIndividualsController {
             final HttpServletRequest request
     ) {
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
-        return commonFragments.getOWLClassFragment(owlClassesService, type, ont,
+        return commonFragments.getOWLClassFragment(owlClassesService, type, false, ont,
                 with, model, request.getQueryString());
     }
 
@@ -281,9 +276,9 @@ public class OWLIndividualsController {
     }
 
     private void buildSecondaryNavigation(OWLOntology ont, List<With> with, Model model, OWLClass type) {
-        var characteristic = owlClassesService.getCharacteristic(
-                ClassCharacteristicsBuilder.MEMBERS,
-                type, ont, kit.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE);
+        var characteristic = owlClassesService.getCharacteristicsBuilder(
+                type, ont, kit.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE)
+                .getCharacteristic(ClassCharacteristicsBuilder.MEMBERS);
 
         model.addAttribute("direct",
                 characteristic.orElse(new Characteristic(type, ClassCharacteristicsBuilder.MEMBERS, Collections.emptyList())));

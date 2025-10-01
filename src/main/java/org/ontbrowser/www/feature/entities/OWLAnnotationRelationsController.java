@@ -81,7 +81,6 @@ public class OWLAnnotationRelationsController {
     }
 
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}")
     public ModelAndView getRelationsForAnnotationProperty(
             @PathVariable final String propertyId,
@@ -156,12 +155,9 @@ public class OWLAnnotationRelationsController {
         commonRelations.buildPrimaryTree(prop, primaryHierarchy, "Annotations on", model);
         commonRelations.buildSecondaryTree(relationsHierarchyService, individual, model, request);
 
-        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
-
         return new ModelAndView(RELATION_TEMPLATE);
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
             @PathVariable final String propertyId,

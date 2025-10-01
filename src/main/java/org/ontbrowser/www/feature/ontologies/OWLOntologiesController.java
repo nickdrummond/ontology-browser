@@ -56,7 +56,6 @@ public class OWLOntologiesController {
         response.sendRedirect("/ontologies/" + id);
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}")
     public ModelAndView getOntology(
             @PathVariable final String ontId,
@@ -73,8 +72,6 @@ public class OWLOntologiesController {
         return new ModelAndView("ontology");
     }
 
-
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "/{ontId}/fragment")
     public ModelAndView getOntologyFragment(
             @PathVariable final String ontId,

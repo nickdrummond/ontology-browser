@@ -1,6 +1,6 @@
 package org.ontbrowser.www.feature.entities;
 
-import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.feature.entities.characteristics.ObjectPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.*;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
@@ -24,13 +24,13 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
     }
 
     @Override
-    public List<Characteristic> getCharacteristics(
+    public CharacteristicsBuilder<OWLObjectProperty> getCharacteristicsBuilder(
             final OWLObjectProperty property,
             final OWLOntology ont,
             final Comparator<OWLObject> comparator,
             final List<With> with,
             final int pageSize) {
-        return new ObjectPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize).getCharacteristics();
+        return new ObjectPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize);
     }
 
     @Override

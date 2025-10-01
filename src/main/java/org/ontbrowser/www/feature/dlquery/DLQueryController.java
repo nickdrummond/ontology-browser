@@ -56,7 +56,6 @@ public class DLQueryController {
         this.graphEnabled = Arrays.asList(environment.getActiveProfiles()).contains("graph");
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping
     public ModelAndView dlQuery(
             @RequestParam(required = false, defaultValue = "") final String expression,
@@ -101,7 +100,6 @@ public class DLQueryController {
         return new ModelAndView("dlquery");
     }
 
-    @SuppressWarnings("SameReturnValue")
     @GetMapping(value = "results")
     public ModelAndView getResults(
             @RequestParam final String expression,

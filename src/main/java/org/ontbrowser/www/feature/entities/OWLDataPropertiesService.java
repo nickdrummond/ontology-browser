@@ -1,7 +1,7 @@
 package org.ontbrowser.www.feature.entities;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
+import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.feature.entities.characteristics.DataPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLDataPropertyHierarchyService;
@@ -26,13 +26,13 @@ public class OWLDataPropertiesService implements PropertiesService<OWLDataProper
         this.reasonerFactoryService = reasonerFactoryService;
     }
 
-    public List<Characteristic> getCharacteristics(
+    public CharacteristicsBuilder<OWLDataProperty> getCharacteristicsBuilder(
             final OWLDataProperty property,
             final OWLOntology ont,
             final Comparator<OWLObject> comparator,
             final List<With> with,
             final int pageSize) {
-        return new DataPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize).getCharacteristics();
+        return new DataPropertyCharacteristicsBuilder(property, ont, comparator, with, pageSize);
     }
 
     @Override
