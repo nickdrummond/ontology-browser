@@ -11,7 +11,8 @@ import java.util.Optional;
 
 public class PagingUtils {
 
-    private PagingUtils() {}
+    private PagingUtils() {
+    }
 
     public static <T extends OWLObject> Characteristic getCharacteristic(
             T target,
@@ -19,8 +20,9 @@ public class PagingUtils {
             int defaultPageSize,
             Comparator<AxiomWithMetadata> compareByOWLObject,
             String charName,
-            List<AxiomWithMetadata> results) {
-
+            List<AxiomWithMetadata> results,
+            OWLObject focus
+    ) {
         int start = 1;
         int pageSize = defaultPageSize;
         Optional<With> withStart = getPagingFor(with, charName);
@@ -28,7 +30,7 @@ public class PagingUtils {
             start = withStart.get().start();
             pageSize = withStart.get().pageSize();
         }
-        return pagedCharacteristic(target, start, pageSize, compareByOWLObject, charName, results);
+        return pagedCharacteristic(target, start, pageSize, compareByOWLObject, charName, results, focus);
     }
 
     private static <T extends OWLObject> Characteristic pagedCharacteristic(
@@ -37,16 +39,35 @@ public class PagingUtils {
             int pageSize,
             Comparator<AxiomWithMetadata> compareByOWLObject,
             String charName,
-            List<AxiomWithMetadata> results) {
-
-        List<AxiomWithMetadata> sortedAndPaged = results.stream()
+            List<AxiomWithMetadata> results,
+            OWLObject focus
+    ) {
+        var sorted = results.stream()
                 .sorted(compareByOWLObject)
-                .skip(start-1L)
+                .toList();
+
+        if (focus != null) {
+            // ignore the start and look for the focus
+            int focusIndex = -1;
+            for (int i = 0; i < sorted.size(); i++) {
+                if (sorted.get(i).owlObject().equals(focus)) {
+                    focusIndex = i;
+                    break;
+                }
+            }
+            if (focusIndex >= 0) {
+                // return the page starting on a multiple of pageSize that includes focusIndex
+                int pageStartIndex = (focusIndex / pageSize) * pageSize;
+                start = pageStartIndex + 1;
+            }
+        }
+
+        var sortedAndPaged = sorted.stream()
+                .skip(start - 1L)
                 .limit(pageSize)
                 .toList();
 
-        PageData pageData = new PageData(start, pageSize, results.size());
-
+        var pageData = new PageData(start, pageSize, results.size());
         return new Characteristic(target, charName, sortedAndPaged, pageData);
     }
 

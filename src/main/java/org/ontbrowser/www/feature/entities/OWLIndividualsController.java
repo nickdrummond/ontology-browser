@@ -115,7 +115,7 @@ public class OWLIndividualsController {
     ) {
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
-        OWLClass type = buildNav(classId, with, statsName, ont, model, request);
+        OWLClass type = buildNav(classId, with, statsName, ont, model, request, null);
 
         getOWLClassFragment(classId, ont, with, model, request);
 
@@ -130,7 +130,8 @@ public class OWLIndividualsController {
             final String statsName,
             final OWLOntology ont,
             final Model model,
-            final HttpServletRequest request
+            final HttpServletRequest request,
+            final OWLNamedIndividual ind
     ) {
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
@@ -140,7 +141,7 @@ public class OWLIndividualsController {
 
         buildPrimaryHierarchy(statsName, model, type, r);
 
-        buildSecondaryNavigation(ont, with, model, type);
+        buildSecondaryNavigation(ont, with, model, type, ind);
 
         return type;
     }
@@ -160,7 +161,7 @@ public class OWLIndividualsController {
 
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
-        OWLClass type = buildNav(classId, with, statsName, ont, model, request);
+        OWLClass type = buildNav(classId, with, statsName, ont, model, request, ind);
 
         getOWLIndividualFragment(individualId, inferred, with, ont, model, request);
 
@@ -263,7 +264,7 @@ public class OWLIndividualsController {
     ) {
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        buildSecondaryNavigation(ont, with, model, type);
+        buildSecondaryNavigation(ont, with, model, type, null);
 
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
@@ -272,12 +273,21 @@ public class OWLIndividualsController {
         return new ModelAndView("tree::secondary");
     }
 
-    private void buildSecondaryNavigation(OWLOntology ont, List<With> with, Model model, OWLClass type) {
-        var characteristic = owlClassesService.getCharacteristicsBuilder(
-                type, ont, kit.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE)
-                .getCharacteristic(ClassCharacteristicsBuilder.MEMBERS);
+    private void buildSecondaryNavigation(OWLOntology ont, List<With> with, Model model, OWLClass type, OWLNamedIndividual ind) {
+        var builder = owlClassesService.getCharacteristicsBuilder(
+                type, ont, kit.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE);
+
+        if (!containsPaging(with, ClassCharacteristicsBuilder.MEMBERS)) {
+            builder = builder.withFocus(ind);
+        }
+
+        var characteristic = builder.getCharacteristic(ClassCharacteristicsBuilder.MEMBERS);
 
         model.addAttribute("direct",
                 characteristic.orElse(new Characteristic(type, ClassCharacteristicsBuilder.MEMBERS, Collections.emptyList())));
+    }
+
+    private boolean containsPaging(List<With> with, String members) {
+        return with.stream().anyMatch(w -> w.characteristicName().equalsIgnoreCase(members));
     }
 }

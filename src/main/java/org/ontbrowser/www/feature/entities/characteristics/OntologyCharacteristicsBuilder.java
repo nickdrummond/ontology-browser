@@ -2,7 +2,6 @@ package org.ontbrowser.www.feature.entities.characteristics;
 
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.feature.entities.characteristics.PagingUtils;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.*;
@@ -53,7 +52,7 @@ public class OntologyCharacteristicsBuilder {
         Comparator<AxiomWithMetadata> compareByOWLObject = (a, b) ->
                 c.compare(a.owlObject(), b.owlObject());
 
-        return Optional.of(PagingUtils.getCharacteristic(ont, with, defaultPageSize, compareByOWLObject, name, r));
+        return Optional.of(PagingUtils.getCharacteristic(ont, with, defaultPageSize, compareByOWLObject, name, r, null));
     }
 
     public List<Characteristic> getCharacteristics() {

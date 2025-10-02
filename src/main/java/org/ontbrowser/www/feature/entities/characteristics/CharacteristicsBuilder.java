@@ -3,7 +3,6 @@ package org.ontbrowser.www.feature.entities.characteristics;
 import com.google.common.collect.Streams;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.feature.entities.characteristics.PagingUtils;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 
@@ -26,6 +25,7 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
     private final Comparator<OWLObject> comparator;
     private final List<With> with;
     private final int defaultPageSize;
+    private OWLObject focus = null;
 
     protected CharacteristicsBuilder(
             T target,
@@ -38,6 +38,11 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
         this.comparator = comparator;
         this.with = with;
         this.defaultPageSize = defaultPageSize;
+    }
+
+    public CharacteristicsBuilder<T> withFocus(OWLObject focus) {
+        this.focus = focus;
+        return this;
     }
 
     public List<Characteristic> getCharacteristics() {
@@ -57,7 +62,7 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
         return PagingUtils.getCharacteristic(
                 target, with, defaultPageSize,
                 (a, b) -> comparator.compare(a.owlObject(), b.owlObject()),
-                name, values);
+                name, values, focus);
     }
 
     private Stream<AxiomWithMetadata> getAxioms() {
