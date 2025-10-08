@@ -1,23 +1,17 @@
-import {graphControls, INDIVIDUALS, PROPERTIES, QUERY} from "./graph-controls.js";
 import {updateAddress} from "./url-helper.js";
 import {getStyle, isDark, HIGHLIGHTED, HIGHLIGHTED_INCOMING, SELECTED} from "./graph-style.js";
 import {getLayout, updateLength, defaultLayout} from "./graph-layouts.js";
 
-document.addEventListener('DOMContentLoaded', function () {
+// Params
+export const QUERY = "query";
+export const INDIVIDUALS = "indivs";
+export const PROPERTIES = "props";
+export const NODE_SPACE = "space";
 
-    const g = graph('.graph');
-    const controls = graphControls('.graph-controls', g);
-
-    // On any resize of the controls (because of the sel list), resize the graph
-    new ResizeObserver(() => {
-        if (g.cy) {
-            g.cy.resize();
-        }
-    }).observe(controls.getContainer());
-});
-
-export function graph(selector) {
+export function graph(selector, endpoint = '/graph/data') {
     const containerDiv = document.querySelector(selector);
+    const nodeCount = document.getElementById("nodeCount");
+    const edgeCount = document.getElementById("edgeCount");
 
     if (!containerDiv) {
         console.error("No container with class " + selector + " found");
@@ -87,26 +81,11 @@ export function graph(selector) {
 
     function refocus() {
         const allSelected = cy.$(SELECTED);
-
-        // Set the components and then update the address once from the controls
-        const instances = allSelected
-            .filter(s => s.data().type === 'individual')
-            .map(s => s.data().label).join(',');
-        document.getElementById(INDIVIDUALS).value = instances;
-        updateAddress(INDIVIDUALS, instances);
-
-        const classes = allSelected
-            .filter(s => s.data().type === 'class')
-            .map(s => s.data().label).join(' or '); // build union of classes
-        document.getElementById(QUERY).value = classes;
-        updateAddress(QUERY, classes);
-
-        const properties = allSelected
-            .filter(s => Boolean(s.data().source))
-            .map(s => s.data().label).join(',');
-        document.getElementById(PROPERTIES).value = properties;
-        updateAddress(PROPERTIES, properties);
-
+        // Dispatch custom event for refocus
+        const event = new CustomEvent('graph:refocus', {
+            detail: allSelected.map(s => s.data())
+        });
+        containerDiv.dispatchEvent(event);
         reload();
     }
 
@@ -123,25 +102,34 @@ export function graph(selector) {
     function expand(node) {
         const data = node.data();
         const label = data.label;
+        const urlParams = new URLSearchParams(window.location.search);
         if (data.type === 'individual') {
-            const indivs = document.getElementById(INDIVIDUALS);
-            const current = indivs.value.trim().split(",");
+            const current = urlParams.get(INDIVIDUALS)?.trim().split(",") || [];
+            console.log("Expanding node " + node.data().label, current);
             if (!current.includes(label)) {
+                console.log("Adding to URL param " + INDIVIDUALS + " value " + label);
                 current.push(label);
-                indivs.value = current.join(",");
+                const newValue = current.join(",");
+                updateAddress(INDIVIDUALS, newValue);
+                // Dispatch event to update controls
+                containerDiv.dispatchEvent(new CustomEvent('graph:updateControls', {
+                    detail: { type: INDIVIDUALS, value: newValue }
+                }));
                 append(label, INDIVIDUALS);
-                updateAddress(INDIVIDUALS, indivs.value);
             }
         }
         else if (data.type === 'class' || data.type === 'expression') {
-            const query = document.getElementById(QUERY);
-            const current = query.value.trim();
+            const current = urlParams.get(QUERY)?.trim() || "";
             const classes = current === "" ? [] : current.split(" or ");
             if (!classes.includes(label)) {
                 classes.push(label);
-                query.value = classes.join(" or ");
+                const newValue = classes.join(" or ");
+                updateAddress(QUERY, newValue);
+                // Dispatch event to update controls
+                containerDiv.dispatchEvent(new CustomEvent('graph:updateControls', {
+                    detail: { type: QUERY, value: newValue }
+                }));
                 append(label, QUERY);
-                updateAddress(QUERY, query.value);
             }
         }
     }
@@ -150,11 +138,15 @@ export function graph(selector) {
         const selected = cy.$(SELECTED);
         const selectedLabels = selected.map(s => s.data().label);
         const selectedIds = selected.map(s => s.data().id);
-        const current = document.getElementById(INDIVIDUALS);
-        const existingIndividuals = current.value.split(",");
+        const urlParams = new URLSearchParams(window.location.search);
+        const existingIndividuals = urlParams.get(INDIVIDUALS)?.split(",") || [];
         const newIndividuals = existingIndividuals.filter(sel => !selectedLabels.includes(sel));
-        current.value = newIndividuals.join(',');
-        updateAddress(INDIVIDUALS, current.value);
+        const newValue = newIndividuals.join(',');
+        updateAddress(INDIVIDUALS, newValue);
+        // Dispatch event to update controls
+        containerDiv.dispatchEvent(new CustomEvent('graph:updateControls', {
+            detail: { type: INDIVIDUALS, value: newValue }
+        }));
         remove(selectedLabels, selectedIds);
     }
 
@@ -184,7 +176,7 @@ export function graph(selector) {
         myHeaders.append("Accept", "application/json");
         let urlSearchParams = new URLSearchParams(window.location.search);
         document.title = "Graph: " + (urlSearchParams.get(QUERY) ?? urlSearchParams.get(INDIVIDUALS) ?? urlSearchParams.get(PROPERTIES) ?? "");
-        let url = '/graph/data?' + urlSearchParams.toString();
+        let url = endpoint + '?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
         })
@@ -202,7 +194,8 @@ export function graph(selector) {
         let urlSearchParams = new URLSearchParams(window.location.search);
         urlSearchParams.set(param, labels);
         urlSearchParams.set("depth", "0");
-        let url = '/graph/data?' + urlSearchParams.toString();
+        console.log("Appending to graph with " + urlSearchParams.toString());
+        let url = endpoint + '?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
         })
@@ -311,6 +304,11 @@ export function graph(selector) {
         selListeners.forEach(callback => {
             callback(sel);
         });
+        // Dispatch custom event for selection change
+        const event = new CustomEvent('graph:selectionChanged', {
+            detail: sel.map(s => s.data())
+        });
+        containerDiv.dispatchEvent(event);
     }
 
     function updateSelected(sel) {
@@ -326,12 +324,10 @@ export function graph(selector) {
     }
 
     function updateStats(nodes, edges) {
-        const nodeCount = document.getElementById("nodeCount");
         if (nodeCount) {
             nodeCount.innerText = nodes.length;
         }
 
-        const edgeCount = document.getElementById("edgeCount");
         if (edgeCount) {
             edgeCount.innerText = edges.length;
         }
@@ -339,8 +335,9 @@ export function graph(selector) {
 
     function buildGraph(type, elements, style) {
         currentLayout = getLayout(type);
-        const spaceCtrl = document.getElementById("space");
-        setLengthProp(parseInt(spaceCtrl.value));
+        const urlParams = new URLSearchParams(window.location.search);
+        const spaceValue = parseInt(urlParams.get('space')) || 20;
+        setLengthProp(spaceValue);
         if (cy) {
             cy.off('select');
             cy.off('unselect');

@@ -66,6 +66,6 @@ export const entity = (sel = "#content") => {
 
     return {
         loadEntity: loadEntity,
-        openLinksInEntityPane: openLinksInEntityPane,
+        openLinksInEntityPane,
     }
 }

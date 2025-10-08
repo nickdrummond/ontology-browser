@@ -99,7 +99,7 @@ public class GraphController {
                 .withMaxEdges(maxEdges)
                 .withDepth(depth);
 
-        var graph = new GraphBuilder(descr).build();
+        var graph = new GraphBuilderImpl(descr).build();
 
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
         var renderer = new MOSStringRenderer(kit.getFinder(), ont);

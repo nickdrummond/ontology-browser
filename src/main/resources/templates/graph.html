@@ -5,37 +5,55 @@
 <head>
     <th:block th:insert='~{base :: header (title=${title})}'/>
 
-    <link rel='stylesheet' type='text/css' href="/css/graph.css" th:href='@{/css/graph.css}'/>
-
     <!-- Class expression -->
     <link rel='stylesheet' type='text/css' href='/css/gaphu-0.0.9.css'
           th:href='@{/css/gaphu-0.0.9.css}'/>
     <script type='text/javascript' src='/js/gaphu-0.0.9.js'
             th:src='@{/js/gaphu-0.0.9.js}'></script>
 
-    <!-- TODO only load necessary layout -->
-    <script src='/js/libs/cytoscape.min.js' th:src="@{/js/libs/cytoscape.min.js}"></script>
+    <th:block th:fragment="includeGraph">
+        <link rel='stylesheet' type='text/css' href="/css/graph.css" th:href='@{/css/graph.css}'/>
 
-    <script src='/js/libs/layout-base.js' th:src="@{/js/libs/layout-base.js}"></script>
-    <script src='/js/libs/cose-base.js' th:src="@{/js/libs/cose-base.js}"></script>
-    <script src='/js/libs/cytoscape-layout-utilities.js' th:src="@{/js/libs/cytoscape-layout-utilities.js}"></script>
-    <script src='/js/libs/cytoscape-fcose.js' th:src="@{/js/libs/cytoscape-fcose.js}"></script>
+        <!-- TODO only load necessary layout -->
+        <script src='/js/libs/cytoscape.min.js' th:src="@{/js/libs/cytoscape.min.js}"></script>
 
-    <script src='/js/libs/cola.min.js' th:src="@{/js/libs/cola.min.js}"></script>
-    <script src='/js/libs/cytoscape-cola.js' th:src="@{/js/libs/cytoscape-cola.js}"></script>
+        <script src='/js/libs/layout-base.js' th:src="@{/js/libs/layout-base.js}"></script>
+        <script src='/js/libs/cose-base.js' th:src="@{/js/libs/cose-base.js}"></script>
+        <script src='/js/libs/cytoscape-layout-utilities.js'
+                th:src="@{/js/libs/cytoscape-layout-utilities.js}"></script>
+        <script src='/js/libs/cytoscape-fcose.js' th:src="@{/js/libs/cytoscape-fcose.js}"></script>
 
-    <script src='/js/libs/cytoscape-euler.js' th:src="@{/js/libs/cytoscape-euler.js}"></script>
+        <script src='/js/libs/cola.min.js' th:src="@{/js/libs/cola.min.js}"></script>
+        <script src='/js/libs/cytoscape-cola.js' th:src="@{/js/libs/cytoscape-cola.js}"></script>
 
-    <script src='/js/libs/dagre.js' th:src="@{/js/libs/dagre.js}"></script>
-    <script src='/js/libs/cytoscape-dagre.js' th:src="@{/js/libs/cytoscape-dagre.js}"></script>
+        <script src='/js/libs/cytoscape-euler.js' th:src="@{/js/libs/cytoscape-euler.js}"></script>
 
-    <script src='/js/libs/klay.js' th:src="@{/js/libs/klay.js}"></script>
-    <script src='/js/libs/cytoscape-klay.js' th:src="@{/js/libs/cytoscape-klay.js}"></script>
+        <script src='/js/libs/dagre.js' th:src="@{/js/libs/dagre.js}"></script>
+        <script src='/js/libs/cytoscape-dagre.js' th:src="@{/js/libs/cytoscape-dagre.js}"></script>
 
-    <script type='module' src='/js/graph.js'
-            th:src='@{/js/graph.js}'>
+        <script src='/js/libs/klay.js' th:src="@{/js/libs/klay.js}"></script>
+        <script src='/js/libs/cytoscape-klay.js' th:src="@{/js/libs/cytoscape-klay.js}"></script>
+
+        <script type='module' src='/js/graph.js'
+                th:src='@{/js/graph.js}'>
+        </script>
+    </th:block>
+
+    <script type="module">
+        import {graph} from '/js/graph.js';
+        import {graphControls} from '/js/graph-controls.js';
+        document.addEventListener('DOMContentLoaded', function () {
+            const g = graph('.graph');
+            const controls = graphControls('.graph-controls', g);
+
+            // On any resize of the controls (because of the sel list), resize the graph
+            new ResizeObserver(() => {
+                if (g.cy) {
+                    g.cy.resize();
+                }
+            }).observe(controls.getContainer());
+        });
     </script>
-
 </head>
 
 <body class="wrapper">
@@ -83,72 +101,72 @@
     </div>
 
     <div id="content">
-    <div class="graph-container">
+        <div class="graph-container">
 
-        <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-        <ul class="graph-actions">
-            <li class="graph-search">
-            <input id="graph-search" class="search" type="text" placeholder='search graph...'/>
-            <span class="search-icon-wrapper">
+            <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+            <ul class="graph-actions">
+                <li class="graph-search">
+                    <input id="graph-search" class="search" type="text" placeholder='search graph...'/>
+                    <span class="search-icon-wrapper">
                 <input type='submit' disabled class="search-icon icon" value=""/>
             </span>
-            </li>
+                </li>
 
-            <li class="icon-button" id="refocus" title="refocus graph on selected nodes">
-                <svg id="refocus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/>
-                </svg>
-            </li>
-            <li class="icon-button" id="expand" title="expand selected nodes">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="M200 32L56 32C42.7 32 32 42.7 32 56l0 144c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l40-40 79 79-79 79L73 295c-6.9-6.9-17.2-8.9-26.2-5.2S32 302.3 32 312l0 144c0 13.3 10.7 24 24 24l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-40-40 79-79 79 79-40 40c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8l144 0c13.3 0 24-10.7 24-24l0-144c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2l-40 40-79-79 79-79 40 40c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2l0-144c0-13.3-10.7-24-24-24L312 32c-9.7 0-18.5 5.8-22.2 14.8s-1.7 19.3 5.2 26.2l40 40-79 79-79-79 40-40c6.9-6.9 8.9-17.2 5.2-26.2S209.7 32 200 32z"/>
-                </svg>
-            </li>
-            <li class="icon-button" id="delete" title="delete selected nodes">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path d="M170.5 51.6L151.5 80l145 0-19-28.4c-1.5-2.2-4-3.6-6.7-3.6l-93.7 0c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80 368 80l48 0 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 304c0 44.2-35.8 80-80 80l-224 0c-44.2 0-80-35.8-80-80l0-304-8 0c-13.3 0-24-10.7-24-24S10.7 80 24 80l8 0 48 0 13.8 0 36.7-55.1C140.9 9.4 158.4 0 177.1 0l93.7 0c18.7 0 36.2 9.4 46.6 24.9zM80 128l0 304c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-304L80 128zm80 64l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16z"/>
-                </svg>
-            </li>
-            <li class="icon-button" id="png" title="export as PNG">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                    <path d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm152 32c5.3 0 10.2 2.6 13.2 6.9l88 128c3.4 4.9 3.7 11.3 1 16.5s-8.2 8.6-14.2 8.6l-88 0-40 0-48 0-48 0c-5.8 0-11.1-3.1-13.9-8.1s-2.8-11.2 .2-16.1l48-80c2.9-4.8 8.1-7.8 13.7-7.8s10.8 2.9 13.7 7.8l12.8 21.4 48.3-70.2c3-4.3 7.9-6.9 13.2-6.9z"/>
-                </svg>
-            </li>
-            <li class="icon-button" id="save" title="save graph layout">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path d="M48 96l0 320c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-245.5c0-4.2-1.7-8.3-4.7-11.3l33.9-33.9c12 12 18.7 28.3 18.7 45.3L448 416c0 35.3-28.7 64-64 64L64 480c-35.3 0-64-28.7-64-64L0 96C0 60.7 28.7 32 64 32l245.5 0c17 0 33.3 6.7 45.3 18.7l74.5 74.5-33.9 33.9L320.8 84.7c-.3-.3-.5-.5-.8-.8L320 184c0 13.3-10.7 24-24 24l-192 0c-13.3 0-24-10.7-24-24L80 80 64 80c-8.8 0-16 7.2-16 16zm80-16l0 80 144 0 0-80L128 80zm32 240a64 64 0 1 1 128 0 64 64 0 1 1 -128 0z"/>
-                </svg>
-            </li>
-            <li class="icon-button" id="recover" title="recover saved layout">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9L0 168c0 13.3 10.7 24 24 24l110.1 0c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24l0 104c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65 0-94.1c0-13.3-10.7-24-24-24z"/>
-                </svg>
-            </li>
-            <li>
-                <label for="space">Space</label>
-                <input id="space" type="range" min="0" max="100" value="50" class="slider"/>
-            </li>
-            <li>
-                <label for="type">Graph Type</label>
-                <select id="type">
-                    <option value="fcose">fcose</option>
-                    <option value="cola">cola</option>
-                    <option value="dagre">dagre</option>
-                    <option value="breadthfirst">breadthfirst</option>
-                    <option value="euler">euler</option>
-                    <option value="klay">klay</option>
-                    <option value="circle">circle</option>
-                    <option value="concentric">concentric</option>
-                    <option value="grid">grid</option>
-                </select>
-            </li>
-        </ul>
-        <div class="graph"></div>
-        <div class="graph-stats">
-            <span>nodes <span id="nodeCount">0</span></span>
-            <span>edges <span id="edgeCount">0</span></span>
+                <li class="icon-button" id="refocus" title="refocus graph on selected nodes">
+                    <svg id="refocus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M448 256A192 192 0 1 0 64 256a192 192 0 1 0 384 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm256 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160zm0-224a144 144 0 1 1 0 288 144 144 0 1 1 0-288zM224 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"/>
+                    </svg>
+                </li>
+                <li class="icon-button" id="expand" title="expand selected nodes">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M200 32L56 32C42.7 32 32 42.7 32 56l0 144c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l40-40 79 79-79 79L73 295c-6.9-6.9-17.2-8.9-26.2-5.2S32 302.3 32 312l0 144c0 13.3 10.7 24 24 24l144 0c9.7 0 18.5-5.8 22.2-14.8s1.7-19.3-5.2-26.2l-40-40 79-79 79 79-40 40c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8l144 0c13.3 0 24-10.7 24-24l0-144c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2l-40 40-79-79 79-79 40 40c6.9 6.9 17.2 8.9 26.2 5.2s14.8-12.5 14.8-22.2l0-144c0-13.3-10.7-24-24-24L312 32c-9.7 0-18.5 5.8-22.2 14.8s-1.7 19.3 5.2 26.2l40 40-79 79-79-79 40-40c6.9-6.9 8.9-17.2 5.2-26.2S209.7 32 200 32z"/>
+                    </svg>
+                </li>
+                <li class="icon-button" id="delete" title="delete selected nodes">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path d="M170.5 51.6L151.5 80l145 0-19-28.4c-1.5-2.2-4-3.6-6.7-3.6l-93.7 0c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80 368 80l48 0 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-8 0 0 304c0 44.2-35.8 80-80 80l-224 0c-44.2 0-80-35.8-80-80l0-304-8 0c-13.3 0-24-10.7-24-24S10.7 80 24 80l8 0 48 0 13.8 0 36.7-55.1C140.9 9.4 158.4 0 177.1 0l93.7 0c18.7 0 36.2 9.4 46.6 24.9zM80 128l0 304c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-304L80 128zm80 64l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0l0 208c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-208c0-8.8 7.2-16 16-16s16 7.2 16 16z"/>
+                    </svg>
+                </li>
+                <li class="icon-button" id="png" title="export as PNG">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                        <path d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm152 32c5.3 0 10.2 2.6 13.2 6.9l88 128c3.4 4.9 3.7 11.3 1 16.5s-8.2 8.6-14.2 8.6l-88 0-40 0-48 0-48 0c-5.8 0-11.1-3.1-13.9-8.1s-2.8-11.2 .2-16.1l48-80c2.9-4.8 8.1-7.8 13.7-7.8s10.8 2.9 13.7 7.8l12.8 21.4 48.3-70.2c3-4.3 7.9-6.9 13.2-6.9z"/>
+                    </svg>
+                </li>
+                <li class="icon-button" id="save" title="save graph layout">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path d="M48 96l0 320c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-245.5c0-4.2-1.7-8.3-4.7-11.3l33.9-33.9c12 12 18.7 28.3 18.7 45.3L448 416c0 35.3-28.7 64-64 64L64 480c-35.3 0-64-28.7-64-64L0 96C0 60.7 28.7 32 64 32l245.5 0c17 0 33.3 6.7 45.3 18.7l74.5 74.5-33.9 33.9L320.8 84.7c-.3-.3-.5-.5-.8-.8L320 184c0 13.3-10.7 24-24 24l-192 0c-13.3 0-24-10.7-24-24L80 80 64 80c-8.8 0-16 7.2-16 16zm80-16l0 80 144 0 0-80L128 80zm32 240a64 64 0 1 1 128 0 64 64 0 1 1 -128 0z"/>
+                    </svg>
+                </li>
+                <li class="icon-button" id="recover" title="recover saved layout">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                        <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9L0 168c0 13.3 10.7 24 24 24l110.1 0c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24l0 104c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65 0-94.1c0-13.3-10.7-24-24-24z"/>
+                    </svg>
+                </li>
+                <li>
+                    <label for="space">Space</label>
+                    <input id="space" type="range" min="0" max="100" value="50" class="slider"/>
+                </li>
+                <li>
+                    <label for="type">Graph Type</label>
+                    <select id="type">
+                        <option value="fcose">fcose</option>
+                        <option value="cola">cola</option>
+                        <option value="dagre">dagre</option>
+                        <option value="breadthfirst">breadthfirst</option>
+                        <option value="euler">euler</option>
+                        <option value="klay">klay</option>
+                        <option value="circle">circle</option>
+                        <option value="concentric">concentric</option>
+                        <option value="grid">grid</option>
+                    </select>
+                </li>
+            </ul>
+            <div class="graph"></div>
+            <div class="graph-stats">
+                <span>nodes <span id="nodeCount">0</span></span>
+                <span>edges <span id="edgeCount">0</span></span>
+            </div>
         </div>
-    </div>
     </div>
 </div>
 

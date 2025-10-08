@@ -1,11 +1,14 @@
 import {updateAddress} from "./url-helper.js";
-
-export const QUERY = "query";
-export const INDIVIDUALS = "indivs";
-export const PROPERTIES = "props";
+import {INDIVIDUALS, NODE_SPACE, PROPERTIES, QUERY} from "./graph.js";
 
 export const graphControls = (selector, graph) => {
+    console.log("Initialising graph controls for selector: " + selector);
     const controls = document.querySelector(selector);
+    const spaceCtrl = document.getElementById(NODE_SPACE);
+    const individualsCtrl = document.getElementById(INDIVIDUALS);
+    const queryCtrl = document.getElementById(QUERY);
+    const propertiesCtrl = document.getElementById(PROPERTIES);
+
     const selectedList = document.getElementById("selected-nodes");
 
     new ExpressionEditor(QUERY, {
@@ -146,6 +149,66 @@ export const graphControls = (selector, graph) => {
             setupControlValue(ctrl.id, ctrl.defaultValue);
         });
         graph.reload();
+    });
+
+    // Listen for custom graph events to update controls
+    controls.addEventListener('graph:selectionChanged', (event) => {
+        const selectedData = event.detail;
+        // Update controls based on selected nodes
+        const instances = selectedData
+            .filter(s => s.type === 'individual')
+            .map(s => s.label).join(',');
+        individualsCtrl.value = instances;
+        updateAddress(INDIVIDUALS, instances);
+
+        const classes = selectedData
+            .filter(s => s.type === 'class')
+            .map(s => s.label).join(' or ');
+        queryCtrl.value = classes;
+        updateAddress(QUERY, classes);
+
+        const properties = selectedData
+            .filter(s => Boolean(s.source))
+            .map(s => s.label).join(',');
+        propertiesCtrl.value = properties;
+        updateAddress(PROPERTIES, properties);
+    });
+
+    controls.addEventListener('graph:refocus', (event) => {
+        const selectedData = event.detail;
+        // Same logic as selectionChanged for refocus
+        const instances = selectedData
+            .filter(s => s.type === 'individual')
+            .map(s => s.label).join(',');
+        individualsCtrl.value = instances;
+        updateAddress(INDIVIDUALS, instances);
+
+        const classes = selectedData
+            .filter(s => s.type === 'class')
+            .map(s => s.label).join(' or ');
+        queryCtrl.value = classes;
+        updateAddress(QUERY, classes);
+
+        const properties = selectedData
+            .filter(s => Boolean(s.source))
+            .map(s => s.label).join(',');
+        propertiesCtrl.value = properties;
+        updateAddress(PROPERTIES, properties);
+    });
+
+    // Listen for custom graph events to update controls
+    controls.addEventListener('graph:updateControls', (event) => {
+        const { type, value } = event.detail;
+        if (type === INDIVIDUALS) {
+            individualsCtrl.value = value;
+            updateAddress(INDIVIDUALS, value);
+        } else if (type === QUERY) {
+            queryCtrl.value = value;
+            updateAddress(QUERY, value);
+        } else if (type === PROPERTIES) {
+            propertiesCtrl.value = value;
+            updateAddress(PROPERTIES, value);
+        }
     });
 
     function getPluralType(type) {

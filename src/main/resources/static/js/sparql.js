@@ -1,5 +1,8 @@
 import {entity} from "./entity.js";
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    entity("#content").openLinksInEntityPane(document.getElementById("resultsForm"), "td a");
+    const resultsForm = document.getElementById("resultsForm");
+    if (resultsForm) {
+        entity("#content").openLinksInEntityPane(resultsForm, "td a");
+    }
 });

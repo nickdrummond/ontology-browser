@@ -7,6 +7,7 @@ import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.DatasetOne;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // TODO each ont as a separate graph?
@@ -35,12 +37,37 @@ public class SPARQLService implements DisposableBean {
 
     private static final Logger log = LoggerFactory.getLogger(SPARQLService.class);
 
-    public static final String DEFAULT_QUERY = """
+    public enum QueryType {
+        select,
+        describe,
+        construct;
+    }
+
+    static final String DEFAULT_SELECT = """
             SELECT DISTINCT ?s ?p ?o
             WHERE {
             ?s ?p ?o .
             }
             """.stripLeading();
+
+    static final String DEFAULT_DESCRIBE = """
+            DESCRIBE :?
+            """.stripLeading();
+
+    static final String DEFAULT_CONSTRUCT = """
+            CONSTRUCT {
+              ?s ?p ?o .
+            }
+            WHERE {
+              ?s ?p ?o .
+            }
+            """.stripLeading();
+
+    static Map<QueryType, String> defaultQueries = Map.of(
+            QueryType.select, DEFAULT_SELECT,
+            QueryType.describe, DEFAULT_DESCRIBE,
+            QueryType.construct, DEFAULT_CONSTRUCT
+    );
 
     private RestartableKit kit;
 
@@ -92,17 +119,9 @@ public class SPARQLService implements DisposableBean {
     }
 
     public List<Map<String, OWLObject>> select(String select, OWLOntology ont) {
-        if (this.dataset == null) {
-            throw new IllegalStateException("No RDF dataset loaded");
-        }
-
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
 
-        var qry = QueryFactory.create(select);
-
-        this.dataset.begin(ReadWrite.READ);
-
-        try (QueryExecution qe = QueryExecutionFactory.create(qry, this.dataset.getDefaultModel())) {
+        return withQuery(select, (qe) -> {
             var results = qe.execSelect();
             var variablesInOrder = results.getResultVars();
             List<Map<String, OWLObject>> r = new ArrayList<>();
@@ -119,6 +138,81 @@ public class SPARQLService implements DisposableBean {
                 }
             });
             return r;
+        });
+    }
+
+    public List<Map<String, OWLObject>> describeAndTranslateToSPO(String describe, OWLOntology ont) {
+        var df = ont.getOWLOntologyManager().getOWLDataFactory();
+
+        var model = describe(describe);
+
+        List<Map<String, OWLObject>> r = new ArrayList<>();
+        model.listStatements().forEachRemaining(s -> {
+            Map<String, OWLObject> map = new LinkedHashMap<>();
+            map.put("s", toOWL(s.getSubject(), df, ont));
+            map.put("p", toOWL(s.getPredicate(), df, ont));
+            map.put("o", toOWL(s.getObject(), df, ont));
+            r.add(map);
+        });
+        return r;
+    }
+
+    public Model query(QueryType queryType, String query) {
+        return switch (queryType) {
+            case select -> withQuery(query, (qe) -> {
+                // find out how many variables in the select query
+                Query parsedQuery = QueryFactory.create(query);
+                List<String> variables = parsedQuery.getResultVars(); // variables in SELECT clause
+                int variableCount = variables.size();
+                if (variableCount != 3) {
+                    throw new IllegalArgumentException("SELECT queries must have 3 vars in the form of a triple to show a graph");
+                }
+
+                var results = qe.execSelect();
+                var variablesInOrder = results.getResultVars();
+                // convert the results into a Model
+                var model = ModelFactory.createDefaultModel();
+                results.forEachRemaining(sol -> {
+                    RDFNode s = sol.get(variablesInOrder.get(0));
+                    RDFNode p = sol.get(variablesInOrder.get(1));
+                    RDFNode o = sol.get(variablesInOrder.get(2));
+                    if (s != null && p != null && o != null &&
+                            s.isResource() &&
+                            p.isResource()) {
+                        Property predicate = model.createProperty(p.asResource().getURI());
+                        model.add(s.asResource(), predicate, o);
+                    }
+                });
+                return model;
+            });
+            case describe -> describe(query);
+            case construct -> construct(query);
+        };
+    }
+
+    private ResultSet select(String query) {
+        return withQuery(query, QueryExecution::execSelect);
+    }
+
+    public Model describe(String describe) {
+        return withQuery(describe, QueryExecution::execDescribe);
+    }
+
+    public Model construct(String construct) {
+        return withQuery(construct, QueryExecution::execConstruct);
+    }
+
+    private <T> T withQuery(String select, Function<QueryExecution, T> queryFunction) {
+        if (this.dataset == null) {
+            throw new IllegalStateException("No RDF dataset loaded");
+        }
+
+        var qry = QueryFactory.create(select);
+
+        this.dataset.begin(ReadWrite.READ);
+
+        try (QueryExecution qe = QueryExecutionFactory.create(qry, this.dataset.getDefaultModel())) {
+            return queryFunction.apply(qe);
         } catch (QueryParseException e) {
             throw e;
         } catch (Exception e) {

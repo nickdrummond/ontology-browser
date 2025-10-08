@@ -1,0 +1,68 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:insert='~{base :: header (title=${"SPARQL query: " + select})}'/>
+
+    <th:block th:replace="~{graph :: includeGraph}" />
+
+    <link rel='stylesheet' type='text/css' href='/css/query.css'
+          th:href='@{/css/query.css}'/>
+    <script type='module' src='/js/sparql.js'
+            th:src='@{/js/sparql.js}'>
+    </script>
+
+    <script type="module" th:inline="javascript">
+        /*<![CDATA[*/
+        import {graph} from '/js/graph.js';
+        document.addEventListener('DOMContentLoaded', function () {
+            const queryType = /*[[${queryType}]]*/;
+            graph('.graph', '/sparql/graph/' + queryType + "/data");
+        });
+        /*]]>*/
+    </script>
+</head>
+
+<body class="wrapper">
+
+<div th:replace='~{base :: title}'></div>
+
+<div th:replace='~{base :: menu}'></div>
+
+<div id="main" class="three-pane">
+
+    <div id="query-pane" class='codebox'>
+        <form method='get' id='query-form' class="sparql" action=''>
+            <h3>SPARQL select query</h3>
+
+            <textarea id='sparql-prefixes' name='prefixes'
+                      class="editor prefixes"
+                      placeholder="PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
+                      th:text="${prefixes}">
+            </textarea>
+
+            <textarea id='select-query' name='select'
+                      class="editor"
+                      placeholder=""
+                      th:text="${select}">
+                </textarea>
+            <div class="bottom">
+                <input id="query-submit" class="icon-button" type='submit' value='&#9881; run'>
+            </div>
+        </form>
+
+    </div>
+    <div id="content">
+        <div class="graph"></div>
+    </div>
+</div>
+
+<div th:if="${error != null}" id="errorMessage">
+    <p th:text="${error}"></p>
+</div>
+
+<div th:replace='~{base :: footer}'></div>
+
+</body>
+</html>
