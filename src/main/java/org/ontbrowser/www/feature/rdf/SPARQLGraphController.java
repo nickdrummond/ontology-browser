@@ -1,6 +1,7 @@
 package org.ontbrowser.www.feature.rdf;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.jena.query.QueryParseException;
 import org.ontbrowser.www.feature.graph.CytoscapeGraph;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,6 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Nullable;
 import java.util.Set;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.ontbrowser.www.feature.rdf.SPARQLService.defaultQueries;
 
 @Profile("rdf & graph")
@@ -63,20 +67,28 @@ public class SPARQLGraphController {
     }
 
     @GetMapping(value = "/{queryType}/data", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CytoscapeGraph graph(
+    public ResponseEntity<CytoscapeGraph> graph(
             @PathVariable SPARQLService.QueryType queryType,
             @Nullable @RequestParam(required = false) String prefixes,
             @Nullable @RequestParam(required = false) String select,
             @ModelAttribute final OWLOntology ont
     ) {
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
-        var jenaModel = sparqlService.query(queryType, prefixes + select);
+        try {
+            var jenaModel = sparqlService.query(queryType, prefixes + select + "\nLIMIT 200");
 
-        log.info("construct graph with {} triples", jenaModel.size());
+            log.info("construct graph with {} triples", jenaModel.size());
 
-        var graph = new JenaGraphBuilder(jenaModel, df).build();
+            var graph = new JenaGraphBuilder(jenaModel, df).build();
 
-        var renderer = new MOSStringRenderer(kit.getFinder(), ont);
-        return new CytoscapeGraph(graph, df, renderer, Set.of(), Set.of());
+            var renderer = new MOSStringRenderer(kit.getFinder(), ont);
+            return ResponseEntity.ok(new CytoscapeGraph(graph, df, renderer, Set.of(), Set.of()));
+        }
+        catch (QueryParseException e) {
+            String encodedMsg = encode(e.getMessage(), UTF_8);
+            return ResponseEntity.badRequest()
+                    .header("X-parse-error", encodedMsg)
+                    .body(CytoscapeGraph.empty());
+        }
     }
 }

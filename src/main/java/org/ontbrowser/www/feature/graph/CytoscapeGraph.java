@@ -31,6 +31,16 @@ public class CytoscapeGraph {
 
     private final List<Element> elements ;
 
+    public static CytoscapeGraph empty(){
+        return new CytoscapeGraph();
+    }
+
+    private CytoscapeGraph() {
+        this.elements = List.of();
+        this.mos = null;
+        this.df = null;
+    }
+
     public CytoscapeGraph(
             Graph graph,
             OWLDataFactory df,

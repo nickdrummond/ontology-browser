@@ -181,6 +181,17 @@ export function graph(selector, endpoint = '/graph/data') {
             headers: myHeaders,
         })
             .then(response => {
+                if (!response.ok) {
+                    let msg = response.headers.get("X-parse-error");
+                    if (msg) {
+                        msg = msg.replace(/\+/g, " ");
+                        msg = decodeURIComponent(msg);
+                        console.error(msg);
+                    }
+                    else {
+                        throw new Error("HTTP error " + response.status + " - " + response.message);
+                    }
+                }
                 response.json().then(json => {
                     const type = urlSearchParams.get("type");
                     buildGraph(type, json.elements, getStyle());
