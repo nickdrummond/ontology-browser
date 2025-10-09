@@ -44,7 +44,10 @@
         import {graphControls} from '/js/graph-controls.js';
         document.addEventListener('DOMContentLoaded', function () {
             const g = graph('.graph');
-            const controls = graphControls('.graph-controls', g);
+            const controls = graphControls({
+                selector: '.graph-controls',
+                graph: g,
+            });
 
             // On any resize of the controls (because of the sel list), resize the graph
             new ResizeObserver(() => {
@@ -104,12 +107,12 @@
         <div class="graph-container">
 
             <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-            <ul class="graph-actions">
+            <ul th:fragment="graphActions" class="graph-actions">
                 <li class="graph-search">
                     <input id="graph-search" class="search" type="text" placeholder='search graph...'/>
                     <span class="search-icon-wrapper">
-                <input type='submit' disabled class="search-icon icon" value=""/>
-            </span>
+                        <input type='submit' disabled class="search-icon icon" value=""/>
+                    </span>
                 </li>
 
                 <li class="icon-button" id="refocus" title="refocus graph on selected nodes">
