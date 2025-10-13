@@ -347,6 +347,7 @@ export function graph(selector, endpoint = '/graph/data') {
     function buildGraph(type, elements, style) {
         currentLayout = getLayout(type);
         const urlParams = new URLSearchParams(window.location.search);
+        const edgeType = urlParams.get("edge-type");
         const spaceValue = parseInt(urlParams.get('space')) || 20;
         setLengthProp(spaceValue);
         if (cy) {
@@ -365,6 +366,13 @@ export function graph(selector, endpoint = '/graph/data') {
                 const edges = this.edges();
 
                 updateStats(nodes, edges);
+
+                if (edgeType) {
+                    cy.style().selector("edge")
+                        .style("curve-style", edgeType)
+                        .style("width", edgeType === "straight-triangle" ? 5 : 1)
+                        .update();
+                }
 
                 nodes.forEach(function (node) {
                     render(node);
@@ -415,9 +423,29 @@ export function graph(selector, endpoint = '/graph/data') {
         return currentLayout ?? defaultLayout;
     }
 
+    function getEdgeType() {
+        if (!cy) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get("edge-type") || "straight-triangle";
+        }
+        return cy.style().selector("edge").style("curve-style");
+    }
+
+    function setEdgeType(newValue) {
+        if (cy) {
+            cy.style().selector("edge")
+                .style("curve-style", newValue)
+                .style("width", newValue === "straight-triangle" ? 5 : 1)
+                .update();
+            cy.layout(currentLayout).run();
+        }
+    }
+
     return {
         setCurrentLayout,
         getCurrentLayout,
+        getEdgeType,
+        setEdgeType,
         setLengthProp,
         reload,
         search,

@@ -45,6 +45,11 @@ export const graphControls = ({
                     graph.setLengthProp(parseInt(newValue));
                 }, onEdit: null,
             },
+            {
+                id: "edge-type", defaultValue: graph.getEdgeType(), onChange: (newValue) => {
+                    graph.setEdgeType(newValue);
+                }, onEdit: null,
+            },
         ];
 
         controlConfig.forEach(ctrl => {
