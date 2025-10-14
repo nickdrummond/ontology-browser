@@ -260,7 +260,7 @@ export function graph(selector, endpoint = '/graph/data') {
     function render(node) {
         let size = 10
         if (node.data().type === 'individual') {
-            size = Math.min(size + (node.degree() * 10), 100);
+            size = Math.min(size + (node.degree() * 2), 100);
         }
         node.css("width", size);
         node.css("height", size);
