@@ -35,6 +35,8 @@
 }
 
 #query {
+    flex: none;
+    height: 6rem;
     margin-bottom: 1rem;
 }
 

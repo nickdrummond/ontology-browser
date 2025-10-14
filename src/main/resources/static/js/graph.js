@@ -37,6 +37,12 @@ export function graph(selector, endpoint = '/graph/data') {
         attributes: true,
     });
 
+    window.addEventListener('popstate', (_event) => {
+        if (cy) {
+            reload();
+        }
+    });
+
     function setLengthProp(newValue) {
         if (!cy) {
             return;

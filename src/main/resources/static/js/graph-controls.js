@@ -83,6 +83,13 @@ export const graphControls = ({
             const fileURL = URL.createObjectURL(file);
             window.open(fileURL);
         }
+
+        // reload the actions when the user navigates back/forward
+        window.addEventListener('popstate', (_event) => {
+            controlConfig.forEach(ctrl => {
+                setupControlValue(ctrl.id, ctrl.defaultValue);
+            });
+        });
     }
 
     const controls = document.querySelector(selector);
@@ -167,6 +174,13 @@ export const graphControls = ({
                     return '';
             }
         }
+
+        // reload the controls when the user navigates back/forward
+        window.addEventListener('popstate', (_event) => {
+            controlConfig.forEach(ctrl => {
+                setupControlValue(ctrl.id, ctrl.defaultValue);
+            });
+        });
     }
 
     function setupControlValue(id, defaultValue) {
