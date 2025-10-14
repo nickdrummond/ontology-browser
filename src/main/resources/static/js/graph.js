@@ -68,7 +68,10 @@ export function graph(selector, endpoint = '/graph/data') {
         disableManualSelectionListener = true;
         cy.$(SELECTED).unselect();
         if (value !== "") {
-            const sel = cy.elements(`[label *= "${value}"]`); // contains match
+            const lower = value.toLowerCase();
+            const sel = cy.nodes().filter(node =>
+                node.data('label')?.toLowerCase().includes(lower)
+            );
             sel.select();
             updateSelected(sel);
             fit(sel);
