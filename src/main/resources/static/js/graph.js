@@ -23,14 +23,8 @@ export function graph(selector, endpoint = '/graph/data') {
 
     let disableManualSelectionListener = false;
     let lastSelected = "";
-    let selListeners = [];
 
     reload();
-
-    function onSelectChange(callback) {
-        selListeners.push(callback);
-    }
-
 
     // Check if the theme changes
     new MutationObserver(function (mutations) {
@@ -49,10 +43,6 @@ export function graph(selector, endpoint = '/graph/data') {
         }
         updateLength(currentLayout, newValue);
         cy.layout(currentLayout).run();
-    }
-
-    function unionSet(a, b) {
-        return [...new Set(a).union(new Set(b))];
     }
 
     function fit(sel) {
@@ -84,11 +74,29 @@ export function graph(selector, endpoint = '/graph/data') {
 
     function refocus() {
         const allSelected = cy.$(SELECTED);
-        // Dispatch custom event for refocus
-        const event = new CustomEvent('graph:refocus', {
-            detail: allSelected.map(s => s.data())
-        });
-        containerDiv.dispatchEvent(event);
+        const individuals = allSelected
+            .filter(s => s.data().type === 'individual')
+            .map(s => s.data().label)
+            .join(',');
+        updateAddress(INDIVIDUALS, individuals);
+
+        const classes = allSelected
+            .filter(s => s.data().type === 'class')
+            .map(s => s.data().label).join(' or ');
+        updateAddress(QUERY, classes);
+
+        const properties = allSelected
+            .filter(s => Boolean(s.data().source))
+            .map(s => s.data().label).join(',');
+        updateAddress(PROPERTIES, properties);
+
+        document.dispatchEvent(new CustomEvent('graph:paramsChanged', {
+            detail: {
+                individuals: individuals,
+                classes: classes,
+                properties: properties,
+            }
+        }));
         reload();
     }
 
@@ -108,15 +116,12 @@ export function graph(selector, endpoint = '/graph/data') {
         const urlParams = new URLSearchParams(window.location.search);
         if (data.type === 'individual') {
             const current = urlParams.get(INDIVIDUALS)?.trim().split(",") || [];
-            console.log("Expanding node " + node.data().label, current);
             if (!current.includes(label)) {
-                console.log("Adding to URL param " + INDIVIDUALS + " value " + label);
                 current.push(label);
                 const newValue = current.join(",");
                 updateAddress(INDIVIDUALS, newValue);
-                // Dispatch event to update controls
-                containerDiv.dispatchEvent(new CustomEvent('graph:updateControls', {
-                    detail: { type: INDIVIDUALS, value: newValue }
+                document.dispatchEvent(new CustomEvent('graph:paramsChanged', {
+                    detail: { individuals: newValue }
                 }));
                 append(label, INDIVIDUALS);
             }
@@ -128,9 +133,8 @@ export function graph(selector, endpoint = '/graph/data') {
                 classes.push(label);
                 const newValue = classes.join(" or ");
                 updateAddress(QUERY, newValue);
-                // Dispatch event to update controls
-                containerDiv.dispatchEvent(new CustomEvent('graph:updateControls', {
-                    detail: { type: QUERY, value: newValue }
+                document.dispatchEvent(new CustomEvent('graph:paramsChanged', {
+                    detail: { classes: newValue }
                 }));
                 append(label, QUERY);
             }
@@ -146,9 +150,8 @@ export function graph(selector, endpoint = '/graph/data') {
         const newIndividuals = existingIndividuals.filter(sel => !selectedLabels.includes(sel));
         const newValue = newIndividuals.join(',');
         updateAddress(INDIVIDUALS, newValue);
-        // Dispatch event to update controls
-        containerDiv.dispatchEvent(new CustomEvent('graph:updateControls', {
-            detail: { type: INDIVIDUALS, value: newValue }
+        document.dispatchEvent(new CustomEvent('graph:paramsChanged', {
+            detail: { individuals: newValue }
         }));
         remove(selectedLabels, selectedIds);
     }
@@ -208,7 +211,6 @@ export function graph(selector, endpoint = '/graph/data') {
         let urlSearchParams = new URLSearchParams(window.location.search);
         urlSearchParams.set(param, labels);
         urlSearchParams.set("depth", "0");
-        console.log("Appending to graph with " + urlSearchParams.toString());
         let url = endpoint + '?' + urlSearchParams.toString();
         fetch(url, {
             headers: myHeaders,
@@ -315,14 +317,9 @@ export function graph(selector, endpoint = '/graph/data') {
     }
 
     function notifySelectionListeners(sel) {
-        selListeners.forEach(callback => {
-            callback(sel);
-        });
-        // Dispatch custom event for selection change
-        const event = new CustomEvent('graph:selectionChanged', {
-            detail: sel.map(s => s.data())
-        });
-        containerDiv.dispatchEvent(event);
+        document.dispatchEvent(new CustomEvent('graph:selectionChanged', {
+            detail: sel,
+        }));
     }
 
     function updateSelected(sel) {
@@ -459,6 +456,5 @@ export function graph(selector, endpoint = '/graph/data') {
         exportPng,
         saveToLocal,
         recoverFromLocal,
-        onSelectChange,
     }
 }

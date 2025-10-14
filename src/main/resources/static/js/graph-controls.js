@@ -15,7 +15,6 @@ export const graphControls = ({
     actions = Object.values(Actions),
     graph,
 }) => {
-    console.log("Initialising graph controls for selector: " + selector);
 
     function hookupActionButton(action, actions, onClick) {
         const button = document.getElementById(action.valueOf());
@@ -110,7 +109,8 @@ export const graphControls = ({
         }).initialise();
 
         if (selectedList != null) {
-            graph.onSelectChange((sel) => {
+            document.addEventListener('graph:selectionChanged', (event) => {
+                const sel = event.detail;
                 while (selectedList.firstChild) {
                     selectedList.removeChild(selectedList.lastChild);
                 }
@@ -133,68 +133,23 @@ export const graphControls = ({
                 });
             });
         }
+
         controlConfig.forEach(ctrl => {
             setupControlValue(ctrl.id, ctrl.defaultValue);
             setupControlListeners(ctrl.id, ctrl.onChange, ctrl.onEdit);
             setupControlAutocomplete(ctrl.id, ctrl.autocomplete);
         });
-            // Listen for custom graph events to update controls
-        controls.addEventListener('graph:selectionChanged', (event) => {
-            const selectedData = event.detail;
-            // Update controls based on selected nodes
-            const instances = selectedData
-                .filter(s => s.type === 'individual')
-                .map(s => s.label).join(',');
-            individualsCtrl.value = instances;
-            updateAddress(INDIVIDUALS, instances);
 
-            const classes = selectedData
-                .filter(s => s.type === 'class')
-                .map(s => s.label).join(' or ');
-            queryCtrl.value = classes;
-            updateAddress(QUERY, classes);
-
-            const properties = selectedData
-                .filter(s => Boolean(s.source))
-                .map(s => s.label).join(',');
-            propertiesCtrl.value = properties;
-            updateAddress(PROPERTIES, properties);
-        });
-
-        controls.addEventListener('graph:refocus', (event) => {
-            const selectedData = event.detail;
-            // Same logic as selectionChanged for refocus
-            const instances = selectedData
-                .filter(s => s.type === 'individual')
-                .map(s => s.label).join(',');
-            individualsCtrl.value = instances;
-            updateAddress(INDIVIDUALS, instances);
-
-            const classes = selectedData
-                .filter(s => s.type === 'class')
-                .map(s => s.label).join(' or ');
-            queryCtrl.value = classes;
-            updateAddress(QUERY, classes);
-
-            const properties = selectedData
-                .filter(s => Boolean(s.source))
-                .map(s => s.label).join(',');
-            propertiesCtrl.value = properties;
-            updateAddress(PROPERTIES, properties);
-        });
-
-        // Listen for custom graph events to update controls
-        controls.addEventListener('graph:updateControls', (event) => {
-            const {type, value} = event.detail;
-            if (type === INDIVIDUALS) {
-                individualsCtrl.value = value;
-                updateAddress(INDIVIDUALS, value);
-            } else if (type === QUERY) {
-                queryCtrl.value = value;
-                updateAddress(QUERY, value);
-            } else if (type === PROPERTIES) {
-                propertiesCtrl.value = value;
-                updateAddress(PROPERTIES, value);
+        document.addEventListener('graph:paramsChanged', (event) => {
+            const {individuals, classes, properties} = event.detail;
+            if (individuals !== undefined) {
+                individualsCtrl.value = individuals;
+            }
+            if (classes !== undefined) {
+                queryCtrl.value = classes;
+            }
+            if (properties !== undefined) {
+                propertiesCtrl.value = properties;
             }
         });
 
