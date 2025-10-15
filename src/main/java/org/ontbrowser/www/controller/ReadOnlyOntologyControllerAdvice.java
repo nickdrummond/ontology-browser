@@ -8,13 +8,11 @@ import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.renderer.RendererFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @ControllerAdvice
-@Profile("!editing")
 public class ReadOnlyOntologyControllerAdvice {
 
     private final OWLHTMLKit kit;

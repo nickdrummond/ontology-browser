@@ -66,78 +66,82 @@ public class RestartableKit implements OWLHTMLKit, Restartable {
         return status;
     }
 
-    @Override
-    public Config getConfig() {
-        return delegate.getConfig();
+    protected OWLHTMLKit getDelegate() {
+        return delegate;
     }
 
     @Override
-    public URLScheme getURLScheme() {
-        return delegate.getURLScheme();
+    public final Config getConfig() {
+        return getDelegate().getConfig();
     }
 
     @Override
-    public Set<OWLOntology> getOntologies() {
-        return delegate.getOntologies();
+    public final URLScheme getURLScheme() {
+        return getDelegate().getURLScheme();
     }
 
     @Override
-    public Optional<OWLOntology> getOntologyForIRI(IRI iri) {
-        return delegate.getOntologyForIRI(iri);
+    public final Set<OWLOntology> getOntologies() {
+        return getDelegate().getOntologies();
     }
 
     @Override
-    public OWLOntologyManager getOWLOntologyManager() {
-        return delegate.getOWLOntologyManager();
+    public final Optional<OWLOntology> getOntologyForIRI(IRI iri) {
+        return getDelegate().getOntologyForIRI(iri);
     }
 
     @Override
-    public Comparator<OWLObject> getComparator() {
-        return delegate.getComparator();
+    public final OWLOntologyManager getOWLOntologyManager() {
+        return getDelegate().getOWLOntologyManager();
     }
 
     @Override
-    public OWLEntityFinder getFinder() {
-        return delegate.getFinder();
+    public final Comparator<OWLObject> getComparator() {
+        return getDelegate().getComparator();
     }
 
     @Override
-    public OWLEntityChecker getOWLEntityChecker() {
-        return delegate.getOWLEntityChecker();
+    public final OWLEntityFinder getFinder() {
+        return getDelegate().getFinder();
     }
 
     @Override
-    public EntityIdLookup lookup() {
-        return delegate.lookup();
+    public final OWLEntityChecker getOWLEntityChecker() {
+        return getDelegate().getOWLEntityChecker();
     }
 
     @Override
-    public ShortFormProvider getShortFormProvider() {
-        return delegate.getShortFormProvider();
+    public final EntityIdLookup lookup() {
+        return getDelegate().lookup();
     }
 
     @Override
-    public MOSStringRenderer getStringRenderer() {
-        return delegate.getStringRenderer();
+    public final ShortFormProvider getShortFormProvider() {
+        return getDelegate().getShortFormProvider();
     }
 
     @Override
-    public OntologyIRIShortFormProvider getOntologySFP() {
-        return delegate.getOntologySFP();
+    public final MOSStringRenderer getStringRenderer() {
+        return getDelegate().getStringRenderer();
     }
 
     @Override
-    public OWLOntology getRootOntology() {
-        return delegate.getRootOntology();
+    public final OntologyIRIShortFormProvider getOntologySFP() {
+        return getDelegate().getOntologySFP();
     }
 
     @Override
-    public Map<String, String> getPrefixes() {
-        return delegate.getPrefixes();
+    public final OWLOntology getRootOntology() {
+        return getDelegate().getRootOntology();
     }
 
     @Override
-    public IRIShortFormProvider getIriShortFormProvider() {
-        return delegate.getIriShortFormProvider();
+    public final Map<String, String> getPrefixes() {
+        return getDelegate().getPrefixes();
+    }
+
+    @Override
+    public final IRIShortFormProvider getIriShortFormProvider() {
+        return getDelegate().getIriShortFormProvider();
     }
 }

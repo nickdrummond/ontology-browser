@@ -1,5 +1,6 @@
 package org.ontbrowser.www.configuration;
 
+import org.ontbrowser.www.feature.editing.EditModeInterceptor;
 import org.ontbrowser.www.interceptor.TitleHeaderInterceptor;
 import org.ontbrowser.www.interceptor.CachingInterceptor;
 import org.ontbrowser.www.interceptor.RedirectInterceptor;
@@ -26,13 +27,16 @@ public class MvcConfig implements WebMvcConfigurer {
     protected String redirectRoot;
 
     private final CachingInterceptor cachingInterceptor;
+    private final EditModeInterceptor editModeInterceptor;
 
     public MvcConfig(
             @Nonnull TitleHeaderInterceptor titleHeaderInterceptor,
-            @Autowired(required = false) CachingInterceptor cachingInterceptor
+            @Autowired(required = false) CachingInterceptor cachingInterceptor,
+            @Autowired(required = false) EditModeInterceptor editModeInterceptor
     ) {
         this.titleHeaderInterceptor = titleHeaderInterceptor;
         this.cachingInterceptor = cachingInterceptor;
+        this.editModeInterceptor = editModeInterceptor;
     }
 
     @Override
@@ -49,6 +53,10 @@ public class MvcConfig implements WebMvcConfigurer {
 
         if (cachingInterceptor != null) {
             registry.addInterceptor(cachingInterceptor);
+        }
+
+        if (editModeInterceptor != null) {
+            registry.addInterceptor(editModeInterceptor);
         }
     }
 }
