@@ -84,7 +84,12 @@ public class GitService implements BeforeLoad {
 
     @Scheduled(fixedRateString = "${git.refresh}")
     private void fetch() {
-        withGit(git -> git.fetch().call());
+        try {
+            withGit(git -> git.fetch().call());
+        }
+        catch (Exception e) {
+            log.warn("Error refreshing git: " + e.getMessage());
+        }
     }
 
     // Work out the remote from the local repo

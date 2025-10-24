@@ -11,6 +11,10 @@ export const edits = () => {
 
     function init(selectors) {
 
+        // TODO: how do we trigger edit mode?
+        // How do we add edit mode to the headers on normal page requests/links? We'd have to add it to the URL
+        console.log("Editing on front-end because we are admin");
+
         let editForm = document.getElementsByClassName("edit").item(0);
 
         let editAxiom = document.getElementById("edit-axiom");
@@ -27,7 +31,9 @@ export const edits = () => {
         // clicking on axioms in characteristics sets the editor
         document.querySelectorAll(selectors).forEach(el => {
             el.querySelectorAll(".asserted").forEach( ax => {
-                ax.onclick = () => {
+                ax.querySelector(".edit-init").onclick = (event) => {
+                    event.preventDefault();
+                    console.log("Edit this axiom");
                     const axiom = ax.querySelector(".owlobject").getAttribute("data");
                     const ontology = ax.querySelector(".source-ont").getAttribute("data");
                     editAxiom.value = editAxiom.placeholder = axiom;

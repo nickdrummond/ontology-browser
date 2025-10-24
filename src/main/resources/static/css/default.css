@@ -315,6 +315,33 @@ img.button {
     float: right;
 }
 
+.edit-init {
+    position: relative;
+    left: -1.3rem;
+}
+
+#login {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    border: 2px solid gray;
+    padding: 1rem;
+    margin: auto;
+    width: 20rem;
+    height: 15rem;
+}
+
+#login form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+#login form input {
+    font-size: large;
+    width: 100%;
+}
+
 @media screen and (max-width: 800px) and (max-height: 450px) {
 
     #burger {

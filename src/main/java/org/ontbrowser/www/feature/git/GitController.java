@@ -9,7 +9,6 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,9 +80,6 @@ public class GitController {
                     model.addAttribute("divergence", divergence);
                 }
             }
-            if (isAdmin(principal)) {
-                model.addAttribute("refresh", true);
-            }
 
             model.addAttribute("status", status);
             model.addAttribute("local", local.getName());
@@ -92,15 +88,5 @@ public class GitController {
             model.addAttribute("pageData", new PageData(start, pageSize, Integer.MAX_VALUE));
         });
         return new ModelAndView("history");
-    }
-
-    private boolean isAdmin(Principal principal) {
-        if (principal instanceof UsernamePasswordAuthenticationToken token) {
-            var authorities = token.getAuthorities();
-            if (!authorities.isEmpty()) {
-                return authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
-            }
-        }
-        return false;
     }
 }

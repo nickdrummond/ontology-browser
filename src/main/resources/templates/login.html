@@ -14,20 +14,23 @@
 
 <div id='main'>
 
-    <h2>Please Log In</h2>
-    <div th:if="${param.error}">
-        Invalid username and password.</div>
-    <div th:if="${param.logout}">
-        You have been logged out.</div>
-    <form th:action="@{/login}" method="post">
-        <div>
+
+    <div id='login'>
+        <p th:if="${param.logout}">
+            You have been logged out.
+        </p>
+
+        <h2>Please Log In</h2>
+
+        <form th:action="@{/login}" method="post">
             <input type="text" name="username" placeholder="Username"/>
-        </div>
-        <div>
             <input type="password" name="password" placeholder="Password"/>
-        </div>
-        <input type="submit" value="Log in" />
-    </form>
+            <span th:if="${param.error}">
+                Invalid username and password.
+            </span>
+            <input type="submit" value="Log in"/>
+        </form>
+    </div>
 </div>
 
 <div th:replace='~{base :: footer}'></div>

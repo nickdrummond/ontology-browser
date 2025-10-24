@@ -49,13 +49,13 @@ export const entity = (sel = "#content") => {
     }
 
     function entityLoaded() {
-        if (editingEnabled) {
+        if (admin) {
             edits().rememberTransaction();
         }
 
         characteristics(sel).init(".characteristic, #metrics");
 
-        if (editingEnabled) {
+        if (admin) {
             edits().init(".characteristic");
         }
     }

@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 
+<body>
 <th:block th:fragment='header'>
 
     <title th:text='${projectInfo.name + ": " + title}'>Project Name: Page Name</title>
@@ -29,6 +30,7 @@
     <script type='text/javascript' th:inline='javascript'>
         const baseUrl = '/';
         const editingEnabled = [[${editingEnabled}]] ?? false;
+        const admin = [[${admin}]] ?? false;
         const THEME_ATTRIBUTE = "data-theme";
         const THEME_KEY = "theme";
         const THEME_DEFAULT = "light";
@@ -55,7 +57,7 @@
 </th:block>
 
 <th:block th:fragment="includeEditing"
-          th:if="${editingEnabled}">
+          th:if="${admin}">
     <link rel='stylesheet' type='text/css' href='/css/query.css'
           th:href='@{/css/query.css}'/>
     <link rel='stylesheet' type='text/css' href='/css/gaphu-0.0.9.css'
@@ -188,6 +190,8 @@
     <ul th:remove="all-but-first" th:class="${cls}">
         <li class="asserted" th:each="object : ${ch.objects}">
 
+            <a th:if="${admin}" class="edit-init" href="#">&#9998;</a>
+
             <span class="owlobject"
                   th:with="data=${object.owlAxiom() != null ? object.owlAxiom() : object.owlObject()}"
                   th:data="${mos.renderAsPlainString(data)}"
@@ -283,6 +287,8 @@
     <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}">Project Link</a>
     <a href='https://github.com/nickdrummond/ontology-browser/'>rendered with Ontology Browser</a>
     <a th:href='${"mailto:" + projectInfo.contact}'>Contact</a>
+    <span th:if="${admin}">admin</span>
+    <span th:if="${editingEnabled}">&#9998;</span>
 </div>
 
 </body>

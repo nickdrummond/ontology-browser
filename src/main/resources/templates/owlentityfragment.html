@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <div th:if="${editingEnabled}"
+        <div th:if="${admin}"
              th:replace='~{edits :: axiom(${""}, ${""})}'>
             Edit this axiom
         </div>
