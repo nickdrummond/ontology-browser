@@ -1,4 +1,3 @@
-
 .characteristics {
     vertical-align: top;
     padding-right: 5px; /* enough space for the scroller */
@@ -43,7 +42,7 @@
     overflow: hidden;
 
     border: solid 1px #c7cfd5;
-    padding: 5px 5px 5px 25px;
+    padding: 5px 5px 5px 15px;
     margin: 0.25rem 0;
     -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
@@ -56,14 +55,25 @@
     height: 0;
 }
 
-.characteristic > ul > li {
-    padding: 4px;
-    clear: both;
+.characteristic ul {
+    list-style-position: inside;
+    padding-left: 0.5rem;
 }
 
-.characteristic > li:hover, .characteristic tr:hover {
-    background: rgba(125, 125, 125, 0.2);
-    transition: ease-out 0.2s;
+.characteristic > ul > li {
+    padding-left: 3em; /* Space for marker */
+    text-indent: -2.5em; /* Pull first line back so all lines align */
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.characteristic li:hover {
+    background-color: rgba(132, 132, 132, 0.1);
+}
+
+.characteristic .owlobject {
+    display: inline;
+    vertical-align: baseline;
 }
 
 .characteristic .source-ont {

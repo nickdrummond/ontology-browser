@@ -1,0 +1,43 @@
+.edit {
+    margin: 0 5px;
+    display: none;
+}
+
+.edit.active {
+    display: block;
+}
+
+#edit {
+    display: flex;
+    flex-direction: row;
+}
+
+#edit-axiom {
+    flex-grow: 2;
+}
+
+#edit-ontology {
+    float: right;
+}
+
+li.asserted {
+    position: relative;
+}
+
+.edit-init {
+    display: none;
+    position: absolute;
+    left: 2.8rem;
+}
+
+.edit-init:hover {
+    text-decoration: none;
+}
+
+li.asserted:hover .edit-init {
+    display: inline-block;
+}
+
+#footer .edit-toggle.disabled {
+    text-decoration: line-through;
+}

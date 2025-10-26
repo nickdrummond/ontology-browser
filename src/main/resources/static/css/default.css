@@ -293,37 +293,6 @@ img.button {
     text-decoration: none;
 }
 
-.edit {
-    margin: 0 5px;
-    display: none;
-}
-
-.edit.active {
-    display: block;
-}
-
-#edit {
-    display: flex;
-    flex-direction: row;
-}
-
-#edit-axiom {
-    flex-grow: 2;
-}
-
-#edit-ontology {
-    float: right;
-}
-
-.edit-init {
-    position: relative;
-    left: -1.3rem;
-}
-
-#footer .edit-toggle.disabled {
-    text-decoration: line-through;
-}
-
 #login {
     display: flex;
     flex-direction: column;
