@@ -320,6 +320,10 @@ img.button {
     left: -1.3rem;
 }
 
+#footer .edit-toggle.disabled {
+    text-decoration: line-through;
+}
+
 #login {
     display: flex;
     flex-direction: column;
@@ -445,4 +449,3 @@ img.button {
         font-size: 1rem;
     }
 }
-

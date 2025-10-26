@@ -18,6 +18,9 @@ import org.ontbrowser.www.kit.event.RestartEvent;
 
 import java.util.*;
 
+import static org.ontbrowser.www.kit.impl.OWLHTMLKitInternals.editableKit;
+import static org.ontbrowser.www.kit.impl.OWLHTMLKitInternals.readOnlyKit;
+
 // Delegate pattern allows the implementation to be switched out
 public class RestartableKit implements OWLHTMLKit, Restartable {
 
@@ -46,7 +49,13 @@ public class RestartableKit implements OWLHTMLKit, Restartable {
         try {
             OWLOntology ont = new OntologyLoader().loadOntologies(config.root());
             // only switches the implementation if the loading was successful
-            delegate = new OWLHTMLKitInternals(ont, config);
+            if (getDelegate().isEditable()) {
+                log.info("Restarting editable kit");
+                delegate = editableKit(ont, config);
+            } else {
+                log.info("Restarting read-only kit");
+                delegate = readOnlyKit(ont, config);
+            }
             if (eventPublisher != null) {
                 eventPublisher.publishEvent(new RestartEvent(this));
             }
@@ -143,5 +152,10 @@ public class RestartableKit implements OWLHTMLKit, Restartable {
     @Override
     public final IRIShortFormProvider getIriShortFormProvider() {
         return getDelegate().getIriShortFormProvider();
+    }
+
+    @Override
+    public boolean isEditable() {
+        return getDelegate().isEditable();
     }
 }

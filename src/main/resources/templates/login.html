@@ -22,12 +22,13 @@
 
         <h2>Please Log In</h2>
 
-        <form th:action="@{/login}" method="post">
+        <form th:action="@{/login(redirect=${param.redirect})}" method="post">
             <input type="text" name="username" placeholder="Username"/>
             <input type="password" name="password" placeholder="Password"/>
             <span th:if="${param.error}">
                 Invalid username and password.
             </span>
+            <input type="hidden" name="redirect" th:if="${param.redirect}" th:value="${param.redirect}"/>
             <input type="submit" value="Log in"/>
         </form>
     </div>

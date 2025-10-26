@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Profile("editing")
 @Component
 public class EditModeContext {
+
     private static final ThreadLocal<Boolean> editMode = new ThreadLocal<>();
 
     public static void setEditMode(boolean isEditMode) {

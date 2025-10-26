@@ -24,6 +24,8 @@ import org.springframework.context.annotation.Profile;
 import java.net.URI;
 import java.util.List;
 
+import static org.ontbrowser.www.kit.impl.OWLHTMLKitInternals.readOnlyKit;
+
 @Configuration
 public class KitConfig {
 
@@ -60,7 +62,7 @@ public class KitConfig {
             bl.beforeLoad(config);
         });
         var ont = new OntologyLoader().loadOntologies(config.root());
-        return new OWLHTMLKitInternals(ont, config);
+        return readOnlyKit(ont, config);
     }
 
     @Profile("!editing")

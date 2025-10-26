@@ -190,7 +190,7 @@
     <ul th:remove="all-but-first" th:class="${cls}">
         <li class="asserted" th:each="object : ${ch.objects}">
 
-            <a th:if="${admin}" class="edit-init" href="#">&#9998;</a>
+            <a th:if="${editingEnabled}" class="edit-init" href="#">&#9998;</a>
 
             <span class="owlobject"
                   th:with="data=${object.owlAxiom() != null ? object.owlAxiom() : object.owlObject()}"
@@ -287,8 +287,23 @@
     <a th:href="${projectInfo.url}" th:text="${projectInfo.tagline}">Project Link</a>
     <a href='https://github.com/nickdrummond/ontology-browser/'>rendered with Ontology Browser</a>
     <a th:href='${"mailto:" + projectInfo.contact}'>Contact</a>
-    <span th:if="${admin}">admin</span>
-    <span th:if="${editingEnabled}">&#9998;</span>
+    <span th:if="${admin}">
+    admin
+        <a th:if="${editingEnabled}"
+           th:href="@{/admin/edit-mode(enable=false)}"
+           title="Disable edit mode"
+        class="edit-toggle">&#9998;</a>
+        <a th:if="${!editingEnabled}"
+           th:href="@{/admin/edit-mode(enable=true)}"
+           title="Enable edit mode"
+           class="edit-toggle disabled">&#9998;</a>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" style="background:none;border:none;padding:0;margin-left:1em;color:inherit;cursor:pointer;text-decoration:underline;">Logout</button>
+        </form>
+    </span>
+    <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'admin') and !admin}">
+        <a th:href="@{/login}" style="margin-left:1em;">Login</a>
+    </th:block>
 </div>
 
 </body>

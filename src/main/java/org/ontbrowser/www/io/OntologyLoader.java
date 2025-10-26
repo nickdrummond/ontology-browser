@@ -32,7 +32,7 @@ public class OntologyLoader {
             }
         }
 
-        OWLOntologyLoaderListener ontLoadListener = new OWLOntologyLoaderListener() {
+        var ontLoadListener = new OWLOntologyLoaderListener() {
 
             private int count = 0;
             public void startedLoadingOntology(@NonNull LoadingStartedEvent loadingStartedEvent) {

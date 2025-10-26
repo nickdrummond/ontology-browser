@@ -48,13 +48,26 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     private EntityIdLookup entityIdLookup;
     private Map<String, String> prefixes;
 
-    public OWLHTMLKitInternals(
+    private final boolean editable;
+
+
+    public static OWLHTMLKitInternals readOnlyKit(OWLOntology rootOntology, Config config) {
+        return new OWLHTMLKitInternals(rootOntology, config, false);
+    }
+
+    public static OWLHTMLKitInternals editableKit(OWLOntology rootOntology, Config config) {
+        return new OWLHTMLKitInternals(rootOntology, config, true);
+    }
+
+    private OWLHTMLKitInternals(
             final OWLOntology rootOntology,
-            final Config config
+            final Config config,
+            final boolean editable
     ) {
         this.mngr = rootOntology.getOWLOntologyManager();
         this.rootOntology = rootOntology;
         this.config = config;
+        this.editable = editable;
         ToStringRenderer.setRenderer(this::getStringRenderer);
     }
 
@@ -184,5 +197,10 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
             nameCache = new QuotingBiDirectionalShortFormProvider(getInternalSFP(), getOntologies());
         }
         return nameCache;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return editable;
     }
 }

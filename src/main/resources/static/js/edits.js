@@ -10,9 +10,6 @@ export const edits = () => {
     }
 
     function init(selectors) {
-
-        // TODO: how do we trigger edit mode?
-        // How do we add edit mode to the headers on normal page requests/links? We'd have to add it to the URL
         console.log("Editing on front-end because we are admin");
 
         let editForm = document.getElementsByClassName("edit").item(0);

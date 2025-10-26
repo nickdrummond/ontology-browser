@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,13 +22,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 
 @RestController
 @Profile("editing")
 @RequestMapping(value = "/axioms")
+@PreAuthorize("hasRole('ADMIN')")
 public class EditController {
 
     private static final Logger log = LoggerFactory.getLogger(EditController.class);
@@ -49,6 +50,7 @@ public class EditController {
     /**
      * Keeping this as a GET as we want the browser to be able to do this without JS
      */
+    @RequiresEditable
     @GetMapping(value = "/add")
     public void add(
             @RequestParam String axiom,
@@ -57,7 +59,6 @@ public class EditController {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws IOException {
-
 
         var df = kit.getOWLOntologyManager().getOWLDataFactory();
         var owlEntityChecker = kit.getOWLEntityChecker();
@@ -97,6 +98,7 @@ public class EditController {
     /**
      * Keeping this as a GET as we want the browser to be able to do this without JS
      */
+    @RequiresEditable
     @GetMapping(value = "/edit")
     public void edit(
             @RequestParam String originalAxiom,

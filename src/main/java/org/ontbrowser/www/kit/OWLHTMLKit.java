@@ -54,4 +54,9 @@ public interface OWLHTMLKit {
     Map<String, String> getPrefixes();
 
     IRIShortFormProvider getIriShortFormProvider();
+
+    /**
+     * @return true if this kit allows editing ontologies, false if read-only
+     */
+    boolean isEditable();
 }
