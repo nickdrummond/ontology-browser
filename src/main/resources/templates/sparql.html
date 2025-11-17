@@ -65,7 +65,7 @@
             <span th:replace="~{base :: graphLink}"></span>
         </h4>
 
-        <table th:if="${!results.isEmpty()}">
+        <table class="hide-target" th:if="${!results.isEmpty()}">
             <thead>
             <tr>
                 <th th:each="header : ${results[0].keySet()}">
