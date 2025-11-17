@@ -1,0 +1,54 @@
+.side-nav {
+    margin: 1rem 0.5rem 0.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 24rem;
+}
+
+.side-nav .header {
+    white-space: nowrap;
+}
+.side-nav .header .hide-trigger {
+    cursor: pointer;
+    display: inline-block;
+}
+
+.side-nav .header .hide-trigger::before {
+    content: "▶";
+    margin: 0.2rem;
+}
+
+.side-nav.hidden .hide-target {
+    display: none !important;
+}
+
+
+@media screen and (min-width: 800px) {
+
+    .side-nav {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-top: 3rem;
+        max-width: 24rem;
+    }
+
+    .side-nav.hidden {
+        flex: 0;
+        width: 2rem;
+        margin: 0;
+    }
+
+    .side-nav.hidden .header {
+        writing-mode: sideways-lr;
+    }
+
+    .side-nav.hidden .header::before {
+        margin-top: 0.5rem;
+    }
+
+    .side-nav.hidden .header .paging {
+        display: none !important;
+    }
+}

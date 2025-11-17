@@ -9,11 +9,11 @@ document.addEventListener("DOMContentLoaded", function (event) {
 
     const entityPane = entity();
 
-    const primaryTree = document.querySelector(".owlselector.primary");
+    const primaryTree = document.querySelector(".side-nav.primary");
     if (primaryTree) {
         const primaryNav = tree(primaryTree, baseUrl, entityPane);
 
-        const secondaryTree = document.querySelector(".owlselector.secondary");
+        const secondaryTree = document.querySelector(".side-nav.secondary");
         if (secondaryTree) {
             const secondaryNav = tree(secondaryTree, baseUrl, entityPane);
             secondaryNav.init();
@@ -35,7 +35,7 @@ const tree = (treeElement, baseUrl, entityPane) => {
     function init(callback) {
         selectedEntityCallback = callback;
 
-        minimise(treeElement).addMinimise();
+        // minimise(treeElement).addMinimise();
         scrollToSelection();
         createExpandListeners();
     }

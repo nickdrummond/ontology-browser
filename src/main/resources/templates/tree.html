@@ -47,18 +47,18 @@
     </div>
 </ul>
 
-<div class='owlselector primary' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
+<div class='side-nav primary' th:fragment="hierarchy (title, hierarchy)" th:if="${hierarchy != null}">
     <h4 class="header">
         <span class="hide-trigger">
             <span class="title" th:text="${title}">Title</span>
         </span>
     </h4>
-    <ul class="minihierarchy" th:classappend="${title}">
+    <ul class="minihierarchy hide-target" th:classappend="${title}">
         <li th:replace="~{tree :: tree(t=${hierarchy})}">Top Thing</li>
     </ul>
 </div>
 
-<div class='owlselector secondary'
+<div class='side-nav secondary'
      th:fragment="secondaryhierarchy"
      th:if="${hierarchy2 != null}">
 
@@ -71,16 +71,16 @@
         <a th:if="${inverse != null && !inverse}" href="?inverse=true" class="keyword" title="Inverse">↩</a>
     </h4>
 
-    <ul class="minihierarchy" th:classappend="${type2}" th:if="${!hierarchy2.children.isEmpty()}">
+    <ul class="minihierarchy hide-target" th:classappend="${type2}" th:if="${!hierarchy2.children.isEmpty()}">
         <div class="removeme" th:each="child : ${hierarchy2.children}" th:remove="tag">
             <li th:replace="~{tree :: tree(t=${child}, parent=${hierarchy2}, stats=${stats2}, statsName=${statsName2})}"></li>
         </div>
     </ul>
 </div>
 
-<div class='owlselector primary' th:fragment="list (title, entities)" th:if="${entities != null}">
+<div class='side-nav primary' th:fragment="list (title, entities)" th:if="${entities != null}">
     <h4 class="header"><span class="title" th:text="${title}">Title</span></h4>
-    <ul class="minihierarchy" th:classappend="${type}">
+    <ul class="minihierarchy hide-target" th:classappend="${type}">
         <li th:each="entity : ${entities}" th:utext="${mos.render(entity)}">
             a thing
         </li>
@@ -89,7 +89,7 @@
 
 <div id='direct' th:fragment="secondary"
      th:if="${direct != null}"
-     class="owlselector secondary">
+     class="side-nav secondary">
 
     <h4 class="header"
         th:with='name=${T(org.ontbrowser.www.feature.entities.characteristics.PagingUtils).getIdFor(direct.name)}'>
@@ -100,7 +100,7 @@
     </h4>
 
     <ul th:remove="all-but-first"
-        th:class="minihierarchy">
+        class="minihierarchy hide-target">
         <li class="asserted"
             th:each="object : ${direct.objects}">
                 <span class="owlobject"

@@ -1,4 +1,5 @@
 import {theme} from "./theme.js";
+import {minimise} from "./minimise.js";
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +13,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
     burgerNavigation();
 
     initSearch();
+
+    const selectorPanes = document.querySelectorAll(".side-nav");
+    selectorPanes.forEach(selectorPane => minimise(selectorPane).addMinimise());
 });
 
 function openFullscreen() {

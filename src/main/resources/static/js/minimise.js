@@ -7,7 +7,7 @@ export const minimise = (component) => {
         if (hidden && hidden === "true") {
             component.classList.add("hidden");
         }
-        const trigger = component.querySelector("h4.header .hide-trigger"); // TODO make this a selector too?
+        const trigger = component.querySelector(".hide-trigger");
         if (trigger) {
             trigger.onclick = (e) => {
                 component.classList.toggle("hidden");

@@ -19,9 +19,11 @@
 
 <div id="main" class="three-pane">
 
-    <div id="query-pane" class='codebox'>
-        <form method='get' id='query-form' class="sparql" action=''>
-            <h3>SPARQL select query</h3>
+    <div class='side-nav'>
+        <h4 class="header">
+            <span class="hide-trigger">SPARQL select query</span>
+        </h4>
+        <form method='get' id='query-form' class="sparql hide-target" action=''>
 
             <textarea id='sparql-prefixes' name='prefixes'
                       class="editor prefixes"
@@ -38,7 +40,7 @@
                 <span>
                     <label for="pageSize">Page size </label>
                     <select id="pageSize" name="pageSize"
-                    th:with="pageSize=${pageData.pageSize()}">
+                            th:with="pageSize=${pageData.pageSize()}">
                         <option th:value="10" th:selected="${pageSize == 10}">10</option>
                         <option th:value="20" th:selected="${pageSize == 20}">20</option>
                         <option th:value="50" th:selected="${pageSize == 50}">50</option>
@@ -51,38 +53,41 @@
         </form>
 
     </div>
-    <div id="content">
+
+    <div th:if="${error != null}" id="errorMessage">
+        <p th:text="${error}"></p>
     </div>
-</div>
 
-<div th:if="${error != null}" id="errorMessage">
-    <p th:text="${error}"></p>
-</div>
+    <div th:if="${results != null}" id='resultsForm' class="side-nav">
+        <h4 class="header">
+            <span class="hide-trigger">Results</span>
+            <span th:replace="~{base::paged (${pageData}, ${name})}">(2)</span>
+            <span th:replace="~{base :: graphLink}"></span>
+        </h4>
 
-<div th:if="${results != null}" id='resultsForm'>
-    <h4>Results</h4>
-    <span th:replace="~{base::paged (${pageData}, ${name})}">(2)</span>
-    <span th:replace="~{base :: graphLink}"></span>
-
-    <table th:if="${!results.isEmpty()}">
-        <thead>
-        <tr>
-            <th th:each="header : ${results[0].keySet()}">
-                <span th:text="${header}"></span>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="result : ${results}">
-            <td th:each="variable : ${result.keySet()}">
+        <table th:if="${!results.isEmpty()}">
+            <thead>
+            <tr>
+                <th th:each="header : ${results[0].keySet()}">
+                    <span th:text="${header}"></span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="result : ${results}">
+                <td th:each="variable : ${result.keySet()}">
                 <span th:if="${result.get(variable) != null}"
                       th:utext="${mos.render(result.get(variable))}"
                 >
                 </span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="content">
+    </div>
 </div>
 
 <div th:replace='~{base :: footer}'></div>

@@ -14,13 +14,13 @@
 
         <div id="main">
 
-            <div class='owlselector primary'>
+            <div class='side-nav primary'>
                 <h4 class="header">
                     <span class="hide-trigger">
                         <span class="title">Axiom types</span>
                     </span>
                 </h4>
-                <ul class="minihierarchy axiom-types">
+                <ul class="minihierarchy axiom-types hide-target">
                     <li th:each="axiomType : ${axiomTypes}">
                         <span class="axiom-category" th:text="${axiomType.category}">category</span>
                         <a class="axiom-type"

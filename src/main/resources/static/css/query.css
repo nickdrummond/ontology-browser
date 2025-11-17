@@ -17,23 +17,13 @@ form.autocomplete {
     margin: 0.5rem;
 }
 
-
-#resultsForm {
-    margin: 0 0.5rem;
-    flex-grow: 1;
-}
-
-#resultsForm h4 {
-    display: inline-block;
-}
-
+/* TODO make scrollable work */
 #resultsForm tbody {
     display: block;
-    height: 20rem;
-    overflow: auto;
+    overflow-y: auto;
 }
 
-#resultsForm thead, table tbody tr {
+#resultsForm thead, #resultsForm tbody tr {
     display: table;
     width: 100%;
     table-layout: fixed;
@@ -41,6 +31,10 @@ form.autocomplete {
 
 #resultsForm thead th {
     text-align: left;
+}
+
+#resultsForm tbody td {
+    word-wrap: anywhere;
 }
 
 #query-form {
