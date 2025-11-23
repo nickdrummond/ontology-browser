@@ -58,10 +58,9 @@
             </div>
         </form>
 
-    </div>
-
-    <div th:if="${error != null}" id="errorMessage">
-        <p th:text="${error}"></p>
+        <div th:if="${error != null}" id="errorMessage">
+            <p th:text="${error}"></p>
+        </div>
     </div>
 
     <div th:if="${results != null}" id='resultsForm' class="side-nav">

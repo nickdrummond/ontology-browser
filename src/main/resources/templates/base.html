@@ -179,7 +179,7 @@
         <span th:replace="~{base::paged (${ch.getPageData()}, ${safeName})}">(2)</span>
     </div>
 
-    <ul th:remove="all-but-first" th:class="${cls}">
+    <ul th:remove="all-but-first" th:class="${cls + ' hide-target'}">
         <li class="asserted" th:each="object : ${ch.objects}">
 
             <a th:if="${editingEnabled}" class="edit-init" href="#">&#9998;</a>
