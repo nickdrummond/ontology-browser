@@ -10,10 +10,11 @@
             </div>
         </div>
 
-        <div th:if="${admin}"
-             th:replace='~{edits :: axiom(${""}, ${""})}'>
+        <th:block th:if="${editingEnabled == true}">
+            <th:block th:replace='~{edits :: axiom(${""}, ${""})}'>
             Edit this axiom
-        </div>
+            </th:block>
+        </th:block>
 
         <div class="characteristics">
             <div th:each="ch : ${characteristics}" th:remove="tag">

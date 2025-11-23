@@ -285,7 +285,7 @@
            th:href="@{/admin/edit-mode(enable=false)}"
            title="Disable edit mode"
         class="edit-toggle">&#9998;</a>
-        <a th:if="${!editingEnabled}"
+        <a th:if="${editingEnabled != true}"
            th:href="@{/admin/edit-mode(enable=true)}"
            title="Enable edit mode"
            class="edit-toggle disabled">&#9998;</a>
