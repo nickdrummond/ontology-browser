@@ -40,6 +40,7 @@ form.autocomplete {
 #query-form {
     display: flex;
     flex-direction: column;
+    margin-top: 0.5rem;
 }
 
 #query-form.sparql {
@@ -66,4 +67,19 @@ form.autocomplete {
 
 .editor.dl {
     height: 6rem;
+}
+
+.results-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.scrollable-tbody {
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.scrollable-tbody table {
+    width: 100%;
+    border-collapse: collapse;
 }
