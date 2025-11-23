@@ -197,14 +197,15 @@ img.button {
 }
 
 .icon-button {
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
     font-size: 2rem;
     background: none;
     border: none;
     cursor: pointer;
     min-width: 2.5rem;
     height: 2.5rem;
-    text-align: center;
 }
 
 .icon-button:hover {

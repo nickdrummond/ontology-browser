@@ -51,6 +51,7 @@ form.autocomplete {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    margin-top: 0.5rem;
 }
 
 .editor {
@@ -65,5 +66,4 @@ form.autocomplete {
 
 .editor.dl {
     height: 6rem;
-    margin-bottom: 0.5rem;
 }
