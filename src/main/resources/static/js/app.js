@@ -29,10 +29,22 @@ function openFullscreen() {
 }
 
 function burgerNavigation() {
-    let burger = document.getElementById("burger");
-    let menu = document.getElementById("menu");
+    const key = "burgerHidden";
+    const hiddenKey = "hidden";
+    const menu = document.getElementById("menu");
+    const burgerHidden = localStorage.getItem(key) || false;
+    if (burgerHidden) {
+        menu.classList.toggle(hiddenKey);
+    }
+    // Add the transition after loaded to avoid animation on initial display
+    setTimeout(() => {
+        menu.style.transition = "height 0.3s ease-in-out";
+    }, 500);
+
+    const burger = document.getElementById("burger");
     burger.onclick = () => {
-        menu.classList.toggle("hidden");
+        const hiddenState = menu.classList.toggle(hiddenKey);
+        localStorage.setItem(key, hiddenState);
     }
 }
 

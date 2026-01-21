@@ -31,7 +31,6 @@ body.wrapper {
 }
 
 #menu {
-    transition: height 0.3s ease-in-out;
     height: auto;
     display: flex;
     flex-direction: column;
