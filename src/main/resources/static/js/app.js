@@ -29,12 +29,12 @@ function openFullscreen() {
 }
 
 function burgerNavigation() {
-    const key = "burgerHidden";
+    const key = "navHidden";
     const hiddenKey = "hidden";
     const menu = document.getElementById("menu");
-    const burgerHidden = localStorage.getItem(key) || false;
-    if (burgerHidden) {
-        menu.classList.toggle(hiddenKey);
+    const navHidden = localStorage.getItem(key) || false;
+    if (navHidden) {
+        menu.classList.add(hiddenKey);
     }
     // Add the transition after loaded to avoid animation on initial display
     setTimeout(() => {
@@ -44,7 +44,12 @@ function burgerNavigation() {
     const burger = document.getElementById("burger");
     burger.onclick = () => {
         const hiddenState = menu.classList.toggle(hiddenKey);
-        localStorage.setItem(key, hiddenState);
+        if (!hiddenState) {
+            localStorage.removeItem(key);
+        }
+        else {
+            localStorage.setItem(key, hiddenState);
+        }
     }
 }
 
