@@ -54,9 +54,12 @@ public class RelationsHierarchyService extends AbstractRelationsHierarchyService
         if (roots.contains(ind)) return Collections.singleton(new OWLNamedIndividualNode(root));
 
         Set<Node<OWLNamedIndividual>> ancestors = new HashSet<>();
-        for (OWLNamedIndividual parent : reverseNodes.get(ind)) {
-            ancestors.add(new OWLNamedIndividualNode(parent));
-            ancestors.addAll(ancestors(parent));
+        var parents = reverseNodes.get(ind);
+        if (parents != null) {
+            for (var parent : parents) {
+                ancestors.add(new OWLNamedIndividualNode(parent));
+                ancestors.addAll(ancestors(parent));
+            }
         }
         return ancestors;
     }
