@@ -3,6 +3,7 @@ package org.ontbrowser.www.url;
 import org.semanticweb.owlapi.model.*;
 
 import static org.ontbrowser.www.url.EntityId.getIdForEntity;
+import static org.ontbrowser.www.url.OntologyId.getIdForOntology;
 
 /**
  * A URL scheme for dynamic server-side resolution
@@ -66,7 +67,7 @@ public class RestURLScheme implements URLScheme {
         }
         else if (owlObject.isOntology()){
             type = "ontologies";
-            code = String.valueOf(((OWLOntology)owlObject).getOntologyID().hashCode());
+            code = getIdForOntology(ontology.getOntologyID());
         }
         else{
             type = owlObject.getClass().getSimpleName();

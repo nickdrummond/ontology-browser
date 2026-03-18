@@ -2,6 +2,7 @@ package org.ontbrowser.www.backend;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.configuration.DBConnectionFilter;
+import org.ontbrowser.www.url.OntologyId;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
@@ -28,10 +29,14 @@ public class DBContext implements BackendContext {
 
     // TODO use spring configuration to set this, and allow it to be configured per-ontology in the database
     private static final String LABEL_IRI = System.getenv().getOrDefault("LABEL_IRI", RDFS_LABEL.getIRI().toString());
-    private static final int DEFAULT_ONT_ID = 1; // TODO just to try to get something working, use the number as the ontology ID for now
+
+    // TODO allow multiple ontologies to be stored in the database
+    // The root is ontology 1 as long as a single ontology (and its imports) is stored in the database
+    private static final int DEFAULT_ONT_ID = 1;
 
     private final Connection connection; // injected from DBConnectionFilter via request attribute
     private final OWLDataFactory df = new OWLDataFactoryImpl();
+    private OWLOntology rootOntology;
 
     public DBContext(HttpServletRequest request) {
         this.connection = (Connection) request.getAttribute(DBConnectionFilter.DB_CONNECTION_ATTR);
@@ -39,18 +44,21 @@ public class DBContext implements BackendContext {
 
     @Override
     public OWLOntology getRootOntology() {
-        // TODO allow multiple ontologies to be stored in the database
-        // The root is ontology 1 as long as a single ontology (and its imports) is stored in the database
-        return getOntologyFor(String.valueOf(DEFAULT_ONT_ID)); // TODO just to try to get something working
+        if (rootOntology == null) {
+            try {
+                return DBOntologyFactory.openFromDb(connection, DEFAULT_ONT_ID);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return rootOntology;
     }
 
     @Override
-    public OWLOntology getOntologyFor(String ontId) { // TODO just to try to get something working, use the number as the ontology ID for now
-        try {
-            return DBOntologyFactory.openFromDb(connection, Integer.parseInt(ontId));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public OWLOntology getOntologyFor(String ontId) {
+        return getRootOntology().importsClosure()
+                .filter(ont -> OntologyId.getIdForOntology(ont.getOntologyID()).equals(ontId))
+                .findFirst().orElseThrow(() -> new RuntimeException("Ontology not found: " + ontId));
     }
 
     @Override
@@ -62,6 +70,7 @@ public class DBContext implements BackendContext {
     @Override
     public ShortFormProvider getShortFormProvider() {
         // TODO Maybe cache this prefix map!
+        // TODO this should be hidden away in OWLDB2
         Map<String, String> prefixMap = Map.of();
         var canonicalRendererFactory = new CanonicalRendererFactory(prefixMap);
         var canonicalParserFactory = new CanonicalParserFactory(df, prefixMap);
