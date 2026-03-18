@@ -86,6 +86,18 @@ To load your own, set the root ontology location and reasoner root ontology IRI 
     INDEX_TYPE=<CLASSES_USAGE_CLOUD|INDIVIDUALS_USAGE_CLOUD|OBJECT_PROPERTIES_USAGE_CLOUD>
     LABEL_IRI=<IRI of the annotation property to use for rendering>
 
+## Ontology backend selection
+
+The app now supports a startup-selected ontology backend:
+
+    ONTOLOGY_BACKEND=<memory|db>
+    ONTOLOGY_ROOT_IRI=<root ontology IRI>
+
+Notes:
+- `memory` remains the default backend.
+- `ONTOLOGY_ROOT_IRI` is used as the root selector for both backends.
+- Existing ontology route IDs are unchanged.
+
 ## SKOS/SKOS-XL support
 
 The OWL API treats SKOS Concepts as individuals and their properties as annotations.

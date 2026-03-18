@@ -5,6 +5,10 @@ spring:
     servlet:
       # needed for csrf token in /boot
       produce-partial-output-while-processing: false
+  datasource:
+    url: ${POSTGRES_URL:#{null}}
+    username: ${POSTGRES_USER:#{null}}
+    password: ${POSTGRES_PASSWORD:#{null}}
 
 
 logging:
@@ -44,6 +48,7 @@ git:
 ontology:
   root:
     location: ${ONTOLOGY_ROOT_LOCATION:examples/pizza.owl}
+  backend: ${ONTOLOGY_BACKEND:mem}
 
 reasoning:
   threads: 2

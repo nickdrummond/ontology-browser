@@ -4,6 +4,7 @@ import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.OntologyCharacteristicsBuilder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
+import org.ontbrowser.www.util.OWLObjectComparator;
 import org.semanticweb.owlapi.metrics.*;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -34,12 +35,12 @@ public class OWLOntologiesService {
             final OWLOntology ont,
             final List<With> with,
             final int defaultPageSize,
-            final OWLHTMLKit kit) {
+            final OWLObjectComparator comparator) {
         return new OntologyCharacteristicsBuilder(
                 ont,
                 with,
                 defaultPageSize,
-                kit.getComparator()
+                comparator
         ).getCharacteristics();
     }
 

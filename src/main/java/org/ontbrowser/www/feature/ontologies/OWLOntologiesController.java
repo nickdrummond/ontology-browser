@@ -4,11 +4,12 @@ import com.google.common.net.HttpHeaders;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.output.WriterOutputStream;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
+import org.ontbrowser.www.util.OWLObjectComparator;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
@@ -29,13 +30,13 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 @RequestMapping(value = "/ontologies")
 public class OWLOntologiesController {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final OWLOntologiesService service;
 
     public OWLOntologiesController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             OWLOntologiesService service) {
-        this.kit = kit;
+        this.backend = backend;
         this.service = service;
     }
 
@@ -50,7 +51,7 @@ public class OWLOntologiesController {
     public void getOntologies(
             final HttpServletResponse response
     ) throws IOException {
-        var rootOntology = kit.getRootOntology();
+        var rootOntology = backend.getRootOntology();
         var id = service.getIdFor(rootOntology);
 
         response.sendRedirect("/ontologies/" + id);
@@ -64,8 +65,8 @@ public class OWLOntologiesController {
             final Model model,
             final HttpServletRequest request
     ) {
-        var ont = service.getOntologyFor(ontId, kit);
-        var hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), treeComparator());
+        var ont = backend.getOntologyFor(ontId);
+        var hierarchyService = new OWLOntologyHierarchyService(backend.getRootOntology(), treeComparator());
         var ontologyTree = hierarchyService.getPrunedTree(ont);
         model.addAttribute("hierarchy", ontologyTree);
         getOntologyFragment(ontId, imports, with, model, request);
@@ -80,9 +81,9 @@ public class OWLOntologiesController {
             final Model model,
             final HttpServletRequest request
     ) {
-        var ont = service.getOntologyFor(ontId, kit);
+        var ont = backend.getOntologyFor(ontId);
 
-        var ontologySFP = kit.getOntologySFP();
+        var ontologySFP = backend.getOntologySFP();
         var title = ontologySFP.getShortForm(ont) + " (Ontology)";
 
         var mos = (OWLHTMLRenderer) model.getAttribute("mos");
@@ -92,7 +93,8 @@ public class OWLOntologiesController {
 
         var iri = ont.getOntologyID().getOntologyIRI().orElse(IRI.create("Anonymous"));
 
-        var characteristics = service.getCharacteristics(ont, with, DEFAULT_PAGE_SIZE, kit);
+        OWLObjectComparator comparator = new OWLObjectComparator(backend.getShortFormProvider());
+        var characteristics = service.getCharacteristics(ont, with, DEFAULT_PAGE_SIZE, comparator);
 
         model.addAttribute("title", title);
         model.addAttribute("type", "Ontologies");
@@ -116,13 +118,13 @@ public class OWLOntologiesController {
             final Writer writer
     ) {
 
-        var owlOntology = service.getOntologyFor(ontId, kit);
+        var owlOntology = backend.getOntologyFor(ontId);
 
         try {
             var format = new RDFXMLDocumentFormat();
             var out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
             response.addHeader(HttpHeaders.ACCEPT, "application/rdf+xml");
-            kit.getOWLOntologyManager().saveOntology(owlOntology, format, out);
+            owlOntology.getOWLOntologyManager().saveOntology(owlOntology, format, out);
         } catch (OWLOntologyStorageException e) {
             throw new RuntimeException(e);
         }
