@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import owlapi.DBLabelShortFormProvider;
@@ -30,7 +31,7 @@ import static org.semanticweb.owlapi.vocab.OWLRDFVocabulary.RDFS_LABEL;
 
 @Component
 @ConditionalOnProperty(name = "ontology.backend", havingValue = "db")
-@RequestScope
+@RequestScope(proxyMode = ScopedProxyMode.TARGET_CLASS) // for ReadOnlyOntologyControllerAdvice
 public class DBContext implements BackendContext {
 
     // TODO use spring configuration to set this, and allow it to be configured per-ontology in the database
@@ -64,10 +65,11 @@ public class DBContext implements BackendContext {
 
     @Override
     public OWLOntology getOntologyFor(String ontId) {
-        if (rootOntology.getOntologyID().getOntologyIRI().stream().anyMatch((iri) -> iri.equals(IRI.create(ontId)))) {
-            return rootOntology;
+        var root = getRootOntology();
+        if (root.getOntologyID().getOntologyIRI().stream().anyMatch((iri) -> iri.equals(IRI.create(ontId)))) {
+            return root;
         }
-        return getRootOntology().importsClosure()
+        return root.importsClosure()
                 .filter(ont -> OntologyId.getIdForOntology(ont.getOntologyID()).equals(ontId))
                 .findFirst().orElseThrow(() -> new RuntimeException("DB Ontology not found: " + ontId));
     }

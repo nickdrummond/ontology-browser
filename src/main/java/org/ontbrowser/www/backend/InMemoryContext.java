@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
@@ -15,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Component
 @ConditionalOnProperty(name = "ontology.backend", havingValue = "memory", matchIfMissing = true)
-@RequestScope
+@RequestScope(proxyMode = ScopedProxyMode.TARGET_CLASS) // for ReadOnlyOntologyControllerAdvice
 public class InMemoryContext implements BackendContext {
 
     private final OWLHTMLKit kit; // injected singleton Kit

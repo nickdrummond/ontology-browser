@@ -1,9 +1,8 @@
 package org.ontbrowser.www.controller;
 
-import org.ontbrowser.www.feature.ontologies.OWLOntologiesService;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.stats.EntityCounts;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.renderer.RendererFactory;
@@ -15,26 +14,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 @ControllerAdvice
 public class ReadOnlyOntologyControllerAdvice {
 
-    private final OWLHTMLKit kit;
-
     private final ProjectInfo projectInfo;
-    private final RendererFactory rendererFactory;
 
-    private final OWLOntologiesService ontService;
+    private final RendererFactory rendererFactory;
     private final StatsService statsService;
+    private final BackendContext backendContext;
 
     public ReadOnlyOntologyControllerAdvice(
-            OWLHTMLKit kit,
             ProjectInfo projectInfo,
             RendererFactory rendererFactory,
-            OWLOntologiesService ontService,
-            StatsService statsService
+            StatsService statsService,
+            BackendContext backendContext
     ) {
-        this.kit = kit;
         this.projectInfo = projectInfo;
         this.rendererFactory = rendererFactory;
-        this.ontService = ontService;
         this.statsService = statsService;
+        this.backendContext = backendContext;
     }
 
     @ModelAttribute("projectInfo")
@@ -50,9 +45,9 @@ public class ReadOnlyOntologyControllerAdvice {
     @ModelAttribute()
     public OWLOntology getOnt(@RequestParam(required = false) final String ontId) {
         if (ontId != null) {
-            return ontService.getOntologyFor(ontId, kit);
+            return backendContext.getOntologyFor(ontId);
         }
-        return kit.getRootOntology();
+        return backendContext.getRootOntology();
     }
 
     @ModelAttribute("entityCounts")
