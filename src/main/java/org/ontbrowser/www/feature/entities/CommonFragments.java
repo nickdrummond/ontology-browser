@@ -1,6 +1,5 @@
 package org.ontbrowser.www.feature.entities;
 
-import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.graph.GraphURLScheme;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.feature.stats.Stats;
@@ -11,7 +10,10 @@ import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.ComponentPagingURIScheme;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -28,16 +30,16 @@ public class CommonFragments {
 
     private final OWLHTMLKit kit;
     private final ProjectInfo projectInfo;
-    private final ReasonerService reasonerService;
+//    private final ReasonerService reasonerService;
 
     public CommonFragments(
             OWLHTMLKit kit,
-            ProjectInfo projectInfo,
-            ReasonerService reasonerService
+            ProjectInfo projectInfo
+//            ReasonerService reasonerService
     ) {
         this.kit = kit;
         this.projectInfo = projectInfo;
-        this.reasonerService = reasonerService;
+//        this.reasonerService = reasonerService;
     }
 
     public ModelAndView getOWLClassFragment(
@@ -109,10 +111,10 @@ public class CommonFragments {
                 service.getCharacteristicsBuilder(entity, ont, kit.getComparator(),
                         with, DEFAULT_PAGE_SIZE).getCharacteristics());
 
-        if (inferred) {
-            OWLReasoner reasoner = reasonerService.getReasoner();
-            characteristics.addAll(service.getInferredCharacteristics(entity, reasoner));
-        }
+//        if (inferred) {
+//            OWLReasoner reasoner = reasonerService.getReasoner();
+//            characteristics.addAll(service.getInferredCharacteristics(entity, reasoner));
+//        }
 
         model.addAttribute("title", title);
         model.addAttribute("iri", entity.getIRI());

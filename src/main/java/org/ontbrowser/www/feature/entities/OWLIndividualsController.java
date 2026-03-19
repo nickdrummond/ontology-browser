@@ -2,11 +2,11 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
-import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.Tree;
@@ -37,7 +37,7 @@ public class OWLIndividualsController {
     private final OWLHTMLKit kit;
     private final OWLIndividualsService individualsService;
     private final OWLClassesService owlClassesService;
-    private final ReasonerFactoryService reasonerFactoryService;
+    private final BackendContext backendContext;
     private final StatsService statsService;
     private final CommonContent commonContent;
     private final CommonFragments commonFragments;
@@ -46,7 +46,7 @@ public class OWLIndividualsController {
             OWLHTMLKit kit,
             OWLIndividualsService individualsService,
             OWLClassesService owlClassesService,
-            ReasonerFactoryService reasonerFactoryService,
+            BackendContext backendContext,
             StatsService statsService,
             CommonContent commonContent,
             CommonFragments commonFragments
@@ -54,7 +54,7 @@ public class OWLIndividualsController {
         this.kit = kit;
         this.individualsService = individualsService;
         this.owlClassesService = owlClassesService;
-        this.reasonerFactoryService = reasonerFactoryService;
+        this.backendContext = backendContext;
         this.statsService = statsService;
         this.commonContent = commonContent;
         this.commonFragments = commonFragments;
@@ -135,7 +135,7 @@ public class OWLIndividualsController {
     ) {
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
+        OWLReasoner r = backendContext.getToldReasoner(ont);
 
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
@@ -220,7 +220,7 @@ public class OWLIndividualsController {
 
         var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
 
-        var r = reasonerFactoryService.getToldReasoner(ont);
+        var r = backendContext.getToldReasoner(ont);
         updateRenderer(type, model, request);
         var stats = statsService.getClassStats(statsName, r);
 

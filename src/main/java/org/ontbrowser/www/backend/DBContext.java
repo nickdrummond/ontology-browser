@@ -3,8 +3,11 @@ package org.ontbrowser.www.backend;
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.configuration.DBConnectionFilter;
 import org.ontbrowser.www.url.OntologyId;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyID;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,12 +15,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import owlapi.DBLabelShortFormProvider;
 import owlapi.DBOntologyFactory;
+import owlapi.DBStructuralReasoner;
 import parser.CanonicalParserFactory;
 import renderer.CanonicalRendererFactory;
+import tables.ontologies.Ontology;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.semanticweb.owlapi.vocab.OWLRDFVocabulary.RDFS_LABEL;
@@ -37,6 +43,8 @@ public class DBContext implements BackendContext {
     private final Connection connection; // injected from DBConnectionFilter via request attribute
     private final OWLDataFactory df = new OWLDataFactoryImpl();
     private OWLOntology rootOntology;
+    private Map<OWLOntologyID, OWLReasoner> toldReasoners = new HashMap<>();
+    private Map<OWLOntologyID, Integer> ontId2bdId = null;
 
     public DBContext(HttpServletRequest request) {
         this.connection = (Connection) request.getAttribute(DBConnectionFilter.DB_CONNECTION_ATTR);
@@ -46,7 +54,7 @@ public class DBContext implements BackendContext {
     public OWLOntology getRootOntology() {
         if (rootOntology == null) {
             try {
-                return DBOntologyFactory.openFromDb(connection, DEFAULT_ONT_ID);
+                rootOntology = DBOntologyFactory.openFromDb(connection, DEFAULT_ONT_ID);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -56,9 +64,12 @@ public class DBContext implements BackendContext {
 
     @Override
     public OWLOntology getOntologyFor(String ontId) {
+        if (rootOntology.getOntologyID().getOntologyIRI().stream().anyMatch((iri) -> iri.equals(IRI.create(ontId)))) {
+            return rootOntology;
+        }
         return getRootOntology().importsClosure()
                 .filter(ont -> OntologyId.getIdForOntology(ont.getOntologyID()).equals(ontId))
-                .findFirst().orElseThrow(() -> new RuntimeException("Ontology not found: " + ontId));
+                .findFirst().orElseThrow(() -> new RuntimeException("DB Ontology not found: " + ontId));
     }
 
     @Override
@@ -81,5 +92,30 @@ public class DBContext implements BackendContext {
                 DEFAULT_ONT_ID,
                 df.getOWLAnnotationProperty(LABEL_IRI)
         );
+    }
+
+    @Override
+    public OWLDataFactory getOWLDataFactory() {
+        return df;
+    }
+
+    @Override
+    public OWLReasoner getToldReasoner(OWLOntology ont) {
+        return toldReasoners.computeIfAbsent(ont.getOntologyID(), (ontId) -> createReasoner(ont));
+    }
+
+    private OWLReasoner createReasoner(OWLOntology ont) {
+        try {
+            return DBStructuralReasoner.withClosure(connection, getDBIdForOntology(ont.getOntologyID()), df);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int getDBIdForOntology(OWLOntologyID ontologyID) throws SQLException {
+        if (ontId2bdId == null) {
+            ontId2bdId = Ontology.owlOntologyIdToId(connection);
+        }
+        return ontId2bdId.get(ontologyID);
     }
 }

@@ -6,6 +6,7 @@ import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.reasoner.ReasonerMomento;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,6 +21,7 @@ import java.util.concurrent.Future;
 
 @Configuration
 @Profile("!reasoners")
+@ConditionalOnProperty(name = "ontology.backend", havingValue = "memory", matchIfMissing = true)
 public class ToldReasonerConfig {
 
     @Value("${reasoner.structural.label}")

@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.env.Environment;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeoutException;
 
 import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE_STR;
 
+@ConditionalOnProperty(name = "ontology.backend", havingValue = "memory", matchIfMissing = true)
 @RestController
 @RequestMapping(value = DLQueryController.PATH)
 public class DLQueryController {

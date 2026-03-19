@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.event.EventListener;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
 
+@ConditionalOnProperty(name = "ontology.backend", havingValue = "memory", matchIfMissing = true)
 @Service
 public class ReasonerService {
 

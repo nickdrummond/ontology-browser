@@ -7,6 +7,7 @@ import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.util.OWLObjectComparator;
 import org.semanticweb.owlapi.metrics.*;
 import org.semanticweb.owlapi.model.AxiomType;
+import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class OWLOntologiesService {
     }
 
     public String getIdFor(final OWLOntology ontology) {
-        return String.valueOf(ontology.getOntologyID().hashCode());
+        return ontology.getOntologyID().getOntologyIRI().map(IRI::toString).orElseThrow();
     }
 
     public List<Characteristic> getCharacteristics(

@@ -1,12 +1,12 @@
 package org.ontbrowser.www.feature.entities;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.feature.entities.characteristics.DataPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLDataPropertyHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
-import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.*;
@@ -20,10 +20,10 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 @Service
 public class OWLDataPropertiesService implements PropertiesService<OWLDataProperty> {
 
-    private final ReasonerFactoryService reasonerFactoryService;
+    private final BackendContext backend;
 
-    public OWLDataPropertiesService(ReasonerFactoryService reasonerFactoryService) {
-        this.reasonerFactoryService = reasonerFactoryService;
+    public OWLDataPropertiesService(BackendContext backend) {
+        this.backend = backend;
     }
 
     public CharacteristicsBuilder<OWLDataProperty> getCharacteristicsBuilder(
@@ -38,7 +38,7 @@ public class OWLDataPropertiesService implements PropertiesService<OWLDataProper
     @Override
     public OWLHierarchyService<OWLDataProperty> getHierarchyService(OWLOntology ont) {
         return new OWLDataPropertyHierarchyService(
-                reasonerFactoryService.getToldReasoner(ont),
+                backend.getToldReasoner(ont),
                 treeComparator());
     }
 

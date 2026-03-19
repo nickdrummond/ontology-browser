@@ -3,16 +3,18 @@ package org.ontbrowser.www.feature.entities;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
-import org.ontbrowser.www.model.paging.With;
-import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
+import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.ontbrowser.www.model.Tree.treeComparator;
@@ -21,14 +23,10 @@ import static org.semanticweb.owlapi.model.AxiomType.SUBCLASS_OF;
 @Service
 public class OWLClassesService implements CharacteristicsProvider<OWLClass>, NamedTypeProvider<OWLClass> {
 
-    private final ReasonerFactoryService reasonerFactoryService;
-
-    public OWLClassesService(ReasonerFactoryService reasonerFactoryService) {
-        this.reasonerFactoryService = reasonerFactoryService;
+    public OWLClassesService() {
     }
 
-    public OWLHierarchyService<OWLClass> getHierarchyService(OWLOntology ont) {
-        OWLReasoner r = reasonerFactoryService.getToldReasoner(ont);
+    public OWLHierarchyService<OWLClass> getHierarchyService(OWLOntology ont, OWLReasoner r) {
         return new OWLClassHierarchyService(r, treeComparator());
     }
 

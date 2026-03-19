@@ -1,9 +1,9 @@
 package org.ontbrowser.www.feature.entities;
 
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
 import org.ontbrowser.www.feature.entities.characteristics.ObjectPropertyCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.*;
-import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.*;
@@ -17,10 +17,10 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 @Service
 public class OWLObjectPropertiesService implements PropertiesService<OWLObjectProperty> {
 
-    private final ReasonerFactoryService reasonerFactoryService;
+    private final BackendContext backendContext;
 
-    public OWLObjectPropertiesService(ReasonerFactoryService reasonerFactoryService) {
-        this.reasonerFactoryService = reasonerFactoryService;
+    public OWLObjectPropertiesService(BackendContext backendContext) {
+        this.backendContext = backendContext;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class OWLObjectPropertiesService implements PropertiesService<OWLObjectPr
     @Override
     public OWLHierarchyService<OWLObjectPropertyExpression> getHierarchyService(OWLOntology ont) {
         return new OWLObjectPropertyHierarchyService(
-                reasonerFactoryService.getToldReasoner(ont),
+                backendContext.getToldReasoner(ont),
                 treeComparator());
     }
 

@@ -3,12 +3,14 @@ package org.ontbrowser.www.feature.graph;
 import com.google.common.collect.Streams;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.dlquery.QueryType;
-import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.parser.ParserService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLProperty;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.springframework.context.annotation.Profile;
@@ -32,16 +34,16 @@ public class GraphController {
 
     private final OWLHTMLKit kit;
     private final ParserService parserService;
-    private final ReasonerService reasonerService;
+//    private final ReasonerService reasonerService;
 
     public GraphController(
             OWLHTMLKit kit,
-            ParserService parserService,
-            ReasonerService reasonerService
+            ParserService parserService
+//            ReasonerService reasonerService
     ) {
         this.kit = kit;
         this.parserService = parserService;
-        this.reasonerService = reasonerService;
+//        this.reasonerService = reasonerService;
     }
 
     @GetMapping()
@@ -119,7 +121,9 @@ public class GraphController {
         var owlEntityChecker = kit.getOWLEntityChecker();
         var clsEpr = parserService.getOWLClassExpression(query, df, owlEntityChecker);
         var dlQuery = new DLQuery(clsEpr, QueryType.instances);
-        return reasonerService.query(dlQuery).stream().map(OWLEntity::asOWLNamedIndividual).collect(Collectors.toSet());
+        // TODO in DB mode we have no reasoners
+        return Set.of();
+//        return reasonerService.query(dlQuery).stream().map(OWLEntity::asOWLNamedIndividual).collect(Collectors.toSet());
     }
 
     private Set<OWLNamedIndividual> getInds(List<String> names, OWLEntityFinder finder) {

@@ -2,10 +2,10 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLObjectPropertyHierarchyService;
-import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
@@ -35,7 +35,7 @@ public class OWLPropertyRelationsController {
     public static final String RELATION_TEMPLATE = "relation";
     private final OWLObjectPropertiesService propertiesService;
     private final OWLIndividualsService individualsService;
-    private final ReasonerFactoryService reasonerFactoryService;
+    private final BackendContext backendContext;
     private final OWLHTMLKit kit;
     private final StatsService statsService;
     private final CommonRelations<OWLObjectProperty> common;
@@ -45,7 +45,7 @@ public class OWLPropertyRelationsController {
     public OWLPropertyRelationsController(
             OWLObjectPropertiesService propertiesService,
             OWLIndividualsService individualsService,
-            ReasonerFactoryService reasonerFactoryService,
+            BackendContext backendContext,
             OWLHTMLKit kit,
             StatsService statsService,
             CommonContent commonContent,
@@ -53,7 +53,7 @@ public class OWLPropertyRelationsController {
     ) {
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
-        this.reasonerFactoryService = reasonerFactoryService;
+        this.backendContext = backendContext;
         this.kit = kit;
         this.statsService = statsService;
         this.commonContent = commonContent;
@@ -103,7 +103,7 @@ public class OWLPropertyRelationsController {
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
-        model.addAttribute("stats", statsService.getPropertyStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
+        model.addAttribute("stats", statsService.getPropertyStats(statsName, backendContext.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
 
         common.buildSecondaryTree(relationsHierarchyService, null, model, request);
@@ -162,7 +162,7 @@ public class OWLPropertyRelationsController {
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
-        model.addAttribute("stats", statsService.getPropertyStats(statsName, reasonerFactoryService.getToldReasoner(ont)));
+        model.addAttribute("stats", statsService.getPropertyStats(statsName, backendContext.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
         model.addAttribute("ontologiesSfp", kit.getOntologySFP());
 
@@ -205,10 +205,10 @@ public class OWLPropertyRelationsController {
         var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
-                reasonerFactoryService.getToldReasoner(ont),
+                backendContext.getToldReasoner(ont),
                 treeComparator());
 
-        OWLReasoner reasoner = reasonerFactoryService.getToldReasoner(ont);
+        OWLReasoner reasoner = backendContext.getToldReasoner(ont);
 
         var mos = (OWLHTMLRenderer)model.getAttribute("mos");
         if (mos != null) {
