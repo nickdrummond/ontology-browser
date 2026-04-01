@@ -1,8 +1,7 @@
 package org.ontbrowser.www.url;
 
 import org.semanticweb.owlapi.model.*;
-
-import static org.ontbrowser.www.url.EntityId.getIdForEntity;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 
 /**
  * A URL scheme for dynamic server-side resolution
@@ -17,6 +16,12 @@ import static org.ontbrowser.www.url.EntityId.getIdForEntity;
  *
  */
 public class RestURLScheme implements URLScheme {
+
+    protected final IRIShortFormProvider iriShortFormProvider;
+
+    public RestURLScheme(IRIShortFormProvider iriShortFormProvider) {
+        this.iriShortFormProvider = iriShortFormProvider;
+    }
 
     private OWLEntityVisitorEx<String> typeVisitor = new OWLEntityVisitorEx<>() {
         @Override
@@ -62,7 +67,7 @@ public class RestURLScheme implements URLScheme {
 
         if (owlObject instanceof OWLEntity owlEntity){
             type = getTypeForEntity(owlEntity);
-            code = getIdForEntity(owlEntity);
+            code = iriShortFormProvider.getShortForm(owlEntity.getIRI());
         }
         else if (owlObject.isOntology()){
             type = "ontologies";

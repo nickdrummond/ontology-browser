@@ -66,7 +66,6 @@ public class OWLPropertiesController<P extends OWLProperty> {
         return new ModelAndView("owlentity");
     }
 
-    @GetMapping(value = "/{propertyId}")
     public ModelAndView getPage(
             @PathVariable final String propertyId,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
@@ -86,7 +85,6 @@ public class OWLPropertiesController<P extends OWLProperty> {
         return new ModelAndView("owlentity");
     }
 
-    @GetMapping(value = "/{propertyId}/fragment")
     public ModelAndView getFragment(
             @PathVariable final String propertyId,
             @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE_STR) int pageSize,
@@ -108,7 +106,6 @@ public class OWLPropertiesController<P extends OWLProperty> {
         return commonFragments.buildCommonEntityFragment(service, entity, inferred, ont, with, model, queryString, title);
     }
 
-    @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
             @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
