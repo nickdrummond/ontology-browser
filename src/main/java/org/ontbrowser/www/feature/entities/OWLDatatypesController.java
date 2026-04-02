@@ -55,7 +55,7 @@ public class OWLDatatypesController {
 
         var owlTopDatatype = df.getTopDatatype();
 
-        String id = kit.lookup().getId(owlTopDatatype);
+        String id = kit.getIriShortFormProvider().getShortForm(owlTopDatatype.getIRI());
 
         response.sendRedirect("/datatypes/" + id);
     }

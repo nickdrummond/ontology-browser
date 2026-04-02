@@ -1,9 +1,7 @@
 package org.ontbrowser.www.url;
 
 import org.semanticweb.owlapi.model.*;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 
 /**
  * A URL scheme for dynamic server-side resolution
@@ -18,6 +16,12 @@ import java.nio.charset.StandardCharsets;
  *
  */
 public class RestURLScheme implements URLScheme {
+
+    protected final IRIShortFormProvider iriShortFormProvider;
+
+    public RestURLScheme(IRIShortFormProvider iriShortFormProvider) {
+        this.iriShortFormProvider = iriShortFormProvider;
+    }
 
     private OWLEntityVisitorEx<String> typeVisitor = new OWLEntityVisitorEx<>() {
         @Override
@@ -58,28 +62,29 @@ public class RestURLScheme implements URLScheme {
         }
 
         String type;
-        IRI iri;
-        var sb = new StringBuilder("/"); // relative URLs
+        String code;
+        StringBuilder sb = new StringBuilder("/"); // relative URLs
 
         if (owlObject instanceof OWLEntity owlEntity){
             type = getTypeForEntity(owlEntity);
-            iri = owlEntity.getIRI();
+            code = iriShortFormProvider.getShortForm(owlEntity.getIRI());
         }
         else if (owlObject.isOntology()){
             type = "ontologies";
-            iri = ontology.getOntologyID().getOntologyIRI().orElseThrow();
+            code = String.valueOf(((OWLOntology)owlObject).getOntologyID().hashCode());
         }
-        else {
-            throw new UnsupportedOperationException("Unsupported OWL Object type: " + owlObject.getClass().getName());
+        else{
+            type = owlObject.getClass().getSimpleName();
+            code = String.valueOf(owlObject.hashCode());
         }
 
         sb.append(type);
-        sb.append("?iri=");
-        sb.append(URLEncoder.encode(iri.toString(), StandardCharsets.UTF_8));
+        sb.append("/");
+        sb.append(code);
 
         if (!owlObject.isOntology()) {
-            sb.append("&ontId=");
-            sb.append(ontology.getOntologyID().getOntologyIRI().map(IRI::toString).orElseThrow());
+            sb.append("?ontId=");
+            sb.append(ontology.getOntologyID().hashCode());
         }
 
         return sb.toString();

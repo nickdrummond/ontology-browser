@@ -6,6 +6,7 @@ import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -56,10 +57,19 @@ public class OWLClassesController {
 //    ) throws IOException {
 //        response.sendRedirect("/classes?iri=" + OWLRDFVocabulary.OWL_THING + (ontId != null ? "&ontId=" + ontId : ""));
 //    }
+//
+//    @GetMapping()
+//    public void getOWLClasses(
+//            @RequestParam(required = false) final String ontId,
+//            final HttpServletResponse response
+//    ) throws IOException {
+//        String id = kit.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_THING.getIRI());
+//        response.sendRedirect("/classes/" + id + (ontId != null ? "?ontId=" + ontId : ""));
+//    }
 
-    @GetMapping()
+    @GetMapping(value = "/{classId}")
     public ModelAndView getOWLClass(
-            @RequestParam(defaultValue = OWL + "Thing") final String iri,
+            @PathVariable final String classId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(defaultValue = "classDescendants") final String statsName,
             @RequestParam(required = false, defaultValue = "") List<With> with,
@@ -76,14 +86,14 @@ public class OWLClassesController {
         model.addAttribute("stats", statsService.getClassStats(statsName, toldReasoner));
         model.addAttribute("statsName", statsName);
 
-        getOWLClassFragment(iri, ont, with, model, request);
+        getOWLClassFragment(classId, ont, with, model, request);
 
         return new ModelAndView("owlentity");
     }
 
-    @GetMapping(value = "/fragment")
+    @GetMapping(value = "/{classId}/fragment")
     public ModelAndView getOWLClassFragment(
-            @RequestParam final String iri,
+            @PathVariable final String classId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(required = false, defaultValue = "") List<With> with,
             final Model model,
@@ -93,9 +103,9 @@ public class OWLClassesController {
         return commonFragments.getOWLClassFragment(service, owlClass, false, ont, with, model, request.getQueryString());
     }
 
-    @GetMapping(value = "/children")
+    @GetMapping(value = "/{classId}/children")
     public ModelAndView getChildren(
-            @RequestParam final String iri,
+            @PathVariable final String classId,
             @RequestParam final String statsName,
             @ModelAttribute final OWLOntology ont,
             final Model model) {
