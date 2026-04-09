@@ -1,16 +1,19 @@
 package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -36,15 +39,15 @@ public class OWLClassesController {
         this.commonFragments = commonFragments;
     }
 
-//
-//    @GetMapping()
-//    public void getOWLClasses(
-//            @RequestParam(required = false) final String ontId,
-//            final HttpServletResponse response
-//    ) throws IOException {
-//        String id = backend.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_THING.getIRI());
-//        response.sendRedirect("/classes/" + id + (ontId != null ? "?ontId=" + ontId : ""));
-//    }
+
+    @GetMapping()
+    public void getOWLClasses(
+            @RequestParam(required = false) final String ontId,
+            final HttpServletResponse response
+    ) throws IOException {
+        String id = backend.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_THING.getIRI());
+        response.sendRedirect("/classes/" + id + (ontId != null ? "?ontId=" + ontId : ""));
+    }
 
     @GetMapping(value = "/{classId}")
     public ModelAndView getOWLClass(

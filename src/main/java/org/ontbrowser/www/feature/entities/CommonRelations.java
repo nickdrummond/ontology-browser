@@ -1,11 +1,11 @@
 package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsMemo;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.event.RestartEvent;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -26,7 +26,7 @@ public class CommonRelations<T extends OWLProperty> {
     public static final String BASE_TREE = "tree::children";
 
     private final String path;
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final PropertiesService<T> propertiesService;
     private final StatsService statsService;
 
@@ -34,17 +34,17 @@ public class CommonRelations<T extends OWLProperty> {
 
     public CommonRelations(
             String path,
-            OWLHTMLKit kit,
+            BackendContext backend,
             PropertiesService<T> propertiesService,
             StatsService statsService) {
         this.path = path;
-        this.kit = kit;
+        this.backend = backend;
         this.propertiesService = propertiesService;
         this.statsService = statsService;
     }
 
     public void renderEntity(OWLEntity entity, Model model) {
-        String shortForm = kit.getShortFormProvider().getShortForm(entity);
+        String shortForm = backend.getShortFormProvider().getShortForm(entity);
         String type = entity.getEntityType().getPrintName();
         model.addAttribute("title", shortForm + " (" + type + ")");
         model.addAttribute("iri", entity.getIRI());
@@ -56,7 +56,7 @@ public class CommonRelations<T extends OWLProperty> {
             @Nullable String orderBy,
             boolean inverse) {
 
-        T orderByProperty = (orderBy != null) ? (T) kit.lookup().entityFor(orderBy, ont, property.getClass()) : null;
+        T orderByProperty = (orderBy != null) ? (T) backend.lookup().entityFor(orderBy, ont, property.getClass()) : null;
 
         Comparator<Tree<OWLNamedIndividual>> comparator = propertiesService.getComparator(orderByProperty, ont);
 
@@ -97,7 +97,7 @@ public class CommonRelations<T extends OWLProperty> {
 
         updateRenderer(relationsHierarchyService, property, individual, model, request);
 
-        model.addAttribute("type2", kit.getShortFormProvider().getShortForm(property));
+        model.addAttribute("type2", backend.getShortFormProvider().getShortForm(property));
         model.addAttribute("inverse", relationsHierarchyService.isInverse());
         model.addAttribute("hierarchy2", relationsTree);
         //TODO fix this - generics!!
@@ -127,13 +127,13 @@ public class CommonRelations<T extends OWLProperty> {
     }
 
     private URLScheme getUrlScheme(AbstractRelationsHierarchyService<T> relationsHierarchyService, T property, HttpServletRequest request) {
-        return new CommonRelationsURLScheme<>("/relations/" + path, property, kit.getIriShortFormProvider())
+        return new CommonRelationsURLScheme<>("/relations/" + path, property, backend.getIriShortFormProvider())
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
     }
 
     public OWLNamedIndividual getOWLIndividualFor(String individualId, OWLOntology ont) {
-        return kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
+        return backend.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
     }
 
     public StatsMemo createMemo(AbstractRelationsHierarchyService<?> hierarchyService) {

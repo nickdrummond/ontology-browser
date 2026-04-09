@@ -4,8 +4,10 @@ import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Comparator;
 
 @Component
 @ConditionalOnProperty(name = "ontology.backend", havingValue = "memory", matchIfMissing = true)
@@ -71,5 +75,15 @@ public class InMemoryContext implements BackendContext {
     @Override
     public EntityIdLookup lookup() {
         return kit.lookup();
+    }
+
+    @Override
+    public IRIShortFormProvider getIriShortFormProvider() {
+        return kit.getIriShortFormProvider();
+    }
+
+    @Override
+    public Comparator<OWLObject> getComparator() {
+        return kit.getComparator();
     }
 }

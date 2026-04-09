@@ -5,11 +5,10 @@ import org.ontbrowser.www.configuration.DBConnectionFilter;
 import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.ontbrowser.www.kit.impl.QNameEntityIdLookup;
 import org.ontbrowser.www.url.OntologyId;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyID;
+import org.ontbrowser.www.util.OWLObjectComparator;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,17 +16,18 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import owlapi.DBLabelShortFormProvider;
+import owlapi.DBOntology;
 import owlapi.DBOntologyFactory;
 import owlapi.DBStructuralReasoner;
 import parser.CanonicalParserFactory;
 import renderer.CanonicalRendererFactory;
-import tables.ontologies.Ontology;
 import tables.ontologies.OntologyImports;
 import tables.prefixes.Prefixes;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +54,8 @@ public class DBContext implements BackendContext {
     private OWLOntology rootOntology;
     private Map<OWLOntologyID, OWLReasoner> toldReasoners = new HashMap<>();
     private Map<OWLOntologyID, Integer> ontId2bdId = null;
+    private IRIShortFormProvider iriSFP;
+    private OWLObjectComparator comparator;
 
     public DBContext(HttpServletRequest request) throws SQLException {
         this.connection = (Connection) request.getAttribute(DBConnectionFilter.DB_CONNECTION_ATTR);
@@ -121,18 +123,30 @@ public class DBContext implements BackendContext {
         return new QNameEntityIdLookup(prefixMap);
     }
 
+    @Override
+    public IRIShortFormProvider getIriShortFormProvider() {
+        if (iriSFP == null) {
+            iriSFP = iri -> canonicalRendererFactory.getIriRenderer().render(iri);
+        }
+        return iriSFP;
+    }
+
+    @Override
+    public Comparator<OWLObject> getComparator() {
+        if (comparator == null){
+            comparator = new OWLObjectComparator(getShortFormProvider());
+        }
+        return comparator;
+    }
+
     private OWLReasoner createReasoner(OWLOntology ont) {
         try {
-            return DBStructuralReasoner.withClosure(connection, getDBIdForOntology(ont.getOntologyID()), df);
+            if (ont instanceof DBOntology dbOnt) {
+                return DBStructuralReasoner.withClosure(connection, dbOnt);
+            }
+            throw new IllegalArgumentException("Cannot create reasoner - expected a DBOntology");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private int getDBIdForOntology(OWLOntologyID ontologyID) throws SQLException {
-        if (ontId2bdId == null) {
-            ontId2bdId = Ontology.owlOntologyIdToId(connection);
-        }
-        return ontId2bdId.get(ontologyID);
     }
 }

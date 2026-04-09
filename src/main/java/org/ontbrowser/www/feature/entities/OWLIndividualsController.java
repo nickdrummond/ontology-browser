@@ -8,7 +8,6 @@ import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -35,27 +34,24 @@ public class OWLIndividualsController {
 
     private static final int DEFAULT_SECONDARY_PAGE_SIZE = 60;
 
-    private final OWLHTMLKit kit;
     private final OWLIndividualsService individualsService;
     private final OWLClassesService owlClassesService;
-    private final BackendContext backendContext;
+    private final BackendContext backend;
     private final StatsService statsService;
     private final CommonContent commonContent;
     private final CommonFragments commonFragments;
 
     public OWLIndividualsController(
-            OWLHTMLKit kit,
             OWLIndividualsService individualsService,
             OWLClassesService owlClassesService,
-            BackendContext backendContext,
+            BackendContext backend,
             StatsService statsService,
             CommonContent commonContent,
             CommonFragments commonFragments
     ) {
-        this.kit = kit;
         this.individualsService = individualsService;
         this.owlClassesService = owlClassesService;
-        this.backendContext = backendContext;
+        this.backend = backend;
         this.statsService = statsService;
         this.commonContent = commonContent;
         this.commonFragments = commonFragments;
@@ -88,12 +84,12 @@ public class OWLIndividualsController {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws IOException {
-        var owlIndividual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
+        var owlIndividual = backend.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
         OWLEntity firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
                 .orElse(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
 
         return byType(
-                kit.getIriShortFormProvider().getShortForm(firstType.getIRI()),
+                backend.getIriShortFormProvider().getShortForm(firstType.getIRI()),
                 individualId, inferred,
                 "inferredInstances", with, ont, model, request);
     }
@@ -103,7 +99,7 @@ public class OWLIndividualsController {
             @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
-        String thingId = kit.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_THING.getIRI());
+        String thingId = backend.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_THING.getIRI());
         response.sendRedirect("/individuals/by/type/" + thingId + (ontId != null ? "?ontId=" + ontId : ""));
     }
 
@@ -118,9 +114,9 @@ public class OWLIndividualsController {
             final HttpServletRequest request,
             final HttpServletResponse response
     ) throws IOException {
-        var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
+        var owlClass = backend.lookup().entityFor(classId, ont, OWLClass.class);
         if (!classId.contains(":")) {
-            response.sendRedirect("/by/type/" + kit.getIriShortFormProvider().getShortForm(owlClass.getIRI()) + (ontId != null ? "?ontId=" + ontId : ""));
+            response.sendRedirect("/by/type/" + backend.getIriShortFormProvider().getShortForm(owlClass.getIRI()) + (ontId != null ? "?ontId=" + ontId : ""));
             return null;
         }
 
@@ -144,9 +140,9 @@ public class OWLIndividualsController {
             final HttpServletRequest request,
             final OWLNamedIndividual ind
     ) {
-        var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
+        var type = backend.lookup().entityFor(classId, ont, OWLClass.class);
 
-        OWLReasoner r = backendContext.getToldReasoner(ont);
+        OWLReasoner r = backend.getToldReasoner(ont);
 
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
 
@@ -168,7 +164,7 @@ public class OWLIndividualsController {
             final Model model,
             final HttpServletRequest request
     ) {
-        var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
+        var ind = backend.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
@@ -185,7 +181,7 @@ public class OWLIndividualsController {
             OWLClass type, OWLNamedIndividual ind,
             Model model, HttpServletRequest request) {
 
-        var urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type, kit.getIriShortFormProvider())
+        var urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type, backend.getIriShortFormProvider())
                 .withQuery(request.getQueryString());
 
         Set<OWLObject> activeObjects = new HashSet<>();
@@ -201,7 +197,7 @@ public class OWLIndividualsController {
     }
 
     private void updateRenderer(OWLClass type, Model model, HttpServletRequest request) {
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type, kit.getIriShortFormProvider())
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type, backend.getIriShortFormProvider())
                 .withQuery(request.getQueryString());
 
         Set<OWLObject> activeObjects = new HashSet<>();
@@ -229,9 +225,9 @@ public class OWLIndividualsController {
             final Model model,
             final HttpServletRequest request) {
 
-        var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
+        var type = backend.lookup().entityFor(classId, ont, OWLClass.class);
 
-        var r = backendContext.getToldReasoner(ont);
+        var r = backend.getToldReasoner(ont);
         updateRenderer(type, model, request);
         var stats = statsService.getClassStats(statsName, r);
 
@@ -247,7 +243,7 @@ public class OWLIndividualsController {
             final Model model,
             final HttpServletRequest request
     ) {
-        var ind = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
+        var ind = backend.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
         return commonFragments.getOWLIndividualFragment(individualsService, ind, inferred, with,
                 ont, model, request.getQueryString());
     }
@@ -260,7 +256,7 @@ public class OWLIndividualsController {
             final Model model,
             final HttpServletRequest request
     ) {
-        var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
+        var type = backend.lookup().entityFor(classId, ont, OWLClass.class);
         return commonFragments.getOWLClassFragment(owlClassesService, type, false, ont,
                 with, model, request.getQueryString());
     }
@@ -273,7 +269,7 @@ public class OWLIndividualsController {
             final Model model,
             final HttpServletRequest request
     ) {
-        var type = kit.lookup().entityFor(classId, ont, OWLClass.class);
+        var type = backend.lookup().entityFor(classId, ont, OWLClass.class);
 
         buildSecondaryNavigation(ont, with, model, type, null);
 
@@ -286,7 +282,7 @@ public class OWLIndividualsController {
 
     private void buildSecondaryNavigation(OWLOntology ont, List<With> with, Model model, OWLClass type, OWLNamedIndividual ind) {
         var builder = owlClassesService.getCharacteristicsBuilder(
-                type, ont, kit.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE);
+                type, ont, backend.getComparator(), with, DEFAULT_SECONDARY_PAGE_SIZE);
 
         if (!containsPaging(with, ClassCharacteristicsBuilder.MEMBERS)) {
             builder = builder.withFocus(ind);

@@ -2,9 +2,9 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.URLScheme;
@@ -32,7 +32,7 @@ public class OWLAnnotationRelationsController {
     public static final String PATH = "onannotationproperty";
     public static final String RELATION_TEMPLATE = "relation";
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final OWLAnnotationPropertiesService propertiesService;
     private final OWLIndividualsService individualsService;
     private final StatsService statsService;
@@ -40,19 +40,19 @@ public class OWLAnnotationRelationsController {
     private final CommonFragments commonFragments;
 
     public OWLAnnotationRelationsController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             OWLAnnotationPropertiesService propertiesService,
             OWLIndividualsService individualsService,
             StatsService statsService,
             CommonFragments commonFragments
     ) {
-        this.kit = kit;
+        this.backend = backend;
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.statsService = statsService;
         this.commonRelations = new CommonRelations<>(
                 PATH,
-                kit,
+                backend,
                 propertiesService,
                 statsService
         );
@@ -71,12 +71,12 @@ public class OWLAnnotationRelationsController {
     public void getRelationsForAnnotationProperty(
             final HttpServletResponse response
     ) throws IOException {
-        Set<OWLAnnotationProperty> props = kit.getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED);
+        Set<OWLAnnotationProperty> props = backend.getRootOntology().getAnnotationPropertiesInSignature(Imports.INCLUDED);
         if (props.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, "Annotation Properties not found");
         }
         // Start with random
-        String id = kit.getIriShortFormProvider().getShortForm(props.iterator().next().getIRI());
+        String id = backend.getIriShortFormProvider().getShortForm(props.iterator().next().getIRI());
         response.sendRedirect("/relations/" + PATH + "/" + id);
     }
 
@@ -91,7 +91,7 @@ public class OWLAnnotationRelationsController {
             final Model model,
             HttpServletRequest request) {
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = backend.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
 
         var relationsHierarchyService = commonRelations.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
@@ -118,7 +118,7 @@ public class OWLAnnotationRelationsController {
             HttpServletRequest request
     ) {
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = backend.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
 
         var relationsHierarchyService = commonRelations.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
@@ -141,12 +141,12 @@ public class OWLAnnotationRelationsController {
             HttpServletRequest request
     ) {
 
-        var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
+        var individual = backend.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         commonFragments.getOWLIndividualFragment(individualsService, individual, false,
                 with, ont, model, request.getQueryString());
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = backend.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
 
         var relationsHierarchyService = commonRelations.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
@@ -167,7 +167,7 @@ public class OWLAnnotationRelationsController {
             final HttpServletRequest request
     ) {
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = backend.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
 
         var stats = statsService.getAnnotationPropertyStats(statsName, ont, propertiesService.getHierarchyService(ont));
 
@@ -175,7 +175,7 @@ public class OWLAnnotationRelationsController {
         model.addAttribute("stats", stats);
         model.addAttribute("statsName", statsName);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop, kit.getIriShortFormProvider())
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop, backend.getIriShortFormProvider())
                 .withQuery(request.getQueryString());
 
         var mos = (OWLHTMLRenderer) model.getAttribute("mos");
@@ -197,13 +197,13 @@ public class OWLAnnotationRelationsController {
             HttpServletRequest request
     ) {
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = backend.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
         OWLNamedIndividual individual = commonRelations.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
                 commonRelations.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop, kit.getIriShortFormProvider())
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop, backend.getIriShortFormProvider())
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
 

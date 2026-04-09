@@ -7,7 +7,6 @@ import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLObjectPropertyHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.URLScheme;
@@ -35,8 +34,7 @@ public class OWLPropertyRelationsController {
     public static final String RELATION_TEMPLATE = "relation";
     private final OWLObjectPropertiesService propertiesService;
     private final OWLIndividualsService individualsService;
-    private final BackendContext backendContext;
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final StatsService statsService;
     private final CommonRelations<OWLObjectProperty> common;
     private final CommonContent commonContent;
@@ -45,22 +43,20 @@ public class OWLPropertyRelationsController {
     public OWLPropertyRelationsController(
             OWLObjectPropertiesService propertiesService,
             OWLIndividualsService individualsService,
-            BackendContext backendContext,
-            OWLHTMLKit kit,
+            BackendContext backend,
             StatsService statsService,
             CommonContent commonContent,
             CommonFragments commonFragments
     ) {
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
-        this.backendContext = backendContext;
-        this.kit = kit;
+        this.backend = backend;
         this.statsService = statsService;
         this.commonContent = commonContent;
 
         this.common = new CommonRelations<>(
                 PATH,
-                kit,
+                backend,
                 propertiesService,
                 statsService
         );
@@ -80,7 +76,7 @@ public class OWLPropertyRelationsController {
     public void getRelationsForProperty(
             final HttpServletResponse response
     ) throws IOException {
-        String id = kit.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_TOP_OBJECT_PROPERTY.getIRI());
+        String id = backend.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_TOP_OBJECT_PROPERTY.getIRI());
         response.sendRedirect("/relations/" + PATH + "/" + id);
     }
 
@@ -94,14 +90,14 @@ public class OWLPropertyRelationsController {
             final Model model,
             HttpServletRequest request
     ) {
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = backend.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
-        model.addAttribute("stats", statsService.getPropertyStats(statsName, backendContext.getToldReasoner(ont)));
+        model.addAttribute("stats", statsService.getPropertyStats(statsName, backend.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
 
         common.buildSecondaryTree(relationsHierarchyService, null, model, request);
@@ -122,7 +118,7 @@ public class OWLPropertyRelationsController {
             HttpServletRequest request
     ) {
 
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = backend.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
@@ -144,11 +140,11 @@ public class OWLPropertyRelationsController {
             final Model model,
             HttpServletRequest request
     ) {
-        var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
+        var individual = backend.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         String queryString = request.getQueryString();
 
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = backend.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
 
         // THIS SETS pageScheme
         commonContent.addCommonContent(queryString, model, ont);
@@ -160,9 +156,9 @@ public class OWLPropertyRelationsController {
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
-        model.addAttribute("stats", statsService.getPropertyStats(statsName, backendContext.getToldReasoner(ont)));
+        model.addAttribute("stats", statsService.getPropertyStats(statsName, backend.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
-        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
+        model.addAttribute("ontologiesSfp", backend.getOntologySFP());
 
         common.buildSecondaryTree(relationsHierarchyService, individual, model, request);
 
@@ -182,7 +178,7 @@ public class OWLPropertyRelationsController {
             final Model model,
             HttpServletRequest request
     ) {
-        var individual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
+        var individual = backend.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
 
         // TODO the URLscheme needs to navigate to the relations page if possible - must be working in full page - look there
 
@@ -200,17 +196,17 @@ public class OWLPropertyRelationsController {
             final Model model
     ) {
 
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = backend.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
-                backendContext.getToldReasoner(ont),
+                backend.getToldReasoner(ont),
                 treeComparator());
 
-        OWLReasoner reasoner = backendContext.getToldReasoner(ont);
+        OWLReasoner reasoner = backend.getToldReasoner(ont);
 
         var mos = (OWLHTMLRenderer)model.getAttribute("mos");
         if (mos != null) {
-            model.addAttribute("mos", mos.withURLScheme(new RelationPropertyURLScheme(kit.getIriShortFormProvider())));
+            model.addAttribute("mos", mos.withURLScheme(new RelationPropertyURLScheme(backend.getIriShortFormProvider())));
         }
 
         model.addAttribute("t", hierarchyService.getChildren(property));
@@ -231,13 +227,13 @@ public class OWLPropertyRelationsController {
             HttpServletRequest request
     ) {
 
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = backend.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
         OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property, kit.getIriShortFormProvider())
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property, backend.getIriShortFormProvider())
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
 

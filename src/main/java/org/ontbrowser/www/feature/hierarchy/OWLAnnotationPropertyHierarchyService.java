@@ -48,9 +48,10 @@ public class OWLAnnotationPropertyHierarchyService extends AbstractOWLHierarchyS
                 .collect(Collectors.toSet());
 
         Set<OWLAnnotationProperty> all = ont.getAnnotationPropertiesInSignature(Imports.INCLUDED);
-        all.removeAll(nonRoots);
 
-        return all.stream().map(AnnotationPropertyNode::new).collect(Collectors.toSet());
+        return all.stream()
+                .filter(prop -> !nonRoots.contains(prop))
+                .map(AnnotationPropertyNode::new).collect(Collectors.toSet());
     }
 
     @Override
