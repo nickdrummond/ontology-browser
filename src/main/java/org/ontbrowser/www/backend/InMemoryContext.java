@@ -2,6 +2,7 @@ package org.ontbrowser.www.backend;
 
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -65,5 +66,10 @@ public class InMemoryContext implements BackendContext {
     @Override
     public OWLReasoner getToldReasoner(OWLOntology ont) {
         return reasonerFactoryService.getToldReasoner(ont);
+    }
+
+    @Override
+    public EntityIdLookup lookup() {
+        return kit.lookup();
     }
 }

@@ -2,8 +2,8 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLProperty;
@@ -22,20 +22,20 @@ import static org.ontbrowser.www.controller.Constants.DEFAULT_PAGE_SIZE_STR;
 
 public class OWLPropertiesController<P extends OWLProperty> {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final PropertiesService<P> service;
     private final CommonContent commonContent;
     private final Class<P> clz;
     private final CommonFragments commonFragments;
 
     public OWLPropertiesController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             PropertiesService<P> service,
             CommonContent commonContent,
             Class<P> clz,
             CommonFragments commonFragments
     ) {
-        this.kit = kit;
+        this.backend = backend;
         this.service = service;
         this.commonContent = commonContent;
         this.clz = clz;
@@ -74,7 +74,7 @@ public class OWLPropertiesController<P extends OWLProperty> {
             final Model model,
             final HttpServletRequest request
     ) {
-        var prop = kit.lookup().entityFor(propertyId, ont, clz);
+        var prop = backend.lookup().entityFor(propertyId, ont, clz);
 
         commonContent.addCommonContent(request.getQueryString(), model, ont);
         model.addAttribute("hierarchy", service.getHierarchyService(ont).getPrunedTree(prop));
@@ -93,9 +93,9 @@ public class OWLPropertiesController<P extends OWLProperty> {
             final Model model,
             final HttpServletRequest request
     ) {
-        var entity = kit.lookup().entityFor(propertyId, ont, clz);
+        var entity = backend.lookup().entityFor(propertyId, ont, clz);
 
-        String entityName = kit.getShortFormProvider().getShortForm(entity);
+        String entityName = backend.getShortFormProvider().getShortForm(entity);
         String typeName = service.getEntityType().getPrintName();
         String title = entityName + " ( " + typeName + " )";
 
@@ -111,7 +111,7 @@ public class OWLPropertiesController<P extends OWLProperty> {
             @ModelAttribute final OWLOntology ont,
             final Model model
     ) {
-        var prop = kit.lookup().entityFor(propertyId, ont, clz);
+        var prop = backend.lookup().entityFor(propertyId, ont, clz);
 
         model.addAttribute("t", service.getHierarchyService(ont).getChildren(prop));
 

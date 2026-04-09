@@ -2,6 +2,8 @@ package org.ontbrowser.www.backend;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.configuration.DBConnectionFilter;
+import org.ontbrowser.www.kit.impl.EntityIdLookup;
+import org.ontbrowser.www.kit.impl.QNameEntityIdLookup;
 import org.ontbrowser.www.url.OntologyId;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -20,6 +22,8 @@ import owlapi.DBStructuralReasoner;
 import parser.CanonicalParserFactory;
 import renderer.CanonicalRendererFactory;
 import tables.ontologies.Ontology;
+import tables.ontologies.OntologyImports;
+import tables.prefixes.Prefixes;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.sql.Connection;
@@ -43,12 +47,21 @@ public class DBContext implements BackendContext {
 
     private final Connection connection; // injected from DBConnectionFilter via request attribute
     private final OWLDataFactory df = new OWLDataFactoryImpl();
+    private final Map<String, String> prefixMap;
+    private final CanonicalRendererFactory canonicalRendererFactory;
+    private final CanonicalParserFactory canonicalParserFactory;
+
     private OWLOntology rootOntology;
     private Map<OWLOntologyID, OWLReasoner> toldReasoners = new HashMap<>();
     private Map<OWLOntologyID, Integer> ontId2bdId = null;
 
-    public DBContext(HttpServletRequest request) {
+    public DBContext(HttpServletRequest request) throws SQLException {
         this.connection = (Connection) request.getAttribute(DBConnectionFilter.DB_CONNECTION_ATTR);
+        var imports = OntologyImports.getImportsClosure(connection, DEFAULT_ONT_ID);
+        // TODO need to fix OWLDB2 - it loses the original prefixes (ontology_prefix table is wrong) - should contain : and util:
+        this.prefixMap = Prefixes.getCanonicalMappingsForClosure(connection, imports); // could be static
+        this.canonicalRendererFactory = new CanonicalRendererFactory(prefixMap);
+        this.canonicalParserFactory = new CanonicalParserFactory(df, prefixMap);
     }
 
     @Override
@@ -84,9 +97,6 @@ public class DBContext implements BackendContext {
     public ShortFormProvider getShortFormProvider() {
         // TODO Maybe cache this prefix map!
         // TODO this should be hidden away in OWLDB2
-        Map<String, String> prefixMap = Map.of();
-        var canonicalRendererFactory = new CanonicalRendererFactory(prefixMap);
-        var canonicalParserFactory = new CanonicalParserFactory(df, prefixMap);
         return new DBLabelShortFormProvider(
                 connection,
                 canonicalRendererFactory,
@@ -104,6 +114,11 @@ public class DBContext implements BackendContext {
     @Override
     public OWLReasoner getToldReasoner(OWLOntology ont) {
         return toldReasoners.computeIfAbsent(ont.getOntologyID(), (ontId) -> createReasoner(ont));
+    }
+
+    @Override
+    public EntityIdLookup lookup() {
+        return new QNameEntityIdLookup(prefixMap);
     }
 
     private OWLReasoner createReasoner(OWLOntology ont) {

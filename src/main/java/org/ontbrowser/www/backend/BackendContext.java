@@ -1,5 +1,6 @@
 package org.ontbrowser.www.backend;
 
+import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -18,4 +19,6 @@ public interface BackendContext {
     OWLDataFactory getOWLDataFactory();
 
     OWLReasoner getToldReasoner(OWLOntology ont);
+
+    EntityIdLookup lookup();
 }

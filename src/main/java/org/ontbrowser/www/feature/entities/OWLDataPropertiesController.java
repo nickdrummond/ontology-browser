@@ -1,8 +1,8 @@
 package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -19,12 +19,12 @@ import java.util.List;
 public class OWLDataPropertiesController extends OWLPropertiesController<OWLDataProperty> {
 
     public OWLDataPropertiesController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             PropertiesService<OWLDataProperty> service,
             CommonContent commonContent,
             CommonFragments commonFragments
     ) {
-        super(kit, service, commonContent, OWLDataProperty.class, commonFragments);
+        super(backend, service, commonContent, OWLDataProperty.class, commonFragments);
     }
     
     @GetMapping(value = "/{dataPropertyId}")

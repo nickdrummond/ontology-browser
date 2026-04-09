@@ -45,7 +45,7 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     private Config config;
 
     private MOSStringRenderer stringRenderer;
-    private EntityIdLookup entityIdLookup;
+    private QNameEntityIdLookup entityIdLookup;
     private Map<String, String> prefixes;
 
     private final boolean editable;
@@ -126,7 +126,7 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     @Override
     public EntityIdLookup lookup() {
         if (entityIdLookup == null){
-            entityIdLookup = new EntityIdLookup(mngr, getPrefixes());
+            entityIdLookup = new QNameEntityIdLookup(getPrefixes());
         }
         return entityIdLookup;
     }
