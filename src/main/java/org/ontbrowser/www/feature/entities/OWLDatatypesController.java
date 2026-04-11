@@ -2,9 +2,9 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.hierarchy.OWLDatatypeHierarchyService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLDatatype;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -22,18 +22,18 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 @RequestMapping(value = "/datatypes")
 public class OWLDatatypesController {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final OWLDatatypesService service;
     private final CommonContent commonContent;
     private final CommonFragments commonFragments;
 
     public OWLDatatypesController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             OWLDatatypesService service,
             CommonContent commonContent,
             CommonFragments commonFragments
     ) {
-        this.kit = kit;
+        this.backend = backend;
         this.service = service;
         this.commonContent = commonContent;
         this.commonFragments = commonFragments;
@@ -51,11 +51,11 @@ public class OWLDatatypesController {
             final HttpServletResponse response
     ) throws IOException {
 
-        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var df = backend.getOWLDataFactory();
 
         var owlTopDatatype = df.getTopDatatype();
 
-        String id = kit.getIriShortFormProvider().getShortForm(owlTopDatatype.getIRI());
+        String id = backend.getIriShortFormProvider().getShortForm(owlTopDatatype.getIRI());
 
         response.sendRedirect("/datatypes/" + id);
     }
@@ -69,7 +69,7 @@ public class OWLDatatypesController {
             final Model model,
             final HttpServletRequest request
     ) {
-        var owlDatatype = kit.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
+        var owlDatatype = backend.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
 
         var hierarchyService = new OWLDatatypeHierarchyService(ont, treeComparator());
 
@@ -93,9 +93,9 @@ public class OWLDatatypesController {
             final Model model,
             final HttpServletRequest request) {
 
-        var entity = kit.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
+        var entity = backend.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
 
-        String entityName = kit.getShortFormProvider().getShortForm(entity);
+        String entityName = backend.getShortFormProvider().getShortForm(entity);
         String title = entityName + " (Datatype)";
         boolean inferred = false;
 
@@ -109,7 +109,7 @@ public class OWLDatatypesController {
             @ModelAttribute final OWLOntology ont,
             final Model model) {
 
-        var owlDatatype = kit.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
+        var owlDatatype = backend.lookup().entityFor(datatypeId, ont, OWLDatatype.class);
         var hierarchyService = new OWLDatatypeHierarchyService(ont, treeComparator());
         var prunedTree = hierarchyService.getChildren(owlDatatype);
 
