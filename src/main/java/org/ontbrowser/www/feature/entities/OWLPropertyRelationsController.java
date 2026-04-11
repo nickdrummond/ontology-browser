@@ -11,11 +11,11 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.URLScheme;
+import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -80,13 +80,15 @@ public class OWLPropertyRelationsController {
     public void getRelationsForProperty(
             final HttpServletResponse response
     ) throws IOException {
-        String id = kit.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_TOP_OBJECT_PROPERTY.getIRI());
+        final OWLDataFactory df = kit.getOWLOntologyManager().getOWLDataFactory();
+        OWLObjectProperty owlTopObjectProperty = df.getOWLTopObjectProperty();
+        String id = kit.lookup().getId(owlTopObjectProperty);
         response.sendRedirect("/relations/" + PATH + "/" + id);
     }
 
-    @GetMapping(value = "/{objectPropertyId}")
+    @GetMapping(value = "/{propertyId}")
     public ModelAndView getRelationsForProperty(
-            @PathVariable final String objectPropertyId,
+            @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
@@ -94,7 +96,7 @@ public class OWLPropertyRelationsController {
             final Model model,
             HttpServletRequest request
     ) {
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
@@ -112,9 +114,9 @@ public class OWLPropertyRelationsController {
         return new ModelAndView(RELATION_TEMPLATE);
     }
 
-    @GetMapping(value = "/{objectPropertyId}/secondary")
+    @GetMapping(value = "/{propertyId}/secondary")
     public ModelAndView getSecondaryFragment(
-            @PathVariable final String objectPropertyId,
+            @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
@@ -122,7 +124,7 @@ public class OWLPropertyRelationsController {
             HttpServletRequest request
     ) {
 
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
@@ -131,9 +133,9 @@ public class OWLPropertyRelationsController {
         return new ModelAndView("tree::secondaryhierarchy");
     }
 
-    @GetMapping(value = "/{objectPropertyId}/withindividual/{individualId}")
+    @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
     public ModelAndView getRelationsForProperty(
-            @PathVariable final String objectPropertyId,
+            @PathVariable final String propertyId,
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
@@ -148,7 +150,7 @@ public class OWLPropertyRelationsController {
 
         String queryString = request.getQueryString();
 
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         // THIS SETS pageScheme
         commonContent.addCommonContent(queryString, model, ont);
@@ -169,9 +171,9 @@ public class OWLPropertyRelationsController {
         return new ModelAndView(RELATION_TEMPLATE);
     }
 
-    @GetMapping(value = "/{objectPropertyId}/withindividual/{individualId}/fragment")
+    @GetMapping(value = "/{propertyId}/withindividual/{individualId}/fragment")
     public ModelAndView getRelationsForPropertyFragment(
-            @PathVariable final String objectPropertyId,
+            @PathVariable final String propertyId,
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
@@ -192,15 +194,15 @@ public class OWLPropertyRelationsController {
         return new ModelAndView("owlentityfragment");
     }
 
-    @GetMapping(value = "/{objectPropertyId}/children")
+    @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
-            @PathVariable final String objectPropertyId,
+            @PathVariable final String propertyId,
             @RequestParam(defaultValue = "relationsCount") final String statsName,
             @ModelAttribute final OWLOntology ont,
             final Model model
     ) {
 
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
 
         OWLObjectPropertyHierarchyService hierarchyService = new OWLObjectPropertyHierarchyService(
                 reasonerFactoryService.getToldReasoner(ont),
@@ -210,7 +212,7 @@ public class OWLPropertyRelationsController {
 
         var mos = (OWLHTMLRenderer)model.getAttribute("mos");
         if (mos != null) {
-            model.addAttribute("mos", mos.withURLScheme(new RelationPropertyURLScheme(kit.getIriShortFormProvider())));
+            model.addAttribute("mos", mos.withURLScheme(new RelationPropertyURLScheme()));
         }
 
         model.addAttribute("t", hierarchyService.getChildren(property));
@@ -220,9 +222,9 @@ public class OWLPropertyRelationsController {
         return new ModelAndView(CommonRelations.BASE_TREE);
     }
 
-    @GetMapping(value = "/{objectPropertyId}/withindividual/{individualId}/children")
+    @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
     public ModelAndView getChildren(
-            @PathVariable final String objectPropertyId,
+            @PathVariable final String propertyId,
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
@@ -231,13 +233,13 @@ public class OWLPropertyRelationsController {
             HttpServletRequest request
     ) {
 
-        var property = kit.lookup().entityFor(objectPropertyId, ont, OWLObjectProperty.class);
+        var property = kit.lookup().entityFor(propertyId, ont, OWLObjectProperty.class);
         OWLNamedIndividual individual = common.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLObjectProperty> relationsHierarchyService =
                 common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property, kit.getIriShortFormProvider())
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, property)
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
 

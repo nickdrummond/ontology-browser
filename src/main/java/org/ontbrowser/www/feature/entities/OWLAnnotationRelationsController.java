@@ -76,14 +76,14 @@ public class OWLAnnotationRelationsController {
             throw new ResponseStatusException(NOT_FOUND, "Annotation Properties not found");
         }
         // Start with random
-        String id = kit.getIriShortFormProvider().getShortForm(props.iterator().next().getIRI());
+        String id = kit.lookup().getId(props.iterator().next());
         response.sendRedirect("/relations/" + PATH + "/" + id);
     }
 
 
-    @GetMapping(value = "/{annotationPropertyId}")
+    @GetMapping(value = "/{propertyId}")
     public ModelAndView getRelationsForAnnotationProperty(
-            @PathVariable final String annotationPropertyId,
+            @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
@@ -91,7 +91,7 @@ public class OWLAnnotationRelationsController {
             final Model model,
             HttpServletRequest request) {
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
         var relationsHierarchyService = commonRelations.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
@@ -108,9 +108,9 @@ public class OWLAnnotationRelationsController {
         return new ModelAndView(RELATION_TEMPLATE);
     }
 
-    @GetMapping(value = "/{annotationPropertyId}/secondary")
+    @GetMapping(value = "/{propertyId}/secondary")
     public ModelAndView getSecondaryFragment(
-            @PathVariable final String annotationPropertyId,
+            @PathVariable final String propertyId,
             @ModelAttribute final OWLOntology ont,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
@@ -118,7 +118,7 @@ public class OWLAnnotationRelationsController {
             HttpServletRequest request
     ) {
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
         var relationsHierarchyService = commonRelations.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
@@ -127,9 +127,9 @@ public class OWLAnnotationRelationsController {
         return new ModelAndView("tree::secondaryhierarchy");
     }
 
-    @GetMapping(value = "/{annotationPropertyId}/withindividual/{individualId}")
+    @GetMapping(value = "/{propertyId}/withindividual/{individualId}")
     public ModelAndView getRelationsForAnnotationProperty(
-            @PathVariable final String annotationPropertyId,
+            @PathVariable final String propertyId,
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @ModelAttribute final OWLOntology ont,
@@ -146,7 +146,7 @@ public class OWLAnnotationRelationsController {
         commonFragments.getOWLIndividualFragment(individualsService, individual, false,
                 with, ont, model, request.getQueryString());
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
         var relationsHierarchyService = commonRelations.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
@@ -158,16 +158,16 @@ public class OWLAnnotationRelationsController {
         return new ModelAndView(RELATION_TEMPLATE);
     }
 
-    @GetMapping(value = "/{annotationPropertyId}/children")
+    @GetMapping(value = "/{propertyId}/children")
     public ModelAndView getChildren(
-            @PathVariable final String annotationPropertyId,
+            @PathVariable final String propertyId,
             @RequestParam(defaultValue = "relationsCount") final String statsName,
             @ModelAttribute final OWLOntology ont,
             final Model model,
             final HttpServletRequest request
     ) {
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
 
         var stats = statsService.getAnnotationPropertyStats(statsName, ont, propertiesService.getHierarchyService(ont));
 
@@ -175,7 +175,7 @@ public class OWLAnnotationRelationsController {
         model.addAttribute("stats", stats);
         model.addAttribute("statsName", statsName);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop, kit.getIriShortFormProvider())
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop)
                 .withQuery(request.getQueryString());
 
         var mos = (OWLHTMLRenderer) model.getAttribute("mos");
@@ -186,9 +186,9 @@ public class OWLAnnotationRelationsController {
         return new ModelAndView(CommonRelations.BASE_TREE);
     }
 
-    @GetMapping(value = "/{annotationPropertyId}/withindividual/{individualId}/children")
+    @GetMapping(value = "/{propertyId}/withindividual/{individualId}/children")
     public ModelAndView getChildren(
-            @PathVariable final String annotationPropertyId,
+            @PathVariable final String propertyId,
             @PathVariable final String individualId,
             @RequestParam(defaultValue = "false") final boolean inverse,
             @RequestParam final @Nullable String orderBy,
@@ -197,13 +197,13 @@ public class OWLAnnotationRelationsController {
             HttpServletRequest request
     ) {
 
-        var prop = kit.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
+        var prop = kit.lookup().entityFor(propertyId, ont, OWLAnnotationProperty.class);
         OWLNamedIndividual individual = commonRelations.getOWLIndividualFor(individualId, ont);
 
         AbstractRelationsHierarchyService<OWLAnnotationProperty> relationsHierarchyService =
                 commonRelations.getRelationsHierarchyService(prop, ont, orderBy, inverse);
 
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop, kit.getIriShortFormProvider())
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/relations/" + PATH, prop)
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
 

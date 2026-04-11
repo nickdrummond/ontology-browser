@@ -1,7 +1,6 @@
 package org.ontbrowser.www.configuration;
 
 import org.ontbrowser.www.interceptor.CachingInterceptor;
-import org.ontbrowser.www.interceptor.LegacyEntityIdInterceptor;
 import org.ontbrowser.www.interceptor.RedirectInterceptor;
 import org.ontbrowser.www.interceptor.TitleHeaderInterceptor;
 import org.slf4j.Logger;
@@ -22,27 +21,22 @@ public class MvcConfig implements WebMvcConfigurer {
     private static final Logger log = LoggerFactory.getLogger(MvcConfig.class);
 
     private final TitleHeaderInterceptor titleHeaderInterceptor;
-    private final LegacyEntityIdInterceptor legacyEntityIdInterceptor;
 
     @Value("${redirect.root}")
     protected String redirectRoot;
 
     private final CachingInterceptor cachingInterceptor;
-
     public MvcConfig(
             @Nonnull TitleHeaderInterceptor titleHeaderInterceptor,
-            @Nonnull LegacyEntityIdInterceptor legacyEntityIdInterceptor,
             @Autowired(required = false) CachingInterceptor cachingInterceptor
     ) {
         this.titleHeaderInterceptor = titleHeaderInterceptor;
-        this.legacyEntityIdInterceptor = legacyEntityIdInterceptor;
         this.cachingInterceptor = cachingInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(titleHeaderInterceptor);
-        registry.addInterceptor(legacyEntityIdInterceptor);
 
         if (redirectRoot != null) {
             log.warn("Redirecting all requests to {}", redirectRoot);

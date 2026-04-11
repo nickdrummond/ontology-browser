@@ -9,7 +9,6 @@ import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -55,8 +54,12 @@ public class OWLClassesController {
             @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
-        String id = kit.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_THING.getIRI());
-        response.sendRedirect("/classes/" + id + (ontId != null ? "?ontId=" + ontId : ""));
+
+        OWLClass owlThing = kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing();
+
+        String id = kit.lookup().getId(owlThing);
+
+        response.sendRedirect("/classes/" + id+ (ontId != null ? "?ontId=" + ontId : ""));
     }
 
     @GetMapping(value = "/{classId}")

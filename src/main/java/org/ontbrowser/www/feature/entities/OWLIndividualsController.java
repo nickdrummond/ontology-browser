@@ -16,7 +16,6 @@ import org.ontbrowser.www.url.ComponentPagingURIScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -81,19 +80,17 @@ public class OWLIndividualsController {
     public ModelAndView getOWLIndividual(
             @PathVariable final String individualId,
             @ModelAttribute final OWLOntology ont,
-            @RequestParam(required = false) final String ontId,
             @RequestParam(required = false, defaultValue = "") List<With> with,
             @RequestParam(defaultValue = "false") final boolean inferred,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) throws IOException {
+            final HttpServletRequest request
+    ) {
         var owlIndividual = kit.lookup().entityFor(individualId, ont, OWLNamedIndividual.class);
         OWLEntity firstType = individualsService.getNamedTypes(owlIndividual, ont).stream().findFirst()
                 .orElse(ont.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
 
         return byType(
-                kit.getIriShortFormProvider().getShortForm(firstType.getIRI()),
+                kit.lookup().getId(firstType),
                 individualId, inferred,
                 "inferredInstances", with, ont, model, request);
     }
@@ -103,7 +100,7 @@ public class OWLIndividualsController {
             @RequestParam(required = false) final String ontId,
             final HttpServletResponse response
     ) throws IOException {
-        String thingId = kit.getIriShortFormProvider().getShortForm(OWLRDFVocabulary.OWL_THING.getIRI());
+        String thingId = kit.lookup().getId(kit.getOWLOntologyManager().getOWLDataFactory().getOWLThing());
         response.sendRedirect("/individuals/by/type/" + thingId + (ontId != null ? "?ontId=" + ontId : ""));
     }
 
@@ -112,18 +109,10 @@ public class OWLIndividualsController {
             @PathVariable final String classId,
             @RequestParam(defaultValue = "inferredInstances") final String statsName,
             @RequestParam(required = false, defaultValue = "") List<With> with,
-            @RequestParam(required = false) final String ontId,
             @ModelAttribute final OWLOntology ont,
             final Model model,
-            final HttpServletRequest request,
-            final HttpServletResponse response
-    ) throws IOException {
-        var owlClass = kit.lookup().entityFor(classId, ont, OWLClass.class);
-        if (!classId.contains(":")) {
-            response.sendRedirect("/by/type/" + kit.getIriShortFormProvider().getShortForm(owlClass.getIRI()) + (ontId != null ? "?ontId=" + ontId : ""));
-            return null;
-        }
-
+            final HttpServletRequest request
+    ) {
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
         OWLClass type = buildNav(classId, with, statsName, ont, model, request, null);
@@ -185,7 +174,7 @@ public class OWLIndividualsController {
             OWLClass type, OWLNamedIndividual ind,
             Model model, HttpServletRequest request) {
 
-        var urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type, kit.getIriShortFormProvider())
+        var urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type)
                 .withQuery(request.getQueryString());
 
         Set<OWLObject> activeObjects = new HashSet<>();
@@ -201,7 +190,7 @@ public class OWLIndividualsController {
     }
 
     private void updateRenderer(OWLClass type, Model model, HttpServletRequest request) {
-        URLScheme urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type, kit.getIriShortFormProvider())
+        URLScheme urlScheme = new CommonRelationsURLScheme<>("/individuals/by/type", type)
                 .withQuery(request.getQueryString());
 
         Set<OWLObject> activeObjects = new HashSet<>();
