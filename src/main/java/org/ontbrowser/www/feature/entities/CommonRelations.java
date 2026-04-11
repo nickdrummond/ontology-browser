@@ -127,7 +127,7 @@ public class CommonRelations<T extends OWLProperty> {
     }
 
     private URLScheme getUrlScheme(AbstractRelationsHierarchyService<T> relationsHierarchyService, T property, HttpServletRequest request) {
-        return new CommonRelationsURLScheme<>("/relations/" + path, property)
+        return new CommonRelationsURLScheme<>("/relations/" + path, property, kit.getIriShortFormProvider())
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
     }

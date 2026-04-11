@@ -7,10 +7,9 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.util.IRIShortFormProvider;
 
 import java.util.Arrays;
-
-import static org.ontbrowser.www.url.EntityId.getIdForEntity;
 
 public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLScheme {
 
@@ -21,10 +20,12 @@ public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLSchem
     private String query = "";
 
     public CommonRelationsURLScheme(String rootPath,
-                                    T property) {
+                                    T property,
+                                    IRIShortFormProvider iriShortFormProvider) {
+        super(iriShortFormProvider);
         this.rootPath = rootPath;
         this.propertyJavaClass = property.getClass();
-        this.propertyId = getIdForEntity(property);
+        this.propertyId = iriShortFormProvider.getShortForm(property.getIRI());
     }
 
     public CommonRelationsURLScheme withTree(AbstractOWLHierarchyService<OWLNamedIndividual> service) {
@@ -34,11 +35,11 @@ public class CommonRelationsURLScheme <T extends OWLEntity> extends RestURLSchem
 
     @Override
     public String getURLForOWLObject(OWLObject owlObject, OWLOntology ontology) {
-        if (service != null && owlObject instanceof OWLNamedIndividual ind && service.treeContains((OWLNamedIndividual)owlObject)) {
-            return rootPath + "/" + propertyId + "/withindividual/" + getIdForEntity(ind) + query;
+        if (service != null && owlObject instanceof OWLNamedIndividual ind && service.treeContains(ind)) {
+            return rootPath + "/" + propertyId + "/withindividual/" + iriShortFormProvider.getShortForm(ind.getIRI()) + query;
         }
         else if (propertyJavaClass.isAssignableFrom(owlObject.getClass())) {
-            return rootPath + "/" + getIdForEntity((OWLEntity) owlObject) + query;
+            return rootPath + "/" + iriShortFormProvider.getShortForm(((OWLEntity) owlObject).getIRI()) + query;
         }
         return super.getURLForOWLObject(owlObject, ontology);
     }

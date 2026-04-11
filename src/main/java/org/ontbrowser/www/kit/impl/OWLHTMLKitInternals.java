@@ -79,7 +79,7 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     @Override
     public URLScheme getURLScheme() {
         if (urlScheme == null){
-            urlScheme = new RestURLScheme();
+            urlScheme = new RestURLScheme(getIriShortFormProvider());
         }
         return urlScheme;
     }
@@ -126,7 +126,7 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
     @Override
     public EntityIdLookup lookup() {
         if (entityIdLookup == null){
-            entityIdLookup = new EntityIdLookup(mngr);
+            entityIdLookup = new EntityIdLookup(mngr, getPrefixes());
         }
         return entityIdLookup;
     }
@@ -158,10 +158,13 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
         if (prefixes == null) {
             prefixes = new HashMap<>();
             prefixes.put("swrlb", "http://www.w3.org/2003/11/swrlb#");
-            var format = rootOntology.getFormat();
-            if (format != null && format.isPrefixOWLDocumentFormat()) {
-                format.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap()
-                        .forEach((key, value) -> prefixes.put(key.substring(0, key.length() - 1), value));
+            // accumulate all prefixes
+            for (var ont: rootOntology.getImportsClosure()) {
+                var format = ont.getFormat();
+                if (format != null && format.isPrefixOWLDocumentFormat()) {
+                    format.asPrefixOWLDocumentFormat().getPrefixName2PrefixMap()
+                            .forEach((key, value) -> prefixes.put(key.substring(0, key.length() - 1), value));
+                }
             }
         }
         return prefixes;
