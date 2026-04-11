@@ -1,6 +1,7 @@
 package org.ontbrowser.www.backend;
 
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
+import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -85,5 +86,10 @@ public class InMemoryContext implements BackendContext {
     @Override
     public Comparator<OWLObject> getComparator() {
         return kit.getComparator();
+    }
+
+    @Override
+    public OWLEntityFinder getFinder() {
+        return kit.getFinder();
     }
 }

@@ -1,7 +1,9 @@
-package org.ontbrowser.www.backend;
+package org.ontbrowser.www.backend.db;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.configuration.DBConnectionFilter;
+import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.ontbrowser.www.kit.impl.QNameEntityIdLookup;
 import org.ontbrowser.www.url.OntologyId;
@@ -56,6 +58,7 @@ public class DBContext implements BackendContext {
     private Map<OWLOntologyID, Integer> ontId2bdId = null;
     private IRIShortFormProvider iriSFP;
     private OWLObjectComparator comparator;
+    private OWLEntityFinder finder;
 
     public DBContext(HttpServletRequest request) throws SQLException {
         this.connection = (Connection) request.getAttribute(DBConnectionFilter.DB_CONNECTION_ATTR);
@@ -137,6 +140,14 @@ public class DBContext implements BackendContext {
             comparator = new OWLObjectComparator(getShortFormProvider());
         }
         return comparator;
+    }
+
+    @Override
+    public OWLEntityFinder getFinder() {
+        if (finder == null) {
+            finder = new DBEntityFinder(getShortFormProvider(), df);
+        }
+        return finder;
     }
 
     private OWLReasoner createReasoner(OWLOntology ont) {

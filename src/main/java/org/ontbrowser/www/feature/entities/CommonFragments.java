@@ -1,9 +1,9 @@
 package org.ontbrowser.www.feature.entities;
 
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.graph.GraphURLScheme;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
 import org.ontbrowser.www.feature.stats.Stats;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
@@ -28,16 +28,16 @@ import static org.ontbrowser.www.model.Tree.treeComparator;
 @Service
 public class CommonFragments {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final ProjectInfo projectInfo;
 //    private final ReasonerService reasonerService;
 
     public CommonFragments(
-            OWLHTMLKit kit,
+            BackendContext backend,
             ProjectInfo projectInfo
 //            ReasonerService reasonerService
     ) {
-        this.kit = kit;
+        this.backend = backend;
         this.projectInfo = projectInfo;
 //        this.reasonerService = reasonerService;
     }
@@ -77,7 +77,7 @@ public class CommonFragments {
 
     private <T extends OWLEntity> String getTitle(T entity, OWLOntology ont, NamedTypeProvider<T> namedTypesProvider) {
 
-        var sfp = kit.getShortFormProvider();
+        var sfp = backend.getShortFormProvider();
         var entityName = sfp.getShortForm(entity);
 
         var namedTypes = namedTypesProvider.getNamedTypes(entity, ont);
@@ -98,7 +98,7 @@ public class CommonFragments {
     ) {
 
         if (projectInfo.activeProfiles().contains("graph")) {
-            var mos = new MOSStringRenderer(kit.getFinder(), ont);
+            var mos = new MOSStringRenderer(backend.getFinder(), ont);
             model.addAttribute("graphLink", new GraphURLScheme(mos).getURLForOWLObject(entity, ont));
         }
 
@@ -108,7 +108,7 @@ public class CommonFragments {
         }
 
         var characteristics = new ArrayList<>(
-                service.getCharacteristicsBuilder(entity, ont, kit.getComparator(),
+                service.getCharacteristicsBuilder(entity, ont, backend.getComparator(),
                         with, DEFAULT_PAGE_SIZE).getCharacteristics());
 
 //        if (inferred) {
@@ -120,7 +120,7 @@ public class CommonFragments {
         model.addAttribute("iri", entity.getIRI());
         model.addAttribute("characteristics", characteristics);
         model.addAttribute("ontologies", ont.getImportsClosure());
-        model.addAttribute("ontologiesSfp", kit.getOntologySFP());
+        model.addAttribute("ontologiesSfp", backend.getOntologySFP());
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(queryString, with));
 
         return new ModelAndView("owlentityfragment");

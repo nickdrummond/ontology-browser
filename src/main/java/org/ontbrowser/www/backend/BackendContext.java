@@ -1,5 +1,6 @@
 package org.ontbrowser.www.backend;
 
+import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -29,4 +30,6 @@ public interface BackendContext {
     IRIShortFormProvider getIriShortFormProvider();
 
     Comparator<OWLObject> getComparator();
+
+    OWLEntityFinder getFinder();
 }
