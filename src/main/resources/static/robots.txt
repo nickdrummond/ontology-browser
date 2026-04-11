@@ -6,3 +6,9 @@ User-agent: SemrushBot
 Disallow: /
 User-agent: AhrefsBot
 Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: GPTBot
+Disallow: /
+User-agent: *
+Crawl-delay: 10
