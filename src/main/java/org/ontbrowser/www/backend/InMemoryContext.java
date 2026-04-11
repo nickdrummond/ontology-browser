@@ -4,6 +4,7 @@ import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.kit.impl.EntityIdLookup;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -91,5 +92,10 @@ public class InMemoryContext implements BackendContext {
     @Override
     public OWLEntityFinder getFinder() {
         return kit.getFinder();
+    }
+
+    @Override
+    public OWLEntityChecker getOWLEntityChecker() {
+        return kit.getOWLEntityChecker();
     }
 }

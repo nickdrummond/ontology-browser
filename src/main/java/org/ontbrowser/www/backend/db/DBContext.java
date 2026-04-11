@@ -8,6 +8,7 @@ import org.ontbrowser.www.kit.impl.EntityIdLookup;
 import org.ontbrowser.www.kit.impl.QNameEntityIdLookup;
 import org.ontbrowser.www.url.OntologyId;
 import org.ontbrowser.www.util.OWLObjectComparator;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.IRIShortFormProvider;
@@ -17,10 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
-import owlapi.DBLabelShortFormProvider;
-import owlapi.DBOntology;
-import owlapi.DBOntologyFactory;
-import owlapi.DBStructuralReasoner;
+import owlapi.*;
 import parser.CanonicalParserFactory;
 import renderer.CanonicalRendererFactory;
 import tables.ontologies.OntologyImports;
@@ -59,11 +57,12 @@ public class DBContext implements BackendContext {
     private IRIShortFormProvider iriSFP;
     private OWLObjectComparator comparator;
     private OWLEntityFinder finder;
+    private OWLEntityChecker entityChecker;
 
     public DBContext(HttpServletRequest request) throws SQLException {
         this.connection = (Connection) request.getAttribute(DBConnectionFilter.DB_CONNECTION_ATTR);
         var imports = OntologyImports.getImportsClosure(connection, DEFAULT_ONT_ID);
-        // TODO need to fix OWLDB2 - it loses the original prefixes (ontology_prefix table is wrong) - should contain : and util:
+        // TODO chache this?
         this.prefixMap = Prefixes.getCanonicalMappingsForClosure(connection, imports); // could be static
         this.canonicalRendererFactory = new CanonicalRendererFactory(prefixMap);
         this.canonicalParserFactory = new CanonicalParserFactory(df, prefixMap);
@@ -100,7 +99,6 @@ public class DBContext implements BackendContext {
 
     @Override
     public ShortFormProvider getShortFormProvider() {
-        // TODO Maybe cache this prefix map!
         // TODO this should be hidden away in OWLDB2
         return new DBLabelShortFormProvider(
                 connection,
@@ -148,6 +146,20 @@ public class DBContext implements BackendContext {
             finder = new DBEntityFinder(getShortFormProvider(), df);
         }
         return finder;
+    }
+
+    @Override
+    public OWLEntityChecker getOWLEntityChecker() {
+        if (entityChecker == null) {
+            entityChecker = new DBEntityChecker(
+                    connection,
+                    canonicalRendererFactory,
+                    canonicalParserFactory,
+                    DEFAULT_ONT_ID,
+                    df.getOWLAnnotationProperty(LABEL_IRI)
+            );
+        }
+        return entityChecker;
     }
 
     private OWLReasoner createReasoner(OWLOntology ont) {

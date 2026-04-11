@@ -1,12 +1,12 @@
 package org.ontbrowser.www.feature.graph;
 
 import com.google.common.collect.Streams;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.dlquery.DLQuery;
 import org.ontbrowser.www.feature.dlquery.QueryType;
 import org.ontbrowser.www.feature.parser.ParserService;
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
+import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -19,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,16 +29,16 @@ import java.util.stream.Stream;
 @RequestMapping(value = "/graph")
 public class GraphController {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final ParserService parserService;
 //    private final ReasonerService reasonerService;
 
     public GraphController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             ParserService parserService
 //            ReasonerService reasonerService
     ) {
-        this.kit = kit;
+        this.backend = backend;
         this.parserService = parserService;
 //        this.reasonerService = reasonerService;
     }
@@ -69,15 +66,15 @@ public class GraphController {
             @RequestParam(required = false, defaultValue = "200") final int maxEdges,
             @ModelAttribute final OWLOntology ont
     ) throws ExecutionException, InterruptedException {
-        var finder = kit.getFinder();
+        var checker = backend.getOWLEntityChecker();
 
-        var parentProperties = getProps(parents, ont, finder);
-        var followProperties = getProps(follow, ont, finder);
-        var withoutProperties = getProps(without, ont, finder);
-        var incomingProperties = getProps(incoming, ont, finder);
+        var parentProperties = getProps(parents, ont, checker);
+        var followProperties = getProps(follow, ont, checker);
+        var withoutProperties = getProps(without, ont, checker);
+        var incomingProperties = getProps(incoming, ont, checker);
         var properties = props.isEmpty()
                 ? getAllProps(ont)
-                : getProps(props, ont, finder);
+                : getProps(props, ont, checker);
 
         //
         Set<OWLObject> objects = new HashSet<>();
@@ -85,7 +82,7 @@ public class GraphController {
             objects.addAll(getInds(query));
         }
         if (indivs != null && !indivs.isEmpty()) {
-            objects.addAll(getInds(indivs, finder));
+            objects.addAll(getInds(indivs, checker));
         }
         if (objects.isEmpty() && !props.isEmpty()) {
             objects.addAll(properties);
@@ -104,7 +101,7 @@ public class GraphController {
         var graph = new GraphBuilderImpl(descr).build();
 
         var df = ont.getOWLOntologyManager().getOWLDataFactory();
-        var renderer = new MOSStringRenderer(kit.getFinder(), ont);
+        var renderer = new MOSStringRenderer(backend.getFinder(), ont);
         return new CytoscapeGraph(graph, df, renderer, parentProperties, objects);
     }
 
@@ -117,8 +114,8 @@ public class GraphController {
     }
 
     private Set<OWLNamedIndividual> getInds(String query) throws ExecutionException, InterruptedException {
-        var df = kit.getOWLOntologyManager().getOWLDataFactory();
-        var owlEntityChecker = kit.getOWLEntityChecker();
+        var df = backend.getOWLDataFactory();
+        var owlEntityChecker = backend.getOWLEntityChecker();
         var clsEpr = parserService.getOWLClassExpression(query, df, owlEntityChecker);
         var dlQuery = new DLQuery(clsEpr, QueryType.instances);
         // TODO in DB mode we have no reasoners
@@ -126,33 +123,26 @@ public class GraphController {
 //        return reasonerService.query(dlQuery).stream().map(OWLEntity::asOWLNamedIndividual).collect(Collectors.toSet());
     }
 
-    private Set<OWLNamedIndividual> getInds(List<String> names, OWLEntityFinder finder) {
+    private Set<OWLNamedIndividual> getInds(List<String> names, OWLEntityChecker owlEntityChecker) {
         return names.stream()
-                .map(name -> getInds(name, finder))
-                .flatMap(Collection::stream)
+                .map(owlEntityChecker::getOWLIndividual)
                 .collect(Collectors.toSet());
     }
 
-    private Set<OWLNamedIndividual> getInds(String name, OWLEntityFinder finder) {
-        return finder.getOWLIndividuals(name);
-    }
-
-    private Set<OWLProperty> getProps(List<String> propNames, OWLOntology ont, OWLEntityFinder finder) {
+    private Set<OWLProperty> getProps(List<String> propNames, OWLOntology ont, OWLEntityChecker finder) {
         return propNames.stream()
-                .map(name -> getProps(name, finder, ont))
-                .flatMap(Collection::stream)
+                .map(name -> getProp(name, finder, ont))
                 .collect(Collectors.toSet());
     }
 
-    private Set<? extends OWLProperty> getProps(String name, OWLEntityFinder finder, OWLOntology ont) {
+    private OWLProperty getProp(String name, OWLEntityChecker finder, OWLOntology ont) {
         if (name.equals("type")) {
-            var type = ont.getOWLOntologyManager().getOWLDataFactory().getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE);
-            return Set.of(type);
+            return ont.getOWLOntologyManager().getOWLDataFactory().getOWLObjectProperty(OWLRDFVocabulary.RDF_TYPE);
         }
-        Set<? extends OWLProperty> props = finder.getOWLObjectProperties(name);
-        if (props.isEmpty()) {
-            props = finder.getOWLDataProperties(name);
+        OWLProperty prop = finder.getOWLObjectProperty(name);
+        if (prop == null) {
+            prop = finder.getOWLDataProperty(name);
         }
-        return props;
+        return prop;
     }
 }
