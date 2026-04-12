@@ -110,10 +110,12 @@ export const graphControls = ({
 
         const selectedList = document.getElementById("selected-nodes");
 
-        new ExpressionEditor(QUERY, {
-            parser : baseUrl + 'parse/class-expression',
-            autocomplete: baseUrl + 'autocomplete/class-expression'
-        }).initialise();
+        if (queryCtrl) {
+            new ExpressionEditor(QUERY, {
+                parser: baseUrl + 'parse/class-expression',
+                autocomplete: baseUrl + 'autocomplete/class-expression'
+            }).initialise();
+        }
 
         if (selectedList != null) {
             document.addEventListener('graph:selectionChanged', (event) => {
@@ -152,7 +154,7 @@ export const graphControls = ({
             if (individuals !== undefined) {
                 individualsCtrl.value = individuals;
             }
-            if (classes !== undefined) {
+            if (classes !== undefined && queryCtrl) {
                 queryCtrl.value = classes;
             }
             if (properties !== undefined) {

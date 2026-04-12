@@ -42,6 +42,7 @@
     <script type="module">
         import {graph} from '/js/graph.js';
         import {graphControls} from '/js/graph-controls.js';
+
         document.addEventListener('DOMContentLoaded', function () {
             const g = graph('.graph');
             const controls = graphControls({
@@ -68,13 +69,15 @@
 <div id="main">
     <div class="graph-controls">
         <form>
-            <label for="query">Query</label>
-            <textarea id="query"
-                      name='query'
-                      placeholder="Class expression. eg participant value R2-D2. Ctrl-space to autocomplete."
-                      class='editor dl'
-                      rows="5">
-            </textarea>
+            <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'reasoners')}">
+                <label for="query">Query</label>
+                <textarea id="query"
+                          name='query'
+                          placeholder="Class expression. eg participant value R2-D2. Ctrl-space to autocomplete."
+                          class='editor dl'
+                          rows="5">
+                </textarea>
+            </th:block>
 
             <label for="indivs">Individuals</label>
             <input id="indivs" type="text"/>

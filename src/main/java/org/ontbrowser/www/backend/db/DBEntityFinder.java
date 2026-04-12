@@ -6,17 +6,22 @@ import org.ontbrowser.www.kit.OWLEntityFinder;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.ShortFormProvider;
+import owlapi.DBLabelSearch;
 
+import java.util.List;
 import java.util.Set;
 
 public class DBEntityFinder implements OWLEntityFinder {
 
+    private static final int DEFAULT_SEARCH_RESULTS = 30;
     private final ShortFormProvider sfp;
     private final OWLDataFactory df;
+    private final DBLabelSearch dbLabelSearch;
 
-    public DBEntityFinder(ShortFormProvider sfp, OWLDataFactory df) {
+    public DBEntityFinder(ShortFormProvider sfp, OWLDataFactory df, DBLabelSearch dbLabelSearch) {
         this.sfp = sfp;
         this.df = df;
+        this.dbLabelSearch = dbLabelSearch;
     }
 
     @Override
@@ -25,69 +30,67 @@ public class DBEntityFinder implements OWLEntityFinder {
     }
 
     @Override
-    public Set<OWLClass> getOWLClasses(String str) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLClass> getOWLClasses(String str) {
+        return dbLabelSearch.search(str, EntityType.CLASS, DEFAULT_SEARCH_RESULTS);
     }
 
     @Override
-    public Set<OWLObjectProperty> getOWLObjectProperties(String str) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLObjectProperty> getOWLObjectProperties(String str) {
+        return getOWLObjectProperties(str, DEFAULT_SEARCH_RESULTS);
     }
 
     @Override
-    public Set<OWLObjectProperty> getOWLObjectProperties(String str, int limit) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLObjectProperty> getOWLObjectProperties(String str, int limit) {
+        return dbLabelSearch.search(str, EntityType.OBJECT_PROPERTY, limit);
     }
 
     @Override
-    public Set<OWLDataProperty> getOWLDataProperties(String str) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLDataProperty> getOWLDataProperties(String str) {
+        return getOWLDataProperties(str, DEFAULT_SEARCH_RESULTS);
     }
 
     @Override
-    public Set<OWLDataProperty> getOWLDataProperties(String str, int limit) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLDataProperty> getOWLDataProperties(String str, int limit) {
+        return dbLabelSearch.search(str, EntityType.DATA_PROPERTY, limit);
     }
 
     @Override
-    public Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLAnnotationProperty> getOWLAnnotationProperties(String str) {
+        return dbLabelSearch.search(str, EntityType.ANNOTATION_PROPERTY, DEFAULT_SEARCH_RESULTS);
     }
 
     @Override
-    public Set<OWLNamedIndividual> getOWLIndividuals(String str) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLNamedIndividual> getOWLIndividuals(String str) {
+        return getOWLIndividuals(str, DEFAULT_SEARCH_RESULTS);
     }
 
     @Override
-    public Set<OWLNamedIndividual> getOWLIndividuals(String str, int limit) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLNamedIndividual> getOWLIndividuals(String str, int limit) {
+        return dbLabelSearch.search(str, EntityType.NAMED_INDIVIDUAL, limit);
     }
 
     @Override
-    public Set<OWLDatatype> getOWLDatatypes(String str) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLDatatype> getOWLDatatypes(String str) {
+        return dbLabelSearch.search(str, EntityType.DATATYPE, DEFAULT_SEARCH_RESULTS);
     }
 
     @Override
-    public Set<OWLEntity> getOWLProperties(String str) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLEntity> getOWLEntities(String str) {
+        throw new NotImplemented("DBEntityFinder getOWLEntities not implemented yet");
     }
 
     @Override
-    public Set<OWLEntity> getOWLEntities(String str) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public List<OWLEntity> getOWLEntities(String str, OWLOntology ont) {
+        throw new NotImplemented("DBEntityFinder getOWLEntities not implemented yet");
     }
 
     @Override
-    public Set<OWLEntity> getOWLEntities(String str, OWLOntology ont) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
+    public <T extends OWLEntity> List<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont) {
+        throw new NotImplemented("DBEntityFinder getOWLEntities not implemented yet");
     }
 
-    @Override
-    public <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont) {
-        throw new NotImplemented("DBEntityFinder search not implemented yet");
-    }
+
+    // TODO this feels like a different lookup (IRI)
 
     @Override
     public Set<OWLEntity> getOWLEntities(IRI iri, OWLOntology ont) {

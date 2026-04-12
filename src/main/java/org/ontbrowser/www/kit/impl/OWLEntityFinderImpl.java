@@ -8,11 +8,8 @@ import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of finder that takes a partial string and does a regexp search based on the renderings
@@ -38,50 +35,50 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         return cache;
     }
 
-    public Set<OWLClass> getOWLClasses (String str){
+    public List<OWLClass> getOWLClasses (String str){
         return getMatches(str, EntityType.CLASS);
     }
 
-    public Set<OWLObjectProperty> getOWLObjectProperties(String str) {
+    public List<OWLObjectProperty> getOWLObjectProperties(String str) {
         return getMatches(str, EntityType.OBJECT_PROPERTY);
     }
 
-    public Set<OWLObjectProperty> getOWLObjectProperties(String str, int limit) {
+    public List<OWLObjectProperty> getOWLObjectProperties(String str, int limit) {
         return getMatches(str, EntityType.OBJECT_PROPERTY, limit);
     }
 
-    public Set<OWLDataProperty> getOWLDataProperties(String str) {
+    public List<OWLDataProperty> getOWLDataProperties(String str) {
         return getMatches(str, EntityType.DATA_PROPERTY);
     }
 
-    public Set<OWLDataProperty> getOWLDataProperties(String str, int limit) {
+    public List<OWLDataProperty> getOWLDataProperties(String str, int limit) {
         return getMatches(str, EntityType.DATA_PROPERTY, limit);
     }
 
-    public Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str) {
+    public List<OWLAnnotationProperty> getOWLAnnotationProperties(String str) {
         return getMatches(str, EntityType.ANNOTATION_PROPERTY);
     }
 
-    public Set<OWLNamedIndividual> getOWLIndividuals(String str) {
+    public List<OWLNamedIndividual> getOWLIndividuals(String str) {
         return getMatches(str, EntityType.NAMED_INDIVIDUAL);
     }
 
-    public Set<OWLNamedIndividual> getOWLIndividuals(String str, int limit) {
+    public List<OWLNamedIndividual> getOWLIndividuals(String str, int limit) {
         return getMatches(str, EntityType.NAMED_INDIVIDUAL, limit);
     }
 
-    public Set<OWLDatatype> getOWLDatatypes(String str) {
+    public List<OWLDatatype> getOWLDatatypes(String str) {
         return getMatches(str, EntityType.DATATYPE);
     }
 
-    public Set<OWLEntity> getOWLProperties(String str) {
-        Set<OWLEntity> results = Sets.newHashSet();
+    public List<OWLEntity> getOWLProperties(String str) {
+        List<OWLEntity> results = new ArrayList<>();
         results.addAll(getOWLObjectProperties(str));
         results.addAll(getOWLDataProperties(str));
         return results;
     }
 
-    public Set<OWLEntity> getOWLEntities(String str) {
+    public List<OWLEntity> getOWLEntities(String str) {
         Pattern pattern = Pattern.compile(str.toLowerCase());
 
         // not very efficient looking at all entity types
@@ -89,23 +86,23 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
                 .filter(sf -> pattern.matcher(sf.toLowerCase()).matches())
                 .map(cache::getEntities)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .toList();
     }
 
     @Override
-    public Set<OWLEntity> getOWLEntities(String str, OWLOntology ont) {
-        final Set<OWLEntity> results = getOWLEntities(str);
+    public List<OWLEntity> getOWLEntities(String str, OWLOntology ont) {
+        final List<OWLEntity> results = getOWLEntities(str);
         if (ont != null){
             results.removeIf(result -> !ont.containsEntityInSignature(result.getIRI()));
         }
         return results;    }
 
-    public <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type) {
+    public <T extends OWLEntity> List<T> getOWLEntities(String str, EntityType<T> type) {
         return getMatches(str, type);
     }
 
-    public <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont) {
-        final Set<T> results = getOWLEntities(str, type);
+    public <T extends OWLEntity> List<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont) {
+        final List<T> results = getOWLEntities(str, type);
         if (ont != null){
             results.removeIf(result -> !ont.containsEntityInSignature(result.getIRI()));
         }
@@ -159,16 +156,16 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         cache.dispose();
     }
 
-    private <T extends OWLEntity> Set<T> getMatches(
+    private <T extends OWLEntity> List<T> getMatches(
             @Nonnull String str,
             @Nonnull EntityType<T> type){
         return getOWLEntities(str).stream()
                 .filter(e -> type.equals(e.getEntityType()))
                 .map(e -> correctType(e, type))
-                .collect(Collectors.toSet());
+                .toList();
     }
 
-    private <T extends OWLEntity> Set<T> getMatches(
+    private <T extends OWLEntity> List<T> getMatches(
             @Nonnull String str,
             @Nonnull EntityType<T> type,
             @Nonnull int limit){
@@ -176,7 +173,7 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
                 .filter(e -> type.equals(e.getEntityType()))
                 .map(e -> correctType(e, type))
                 .limit(limit)
-                .collect(Collectors.toSet());
+                .toList();
     }
 
     private <T extends OWLEntity> T correctType(OWLEntity e, EntityType<T> type) {

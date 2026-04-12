@@ -84,9 +84,9 @@ public class GraphBuilderImpl implements GraphBuilder {
 
             @Override
             public void doDefault(Object object) {
-                if (!(object instanceof OWLDeclarationAxiom)) {
-                    log.debug("Ignoring axiom {} ", object);
-                }
+//                if (!(object instanceof OWLDeclarationAxiom)) {
+//                    log.debug("Ignoring axiom {} ", object);
+//                }
             }
         };
         ont.referencingAxioms(entity, Imports.INCLUDED).forEach(ax -> {

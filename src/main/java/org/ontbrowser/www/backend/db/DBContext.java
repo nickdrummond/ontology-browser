@@ -143,7 +143,14 @@ public class DBContext implements BackendContext {
     @Override
     public OWLEntityFinder getFinder() {
         if (finder == null) {
-            finder = new DBEntityFinder(getShortFormProvider(), df);
+            var labelSearch = new DBLabelSearch(
+                    connection,
+                    canonicalRendererFactory,
+                    canonicalParserFactory,
+                    DEFAULT_ONT_ID,
+                    df.getOWLAnnotationProperty(IRI.create(LABEL_IRI))
+            );
+            finder = new DBEntityFinder(getShortFormProvider(), df, labelSearch);
         }
         return finder;
     }

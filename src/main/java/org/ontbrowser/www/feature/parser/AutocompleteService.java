@@ -8,6 +8,7 @@ import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +89,11 @@ public class AutocompleteService {
         int pos = expression.length() - lastPart.length();
         Map<String, List<String>> expected = new HashMap<>();
         String search = lastPart + ".*"; // starts with
-        addResults(expected, EntityType.OBJECT_PROPERTY, finder.getOWLObjectProperties(search, MAX_ENTITIES_AC/2), sfp);
+
+        System.out.println("search = " + search);
+        List<OWLObjectProperty> owlObjectProperties = finder.getOWLObjectProperties(search, MAX_ENTITIES_AC / 2);
+        owlObjectProperties.forEach(System.out::println);
+        addResults(expected, EntityType.OBJECT_PROPERTY, owlObjectProperties, sfp);
         addResults(expected, EntityType.DATA_PROPERTY, finder.getOWLDataProperties(search, MAX_ENTITIES_AC/2), sfp);
         return new AutocompleteResultJson(expression, pos, lastPart, expected);
     }

@@ -3,6 +3,7 @@ package org.ontbrowser.www.kit;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,28 +17,26 @@ public interface OWLEntityFinder {
 
     ShortFormProvider getShortFormProvider();
 
-    Set<OWLClass> getOWLClasses(String str);
+    List<OWLClass> getOWLClasses(String str);
 
-    Set<OWLObjectProperty> getOWLObjectProperties(String str);
-    Set<OWLObjectProperty> getOWLObjectProperties(String str, int limit);
+    List<OWLObjectProperty> getOWLObjectProperties(String str);
+    List<OWLObjectProperty> getOWLObjectProperties(String str, int limit);
 
-    Set<OWLDataProperty> getOWLDataProperties(String str);
-    Set<OWLDataProperty> getOWLDataProperties(String str, int limit);
+    List<OWLDataProperty> getOWLDataProperties(String str);
+    List<OWLDataProperty> getOWLDataProperties(String str, int limit);
 
-    Set<OWLAnnotationProperty> getOWLAnnotationProperties(String str);
+    List<OWLAnnotationProperty> getOWLAnnotationProperties(String str);
 
-    Set<OWLNamedIndividual> getOWLIndividuals(String str);
-    Set<OWLNamedIndividual> getOWLIndividuals(String str, int limit);
+    List<OWLNamedIndividual> getOWLIndividuals(String str);
+    List<OWLNamedIndividual> getOWLIndividuals(String str, int limit);
 
-    Set<OWLDatatype> getOWLDatatypes(String str);
+    List<OWLDatatype> getOWLDatatypes(String str);
 
-    Set<OWLEntity> getOWLProperties(String str);
+    List<OWLEntity> getOWLEntities(String str);
 
-    Set<OWLEntity> getOWLEntities(String str);
+    List<OWLEntity> getOWLEntities(String str, OWLOntology ont);
 
-    Set<OWLEntity> getOWLEntities(String str, OWLOntology ont);
-
-    <T extends OWLEntity> Set<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont);
+    <T extends OWLEntity> List<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont);
 
     Set<OWLEntity> getOWLEntities(IRI iri, OWLOntology ont);
 
