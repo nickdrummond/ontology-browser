@@ -1,8 +1,8 @@
 package org.ontbrowser.www.feature.axioms;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -27,15 +27,15 @@ public class OWLAxiomsController {
 
     private static final String MODEL_KEY_AXIOMS = "axioms";
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final OWLAxiomService axiomService;
     private final CommonContent commonContent;
 
     OWLAxiomsController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             OWLAxiomService axiomService,
             CommonContent commonContent) {
-        this.kit = kit;
+        this.backend = backend;
         this.axiomService = axiomService;
         this.commonContent = commonContent;
     }
@@ -81,7 +81,7 @@ public class OWLAxiomsController {
             if (mos != null) {
                 model.addAttribute("mos", getHighlightRenderer(search, mos));
             }
-            var sfp = kit.getShortFormProvider();
+            var sfp = backend.getShortFormProvider();
             if (type == null) {
                 model.addAttribute(MODEL_KEY_AXIOMS, axiomService.findAxioms(search, ont, imports, sfp, start, pageSize));
             } else if (type.equals(LOGICAL_AXIOMS_TYPE)) {

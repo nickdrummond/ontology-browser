@@ -1,10 +1,14 @@
-package org.ontbrowser.www.backend;
+package org.ontbrowser.www.backend.memory;
 
+import org.ontbrowser.www.backend.BackendContext;
+import org.ontbrowser.www.backend.memory.kit.impl.RestartableKit;
+import org.ontbrowser.www.controller.AppStatus;
 import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.impl.EntityIdLookup;
+import org.ontbrowser.www.backend.OWLEntityFinder;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.EntityIdLookup;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -65,6 +69,11 @@ public class InMemoryContext implements BackendContext {
     }
 
     @Override
+    public ShortFormProvider getShortFormProvider(OWLAnnotationProperty prop) {
+        return null;
+    }
+
+    @Override
     public OWLDataFactory getOWLDataFactory() {
         return kit.getOWLOntologyManager().getOWLDataFactory();
     }
@@ -97,5 +106,13 @@ public class InMemoryContext implements BackendContext {
     @Override
     public OWLEntityChecker getOWLEntityChecker() {
         return kit.getOWLEntityChecker();
+    }
+
+    @Override
+    public AppStatus getStatus() {
+        if (kit instanceof RestartableKit restartable) {
+            return restartable.getStatus();
+        }
+        return new AppStatus(AppStatus.Status.UP);
     }
 }

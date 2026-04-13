@@ -1,6 +1,6 @@
 package org.ontbrowser.www.feature.search;
 
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.semanticweb.owlapi.model.*;
 import org.springframework.stereotype.Service;
@@ -11,12 +11,20 @@ import java.util.*;
 @Service
 public class FindByAnnotation {
 
-    public List<AxiomWithMetadata> findByAnnotation(@Nonnull String value,
-                                                    OWLAnnotationProperty searchProp,
-                                                    @Nonnull OWLHTMLKit kit) {
+    private final BackendContext backend;
+
+    public FindByAnnotation(BackendContext backend) {
+        this.backend = backend;
+    }
+
+    public List<AxiomWithMetadata> findByAnnotation(
+            @Nonnull String value,
+            OWLAnnotationProperty searchProp
+    ) {
         Optional<OWLAnnotationProperty> prop = Optional.ofNullable(searchProp);
         Set<AxiomWithMetadata> results = new HashSet<>();
-        for (OWLOntology ont : kit.getOWLOntologyManager().getOntologies()) {
+        // TODO this could be a lot more efficient if we delegate to the backend
+        for (OWLOntology ont : backend.getRootOntology().getImportsClosure()) {
             for (OWLAnnotationAssertionAxiom ax : ont.getAxioms(AxiomType.ANNOTATION_ASSERTION)) {
                 if (prop.isEmpty() || prop.get().equals(ax.getProperty())) {
                     OWLAnnotationValue v = ax.getValue();

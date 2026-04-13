@@ -1,10 +1,10 @@
 package org.ontbrowser.www.feature.cloud;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
 import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -22,14 +22,14 @@ import static org.ontbrowser.www.util.OWLUtils.getEntityTypeFromPath;
 @RequestMapping(value = "/clouds")
 public class CloudController {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final CommonContent commonContent;
 
     public CloudController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             CommonContent commonContent
     ) {
-        this.kit = kit;
+        this.backend = backend;
         this.commonContent = commonContent;
     }
 
@@ -57,7 +57,7 @@ public class CloudController {
         helper.setThreshold(threshold);
         helper.setNormalise(normalise);
 
-        var hierarchyService = new OWLOntologyHierarchyService(kit.getRootOntology(), treeComparator());
+        var hierarchyService = new OWLOntologyHierarchyService(backend.getRootOntology(), treeComparator());
         var ontologyTree = hierarchyService.getPrunedTree(ont);
         model.addAttribute("hierarchy", ontologyTree);
 
@@ -69,7 +69,7 @@ public class CloudController {
                         if (owlObject instanceof OWLOntology ontLink) {
                             return request.getServletPath() + "?imports=EXCLUDED&ontId=" + ontLink.getOntologyID().hashCode();
                         }
-                        return kit.getURLScheme().getURLForOWLObject(owlObject, ontology);
+                        return backend.getURLScheme().getURLForOWLObject(owlObject, ontology);
                     });
         }
 

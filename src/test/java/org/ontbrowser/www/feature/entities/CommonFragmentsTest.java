@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLDataFactory;

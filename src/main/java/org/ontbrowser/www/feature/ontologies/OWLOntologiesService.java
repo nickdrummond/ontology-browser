@@ -2,7 +2,7 @@ package org.ontbrowser.www.feature.ontologies;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.OntologyCharacteristicsBuilder;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.util.OWLObjectComparator;
 import org.semanticweb.owlapi.metrics.*;

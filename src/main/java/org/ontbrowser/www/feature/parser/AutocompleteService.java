@@ -1,7 +1,7 @@
 package org.ontbrowser.www.feature.parser;
 
 import org.ontbrowser.www.feature.parser.axiom.MOSAxiomTreeParser;
-import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;

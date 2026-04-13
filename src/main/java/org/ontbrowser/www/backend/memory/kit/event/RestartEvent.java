@@ -1,4 +1,4 @@
-package org.ontbrowser.www.kit.event;
+package org.ontbrowser.www.backend.memory.kit.event;
 
 import org.springframework.context.ApplicationEvent;
 

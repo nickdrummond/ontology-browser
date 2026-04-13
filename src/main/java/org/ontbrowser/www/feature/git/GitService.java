@@ -13,7 +13,7 @@ import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.FileTreeIterator;
 import org.ontbrowser.www.BeforeLoad;
-import org.ontbrowser.www.kit.Config;
+import org.ontbrowser.www.configuration.Config;
 import org.ontbrowser.www.util.OWLUtils;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;

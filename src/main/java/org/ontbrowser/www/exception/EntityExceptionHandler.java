@@ -1,7 +1,7 @@
 package org.ontbrowser.www.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.BackendContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,10 +13,10 @@ import org.springframework.web.servlet.ModelAndView;
 @ControllerAdvice
 public class EntityExceptionHandler {
 
-    private final OWLHTMLKit kit; // Your service containing getRootOntology
+    private final BackendContext backend; // Your service containing getRootOntology
 
-    public EntityExceptionHandler(OWLHTMLKit kit) {
-        this.kit = kit;
+    public EntityExceptionHandler(BackendContext backend) {
+        this.backend = backend;
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -24,7 +24,7 @@ public class EntityExceptionHandler {
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        if (!ex.getOntology().getOntologyID().equals(kit.getRootOntology().getOntologyID())) {
+        if (!ex.getOntology().getOntologyID().equals(backend.getRootOntology().getOntologyID())) {
             return new ModelAndView(generateRedirectWithoutOntology(request));
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex);

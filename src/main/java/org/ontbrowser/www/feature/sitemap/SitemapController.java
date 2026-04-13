@@ -1,6 +1,6 @@
 package org.ontbrowser.www.feature.sitemap;
 
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -16,10 +16,10 @@ import java.util.function.Consumer;
 @RequestMapping(value="/sitemap.xml")
 public class SitemapController {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
 
-    public SitemapController(OWLHTMLKit kit) {
-        this.kit = kit;
+    public SitemapController(BackendContext backend) {
+        this.backend = backend;
     }
 
     @GetMapping()
@@ -49,8 +49,8 @@ public class SitemapController {
         xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/annotationproperties"));
         xmlUrlSet.addUrl(new XmlUrl(baseUrl + "/clouds/datatypes"));
 
-        OWLOntology ont = kit.getRootOntology();
-        URLScheme scheme = kit.getURLScheme();
+        OWLOntology ont = backend.getRootOntology();
+        URLScheme scheme = backend.getURLScheme();
 
         // ontologies
         ont.getImportsClosure().forEach(o -> xmlUrlSet.addUrl(new XmlUrl(baseUrl + scheme.getURLForOWLObject(o, ont))));

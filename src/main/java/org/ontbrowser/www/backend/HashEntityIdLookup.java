@@ -1,4 +1,4 @@
-package org.ontbrowser.www.kit.impl;
+package org.ontbrowser.www.backend;
 
 import org.ontbrowser.www.exception.EntityNotFoundException;
 import org.semanticweb.owlapi.model.*;

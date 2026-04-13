@@ -2,7 +2,7 @@ package org.ontbrowser.www.feature.rdf;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.query.QueryParseException;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;

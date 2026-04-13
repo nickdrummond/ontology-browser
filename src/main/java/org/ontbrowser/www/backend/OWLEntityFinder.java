@@ -1,4 +1,4 @@
-package org.ontbrowser.www.kit;
+package org.ontbrowser.www.backend;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.ShortFormProvider;

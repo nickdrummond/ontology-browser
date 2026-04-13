@@ -1,7 +1,7 @@
 package org.ontbrowser.www.renderer;
 
 import com.google.common.collect.Multimap;
-import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.manchestersyntax.parser.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.*;

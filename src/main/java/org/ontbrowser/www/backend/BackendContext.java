@@ -1,8 +1,10 @@
 package org.ontbrowser.www.backend;
 
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.kit.impl.EntityIdLookup;
+import org.ontbrowser.www.controller.AppStatus;
+import org.ontbrowser.www.url.RestURLScheme;
+import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -22,6 +24,8 @@ public interface BackendContext {
 
     ShortFormProvider getShortFormProvider();
 
+    ShortFormProvider getShortFormProvider(OWLAnnotationProperty prop);
+
     OWLDataFactory getOWLDataFactory();
 
     OWLReasoner getToldReasoner(OWLOntology ont);
@@ -35,4 +39,10 @@ public interface BackendContext {
     OWLEntityFinder getFinder();
 
     OWLEntityChecker getOWLEntityChecker();
+
+    AppStatus getStatus();
+
+    default URLScheme getURLScheme(){
+        return new RestURLScheme(getIriShortFormProvider());
+    };
 }

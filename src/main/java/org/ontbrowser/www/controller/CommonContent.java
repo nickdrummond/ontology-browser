@@ -1,12 +1,12 @@
 package org.ontbrowser.www.controller;
 
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
-import org.ontbrowser.www.renderer.RendererFactory;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.ontbrowser.www.url.PagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -21,21 +21,17 @@ public class CommonContent {
 
     protected final ProjectInfo projectInfo;
 
-    protected final OWLHTMLKit kit;
-
-    protected final RendererFactory rendererFactory;
+    protected final BackendContext backend;
 
     private final StatsService statsService;
 
     public CommonContent(
             ProjectInfo projectInfo,
-            OWLHTMLKit kit,
-            RendererFactory rendererFactory,
+            BackendContext backend,
             StatsService statsService
     ) {
         this.projectInfo = projectInfo;
-        this.kit = kit;
-        this.rendererFactory = rendererFactory;
+        this.backend = backend;
         this.statsService = statsService;
     }
 
@@ -54,8 +50,8 @@ public class CommonContent {
     record OntologySummary(String label, URI link) {}
 
     private void addOntologySelectorData(Model model, OWLOntology ont, PagingURIScheme scheme) {
-        var ontSfp = kit.getOntologySFP();
-        var allOntologies = kit.getOntologies().stream()
+        var ontSfp = backend.getOntologySFP();
+        var allOntologies = Imports.INCLUDED.stream(backend.getRootOntology())
                 .map(ontology -> new OntologySummary(
                         ontSfp.getShortForm(ontology),
                         scheme.replacingParam("ontId", Integer.toString(ontology.getOntologyID().hashCode()))

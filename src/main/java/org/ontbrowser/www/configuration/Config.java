@@ -1,4 +1,4 @@
-package org.ontbrowser.www.kit;
+package org.ontbrowser.www.configuration;
 
 import org.semanticweb.owlapi.model.IRI;
 

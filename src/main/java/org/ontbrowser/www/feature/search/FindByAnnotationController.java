@@ -1,9 +1,9 @@
 package org.ontbrowser.www.feature.search;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -19,14 +19,14 @@ import java.util.Optional;
 @RequestMapping(value = "/entities")
 public class FindByAnnotationController {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final FindByAnnotation service;
 
     public FindByAnnotationController(
-            OWLHTMLKit kit,
+            BackendContext backend,
             FindByAnnotation service
     ) {
-        this.kit = kit;
+        this.backend = backend;
         this.service = service;
     }
 
@@ -42,20 +42,20 @@ public class FindByAnnotationController {
 
         Optional<String> optProp = Optional.ofNullable(property);
 
-        Optional<OWLAnnotationProperty> optAnnot = optProp.map(p -> kit.getOWLEntityChecker().getOWLAnnotationProperty(p));
+        Optional<OWLAnnotationProperty> optAnnot = optProp.map(p -> backend.getOWLEntityChecker().getOWLAnnotationProperty(p));
 
         if (optProp.isPresent() && optAnnot.isEmpty()) {
             throw new OntServerException("Unknown property: " + property);
         }
 
-        List<AxiomWithMetadata> results = service.findByAnnotation(search, optAnnot.orElse(null), kit);
+        List<AxiomWithMetadata> results = service.findByAnnotation(search, optAnnot.orElse(null));
 
         if (results.size() == 1) {
             OWLObject owlObject = results.get(0).owlObject();
             if (owlObject instanceof OWLAnnotationAssertionAxiom ax) {
                 Optional<IRI> iri = ax.getSubject().asIRI();
                 OWLObject o = ont.getEntitiesInSignature(iri.orElseThrow(), Imports.INCLUDED).iterator().next();
-                response.sendRedirect(kit.getURLScheme().getURLForOWLObject(o, ont));
+                response.sendRedirect(backend.getURLScheme().getURLForOWLObject(o, ont));
                 return null;
             }
         }

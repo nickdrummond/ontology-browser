@@ -1,7 +1,7 @@
-package org.ontbrowser.www.kit.impl;
+package org.ontbrowser.www.backend.memory.kit.impl;
 
 import com.google.common.collect.Sets;
-import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;

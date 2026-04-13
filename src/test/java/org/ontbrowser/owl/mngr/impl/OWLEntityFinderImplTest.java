@@ -1,7 +1,7 @@
 package org.ontbrowser.owl.mngr.impl;
 
 import org.junit.jupiter.api.Test;
-import org.ontbrowser.www.kit.impl.OWLEntityFinderImpl;
+import org.ontbrowser.www.backend.memory.kit.impl.OWLEntityFinderImpl;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;

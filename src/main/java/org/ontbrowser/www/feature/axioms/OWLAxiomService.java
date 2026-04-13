@@ -1,7 +1,7 @@
 package org.ontbrowser.www.feature.axioms;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
-import org.ontbrowser.www.kit.event.RestartEvent;
+import org.ontbrowser.www.backend.memory.kit.event.RestartEvent;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;

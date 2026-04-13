@@ -14,14 +14,15 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
-import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.event.RestartEvent;
-import org.ontbrowser.www.renderer.LabelShortFormProvider;
+import org.ontbrowser.www.backend.BackendContext;
+import org.ontbrowser.www.backend.OWLEntityFinder;
+import org.ontbrowser.www.backend.memory.kit.event.RestartEvent;
 import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.model.providers.EntityProvider;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,15 +49,15 @@ public class LuceneSearchService implements SearchService {
     public static final String TYPE_FIELD = "type";
 
     private final Directory directory;
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final Analyzer analyzer;
 
     public LuceneSearchService(
             Directory directory,
-            OWLHTMLKit kit
+            BackendContext backend
     ) {
         this.directory = directory;
-        this.kit = kit;
+        this.backend = backend;
         this.analyzer = new DelegatingAnalyzerWrapper(PER_FIELD_REUSE_STRATEGY) {
             private final Analyzer defaultAnalyzer = new StandardAnalyzer();
             private final Analyzer keywordAnalyzer = new KeywordAnalyzer();
@@ -78,16 +79,12 @@ public class LuceneSearchService implements SearchService {
     }
 
     private void doIndex() {
-        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var df = backend.getOWLDataFactory();
 
         // RDFS:label short form provider on top of the default
         var labelProp = OWLRDFVocabulary.RDFS_LABEL.getIRI();
         var labelAnnotationProperty = df.getOWLAnnotationProperty(labelProp);
-        var labelSfp = new LabelShortFormProvider(
-                labelAnnotationProperty,
-                "",
-                kit.getOntologies(),
-                kit.getShortFormProvider());
+        var labelSfp = backend.getShortFormProvider(labelAnnotationProperty);
 
         log.info("Building lucene search index");
 
@@ -95,7 +92,7 @@ public class LuceneSearchService implements SearchService {
         conf.setOpenMode(IndexWriterConfig.OpenMode.CREATE); // overwrite index
 
         try (var writer = new IndexWriter(directory, conf)) {
-            var ont = kit.getRootOntology();
+            var ont = backend.getRootOntology();
 
             Streams.concat(
                             ont.classesInSignature(Imports.INCLUDED),
@@ -120,17 +117,17 @@ public class LuceneSearchService implements SearchService {
         log.info("Completed lucene search index");
     }
 
-    private Document createDocumentFromEntity(OWLEntity entity, LabelShortFormProvider sfp) {
+    private Document createDocumentFromEntity(OWLEntity entity, ShortFormProvider sfp) {
         Document doc = new Document();
         doc.add(new StringField(IRI_FIELD, entity.getIRI().getIRIString(), YES));
         doc.add(new StringField(TYPE_FIELD, entity.getEntityType().getName(), YES));
-        doc.add(new TextField(SHORTFORM_FIELD, kit.getShortFormProvider().getShortForm(entity).toLowerCase(), YES));
+        doc.add(new TextField(SHORTFORM_FIELD, backend.getShortFormProvider().getShortForm(entity).toLowerCase(), YES));
         doc.add(new TextField(LABEL_FIELD, sfp.getShortForm(entity).toLowerCase(), YES));
         return doc;
     }
 
     @Override
-    public List<OWLEntity> findByName(String input, int size, OWLHTMLKit kit) {
+    public List<OWLEntity> findByName(String input, int size, OWLEntityFinder finder, ShortFormProvider sfp) {
         try (var reader = DirectoryReader.open(directory)) {
 
             var searcher = new IndexSearcher(reader);
@@ -148,7 +145,7 @@ public class LuceneSearchService implements SearchService {
     }
 
     private List<OWLEntity> toOwlEntities(TopFieldDocs results, DirectoryReader reader) {
-        var df = kit.getOWLOntologyManager().getOWLDataFactory();
+        var df = backend.getOWLDataFactory();
 
         return Arrays.stream(results.scoreDocs)
                 .map(hit -> {

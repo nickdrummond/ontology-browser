@@ -1,8 +1,10 @@
-package org.ontbrowser.www.kit.impl;
+package org.ontbrowser.www.backend.memory.kit.impl;
 
-import org.ontbrowser.www.kit.Config;
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.EntityIdLookup;
+import org.ontbrowser.www.backend.QNameEntityIdLookup;
+import org.ontbrowser.www.backend.OWLEntityFinder;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
+import org.ontbrowser.www.configuration.Config;
 import org.ontbrowser.www.renderer.*;
 import org.ontbrowser.www.url.RestURLScheme;
 import org.ontbrowser.www.url.URLScheme;
@@ -135,6 +137,19 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
         return getNameCache();
     }
 
+    @Override
+    public ShortFormProvider getShortFormProvider(OWLAnnotationProperty prop) {
+        var noLabelSFP = new FixedSimpleShortFormProvider(getIriShortFormProvider());
+        if (VocabUtils.isSkosXLLabelAnnotation(prop)) {
+            return new SkosXLShortFormProvider(
+                    config.labelLang(), getOntologies(), noLabelSFP);
+        }
+        else {
+            return new LabelShortFormProvider(prop,
+                    config.labelLang(), getOntologies(), noLabelSFP);
+        }
+    }
+
     public MOSStringRenderer getStringRenderer() {
         if (stringRenderer == null) {
             stringRenderer = new MOSStringRenderer(getFinder(), rootOntology);
@@ -182,15 +197,7 @@ public class OWLHTMLKitInternals implements OWLHTMLKit {
         if (shortFormProvider == null){
             var df = mngr.getOWLDataFactory();
             var labelAnnotationProperty = df.getOWLAnnotationProperty(config.labelIRI());
-            var noLabelSFP = new FixedSimpleShortFormProvider(getIriShortFormProvider());
-            if (VocabUtils.isSkosXLLabelAnnotation(labelAnnotationProperty)) {
-                shortFormProvider = new SkosXLShortFormProvider(
-                        config.labelLang(), getOntologies(), noLabelSFP);
-            }
-            else {
-                shortFormProvider = new LabelShortFormProvider(labelAnnotationProperty,
-                        config.labelLang(), getOntologies(), noLabelSFP);
-            }
+            shortFormProvider = getShortFormProvider(labelAnnotationProperty);
         }
         return shortFormProvider;
     }

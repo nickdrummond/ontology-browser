@@ -1,9 +1,9 @@
 package org.ontbrowser.www.feature.editing;
 
 import org.ontbrowser.www.BeforeLoad;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.memory.kit.impl.RestartableKit;
 import org.ontbrowser.www.io.OntologyLoader;
-import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
-import static org.ontbrowser.www.kit.impl.OWLHTMLKitInternals.editableKit;
+import static org.ontbrowser.www.backend.memory.kit.impl.OWLHTMLKitInternals.editableKit;
 
 public class EditableKit extends RestartableKit {
 

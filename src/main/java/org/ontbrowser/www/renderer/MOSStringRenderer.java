@@ -1,6 +1,6 @@
 package org.ontbrowser.www.renderer;
 
-import org.ontbrowser.www.kit.OWLEntityFinder;
+import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.semanticweb.owlapi.io.OWLObjectRenderer;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;

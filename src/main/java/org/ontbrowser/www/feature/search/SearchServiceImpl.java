@@ -1,6 +1,6 @@
 package org.ontbrowser.www.feature.search;
 
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.ontbrowser.www.util.MyStringUtils;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -20,9 +20,12 @@ public class SearchServiceImpl implements SearchService {
 
     private final String wildcard = "*";
 
-    // TODO get Kit out of here
-    public List<OWLEntity> findByName(final String input, int size, final OWLHTMLKit kit) {
-
+    public List<OWLEntity> findByName(
+            final String input,
+            final int size,
+            final OWLEntityFinder finder,
+            final ShortFormProvider sfp
+    ) {
         if ((input == null) || (input.isEmpty())) {
             return Collections.emptyList();
         }
@@ -35,7 +38,6 @@ public class SearchServiceImpl implements SearchService {
 
         // Sort first by index of search and then alphabetically
         Comparator<OWLEntity> c = new Comparator<>() {
-            final ShortFormProvider sfp = kit.getShortFormProvider();
             final String str = input.replace("\\" + wildcard, "").toLowerCase();
 
             @Override
@@ -53,6 +55,6 @@ public class SearchServiceImpl implements SearchService {
             }
         };
 
-        return kit.getFinder().getOWLEntities(searchStr).stream().sorted(c).limit(size).toList();
+        return finder.getOWLEntities(searchStr).stream().sorted(c).limit(size).toList();
     }
 }

@@ -1,4 +1,4 @@
-package org.ontbrowser.www.kit.impl;
+package org.ontbrowser.www.backend.memory.kit.impl;
 
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyIRIMapper;

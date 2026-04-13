@@ -1,13 +1,12 @@
-package org.ontbrowser.www.kit;
+package org.ontbrowser.www.backend.memory.kit;
 
-import org.ontbrowser.www.kit.impl.EntityIdLookup;
+import org.ontbrowser.www.backend.EntityIdLookup;
+import org.ontbrowser.www.backend.OWLEntityFinder;
+import org.ontbrowser.www.configuration.Config;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
 import org.semanticweb.owlapi.util.ShortFormProvider;
@@ -44,6 +43,8 @@ public interface OWLHTMLKit {
     EntityIdLookup lookup();
 
     ShortFormProvider getShortFormProvider();
+
+    ShortFormProvider getShortFormProvider(OWLAnnotationProperty prop);
 
     MOSStringRenderer getStringRenderer();
 

@@ -3,8 +3,9 @@ package org.ontbrowser.www.feature.editing;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +18,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 @Aspect
 @Component
 @Order(1)
+@ConditionalOnProperty(name = "ontology.backend", havingValue = "memory", matchIfMissing = true) // mem only
 public class RequiresEditableAspect {
 
     private final OWLHTMLKit kit;

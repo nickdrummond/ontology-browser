@@ -5,7 +5,7 @@ import org.ontbrowser.www.exception.OntServerException;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.graph.GraphURLScheme;
 import org.ontbrowser.www.feature.parser.ParserService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.AxiomWithMetadata;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.renderer.MOSStringRenderer;

@@ -6,7 +6,7 @@ import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsMemo;
 import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.kit.event.RestartEvent;
+import org.ontbrowser.www.backend.memory.kit.event.RestartEvent;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.URLScheme;

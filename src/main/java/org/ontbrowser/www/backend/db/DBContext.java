@@ -2,10 +2,11 @@ package org.ontbrowser.www.backend.db;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.backend.BackendContext;
+import org.ontbrowser.www.backend.OWLEntityFinder;
+import org.ontbrowser.www.backend.EntityIdLookup;
+import org.ontbrowser.www.backend.QNameEntityIdLookup;
 import org.ontbrowser.www.configuration.DBConnectionFilter;
-import org.ontbrowser.www.kit.OWLEntityFinder;
-import org.ontbrowser.www.kit.impl.EntityIdLookup;
-import org.ontbrowser.www.kit.impl.QNameEntityIdLookup;
+import org.ontbrowser.www.controller.AppStatus;
 import org.ontbrowser.www.url.OntologyId;
 import org.ontbrowser.www.util.OWLObjectComparator;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -62,7 +63,8 @@ public class DBContext implements BackendContext {
     public DBContext(HttpServletRequest request) throws SQLException {
         this.connection = (Connection) request.getAttribute(DBConnectionFilter.DB_CONNECTION_ATTR);
         var imports = OntologyImports.getImportsClosure(connection, DEFAULT_ONT_ID);
-        // TODO chache this?
+        // TODO cache this?
+        // TODO this should be hidden away in OWLDB2
         this.prefixMap = Prefixes.getCanonicalMappingsForClosure(connection, imports); // could be static
         this.canonicalRendererFactory = new CanonicalRendererFactory(prefixMap);
         this.canonicalParserFactory = new CanonicalParserFactory(df, prefixMap);
@@ -99,13 +101,17 @@ public class DBContext implements BackendContext {
 
     @Override
     public ShortFormProvider getShortFormProvider() {
-        // TODO this should be hidden away in OWLDB2
+        return getShortFormProvider(df.getOWLAnnotationProperty(LABEL_IRI));
+    }
+
+    @Override
+    public ShortFormProvider getShortFormProvider(OWLAnnotationProperty prop) {
         return new DBLabelShortFormProvider(
                 connection,
                 canonicalRendererFactory,
                 canonicalParserFactory,
                 DEFAULT_ONT_ID,
-                df.getOWLAnnotationProperty(LABEL_IRI)
+                prop
         );
     }
 
@@ -134,7 +140,7 @@ public class DBContext implements BackendContext {
 
     @Override
     public Comparator<OWLObject> getComparator() {
-        if (comparator == null){
+        if (comparator == null) {
             comparator = new OWLObjectComparator(getShortFormProvider());
         }
         return comparator;
@@ -167,6 +173,11 @@ public class DBContext implements BackendContext {
             );
         }
         return entityChecker;
+    }
+
+    @Override
+    public AppStatus getStatus() {
+        return new AppStatus(AppStatus.Status.UP);
     }
 
     private OWLReasoner createReasoner(OWLOntology ont) {

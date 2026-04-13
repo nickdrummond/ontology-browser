@@ -1,29 +1,24 @@
 package org.ontbrowser.www.feature.search;
 
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.BackendContext;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/entities")
 public class SearchController {
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
     private final SearchService service;
-    private final NameService nameService;
 
     public SearchController(
-            OWLHTMLKit kit,
-            SearchService service,
-            NameService nameService
+            BackendContext backend,
+            SearchService service
     ) {
-        this.kit = kit;
+        this.backend = backend;
         this.service = service;
-        this.nameService = nameService;
     }
 
     @GetMapping(value = "/", produces = MediaType.APPLICATION_XML_VALUE)
@@ -38,10 +33,12 @@ public class SearchController {
 
         // Minimum search length of 2
         if (name.length() > 1) {
-            List<OWLEntity> entities = service.findByName(name, size, kit);
+            var sfp = backend.getShortFormProvider();
+            var finder = backend.getFinder();
+            var entities = service.findByName(name, size, finder, sfp);
             for (OWLEntity owlEntity : entities) {
-                String entityUrl = kit.getURLScheme().getURLForOWLObject(owlEntity, ont);
-                String entityName = nameService.getName(owlEntity, kit);
+                var entityUrl = backend.getURLScheme().getURLForOWLObject(owlEntity, ont);
+                var entityName = sfp.getShortForm(owlEntity);
                 results.addResult(new SearchResult(entityUrl, "", entityName));
             }
         }

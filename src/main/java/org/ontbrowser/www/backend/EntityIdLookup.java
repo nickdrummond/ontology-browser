@@ -1,4 +1,4 @@
-package org.ontbrowser.www.kit.impl;
+package org.ontbrowser.www.backend;
 
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;

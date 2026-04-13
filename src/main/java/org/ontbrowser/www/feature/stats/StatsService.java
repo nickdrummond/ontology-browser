@@ -1,10 +1,9 @@
 package org.ontbrowser.www.feature.stats;
 
 import org.apache.commons.collections4.map.LRUMap;
+import org.ontbrowser.www.backend.BackendContext;
+import org.ontbrowser.www.backend.memory.kit.event.RestartEvent;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
-import org.ontbrowser.www.kit.event.RestartEvent;
-import org.ontbrowser.www.kit.impl.RestartableKit;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -22,13 +21,13 @@ public class StatsService {
 
     private static final Logger log = LoggerFactory.getLogger(StatsService.class);
 
-    private final OWLHTMLKit kit;
+    private final BackendContext backend;
 
     private final LRUMap<StatsMemo, Stats> cache = new LRUMap<>(20);
     private EntityCounts entityCountsTotal = null;
 
-    public StatsService(RestartableKit kit) {
-        this.kit = kit;
+    public StatsService(BackendContext backend) {
+        this.backend = backend;
     }
 
     public Stats<OWLClass> getClassStats(String type, OWLReasoner reasoner) {
@@ -122,7 +121,7 @@ public class StatsService {
 
     public EntityCounts getEntityCountsTotal() {
         if (entityCountsTotal == null) {
-            this.entityCountsTotal = getCounts(kit.getRootOntology(), Imports.INCLUDED);
+            this.entityCountsTotal = getCounts(backend.getRootOntology(), Imports.INCLUDED);
         }
         return entityCountsTotal;
     }

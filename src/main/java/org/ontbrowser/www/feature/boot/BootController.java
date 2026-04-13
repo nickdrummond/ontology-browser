@@ -1,8 +1,8 @@
 package org.ontbrowser.www.feature.boot;
 
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.kit.Config;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.configuration.Config;
+import org.ontbrowser.www.backend.memory.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.semanticweb.owlapi.model.IRI;
 import org.slf4j.Logger;

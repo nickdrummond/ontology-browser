@@ -1,9 +1,13 @@
-package org.ontbrowser.www.kit.impl;
+package org.ontbrowser.www.backend.memory.kit.impl;
 
 import org.ontbrowser.www.BeforeLoad;
+import org.ontbrowser.www.backend.EntityIdLookup;
+import org.ontbrowser.www.configuration.Config;
+import org.ontbrowser.www.backend.OWLEntityFinder;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.memory.kit.Restartable;
 import org.ontbrowser.www.controller.AppStatus;
 import org.ontbrowser.www.io.OntologyLoader;
-import org.ontbrowser.www.kit.*;
 import org.ontbrowser.www.renderer.MOSStringRenderer;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -14,12 +18,12 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
-import org.ontbrowser.www.kit.event.RestartEvent;
+import org.ontbrowser.www.backend.memory.kit.event.RestartEvent;
 
 import java.util.*;
 
-import static org.ontbrowser.www.kit.impl.OWLHTMLKitInternals.editableKit;
-import static org.ontbrowser.www.kit.impl.OWLHTMLKitInternals.readOnlyKit;
+import static org.ontbrowser.www.backend.memory.kit.impl.OWLHTMLKitInternals.editableKit;
+import static org.ontbrowser.www.backend.memory.kit.impl.OWLHTMLKitInternals.readOnlyKit;
 
 // Delegate pattern allows the implementation to be switched out
 public class RestartableKit implements OWLHTMLKit, Restartable {
@@ -127,6 +131,11 @@ public class RestartableKit implements OWLHTMLKit, Restartable {
     @Override
     public final ShortFormProvider getShortFormProvider() {
         return getDelegate().getShortFormProvider();
+    }
+
+    @Override
+    public ShortFormProvider getShortFormProvider(OWLAnnotationProperty prop) {
+        return getDelegate().getShortFormProvider(prop);
     }
 
     @Override

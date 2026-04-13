@@ -1,6 +1,6 @@
 package org.ontbrowser.www.io;
 
-import org.ontbrowser.www.kit.impl.BaseURIMapper;
+import org.ontbrowser.www.backend.memory.kit.impl.BaseURIMapper;
 import org.ontbrowser.www.util.OWLUtils;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;

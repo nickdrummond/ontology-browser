@@ -4,12 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.http.HttpHeaders;
 import org.ontbrowser.www.feature.parser.ParserService;
-import org.ontbrowser.www.kit.OWLHTMLKit;
+import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ParserException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUri;
 @Profile("editing")
 @RequestMapping(value = "/axioms")
 @PreAuthorize("hasRole('ADMIN')")
+@ConditionalOnProperty(name = "ontology.backend", havingValue = "memory", matchIfMissing = true) // mem only
 public class EditController {
 
     private static final Logger log = LoggerFactory.getLogger(EditController.class);

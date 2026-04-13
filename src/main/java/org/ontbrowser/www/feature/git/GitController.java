@@ -2,7 +2,7 @@ package org.ontbrowser.www.feature.git;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.kit.impl.RestartableKit;
+import org.ontbrowser.www.backend.memory.kit.impl.RestartableKit;
 import org.ontbrowser.www.model.paging.PageData;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
