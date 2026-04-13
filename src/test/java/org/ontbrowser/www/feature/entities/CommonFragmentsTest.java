@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.dlquery.ReasonerService;
 import org.ontbrowser.www.feature.entities.characteristics.CharacteristicsBuilder;
-import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 class CommonFragmentsTest {
 
     @Mock
-    private OWLHTMLKit mockKit;
+    private BackendContext mockBackend;
     @Mock
     private ReasonerService mockReasonerService;
     @Mock
@@ -48,9 +48,9 @@ class CommonFragmentsTest {
     @BeforeEach
     public void setUp() {
         stubProjectInfo = new ProjectInfo("name", "contact", "url", "tagline", List.of());
-        commonFragments = new CommonFragments(mockKit, stubProjectInfo, mockReasonerService);
+        commonFragments = new CommonFragments(mockBackend, stubProjectInfo);
         df = OWLManager.getOWLDataFactory();
-        when(mockKit.getShortFormProvider()).thenReturn(mockShortFormProvider);
+        when(mockBackend.getShortFormProvider()).thenReturn(mockShortFormProvider);
         when(mockIndividualsService.getCharacteristicsBuilder(any(), any(), any(), anyList(), anyInt())).thenReturn(mockCharacteristicsBuilder);
         when(mockCharacteristicsBuilder.getCharacteristics()).thenReturn(List.of());
     }

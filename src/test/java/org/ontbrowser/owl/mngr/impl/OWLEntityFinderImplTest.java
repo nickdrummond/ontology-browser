@@ -6,7 +6,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,9 +33,9 @@ public class OWLEntityFinderImplTest {
         OWLClass has_the_word = cls("Has_the_word_help", df, ont, cache);
         OWLClass also_has_the = cls("Also_has_the_word_help", df, ont, cache);
 
-        Set<OWLEntity> results = finder.getOWLEntities(".*Helping.*");
+        List<OWLEntity> results = finder.getOWLEntities(".*Helping.*");
 
-        assertEquals(Set.of(helping_at_the, also_helping_at_the), results);
+        assertEquals(List.of(also_helping_at_the, helping_at_the), results);
     }
 
     private OWLClass cls(String classIRI, OWLDataFactory df, OWLOntology ont, CachingBidirectionalShortFormProvider cache) {
