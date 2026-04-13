@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.parameters.Imports;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,6 +22,17 @@ public class CloudModelFactory {
     ) {
         Set<T> entities = getEntities(entityType, ont, imports);
         var cloud = new EntityByUsageCloud<>(ont, entities, imports);
+        cloud.load();
+        return cloud;
+    }
+
+    /**
+     * Build a CloudModel from a pre-computed entity → usage-count map.
+     * Intended for backends (e.g. DB) that can produce the full map in a single
+     * query rather than counting axioms per entity via the OWL API.
+     */
+    public static <T extends OWLEntity> CloudModel<T> fromPreloadedValues(Map<T, Integer> valueMap) {
+        var cloud = new PreloadedCloudModel<>(valueMap);
         cloud.load();
         return cloud;
     }

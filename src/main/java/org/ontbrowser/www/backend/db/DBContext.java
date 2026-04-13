@@ -2,15 +2,18 @@ package org.ontbrowser.www.backend.db;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.backend.BackendContext;
-import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.ontbrowser.www.backend.EntityIdLookup;
+import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.ontbrowser.www.backend.QNameEntityIdLookup;
 import org.ontbrowser.www.configuration.DBConnectionFilter;
 import org.ontbrowser.www.controller.AppStatus;
+import org.ontbrowser.www.feature.cloud.model.CloudModel;
+import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
 import org.ontbrowser.www.url.OntologyId;
 import org.ontbrowser.www.util.OWLObjectComparator;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
@@ -173,6 +176,23 @@ public class DBContext implements BackendContext {
             );
         }
         return entityChecker;
+    }
+
+
+    @Override
+    public <T extends OWLEntity> CloudModel<T> getUsageCloud(
+            EntityType<T> entityType, OWLOntology ont, Imports imports) {
+        try {
+            if (ont instanceof DBOntology dbOnt) {
+                var dbEntityUsage = new DBEntityUsage(connection, dbOnt);
+                Map<T, Integer> usageByEntity = dbEntityUsage
+                        .getUsage(entityType, imports, 0);
+                return CloudModelFactory.fromPreloadedValues(usageByEntity);
+            }
+            throw new IllegalArgumentException("Cannot get usage - expected a DBOntology");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

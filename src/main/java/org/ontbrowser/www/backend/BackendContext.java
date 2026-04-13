@@ -1,13 +1,18 @@
 package org.ontbrowser.www.backend;
 
 import org.ontbrowser.www.controller.AppStatus;
+import org.ontbrowser.www.feature.cloud.model.CloudModel;
+import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
 import org.ontbrowser.www.url.RestURLScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
+import org.semanticweb.owlapi.model.EntityType;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.IRIShortFormProvider;
 import org.semanticweb.owlapi.util.OntologyIRIShortFormProvider;
@@ -41,6 +46,18 @@ public interface BackendContext {
     OWLEntityChecker getOWLEntityChecker();
 
     AppStatus getStatus();
+
+    /**
+     * Returns a usage-frequency cloud for all entities of the given type in {@code ont}.
+     * The default implementation uses the OWL API and is efficient for the in-memory backend.
+     * Backends with direct data-source access (e.g. DB) should override this to fetch
+     * entities and their usage counts in a single query and return
+     * {@link CloudModelFactory#fromPreloadedValues(java.util.Map)}.
+     */
+    default <T extends OWLEntity> CloudModel<T> getUsageCloud(
+            EntityType<T> entityType, OWLOntology ont, Imports imports) {
+        return CloudModelFactory.getUsageCloud(entityType, ont, imports);
+    }
 
     default URLScheme getURLScheme(){
         return new RestURLScheme(getIriShortFormProvider());

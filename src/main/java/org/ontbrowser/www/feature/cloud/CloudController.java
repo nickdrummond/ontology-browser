@@ -3,7 +3,6 @@ package org.ontbrowser.www.feature.cloud;
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
 import org.ontbrowser.www.feature.hierarchy.OWLOntologyHierarchyService;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -46,7 +45,7 @@ public class CloudController {
     ) {
         var et = getEntityTypeFromPath(entityType);
 
-        var cloudModel = CloudModelFactory.getUsageCloud(et, ont, imports);
+        var cloudModel = backend.getUsageCloud(et, ont, imports);
 
         var title = et.getPluralPrintName() + " usage";
 
