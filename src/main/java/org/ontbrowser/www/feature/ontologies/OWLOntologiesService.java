@@ -2,16 +2,12 @@ package org.ontbrowser.www.feature.ontologies;
 
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.OntologyCharacteristicsBuilder;
-import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.util.OWLObjectComparator;
 import org.semanticweb.owlapi.metrics.*;
 import org.semanticweb.owlapi.model.AxiomType;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,17 +15,8 @@ import java.util.List;
 @Service
 public class OWLOntologiesService {
 
-    public OWLOntology getOntologyFor(final String id, final OWLHTMLKit kit) {
-        for (OWLOntology ont : kit.getOntologies()){
-            if (getIdFor(ont).equals(id)){
-                return ont;
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ontology not found: " + id);
-    }
-
     public String getIdFor(final OWLOntology ontology) {
-        return ontology.getOntologyID().getOntologyIRI().map(IRI::toString).orElseThrow();
+        return Integer.toString(ontology.getOntologyID().hashCode());
     }
 
     public List<Characteristic> getCharacteristics(
