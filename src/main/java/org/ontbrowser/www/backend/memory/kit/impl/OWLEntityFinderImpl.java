@@ -71,13 +71,6 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         return getMatches(str, EntityType.DATATYPE);
     }
 
-    public List<OWLEntity> getOWLProperties(String str) {
-        List<OWLEntity> results = new ArrayList<>();
-        results.addAll(getOWLObjectProperties(str));
-        results.addAll(getOWLDataProperties(str));
-        return results;
-    }
-
     public List<OWLEntity> getOWLEntities(String str) {
         Pattern pattern = Pattern.compile(str.toLowerCase());
 
@@ -87,26 +80,6 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
                 .map(cache::getEntities)
                 .flatMap(Collection::stream)
                 .toList();
-    }
-
-    @Override
-    public List<OWLEntity> getOWLEntities(String str, OWLOntology ont) {
-        final List<OWLEntity> results = getOWLEntities(str);
-        if (ont != null){
-            results.removeIf(result -> !ont.containsEntityInSignature(result.getIRI()));
-        }
-        return results;    }
-
-    public <T extends OWLEntity> List<T> getOWLEntities(String str, EntityType<T> type) {
-        return getMatches(str, type);
-    }
-
-    public <T extends OWLEntity> List<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont) {
-        final List<T> results = getOWLEntities(str, type);
-        if (ont != null){
-            results.removeIf(result -> !ont.containsEntityInSignature(result.getIRI()));
-        }
-        return results;
     }
 
     public Set<OWLEntity> getOWLEntities(IRI iri, OWLOntology ont) {
@@ -136,26 +109,6 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
         return results;
     }
 
-    public <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type, OWLOntology ont) {
-        return getOWLEntity(iri, type, ont, Imports.INCLUDED); // INCLUDED OR NOT?
-    }
-
-    public <T extends OWLEntity> Optional<T> getOWLEntity(IRI iri, EntityType<T> type, OWLOntology ont, Imports imports) {
-        boolean found =
-                (type.equals(EntityType.CLASS) && (ont.containsClassInSignature(iri, imports))) ||
-                (type.equals(EntityType.OBJECT_PROPERTY) && (ont.containsObjectPropertyInSignature(iri, imports))) ||
-                (type.equals(EntityType.DATA_PROPERTY) && (ont.containsDataPropertyInSignature(iri, imports))) ||
-                (type.equals(EntityType.ANNOTATION_PROPERTY) && (ont.containsAnnotationPropertyInSignature(iri, imports))) ||
-                (type.equals(EntityType.NAMED_INDIVIDUAL) && (ont.containsIndividualInSignature(iri, imports))) ||
-                (type.equals(EntityType.DATATYPE) && (ont.containsDatatypeInSignature(iri, imports)));
-
-        return found ? Optional.of(type.buildEntity(iri, df)) : Optional.empty();
-    }
-
-    public void dispose() {
-        cache.dispose();
-    }
-
     private <T extends OWLEntity> List<T> getMatches(
             @Nonnull String str,
             @Nonnull EntityType<T> type){
@@ -168,7 +121,8 @@ public class OWLEntityFinderImpl implements OWLEntityFinder {
     private <T extends OWLEntity> List<T> getMatches(
             @Nonnull String str,
             @Nonnull EntityType<T> type,
-            @Nonnull int limit){
+            int limit
+    ){
         return getOWLEntities(str).stream()
                 .filter(e -> type.equals(e.getEntityType()))
                 .map(e -> correctType(e, type))

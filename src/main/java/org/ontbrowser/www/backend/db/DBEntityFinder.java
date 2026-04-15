@@ -1,7 +1,6 @@
 package org.ontbrowser.www.backend.db;
 
 import com.google.common.collect.Sets;
-import org.apache.jena.atlas.lib.NotImplemented;
 import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -13,7 +12,7 @@ import java.util.Set;
 
 public class DBEntityFinder implements OWLEntityFinder {
 
-    private static final int DEFAULT_SEARCH_RESULTS = 30;
+    private static final int MAX_SEARCH_RESULTS = 30;
     private final ShortFormProvider sfp;
     private final OWLDataFactory df;
     private final DBLabelSearch dbLabelSearch;
@@ -31,12 +30,12 @@ public class DBEntityFinder implements OWLEntityFinder {
 
     @Override
     public List<OWLClass> getOWLClasses(String str) {
-        return dbLabelSearch.search(str, EntityType.CLASS, DEFAULT_SEARCH_RESULTS);
+        return dbLabelSearch.search(str, EntityType.CLASS, MAX_SEARCH_RESULTS);
     }
 
     @Override
     public List<OWLObjectProperty> getOWLObjectProperties(String str) {
-        return getOWLObjectProperties(str, DEFAULT_SEARCH_RESULTS);
+        return getOWLObjectProperties(str, MAX_SEARCH_RESULTS);
     }
 
     @Override
@@ -46,7 +45,7 @@ public class DBEntityFinder implements OWLEntityFinder {
 
     @Override
     public List<OWLDataProperty> getOWLDataProperties(String str) {
-        return getOWLDataProperties(str, DEFAULT_SEARCH_RESULTS);
+        return getOWLDataProperties(str, MAX_SEARCH_RESULTS);
     }
 
     @Override
@@ -56,12 +55,12 @@ public class DBEntityFinder implements OWLEntityFinder {
 
     @Override
     public List<OWLAnnotationProperty> getOWLAnnotationProperties(String str) {
-        return dbLabelSearch.search(str, EntityType.ANNOTATION_PROPERTY, DEFAULT_SEARCH_RESULTS);
+        return dbLabelSearch.search(str, EntityType.ANNOTATION_PROPERTY, MAX_SEARCH_RESULTS);
     }
 
     @Override
     public List<OWLNamedIndividual> getOWLIndividuals(String str) {
-        return getOWLIndividuals(str, DEFAULT_SEARCH_RESULTS);
+        return getOWLIndividuals(str, MAX_SEARCH_RESULTS);
     }
 
     @Override
@@ -71,24 +70,13 @@ public class DBEntityFinder implements OWLEntityFinder {
 
     @Override
     public List<OWLDatatype> getOWLDatatypes(String str) {
-        return dbLabelSearch.search(str, EntityType.DATATYPE, DEFAULT_SEARCH_RESULTS);
+        return dbLabelSearch.search(str, EntityType.DATATYPE, MAX_SEARCH_RESULTS);
     }
 
     @Override
     public List<OWLEntity> getOWLEntities(String str) {
-        throw new NotImplemented("DBEntityFinder getOWLEntities not implemented yet");
+        return dbLabelSearch.search(str, MAX_SEARCH_RESULTS);
     }
-
-    @Override
-    public List<OWLEntity> getOWLEntities(String str, OWLOntology ont) {
-        throw new NotImplemented("DBEntityFinder getOWLEntities not implemented yet");
-    }
-
-    @Override
-    public <T extends OWLEntity> List<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont) {
-        throw new NotImplemented("DBEntityFinder getOWLEntities not implemented yet");
-    }
-
 
     // TODO this feels like a different lookup (IRI)
 
@@ -118,10 +106,5 @@ public class DBEntityFinder implements OWLEntityFinder {
             results.add(df.getOWLDatatype(iri));
         }
         return results;
-    }
-
-    @Override
-    public void dispose() {
-        // No-op
     }
 }

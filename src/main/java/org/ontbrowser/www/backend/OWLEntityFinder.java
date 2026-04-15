@@ -34,11 +34,5 @@ public interface OWLEntityFinder {
 
     List<OWLEntity> getOWLEntities(String str);
 
-    List<OWLEntity> getOWLEntities(String str, OWLOntology ont);
-
-    <T extends OWLEntity> List<T> getOWLEntities(String str, EntityType<T> type, OWLOntology ont);
-
     Set<OWLEntity> getOWLEntities(IRI iri, OWLOntology ont);
-
-    void dispose();
 }
