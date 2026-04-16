@@ -1,8 +1,6 @@
 package org.ontbrowser.www.controller;
 
 import org.ontbrowser.www.backend.BackendContext;
-import org.ontbrowser.www.feature.stats.EntityCounts;
-import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -15,16 +13,13 @@ public class ReadOnlyOntologyControllerAdvice {
 
     private final ProjectInfo projectInfo;
 
-    private final StatsService statsService;
     private final BackendContext backend;
 
     public ReadOnlyOntologyControllerAdvice(
             ProjectInfo projectInfo,
-            StatsService statsService,
             BackendContext backend
     ) {
         this.projectInfo = projectInfo;
-        this.statsService = statsService;
         this.backend = backend;
     }
 
@@ -51,10 +46,5 @@ public class ReadOnlyOntologyControllerAdvice {
             return backend.getOntologyFor(ontId);
         }
         return backend.getRootOntology();
-    }
-
-    @ModelAttribute("entityCounts")
-    public EntityCounts getEntityCounts() {
-        return statsService.getEntityCountsTotal();
     }
 }

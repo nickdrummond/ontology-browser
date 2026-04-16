@@ -35,7 +35,8 @@ public class OWLOntologiesController {
 
     public OWLOntologiesController(
             BackendContext backend,
-            OWLOntologiesService service) {
+            OWLOntologiesService service
+    ) {
         this.backend = backend;
         this.service = service;
     }
@@ -107,6 +108,7 @@ public class OWLOntologiesController {
         model.addAttribute("metrics", service.getMetrics(ont));
         model.addAttribute("showImportMetrics", imports == Imports.INCLUDED && !ont.getImports().isEmpty());
         model.addAttribute("pageURIScheme", new ComponentPagingURIScheme(request.getQueryString(), with));
+        model.addAttribute("entityCounts", backend.getStats().getEntityCountsTotal());
 
         return new ModelAndView("ontologyfragment");
     }

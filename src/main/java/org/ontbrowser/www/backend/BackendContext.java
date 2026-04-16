@@ -3,15 +3,11 @@ package org.ontbrowser.www.backend;
 import org.ontbrowser.www.controller.AppStatus;
 import org.ontbrowser.www.feature.cloud.model.CloudModel;
 import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
+import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.url.RestURLScheme;
 import org.ontbrowser.www.url.URLScheme;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
-import org.semanticweb.owlapi.model.EntityType;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLEntity;
-import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.IRIShortFormProvider;
@@ -46,6 +42,8 @@ public interface BackendContext {
     OWLEntityChecker getOWLEntityChecker();
 
     AppStatus getStatus();
+
+    StatsService getStats();
 
     /**
      * Returns a usage-frequency cloud for all entities of the given type in {@code ont}.

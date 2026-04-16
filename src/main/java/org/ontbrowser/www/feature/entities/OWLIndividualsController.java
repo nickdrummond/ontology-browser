@@ -7,7 +7,6 @@ import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.entities.characteristics.Characteristic;
 import org.ontbrowser.www.feature.entities.characteristics.ClassCharacteristicsBuilder;
 import org.ontbrowser.www.feature.hierarchy.OWLClassHierarchyService;
-import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
@@ -37,7 +36,6 @@ public class OWLIndividualsController {
     private final OWLIndividualsService individualsService;
     private final OWLClassesService owlClassesService;
     private final BackendContext backend;
-    private final StatsService statsService;
     private final CommonContent commonContent;
     private final CommonFragments commonFragments;
 
@@ -45,14 +43,12 @@ public class OWLIndividualsController {
             OWLIndividualsService individualsService,
             OWLClassesService owlClassesService,
             BackendContext backend,
-            StatsService statsService,
             CommonContent commonContent,
             CommonFragments commonFragments
     ) {
         this.individualsService = individualsService;
         this.owlClassesService = owlClassesService;
         this.backend = backend;
-        this.statsService = statsService;
         this.commonContent = commonContent;
         this.commonFragments = commonFragments;
     }
@@ -213,7 +209,7 @@ public class OWLIndividualsController {
         Tree<OWLClass> prunedTree = hierarchyService.getPrunedTree(type);
 
         model.addAttribute("hierarchy", prunedTree);
-        model.addAttribute("stats", statsService.getClassStats(statsName, r));
+        model.addAttribute("stats", backend.getStats().getClassStats(statsName, r));
         model.addAttribute("statsName", statsName);
     }
 
@@ -229,7 +225,7 @@ public class OWLIndividualsController {
 
         var r = backend.getToldReasoner(ont);
         updateRenderer(type, model, request);
-        var stats = statsService.getClassStats(statsName, r);
+        var stats = backend.getStats().getClassStats(statsName, r);
 
         return commonFragments.getClassChildren(type, r, stats, model);
     }

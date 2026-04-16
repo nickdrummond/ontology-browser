@@ -1,7 +1,7 @@
 package org.ontbrowser.www.controller;
 
 import org.ontbrowser.www.backend.BackendContext;
-import org.ontbrowser.www.feature.stats.StatsService;
+import org.ontbrowser.www.feature.stats.EntityExists;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.ontbrowser.www.url.GlobalPagingURIScheme;
 import org.ontbrowser.www.url.PagingURIScheme;
@@ -23,23 +23,22 @@ public class CommonContent {
 
     protected final BackendContext backend;
 
-    private final StatsService statsService;
 
     public CommonContent(
             ProjectInfo projectInfo,
-            BackendContext backend,
-            StatsService statsService
+            BackendContext backend
     ) {
         this.projectInfo = projectInfo;
         this.backend = backend;
-        this.statsService = statsService;
     }
 
     public void addCommonContent(String queryString, Model model, OWLOntology ont) {
         // required for header and footer text and links
         model.addAttribute("projectInfo", projectInfo);
+
         // required for entity visibility in the menu
-        model.addAttribute("entityCounts", statsService.getEntityCountsTotal());
+        EntityExists entityExists = backend.getStats().entityExists();
+        model.addAttribute("entityExists", entityExists);
 
         var scheme = new GlobalPagingURIScheme(queryString);
         model.addAttribute("pageURIScheme", scheme);

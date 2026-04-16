@@ -10,13 +10,11 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
 import static org.ontbrowser.www.feature.stats.StatsHelper.getBarData;
 
-@Service
 public class StatsService {
 
     private static final Logger log = LoggerFactory.getLogger(StatsService.class);
@@ -42,8 +40,8 @@ public class StatsService {
         return switch (type) {
             case RelationsCountStats.NAME -> cache.computeIfAbsent(
                     new StatsMemo(type, reasoner.getRootOntology().getOntologyID().toString()), m ->
-                        new RelationsCountStats(reasoner)
-                    );
+                            new RelationsCountStats(reasoner)
+            );
             default -> null;
         };
     }
@@ -124,6 +122,18 @@ public class StatsService {
             this.entityCountsTotal = getCounts(backend.getRootOntology(), Imports.INCLUDED);
         }
         return entityCountsTotal;
+    }
+
+    public EntityExists entityExists() {
+        var counts = getEntityCountsTotal();
+        return new EntityExists(
+                counts.classes() > 0,
+                counts.individuals() > 0,
+                counts.objectProperties() > 0,
+                counts.dataProperties() > 0,
+                counts.annotationProperties() > 0,
+                counts.datatypes() > 0
+        );
     }
 
     @EventListener

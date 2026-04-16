@@ -2,11 +2,10 @@ package org.ontbrowser.www.feature.entities;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.ontbrowser.www.backend.BackendContext;
+import org.ontbrowser.www.backend.memory.kit.event.RestartEvent;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLHierarchyService;
 import org.ontbrowser.www.feature.stats.StatsMemo;
-import org.ontbrowser.www.feature.stats.StatsService;
-import org.ontbrowser.www.backend.memory.kit.event.RestartEvent;
 import org.ontbrowser.www.model.Tree;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.URLScheme;
@@ -28,19 +27,16 @@ public class CommonRelations<T extends OWLProperty> {
     private final String path;
     private final BackendContext backend;
     private final PropertiesService<T> propertiesService;
-    private final StatsService statsService;
 
     private final Map<StatsMemo, AbstractRelationsHierarchyService<T>> hierarchyCache = new HashMap<>();
 
     public CommonRelations(
             String path,
             BackendContext backend,
-            PropertiesService<T> propertiesService,
-            StatsService statsService) {
+            PropertiesService<T> propertiesService) {
         this.path = path;
         this.backend = backend;
         this.propertiesService = propertiesService;
-        this.statsService = statsService;
     }
 
     public void renderEntity(OWLEntity entity, Model model) {
@@ -101,7 +97,7 @@ public class CommonRelations<T extends OWLProperty> {
         model.addAttribute("inverse", relationsHierarchyService.isInverse());
         model.addAttribute("hierarchy2", relationsTree);
         //TODO fix this - generics!!
-        model.addAttribute("stats2", statsService.getTreeStats(createMemo(relationsHierarchyService), relationsHierarchyService));
+        model.addAttribute("stats2", backend.getStats().getTreeStats(createMemo(relationsHierarchyService), relationsHierarchyService));
         model.addAttribute("statsName2", "treeStats");
     }
 

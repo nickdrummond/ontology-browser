@@ -2,7 +2,7 @@ package org.ontbrowser.www.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.ontbrowser.www.feature.stats.StatsService;
+import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.model.ProjectInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +21,12 @@ public class ErrorHandling {
     public static final String MODEL_ERROR_CODE = "errorCode";
     public static final String MODEL_MESSAGE = "message";
 
+    private final BackendContext backend;
     private final ProjectInfo projectInfo;
-    private final StatsService statsService;
 
-    public ErrorHandling(ProjectInfo projectInfo, StatsService statsService) {
+    public ErrorHandling(BackendContext backend, ProjectInfo projectInfo) {
+        this.backend = backend;
         this.projectInfo = projectInfo;
-        this.statsService = statsService;
     }
 
     @ExceptionHandler(produces = "text/html")
@@ -37,7 +37,7 @@ public class ErrorHandling {
             Model model) {
 
         model.addAttribute("projectInfo", projectInfo);
-        model.addAttribute( "entityCounts", statsService.getEntityCountsTotal());
+        model.addAttribute( "entityCounts", backend.getStats().getEntityCountsTotal());
 
         if (e != null) {
             if (e instanceof NoResourceFoundException) {

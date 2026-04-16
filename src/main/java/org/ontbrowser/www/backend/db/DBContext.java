@@ -9,6 +9,7 @@ import org.ontbrowser.www.configuration.DBConnectionFilter;
 import org.ontbrowser.www.controller.AppStatus;
 import org.ontbrowser.www.feature.cloud.model.CloudModel;
 import org.ontbrowser.www.feature.cloud.model.CloudModelFactory;
+import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.url.OntologyId;
 import org.ontbrowser.www.util.OWLObjectComparator;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
@@ -198,6 +199,11 @@ public class DBContext implements BackendContext {
     @Override
     public AppStatus getStatus() {
         return new AppStatus(AppStatus.Status.UP);
+    }
+
+    @Override
+    public StatsService getStats() {
+        return new DBStatsService(this, connection);
     }
 
     private OWLReasoner createReasoner(OWLOntology ont) {

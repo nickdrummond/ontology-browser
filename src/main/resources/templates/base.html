@@ -95,20 +95,20 @@
 
 <ul id='tabs' th:fragment='tabs'>
     <li><a th:href='@{/ontologies}'>Ontologies</a></li>
-    <th:block th:if="${entityCounts.classes > 0}">
+    <th:block th:if="${entityExists.classes}">
         <li><a th:href='@{/classes}'>Classes</a></li>
     </th:block>
-    <li th:if="${entityCounts.individuals > 0}">Individuals:
+    <li th:if="${entityExists.individuals}">Individuals:
         <a th:href='@{/individuals}'>by&nbsp;Type</a> /
         <a th:href='@{/relations/onproperty}'>by&nbsp;Relation</a> /
         <a th:href='@{/relations/onannotationproperty}'>by&nbsp;Annotation</a></li>
     <li>Properties:
-        <th:block th:if="${entityCounts.objectProperties > 0}"><a th:href='@{/objectproperties}'>Object</a> /</th:block>
-        <th:block th:if="${entityCounts.dataProperties > 0}"><a th:href='@{/dataproperties}'>Data</a> /</th:block>
-        <th:block th:if="${entityCounts.annotationProperties > 0}"><a th:href='@{/annotationproperties}'>Annotation</a>
+        <th:block th:if="${entityExists.objectProperties}"><a th:href='@{/objectproperties}'>Object</a> /</th:block>
+        <th:block th:if="${entityExists.dataProperties}"><a th:href='@{/dataproperties}'>Data</a> /</th:block>
+        <th:block th:if="${entityExists.annotationProperties}"><a th:href='@{/annotationproperties}'>Annotation</a>
         </th:block>
     </li>
-    <th:block th:if="${entityCounts.datatypes > 0}">
+    <th:block th:if="${entityExists.datatypes}">
         <li><a th:href='@{/datatypes}'>Datatypes</a></li>
     </th:block>
     <li><a th:href='@{/axioms}'>Axioms</a></li>
@@ -123,14 +123,14 @@
     </th:block>
 
     <li>Usage:
-        <th:block th:if="${entityCounts.classes > 0}"><a th:href='@{/clouds/classes}'>cl</a> /</th:block>
-        <th:block th:if="${entityCounts.individuals > 0}"><a th:href='@{/clouds/individuals}'>in</a> /</th:block>
-        <th:block th:if="${entityCounts.objectProperties > 0}"><a th:href='@{/clouds/objectproperties}'>op</a> /
+        <th:block th:if="${entityExists.classes}"><a th:href='@{/clouds/classes}'>cl</a> /</th:block>
+        <th:block th:if="${entityExists.individuals}"><a th:href='@{/clouds/individuals}'>in</a> /</th:block>
+        <th:block th:if="${entityExists.objectProperties}"><a th:href='@{/clouds/objectproperties}'>op</a> /
         </th:block>
-        <th:block th:if="${entityCounts.dataProperties > 0}"><a th:href='@{/clouds/dataproperties}'>dp</a> /</th:block>
-        <th:block th:if="${entityCounts.annotationProperties > 0}"><a th:href='@{/clouds/annotationproperties}'>ap</a> /
+        <th:block th:if="${entityExists.dataProperties}"><a th:href='@{/clouds/dataproperties}'>dp</a> /</th:block>
+        <th:block th:if="${entityExists.annotationProperties}"><a th:href='@{/clouds/annotationproperties}'>ap</a> /
         </th:block>
-        <th:block th:if="${entityCounts.datatypes > 0}"><a th:href='@{/clouds/datatypes}'>dt</a></th:block>
+        <th:block th:if="${entityExists.datatypes}"><a th:href='@{/clouds/datatypes}'>dt</a></th:block>
     </li>
 
     <th:block th:if="${#arrays.contains(@environment.getActiveProfiles(),'git')}">

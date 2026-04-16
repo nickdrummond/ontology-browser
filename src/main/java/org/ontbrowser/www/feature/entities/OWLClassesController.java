@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
-import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.model.paging.With;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -22,19 +21,16 @@ public class OWLClassesController {
 
     private final BackendContext backend;
     private final OWLClassesService service;
-    private final StatsService statsService;
     private final CommonContent commonContent;
     private final CommonFragments commonFragments;
 
     public OWLClassesController(
             BackendContext backend,
             OWLClassesService service,
-            StatsService statsService,
             CommonContent commonContent,
             CommonFragments commonFragments) {
         this.backend = backend;
         this.service = service;
-        this.statsService = statsService;
         this.commonContent = commonContent;
         this.commonFragments = commonFragments;
     }
@@ -65,7 +61,7 @@ public class OWLClassesController {
         var toldReasoner = backend.getToldReasoner(ont);
 
         model.addAttribute("hierarchy", service.getHierarchyService(ont, toldReasoner).getPrunedTree(owlClass));
-        model.addAttribute("stats", statsService.getClassStats(statsName, toldReasoner));
+        model.addAttribute("stats", backend.getStats().getClassStats(statsName, toldReasoner));
         model.addAttribute("statsName", statsName);
 
         getOWLClassFragment(classId, ont, with, model, request);
@@ -95,7 +91,7 @@ public class OWLClassesController {
         var owlClass = backend.lookup().entityFor(classId, ont, OWLClass.class);
 
         var r = backend.getToldReasoner(ont);
-        var stats = statsService.getClassStats(statsName, r);
+        var stats = backend.getStats().getClassStats(statsName, r);
 
         return commonFragments.getClassChildren(owlClass, r, stats, model);
     }

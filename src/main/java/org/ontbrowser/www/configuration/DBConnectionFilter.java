@@ -20,17 +20,12 @@ public class DBConnectionFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
-            Connection conn = null;
-            try {
-                conn = dataSource.getConnection();
+            try (Connection conn = dataSource.getConnection()) {
                 request.setAttribute(DB_CONNECTION_ATTR, conn);
                 chain.doFilter(request, response);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             } finally {
-                if (conn != null) {
-                    try { conn.close(); } catch (Exception ignored) {}
-                }
                 request.removeAttribute(DB_CONNECTION_ATTR);
             }
         } else {

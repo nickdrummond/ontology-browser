@@ -7,6 +7,7 @@ import org.ontbrowser.www.feature.reasoner.ReasonerFactoryService;
 import org.ontbrowser.www.backend.OWLEntityFinder;
 import org.ontbrowser.www.backend.memory.kit.OWLHTMLKit;
 import org.ontbrowser.www.backend.EntityIdLookup;
+import org.ontbrowser.www.feature.stats.StatsService;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLDataFactory;
@@ -32,6 +33,7 @@ public class InMemoryContext implements BackendContext {
 
     private final OWLHTMLKit kit; // injected singleton Kit
     private final ReasonerFactoryService reasonerFactoryService;
+    private StatsService stats;
 
     public InMemoryContext(OWLHTMLKit kit, ReasonerFactoryService reasonerFactoryService) {
         this.kit = kit;
@@ -114,5 +116,13 @@ public class InMemoryContext implements BackendContext {
             return restartable.getStatus();
         }
         return new AppStatus(AppStatus.Status.UP);
+    }
+
+    @Override
+    public StatsService getStats() {
+        if (stats == null) {
+            stats = new StatsService(this);
+        }
+        return stats;
     }
 }

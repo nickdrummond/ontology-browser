@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
-import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.URLScheme;
@@ -35,7 +34,6 @@ public class OWLAnnotationRelationsController {
     private final BackendContext backend;
     private final OWLAnnotationPropertiesService propertiesService;
     private final OWLIndividualsService individualsService;
-    private final StatsService statsService;
     private final CommonRelations<OWLAnnotationProperty> commonRelations;
     private final CommonFragments commonFragments;
 
@@ -43,18 +41,15 @@ public class OWLAnnotationRelationsController {
             BackendContext backend,
             OWLAnnotationPropertiesService propertiesService,
             OWLIndividualsService individualsService,
-            StatsService statsService,
             CommonFragments commonFragments
     ) {
         this.backend = backend;
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
-        this.statsService = statsService;
         this.commonRelations = new CommonRelations<>(
                 PATH,
                 backend,
-                propertiesService,
-                statsService
+                propertiesService
         );
         this.commonFragments = commonFragments;
     }
@@ -100,7 +95,7 @@ public class OWLAnnotationRelationsController {
         commonRelations.buildPrimaryTree(prop, primaryHierarchy, "Annotations on", model);
         commonRelations.buildSecondaryTree(relationsHierarchyService, null, model, request);
 
-        model.addAttribute("stats", statsService.getAnnotationPropertyStats(statsName, ont, primaryHierarchy));
+        model.addAttribute("stats", backend.getStats().getAnnotationPropertyStats(statsName, ont, primaryHierarchy));
         model.addAttribute("statsName", statsName);
 
         commonRelations.renderEntity(prop, model);
@@ -169,7 +164,7 @@ public class OWLAnnotationRelationsController {
 
         var prop = backend.lookup().entityFor(annotationPropertyId, ont, OWLAnnotationProperty.class);
 
-        var stats = statsService.getAnnotationPropertyStats(statsName, ont, propertiesService.getHierarchyService(ont));
+        var stats = backend.getStats().getAnnotationPropertyStats(statsName, ont, propertiesService.getHierarchyService(ont));
 
         model.addAttribute("t", propertiesService.getHierarchyService(ont).getChildren(prop));
         model.addAttribute("stats", stats);
@@ -207,7 +202,7 @@ public class OWLAnnotationRelationsController {
                 .withTree(relationsHierarchyService)
                 .withQuery(request.getQueryString());
 
-        var stats = statsService.getTreeStats(commonRelations.createMemo(relationsHierarchyService), relationsHierarchyService);
+        var stats = backend.getStats().getTreeStats(commonRelations.createMemo(relationsHierarchyService), relationsHierarchyService);
 
         var mos = (OWLHTMLRenderer) model.getAttribute("mos");
         if (mos != null) {

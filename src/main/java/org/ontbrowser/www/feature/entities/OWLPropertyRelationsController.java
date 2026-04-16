@@ -6,7 +6,6 @@ import org.ontbrowser.www.backend.BackendContext;
 import org.ontbrowser.www.controller.CommonContent;
 import org.ontbrowser.www.feature.hierarchy.AbstractRelationsHierarchyService;
 import org.ontbrowser.www.feature.hierarchy.OWLObjectPropertyHierarchyService;
-import org.ontbrowser.www.feature.stats.StatsService;
 import org.ontbrowser.www.model.paging.With;
 import org.ontbrowser.www.renderer.OWLHTMLRenderer;
 import org.ontbrowser.www.url.URLScheme;
@@ -35,7 +34,6 @@ public class OWLPropertyRelationsController {
     private final OWLObjectPropertiesService propertiesService;
     private final OWLIndividualsService individualsService;
     private final BackendContext backend;
-    private final StatsService statsService;
     private final CommonRelations<OWLObjectProperty> common;
     private final CommonContent commonContent;
     private final CommonFragments commonFragments;
@@ -44,21 +42,18 @@ public class OWLPropertyRelationsController {
             OWLObjectPropertiesService propertiesService,
             OWLIndividualsService individualsService,
             BackendContext backend,
-            StatsService statsService,
             CommonContent commonContent,
             CommonFragments commonFragments
     ) {
         this.propertiesService = propertiesService;
         this.individualsService = individualsService;
         this.backend = backend;
-        this.statsService = statsService;
         this.commonContent = commonContent;
 
         this.common = new CommonRelations<>(
                 PATH,
                 backend,
-                propertiesService,
-                statsService
+                propertiesService
         );
 
         this.commonFragments = commonFragments;
@@ -97,7 +92,7 @@ public class OWLPropertyRelationsController {
         commonContent.addCommonContent(request.getQueryString(), model, ont);
 
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
-        model.addAttribute("stats", statsService.getPropertyStats(statsName, backend.getToldReasoner(ont)));
+        model.addAttribute("stats", backend.getStats().getPropertyStats(statsName, backend.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
 
         common.buildSecondaryTree(relationsHierarchyService, null, model, request);
@@ -156,7 +151,7 @@ public class OWLPropertyRelationsController {
         var relationsHierarchyService = common.getRelationsHierarchyService(property, ont, orderBy, inverse);
 
         common.buildPrimaryTree(property, propertiesService.getHierarchyService(ont), "Relations on", model);
-        model.addAttribute("stats", statsService.getPropertyStats(statsName, backend.getToldReasoner(ont)));
+        model.addAttribute("stats", backend.getStats().getPropertyStats(statsName, backend.getToldReasoner(ont)));
         model.addAttribute("statsName", statsName);
         model.addAttribute("ontologiesSfp", backend.getOntologySFP());
 
@@ -210,7 +205,7 @@ public class OWLPropertyRelationsController {
         }
 
         model.addAttribute("t", hierarchyService.getChildren(property));
-        model.addAttribute("stats", statsService.getPropertyStats(statsName, reasoner));
+        model.addAttribute("stats", backend.getStats().getPropertyStats(statsName, reasoner));
         model.addAttribute("statsName", statsName);
 
         return new ModelAndView(CommonRelations.BASE_TREE);
@@ -243,7 +238,7 @@ public class OWLPropertyRelationsController {
         }
 
         model.addAttribute("t", relationsHierarchyService.getChildren(individual));
-        model.addAttribute("stats", statsService.getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService));
+        model.addAttribute("stats", backend.getStats().getTreeStats(common.createMemo(relationsHierarchyService), relationsHierarchyService));
         model.addAttribute("statsName", "treeStats"); // TODO not used
 
         return new ModelAndView(CommonRelations.BASE_TREE);
