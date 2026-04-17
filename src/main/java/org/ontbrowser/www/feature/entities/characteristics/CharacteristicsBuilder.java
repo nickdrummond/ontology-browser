@@ -58,6 +58,13 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
                 .toList();
     }
 
+    public Optional<Characteristic> getCharacteristic(String name) {
+        var filtered = getAxioms()
+                .filter(axiomWithMetadata -> axiomWithMetadata.type().equals(name))
+                .toList();
+        return filtered.isEmpty() ? Optional.empty() : Optional.of(createCharacteristic(name, filtered));
+    }
+
     private Characteristic createCharacteristic(String name, List<AxiomWithMetadata> values) {
         return PagingUtils.getCharacteristic(
                 target, with, defaultPageSize,
@@ -66,21 +73,7 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
     }
 
     private Stream<AxiomWithMetadata> getAxioms() {
-        return createFilters()
-                .flatMap(InterestingFilter::findAxioms);
-    }
-
-    private Stream<InterestingFilter> createFilters() {
-        return ont.getImportsClosure().stream()
-                .map(o -> createFilter(o, target));
-    }
-
-    public Optional<Characteristic> getCharacteristic(String name) {
-
-        var filtered = getAxioms()
-                .filter(axiomWithMetadata -> axiomWithMetadata.type().equals(name))
-                .toList();
-        return filtered.isEmpty() ? Optional.empty() : Optional.of(createCharacteristic(name, filtered));
+        return createFilter(ont, target).findAxioms(Imports.INCLUDED);
     }
 
     abstract InterestingFilter createFilter(OWLOntology ont, T target);
@@ -88,6 +81,7 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
     abstract List<String> getOrder();
 
 
+    // TODO change so that this uses the imports closure
     public abstract class InterestingFilter implements OWLAxiomVisitorEx<AxiomWithMetadata> {
         protected final OWLOntology ont;
         protected final T target;
@@ -97,10 +91,10 @@ public abstract class CharacteristicsBuilder<T extends OWLEntity> {
             this.target = target;
         }
 
-        protected Stream<AxiomWithMetadata> findAxioms() {
+        protected Stream<AxiomWithMetadata> findAxioms(Imports imports) {
             return Streams.concat(
-                    ont.annotationAssertionAxioms(target.getIRI(), Imports.EXCLUDED),
-                    ont.referencingAxioms(target, Imports.EXCLUDED)
+                    ont.annotationAssertionAxioms(target.getIRI(), imports),
+                    ont.referencingAxioms(target, imports)
             ).map(ax -> ax.accept(this));
         }
 

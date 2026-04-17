@@ -93,6 +93,7 @@ public class StatsService {
     }
 
     private Long getSubclassCount(OWLClass cls, OWLOntology ont, Imports imports) {
+        System.out.println("getSubclassCount = " + cls.getIRI());
         return ont.referencingAxioms(cls, imports)
                 .filter(OWLSubClassOfAxiom.class::isInstance)
                 .filter(ax -> ((OWLSubClassOfAxiom) ax).getSuperClass().equals(cls))
