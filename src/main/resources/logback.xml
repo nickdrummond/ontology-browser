@@ -21,4 +21,9 @@
         <appender-ref ref="consoleAppender" />
     </logger>
 
+    <logger name="tables" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="consoleAppender" />
+    </logger>
+
 </configuration>

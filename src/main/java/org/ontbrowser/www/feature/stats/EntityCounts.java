@@ -1,10 +1,10 @@
 package org.ontbrowser.www.feature.stats;
 
 public record EntityCounts(
-        int classes,
-        int individuals,
-        int objectProperties,
-        int dataProperties,
-        int annotationProperties,
-        int datatypes) {
+        long classes,
+        long individuals,
+        long objectProperties,
+        long dataProperties,
+        long annotationProperties,
+        long datatypes) {
 }
