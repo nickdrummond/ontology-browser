@@ -63,6 +63,7 @@ public class DBContext implements BackendContext {
     private OWLObjectComparator comparator;
     private OWLEntityFinder finder;
     private OWLEntityChecker entityChecker;
+    private ShortFormProvider sfp;
 
     public DBContext(HttpServletRequest request) throws SQLException {
         this.connection = (Connection) request.getAttribute(DBConnectionFilter.DB_CONNECTION_ATTR);
@@ -105,18 +106,28 @@ public class DBContext implements BackendContext {
 
     @Override
     public ShortFormProvider getShortFormProvider() {
-        return getShortFormProvider(df.getOWLAnnotationProperty(LABEL_IRI));
+        if (sfp == null) {
+            sfp = getShortFormProvider(df.getOWLAnnotationProperty(LABEL_IRI));
+        }
+        return sfp;
     }
 
     @Override
     public ShortFormProvider getShortFormProvider(OWLAnnotationProperty prop) {
-        return new DBLabelShortFormProvider(
-                connection,
-                canonicalRendererFactory,
-                canonicalParserFactory,
-                DEFAULT_ONT_ID,
-                prop
-        );
+        // pre-load all labels for the imports closure - TODO cache this?)
+        try {
+            var entity2Label = new DBLabelRenderings(
+                    connection,
+                    canonicalRendererFactory,
+                    canonicalParserFactory,
+                    DEFAULT_ONT_ID,
+                    prop,
+                    "en"
+            ).getLabels();
+            return new SimpleCacheShortFormProvider(entity2Label);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
